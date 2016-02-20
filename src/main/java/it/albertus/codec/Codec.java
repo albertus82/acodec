@@ -2,7 +2,10 @@ package it.albertus.codec;
 
 import it.albertus.codec.gui.GuiImages;
 
+import org.apache.commons.codec.binary.Base64;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -89,6 +92,15 @@ public class Codec {
 
 		final Combo codecCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
 		codecCombo.setItems(CodecOption.getAll());
+//		codecCombo.setItem
+		
+		inputText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				/* TODO Switch sul codec selezionato */ 
+				outputText.setText(Base64.encodeBase64String(inputText.getText().getBytes()));
+			}
+		});
 
 		shell.open();
 		return shell;
