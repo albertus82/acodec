@@ -1,7 +1,7 @@
 package it.albertus.codec.gui;
 
-import it.albertus.codec.Codec;
-import it.albertus.codec.Codec.Mode;
+import it.albertus.codec.CodecEngine;
+import it.albertus.codec.CodecMode;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -11,13 +11,13 @@ import org.eclipse.swt.widgets.Text;
 
 public class ModeRadioSelectionListener extends SelectionAdapter {
 
-	private final Codec app;
+	private final CodecEngine engine;
 	private final Button radio;
-	private final Mode mode;
+	private final CodecMode mode;
 	private final Text inputText;
 
-	public ModeRadioSelectionListener(Codec app, Button radio, Mode mode, Text inputText) {
-		this.app = app;
+	public ModeRadioSelectionListener(CodecEngine engine, Button radio, CodecMode mode, Text inputText) {
+		this.engine = engine;
 		this.radio = radio;
 		this.mode = mode;
 		this.inputText = inputText;
@@ -26,7 +26,7 @@ public class ModeRadioSelectionListener extends SelectionAdapter {
 	@Override
 	public void widgetSelected(SelectionEvent e) {
 		if (radio.getSelection()) {
-			app.setMode(mode);
+			engine.setMode(mode);
 			inputText.notifyListeners(SWT.Modify, null);
 		}
 	}

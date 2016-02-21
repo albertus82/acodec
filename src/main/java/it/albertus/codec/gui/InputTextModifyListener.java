@@ -1,6 +1,6 @@
 package it.albertus.codec.gui;
 
-import it.albertus.codec.Codec;
+import it.albertus.codec.CodecEngine;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -10,14 +10,14 @@ import org.eclipse.swt.widgets.Text;
 
 public class InputTextModifyListener implements ModifyListener {
 
-	private final Codec app;
+	private final CodecEngine engine;
 	private final Text input;
 	private final Text output;
 	private final Color defaultTextColor;
 	private final Color inactiveTextColor;
 
-	public InputTextModifyListener(Codec app, Text input, Text output) {
-		this.app = app;
+	public InputTextModifyListener(CodecEngine engine, Text input, Text output) {
+		this.engine = engine;
 		this.input = input;
 		this.output = output;
 		this.defaultTextColor = output.getForeground();
@@ -26,7 +26,7 @@ public class InputTextModifyListener implements ModifyListener {
 
 	@Override
 	public void modifyText(ModifyEvent e) {
-		String result = app.encode(input.getText());
+		String result = engine.run(input.getText());
 		if (result == null) {
 			if (!output.getForeground().equals(inactiveTextColor)) {
 				output.setForeground(inactiveTextColor);

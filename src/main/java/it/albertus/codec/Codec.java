@@ -5,7 +5,6 @@ import it.albertus.codec.gui.Images;
 import it.albertus.codec.gui.InputTextModifyListener;
 import it.albertus.codec.gui.ModeRadioSelectionListener;
 
-import org.apache.commons.codec.binary.Base64;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -17,79 +16,21 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class Codec {
+	
+	private final CodecEngine engine;
 
-	private Type codec;
-	private Mode mode = Mode.ENCODE;
-
-	public enum Mode {
-		ENCODE(0, "Encode"),
-		DECODE(1, "Decode");
-
-		private final int index;
-		private final String name;
-
-		private Mode(int index, String name) {
-			this.index = index;
-			this.name = name;
-		}
-
-		public int getIndex() {
-			return index;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public String toString() {
-			return name;
-		}
-
-	}
-
-	public enum Type {
-		BASE64(0, "Base64");
-
-		private final int index;
-		private final String name;
-
-		private Type(int index, String name) {
-			this.index = index;
-			this.name = name;
-		}
-
-		@Override
-		public String toString() {
-			return name;
-		}
-
-		public int getIndex() {
-			return index;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public static String[] getNames() {
-			String[] names = new String[Type.values().length];
-			for (int i = 0; i < Type.values().length; i++) {
-				names[i] = Type.values()[i].name;
-			}
-			return names;
-		}
-
+	public Codec(CodecEngine codecEngine) {
+		this.engine = codecEngine;
 	}
 
 	public static void main(String[] args) {
-		Codec codec = new Codec();
+		Codec app = new Codec(new CodecEngine());
 		if (args.length > 0) {
 			// TODO Console version
 		}
 		else {
 			final Display display = new Display();
-			final Shell shell = codec.createShell(display);
+			final Shell shell = app.createShell(display);
 			shell.open();
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
@@ -139,7 +80,7 @@ public class Codec {
 		codecLabel.setLayoutData(gridData);
 
 		final Combo codecCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
-		codecCombo.setItems(Type.getNames());
+		codecCombo.setItems(CodecType.getNames());
 
 		/* Mode radio */
 		final Label modeLabel = new Label(shell, SWT.NONE);
@@ -147,54 +88,19 @@ public class Codec {
 		gridData = new GridData();
 		modeLabel.setLayoutData(gridData);
 
-		for (Mode mode : Mode.values()) {
+		for (CodecMode mode : CodecMode.values()) {
 			Button radio = new Button(shell, SWT.RADIO);
-			radio.setSelection(this.mode.equals(mode));
+			radio.setSelection(engine.getMode().equals(mode));
 			radio.setText(mode.getName());
-			radio.addSelectionListener(new ModeRadioSelectionListener(this, radio, mode, inputText));
+			radio.addSelectionListener(new ModeRadioSelectionListener(engine, radio, mode, inputText));
 		}
 
 		/* Listener */
-		codecCombo.addSelectionListener(new CodecComboSelectionListener(this, codecCombo, inputText));
-		inputText.addModifyListener(new InputTextModifyListener(this, inputText, outputText));
+		codecCombo.addSelectionListener(new CodecComboSelectionListener(engine, codecCombo, inputText));
+		inputText.addModifyListener(new InputTextModifyListener(engine, inputText, outputText));
 
 		shell.open();
 		return shell;
-	}
-
-	public Type getCodec() {
-		return codec;
-	}
-
-	public void setCodec(Type co) {
-		codec = co;
-	}
-
-	public String encode(String input) {
-		if (codec != null) {
-			switch (codec) {
-			case BASE64:
-				switch (mode) {
-				case DECODE:
-					return new String(Base64.decodeBase64(input));
-				case ENCODE:
-					return Base64.encodeBase64String(input.getBytes());
-				}
-			default:
-				return null;
-			}
-		}
-		else {
-			return null;
-		}
-	}
-
-	public Mode getMode() {
-		return mode;
-	}
-
-	public void setMode(Mode mode) {
-		this.mode = mode;
 	}
 
 }
