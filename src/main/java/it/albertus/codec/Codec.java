@@ -9,6 +9,8 @@ import it.albertus.codec.gui.InputTextModifyListener;
 import it.albertus.codec.gui.ModeRadioSelectionListener;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -34,6 +36,7 @@ public class Codec {
 		else {
 			final Display display = new Display();
 			final Shell shell = app.createShell(display);
+			shell.pack();
 			shell.open();
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
@@ -49,8 +52,8 @@ public class Codec {
 		final Shell shell = new Shell(display);
 		shell.setImages(Images.ICONS);
 		shell.setText("Codec");
-		shell.setSize(500, 150);
-		shell.setLayout(new GridLayout(6, false));
+//		shell.setSize(500, 150);
+		shell.setLayout(new GridLayout(7, false));
 
 		/* Input text */
 		final Label inputLabel = new Label(shell, SWT.NONE);
@@ -60,7 +63,7 @@ public class Codec {
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
-		gridData.horizontalSpan = 5;
+		gridData.horizontalSpan = 6;
 		inputText.setLayoutData(gridData);
 
 		/* Output text */
@@ -73,7 +76,7 @@ public class Codec {
 		gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
-		gridData.horizontalSpan = 5;
+		gridData.horizontalSpan = 6;
 		outputText.setLayoutData(gridData);
 		outputText.setBackground(inputText.getBackground());
 
@@ -98,6 +101,26 @@ public class Codec {
 			radio.setText(mode.getName());
 			radio.addSelectionListener(new ModeRadioSelectionListener(engine, radio, mode, inputText));
 		}
+		
+		/* Buttons */
+		Button aboutButton = new Button(shell, SWT.NULL);
+		aboutButton.setText("About");
+		aboutButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				shell.dispose();
+			}
+		});
+		
+		Button exitButton = new Button(shell, SWT.NULL);
+		exitButton.setText("Exit");
+		exitButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				shell.dispose();
+			}
+		});
+		
 
 		/* Listener */
 		codecCombo.addSelectionListener(new CodecComboSelectionListener(engine, codecCombo, inputText));
