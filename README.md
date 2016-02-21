@@ -1,6 +1,6 @@
 Codec
 =====
-
+```
 Usage: codec <mode> <algorithm> "Testo da codificare/decodificare"
 
 Mode:
@@ -19,3 +19,4 @@ Algorithms:
     SHA-512
 
 Example: codec e base64 "Lorem ipsum dolor sit amet"
+```
