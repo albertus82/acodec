@@ -37,7 +37,7 @@ public enum CodecAlgorithm {
 	}
 
 	public static String[] getNames() {
-		String[] names = new String[CodecAlgorithm.values().length];
+		final String[] names = new String[CodecAlgorithm.values().length];
 		for (int i = 0; i < CodecAlgorithm.values().length; i++) {
 			names[i] = CodecAlgorithm.values()[i].name;
 		}

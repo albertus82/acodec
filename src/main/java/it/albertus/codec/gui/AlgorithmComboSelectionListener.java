@@ -1,8 +1,8 @@
 package it.albertus.codec.gui;
 
+import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecEngine;
 import it.albertus.codec.engine.CodecMode;
-import it.albertus.codec.engine.CodecAlgorithm;
 
 import java.util.Map;
 
@@ -29,12 +29,12 @@ public class AlgorithmComboSelectionListener extends SelectionAdapter {
 
 	@Override
 	public void widgetSelected(final SelectionEvent se) {
-		CodecAlgorithm algorithm = CodecAlgorithm.values()[(algorithmCombo.getSelectionIndex())];
+		final CodecAlgorithm algorithm = CodecAlgorithm.values()[(algorithmCombo.getSelectionIndex())];
 		engine.setAlgorithm(algorithm);
 
 		/* Gestione radio */
-		Button encodeRadio = modeRadios.get(CodecMode.ENCODE);
-		Button decodeRadio = modeRadios.get(CodecMode.DECODE);
+		final Button encodeRadio = modeRadios.get(CodecMode.ENCODE);
+		final Button decodeRadio = modeRadios.get(CodecMode.DECODE);
 
 		if (algorithm.getModes().contains(CodecMode.DECODE)) {
 			if (!decodeRadio.getEnabled()) {

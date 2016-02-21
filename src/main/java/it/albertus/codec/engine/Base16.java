@@ -8,7 +8,7 @@ public class Base16 {
 
 	private static final CharSequence ALPHABET = "0123456789ABCDEF";
 
-	public static String encode(byte[] byteArray) {
+	public static String encode(final byte[] byteArray) {
 		return Base16Encoder.encode(byteArray);
 	}
 

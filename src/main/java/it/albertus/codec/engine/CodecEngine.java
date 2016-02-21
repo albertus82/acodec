@@ -11,7 +11,7 @@ public class CodecEngine {
 	private CodecAlgorithm algorithm;
 	private CodecMode mode = CodecMode.ENCODE;
 
-	public String run(String input) {
+	public String run(final String input) {
 		if (input.length() == 0) {
 			throw new IllegalStateException(Resources.get("msg.missing.input"));
 		}
@@ -30,7 +30,7 @@ public class CodecEngine {
 		}
 	}
 
-	private String decode(String input) {
+	private String decode(final String input) {
 		switch (algorithm) {
 		case BASE16:
 			return new String(Base16.decode(input));
@@ -44,7 +44,7 @@ public class CodecEngine {
 		throw new IllegalStateException(Resources.get("err.cannot.decode", algorithm.getName()));
 	}
 
-	private String encode(String input) {
+	private String encode(final String input) {
 		switch (algorithm) {
 		case BASE16:
 			return Base16.encode(input.getBytes());
@@ -74,7 +74,7 @@ public class CodecEngine {
 		return algorithm;
 	}
 
-	public void setAlgorithm(CodecAlgorithm algorithm) {
+	public void setAlgorithm(final CodecAlgorithm algorithm) {
 		this.algorithm = algorithm;
 	}
 
@@ -82,7 +82,7 @@ public class CodecEngine {
 		return mode;
 	}
 
-	public void setMode(CodecMode mode) {
+	public void setMode(final CodecMode mode) {
 		this.mode = mode;
 	}
 

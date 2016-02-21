@@ -81,8 +81,8 @@ public class CodecGui extends Codec {
 		modeLabel.setLayoutData(gridData);
 
 		final Map<CodecMode, Button> modeRadios = new EnumMap<CodecMode, Button>(CodecMode.class);
-		for (CodecMode mode : CodecMode.values()) {
-			Button radio = new Button(shell, SWT.RADIO);
+		for (final CodecMode mode : CodecMode.values()) {
+			final Button radio = new Button(shell, SWT.RADIO);
 			radio.setSelection(engine.getMode().equals(mode));
 			radio.setText(mode.getName());
 			radio.addSelectionListener(new ModeRadioSelectionListener(engine, radio, mode, inputText));
@@ -90,11 +90,11 @@ public class CodecGui extends Codec {
 		}
 
 		/* Buttons */
-		Button aboutButton = new Button(shell, SWT.NULL);
+		final Button aboutButton = new Button(shell, SWT.NULL);
 		aboutButton.setText(Resources.get("lbl.about"));
 		aboutButton.addSelectionListener(new AboutButtonSelectionListener(shell));
 
-		Button closeButton = new Button(shell, SWT.NULL);
+		final Button closeButton = new Button(shell, SWT.NULL);
 		closeButton.setText(Resources.get("lbl.close"));
 		closeButton.addSelectionListener(new CloseButtonSelectionListener(shell));
 
