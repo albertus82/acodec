@@ -31,7 +31,7 @@ public class Codec {
 		this.engine = new CodecEngine();
 	}
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		Codec app = new Codec();
 		if (args.length > 0) {
 			// TODO Console version
@@ -50,7 +50,7 @@ public class Codec {
 		}
 	}
 
-	private Shell createShell(Display display) {
+	private Shell createShell(final Display display) {
 		final Shell shell = new Shell(display);
 		shell.setImages(Images.ICONS);
 		shell.setText("Codec");

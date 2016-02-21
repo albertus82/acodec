@@ -10,7 +10,7 @@ public class CodecEngine {
 
 	public String run(String input) {
 		if (input.length() == 0) {
-			return "";
+			throw new IllegalStateException("Write some text in input");
 		}
 		if (codec != null) {
 			switch (mode) {
@@ -23,7 +23,7 @@ public class CodecEngine {
 			}
 		}
 		else {
-			return null;
+			throw new IllegalStateException("Select algoritm");
 		}
 	}
 
@@ -34,7 +34,7 @@ public class CodecEngine {
 		default:
 			break;
 		}
-		throw new IllegalStateException("Invalid codec");
+		throw new IllegalStateException("Cannot decode " + codec.getName());
 	}
 
 	private String encode(String input) {
@@ -56,7 +56,7 @@ public class CodecEngine {
 		default:
 			break;
 		}
-		throw new IllegalStateException("Invalid codec");
+		throw new IllegalStateException("Cannot encode "+ codec.getName());
 	}
 
 	public CodecType getCodec() {

@@ -16,7 +16,7 @@ public class ModeRadioSelectionListener extends SelectionAdapter {
 	private final Button radio;
 	private final Text inputText;
 
-	public ModeRadioSelectionListener(CodecEngine engine, Button radio, CodecMode mode, Text inputText) {
+	public ModeRadioSelectionListener(final CodecEngine engine, final Button radio, final CodecMode mode, final Text inputText) {
 		this.engine = engine;
 		this.radio = radio;
 		this.mode = mode;
@@ -24,7 +24,7 @@ public class ModeRadioSelectionListener extends SelectionAdapter {
 	}
 
 	@Override
-	public void widgetSelected(SelectionEvent e) {
+	public void widgetSelected(final SelectionEvent se) {
 		if (radio.getSelection()) {
 			engine.setMode(mode);
 			inputText.notifyListeners(SWT.Modify, null);

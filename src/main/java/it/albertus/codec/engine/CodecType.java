@@ -17,7 +17,7 @@ public enum CodecType {
 	private final String name;
 	private final Set<CodecMode> modes;
 
-	private CodecType(int index, String name, CodecMode... modes) {
+	private CodecType(final int index, final String name, final CodecMode... modes) {
 		this.index = index;
 		this.name = name;
 		this.modes = new HashSet<CodecMode>(Arrays.asList(modes.length == 0 ? CodecMode.values() : modes));

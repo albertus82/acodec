@@ -8,12 +8,12 @@ public class ExitButtonSelectionListener extends SelectionAdapter {
 
 	private final Shell shell;
 
-	public ExitButtonSelectionListener(Shell shell) {
+	public ExitButtonSelectionListener(final Shell shell) {
 		this.shell = shell;
 	}
 
 	@Override
-	public void widgetSelected(SelectionEvent e) {
+	public void widgetSelected(final SelectionEvent se) {
 		shell.dispose();
 	}
 

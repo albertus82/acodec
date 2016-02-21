@@ -20,7 +20,7 @@ public class CodecComboSelectionListener extends SelectionAdapter {
 	private final Text inputText;
 	private final Map<CodecMode, Button> modeRadios;
 
-	public CodecComboSelectionListener(CodecEngine engine, Combo codecCombo, Text inputText, Map<CodecMode, Button> modeRadios) {
+	public CodecComboSelectionListener(final CodecEngine engine, final Combo codecCombo, final Text inputText, final Map<CodecMode, Button> modeRadios) {
 		this.engine = engine;
 		this.codecCombo = codecCombo;
 		this.inputText = inputText;
@@ -28,7 +28,7 @@ public class CodecComboSelectionListener extends SelectionAdapter {
 	}
 
 	@Override
-	public void widgetSelected(SelectionEvent e) {
+	public void widgetSelected(final SelectionEvent se) {
 		CodecType codec = CodecType.values()[(codecCombo.getSelectionIndex())];
 		engine.setCodec(codec);
 

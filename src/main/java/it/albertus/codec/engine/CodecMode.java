@@ -7,7 +7,7 @@ public enum CodecMode {
 	private final int index;
 	private final String name;
 
-	private CodecMode(int index, String name) {
+	private CodecMode(final int index, final String name) {
 		this.index = index;
 		this.name = name;
 	}
