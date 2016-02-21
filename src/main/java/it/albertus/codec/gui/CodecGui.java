@@ -92,6 +92,8 @@ public class CodecGui extends Codec {
 		algorithmCombo.addSelectionListener(new AlgorithmComboSelectionListener(engine, algorithmCombo, inputText, modeRadios));
 		inputText.addModifyListener(new InputTextModifyListener(engine, inputText, outputText));
 
+		inputText.notifyListeners(SWT.Modify, null);
+
 		shell.pack();
 		shell.setMinimumSize(shell.getSize());
 

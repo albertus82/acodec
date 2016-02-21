@@ -25,7 +25,7 @@ public class CodecEngine {
 			}
 		}
 		else {
-			throw new IllegalStateException("Select algoritm");
+			throw new IllegalStateException("Select algorithm");
 		}
 	}
 
