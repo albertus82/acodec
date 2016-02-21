@@ -1,5 +1,10 @@
 package it.albertus.codec.gui;
 
+import it.albertus.codec.Codec;
+import it.albertus.codec.engine.CodecAlgorithm;
+import it.albertus.codec.engine.CodecMode;
+import it.albertus.codec.resources.Resources;
+
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -13,45 +18,49 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import it.albertus.codec.Codec;
-import it.albertus.codec.engine.CodecAlgorithm;
-import it.albertus.codec.engine.CodecMode;
-import it.albertus.codec.resources.Resources;
-
 public class CodecGui extends Codec {
+
+	private static final int TEXT_LIMIT_CHARS = 1048576;
+	private static final int TEXT_HEIGHT_MULTIPLIER = 2;
 
 	public Shell createShell(final Display display) {
 		final Shell shell = new Shell(display);
 		shell.setImages(Images.ICONS);
 		shell.setText(Resources.get("lbl.title"));
-		// shell.setSize(500, 150);
 		shell.setLayout(new GridLayout(7, false));
 
 		/* Input text */
 		final Label inputLabel = new Label(shell, SWT.NONE);
 		inputLabel.setText(Resources.get("lbl.input"));
 
-		final Text inputText = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.MULTI);
+		final Text inputText = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 		GridData gridData = new GridData();
 		gridData.horizontalSpan = 6;
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.verticalAlignment = SWT.FILL;
 		gridData.grabExcessVerticalSpace = true;
+		if (TEXT_HEIGHT_MULTIPLIER > 1) {
+			gridData.heightHint = inputText.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+		}
 		inputText.setLayoutData(gridData);
+		inputText.setTextLimit(TEXT_LIMIT_CHARS);
 		inputText.addKeyListener(new TextKeyListener(inputText));
 
 		/* Output text */
 		final Label outputLabel = new Label(shell, SWT.NONE);
 		outputLabel.setText(Resources.get("lbl.output"));
 
-		final Text outputText = new Text(shell, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI);
+		final Text outputText = new Text(shell, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 		gridData = new GridData();
 		gridData.horizontalSpan = 6;
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.verticalAlignment = SWT.FILL;
 		gridData.grabExcessVerticalSpace = true;
+		if (TEXT_HEIGHT_MULTIPLIER > 1) {
+			gridData.heightHint = outputText.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+		}
 		outputText.setLayoutData(gridData);
 		outputText.setBackground(inputText.getBackground());
 		outputText.addKeyListener(new TextKeyListener(outputText));
