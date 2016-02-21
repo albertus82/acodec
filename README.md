@@ -1,7 +1,7 @@
 Codec
 =====
 ```ruby
-Usage: codec <mode> <algorithm> "Testo da codificare/decodificare"
+Usage: codec <mode> <algorithm> "Text to encode/decode"
 
 Mode:
     e    Encode
