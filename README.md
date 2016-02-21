@@ -1,6 +1,6 @@
 Codec
 =====
-```
+```ruby
 Usage: codec <mode> <algorithm> "Testo da codificare/decodificare"
 
 Mode:
