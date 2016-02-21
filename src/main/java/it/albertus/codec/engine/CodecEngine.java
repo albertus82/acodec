@@ -9,6 +9,9 @@ public class CodecEngine {
 	private CodecMode mode = CodecMode.ENCODE;
 
 	public String run(String input) {
+		if (input.length() == 0) {
+			return "";
+		}
 		if (codec != null) {
 			switch (mode) {
 			case DECODE:

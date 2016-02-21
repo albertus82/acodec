@@ -87,7 +87,7 @@ public class Codec {
 
 		/* Codec combo */
 		final Label codecLabel = new Label(shell, SWT.NONE);
-		codecLabel.setText("Codec:");
+		codecLabel.setText("Algorithm:");
 		gridData = new GridData();
 		codecLabel.setLayoutData(gridData);
 
