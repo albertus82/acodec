@@ -1,5 +1,7 @@
 package it.albertus.codec.engine;
 
+import it.albertus.codec.resources.Resources;
+
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -12,7 +14,7 @@ public class CodecEngine {
 
 	public String run(String input) {
 		if (input.length() == 0) {
-			throw new IllegalStateException("Write some text in input");
+			throw new IllegalStateException(Resources.get("msg.missing.input"));
 		}
 		if (algorithm != null) {
 			switch (mode) {
@@ -25,7 +27,7 @@ public class CodecEngine {
 			}
 		}
 		else {
-			throw new IllegalStateException("Select algorithm");
+			throw new IllegalStateException(Resources.get("msg.missing.algorithm"));
 		}
 	}
 
@@ -38,7 +40,7 @@ public class CodecEngine {
 		default:
 			break;
 		}
-		throw new IllegalStateException("Cannot decode " + algorithm.getName());
+		throw new IllegalStateException(Resources.get("err.cannot.decode", algorithm.getName()));
 	}
 
 	private String encode(String input) {
@@ -64,7 +66,7 @@ public class CodecEngine {
 		default:
 			break;
 		}
-		throw new IllegalStateException("Cannot encode " + algorithm.getName());
+		throw new IllegalStateException(Resources.get("err.cannot.encode", algorithm.getName()));
 	}
 
 	public CodecAlgorithm getAlgorithm() {

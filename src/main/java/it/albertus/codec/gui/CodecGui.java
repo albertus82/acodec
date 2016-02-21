@@ -16,19 +16,20 @@ import org.eclipse.swt.widgets.Text;
 import it.albertus.codec.Codec;
 import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecMode;
+import it.albertus.codec.resources.Resources;
 
 public class CodecGui extends Codec {
 
 	public Shell createShell(final Display display) {
 		final Shell shell = new Shell(display);
 		shell.setImages(Images.ICONS);
-		shell.setText("Codec");
+		shell.setText(Resources.get("lbl.title"));
 		// shell.setSize(500, 150);
 		shell.setLayout(new GridLayout(7, false));
 
 		/* Input text */
 		final Label inputLabel = new Label(shell, SWT.NONE);
-		inputLabel.setText("Input:");
+		inputLabel.setText(Resources.get("lbl.input"));
 
 		final Text inputText = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.MULTI);
 		GridData gridData = new GridData();
@@ -42,7 +43,7 @@ public class CodecGui extends Codec {
 
 		/* Output text */
 		final Label outputLabel = new Label(shell, SWT.NONE);
-		outputLabel.setText("Output:");
+		outputLabel.setText(Resources.get("lbl.output"));
 
 		final Text outputText = new Text(shell, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI);
 		gridData = new GridData();
@@ -57,7 +58,7 @@ public class CodecGui extends Codec {
 
 		/* Codec combo */
 		final Label algorithmLabel = new Label(shell, SWT.NONE);
-		algorithmLabel.setText("Algorithm:");
+		algorithmLabel.setText(Resources.get("lbl.algorithm"));
 		gridData = new GridData();
 		algorithmLabel.setLayoutData(gridData);
 
@@ -66,7 +67,7 @@ public class CodecGui extends Codec {
 
 		/* Mode radio */
 		final Label modeLabel = new Label(shell, SWT.NONE);
-		modeLabel.setText("Mode:");
+		modeLabel.setText(Resources.get("lbl.mode"));
 		gridData = new GridData();
 		modeLabel.setLayoutData(gridData);
 
@@ -81,12 +82,12 @@ public class CodecGui extends Codec {
 
 		/* Buttons */
 		Button aboutButton = new Button(shell, SWT.NULL);
-		aboutButton.setText("About");
+		aboutButton.setText(Resources.get("lbl.about"));
 		aboutButton.addSelectionListener(new AboutButtonSelectionListener(shell));
 
-		Button exitButton = new Button(shell, SWT.NULL);
-		exitButton.setText("Exit");
-		exitButton.addSelectionListener(new ExitButtonSelectionListener(shell));
+		Button closeButton = new Button(shell, SWT.NULL);
+		closeButton.setText(Resources.get("lbl.close"));
+		closeButton.addSelectionListener(new CloseButtonSelectionListener(shell));
 
 		/* Listener */
 		algorithmCombo.addSelectionListener(new AlgorithmComboSelectionListener(engine, algorithmCombo, inputText, modeRadios));

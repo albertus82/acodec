@@ -1,16 +1,18 @@
 package it.albertus.codec.engine;
 
+import it.albertus.codec.resources.Resources;
+
 public enum CodecMode {
-	ENCODE(0, "Encode", 'E'),
-	DECODE(1, "Decode", 'D');
+	ENCODE(0, "lbl.mode.encode", 'E'),
+	DECODE(1, "lbl.mode.decode", 'D');
 
 	private final int index;
-	private final String name;
+	private final String label;
 	private final char abbreviation;
 
-	private CodecMode(final int index, final String name, final char abbreviation) {
+	private CodecMode(final int index, final String key, final char abbreviation) {
 		this.index = index;
-		this.name = name;
+		this.label = Resources.get(key);
 		this.abbreviation = abbreviation;
 	}
 
@@ -19,7 +21,7 @@ public enum CodecMode {
 	}
 
 	public String getName() {
-		return name;
+		return label;
 	}
 
 	public char getAbbreviation() {
@@ -28,7 +30,7 @@ public enum CodecMode {
 
 	@Override
 	public String toString() {
-		return name;
+		return label;
 	}
 
 }

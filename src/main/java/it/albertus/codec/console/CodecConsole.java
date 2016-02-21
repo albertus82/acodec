@@ -3,6 +3,7 @@ package it.albertus.codec.console;
 import it.albertus.codec.Codec;
 import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecMode;
+import it.albertus.codec.resources.Resources;
 
 public class CodecConsole extends Codec {
 
@@ -12,7 +13,7 @@ public class CodecConsole extends Codec {
 		CodecAlgorithm algorithm = null;
 
 		if (args.length < 3) {
-			System.out.println("Missing parameter");
+			System.out.println("Missing parameter"); // TODO help
 			return;
 		}
 
@@ -25,7 +26,7 @@ public class CodecConsole extends Codec {
 			}
 		}
 		if (mode == null) {
-			System.out.println("Invalid mode");
+			System.err.println(Resources.get("err.invalid.mode", args[0].trim()));
 			return;
 		}
 
@@ -38,7 +39,7 @@ public class CodecConsole extends Codec {
 			}
 		}
 		if (algorithm == null) {
-			System.out.println("Invalid algorithm");
+			System.err.println(Resources.get("err.invalid.algorithm", algorithmArg));
 			return;
 		}
 
@@ -50,7 +51,7 @@ public class CodecConsole extends Codec {
 			System.out.println(engine.run(args[2]));
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			System.err.println(Resources.get("err.generic", e.getMessage()));
 		}
 	}
 
