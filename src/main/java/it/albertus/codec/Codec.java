@@ -9,6 +9,7 @@ import it.albertus.codec.gui.ExitButtonSelectionListener;
 import it.albertus.codec.gui.Images;
 import it.albertus.codec.gui.InputTextModifyListener;
 import it.albertus.codec.gui.ModeRadioSelectionListener;
+import it.albertus.codec.gui.TextKeyListener;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class Codec {
 			final Display display = new Display();
 			final Shell shell = app.createShell(display);
 			shell.pack();
+			shell.setMinimumSize(shell.getSize());
 			shell.open();
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
@@ -61,26 +63,30 @@ public class Codec {
 		final Label inputLabel = new Label(shell, SWT.NONE);
 		inputLabel.setText("Input:");
 
-		final Text inputText = new Text(shell, SWT.BORDER);
+		final Text inputText = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.MULTI);
 		GridData gridData = new GridData();
+		gridData.horizontalSpan = 6;
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
-		gridData.horizontalSpan = 6;
+		gridData.verticalAlignment = SWT.FILL;
+		gridData.grabExcessVerticalSpace = true;
 		inputText.setLayoutData(gridData);
+		inputText.addKeyListener(new TextKeyListener(inputText));
 
 		/* Output text */
 		final Label outputLabel = new Label(shell, SWT.NONE);
 		outputLabel.setText("Output:");
-		// gridData = new GridData();
-		// outputLabel.setLayoutData(gridData);
 
-		final Text outputText = new Text(shell, SWT.BORDER | SWT.READ_ONLY);
+		final Text outputText = new Text(shell, SWT.READ_ONLY|  SWT.BORDER | SWT.WRAP | SWT.MULTI );
 		gridData = new GridData();
+		gridData.horizontalSpan = 6;
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
-		gridData.horizontalSpan = 6;
+		gridData.verticalAlignment = SWT.FILL;
+		gridData.grabExcessVerticalSpace = true;
 		outputText.setLayoutData(gridData);
 		outputText.setBackground(inputText.getBackground());
+		outputText.addKeyListener(new TextKeyListener(outputText));
 
 		/* Codec combo */
 		final Label codecLabel = new Label(shell, SWT.NONE);
@@ -119,7 +125,6 @@ public class Codec {
 		codecCombo.addSelectionListener(new CodecComboSelectionListener(engine, codecCombo, inputText, modeRadios));
 		inputText.addModifyListener(new InputTextModifyListener(engine, inputText, outputText));
 
-		shell.open();
 		return shell;
 	}
 
