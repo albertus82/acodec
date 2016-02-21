@@ -7,6 +7,11 @@ import it.albertus.codec.gui.CodecComboSelectionListener;
 import it.albertus.codec.gui.Images;
 import it.albertus.codec.gui.InputTextModifyListener;
 import it.albertus.codec.gui.ModeRadioSelectionListener;
+import it.albertus.util.NewLine;
+import it.albertus.util.Version;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -17,6 +22,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -27,7 +33,7 @@ public class Codec {
 	public Codec() {
 		this.engine = new CodecEngine();
 	}
-	
+
 	public static void main(String[] args) {
 		Codec app = new Codec();
 		if (args.length > 0) {
@@ -47,12 +53,11 @@ public class Codec {
 		}
 	}
 
-
 	private Shell createShell(Display display) {
 		final Shell shell = new Shell(display);
 		shell.setImages(Images.ICONS);
 		shell.setText("Codec");
-//		shell.setSize(500, 150);
+		// shell.setSize(500, 150);
 		shell.setLayout(new GridLayout(7, false));
 
 		/* Input text */
@@ -95,23 +100,28 @@ public class Codec {
 		gridData = new GridData();
 		modeLabel.setLayoutData(gridData);
 
+		final Map<CodecMode, Button> modeRadios = new EnumMap<CodecMode, Button>(CodecMode.class);
 		for (CodecMode mode : CodecMode.values()) {
 			Button radio = new Button(shell, SWT.RADIO);
 			radio.setSelection(engine.getMode().equals(mode));
 			radio.setText(mode.getName());
 			radio.addSelectionListener(new ModeRadioSelectionListener(engine, radio, mode, inputText));
+			modeRadios.put(mode, radio);
 		}
-		
+
 		/* Buttons */
 		Button aboutButton = new Button(shell, SWT.NULL);
 		aboutButton.setText("About");
 		aboutButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				shell.dispose();
+				MessageBox messageBox = new MessageBox(shell, SWT.ICON_INFORMATION);
+				messageBox.setText("About Codec");
+				messageBox.setMessage("Version " + Version.getInstance().getNumber() + " (" + Version.getInstance().getDate() + ')' + NewLine.CRLF + "Icon by www.aha-soft.com");
+				messageBox.open();
 			}
 		});
-		
+
 		Button exitButton = new Button(shell, SWT.NULL);
 		exitButton.setText("Exit");
 		exitButton.addSelectionListener(new SelectionAdapter() {
@@ -120,10 +130,9 @@ public class Codec {
 				shell.dispose();
 			}
 		});
-		
 
 		/* Listener */
-		codecCombo.addSelectionListener(new CodecComboSelectionListener(engine, codecCombo, inputText));
+		codecCombo.addSelectionListener(new CodecComboSelectionListener(engine, codecCombo, inputText, modeRadios));
 		inputText.addModifyListener(new InputTextModifyListener(engine, inputText, outputText));
 
 		shell.open();

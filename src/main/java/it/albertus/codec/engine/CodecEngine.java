@@ -1,6 +1,7 @@
 package it.albertus.codec.engine;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class CodecEngine {
 
@@ -28,17 +29,31 @@ public class CodecEngine {
 		case BASE64:
 			return new String(Base64.decodeBase64(input));
 		default:
-			throw new IllegalStateException("Invalid codec");
+			break;
 		}
+		throw new IllegalStateException("Invalid codec");
 	}
 
 	private String encode(String input) {
 		switch (codec) {
 		case BASE64:
 			return Base64.encodeBase64String(input.getBytes());
+		case MD2:
+			return DigestUtils.md2Hex(input);
+		case MD5:
+			return DigestUtils.md5Hex(input);
+		case SHA1:
+			return DigestUtils.sha1Hex(input);
+		case SHA256:
+			return DigestUtils.sha256Hex(input);
+		case SHA384:
+			return DigestUtils.sha384Hex(input);
+		case SHA512:
+			return DigestUtils.sha512Hex(input);
 		default:
-			throw new IllegalStateException("Invalid codec");
+			break;
 		}
+		throw new IllegalStateException("Invalid codec");
 	}
 
 	public CodecType getCodec() {

@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/albertus-utils-2.0.3.jar" sourcepath="lib/src/albertus-utils-2.0.3-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.10.jar" sourcepath="lib/src/commons-codec-1.10-src.zip"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.core.commands_3.6.100.v20140528-1422.jar" sourcepath="lib/src/org.eclipse.core.commands.source_3.6.100.v20140528-1422.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar" sourcepath="lib/src/org.eclipse.equinox.common.source_3.6.200.v20130402-1505.jar"/>
