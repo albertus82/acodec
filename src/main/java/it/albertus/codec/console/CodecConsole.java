@@ -40,7 +40,7 @@ public class CodecConsole extends Codec {
 		}
 
 		/* Mode */
-		final char modeArg = args[0].trim().toUpperCase().charAt(0);
+		final char modeArg = args[0].trim().toLowerCase().charAt(0);
 		for (final CodecMode cm : CodecMode.values()) {
 			if (cm.getAbbreviation() == modeArg) {
 				mode = cm;

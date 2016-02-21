@@ -3,21 +3,15 @@ package it.albertus.codec.engine;
 import it.albertus.codec.resources.Resources;
 
 public enum CodecMode {
-	ENCODE(0, "lbl.mode.encode", 'E'),
-	DECODE(1, "lbl.mode.decode", 'D');
+	ENCODE("lbl.mode.encode", 'e'),
+	DECODE("lbl.mode.decode", 'd');
 
-	private final int index;
 	private final String label;
 	private final char abbreviation;
 
-	private CodecMode(final int index, final String key, final char abbreviation) {
-		this.index = index;
+	private CodecMode(final String key, final char abbreviation) {
 		this.label = Resources.get(key);
 		this.abbreviation = abbreviation;
-	}
-
-	public int getIndex() {
-		return index;
 	}
 
 	public String getName() {
