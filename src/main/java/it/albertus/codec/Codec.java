@@ -1,15 +1,11 @@
 package it.albertus.codec;
 
+import it.albertus.codec.gui.CodecComboSelectionListener;
 import it.albertus.codec.gui.Images;
+import it.albertus.codec.gui.InputTextModifyListener;
 
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -20,15 +16,15 @@ import org.eclipse.swt.widgets.Text;
 
 public class Codec {
 
-	private CodecOption codec;
+	private Type codec;
 
-	public enum CodecOption {
+	public enum Type {
 		BASE64(0, "Base64");
 
 		private final int index;
 		private final String name;
 
-		private CodecOption(int index, String name) {
+		private Type(int index, String name) {
 			this.index = index;
 			this.name = name;
 		}
@@ -47,9 +43,9 @@ public class Codec {
 		}
 
 		public static String[] getAll() {
-			String[] names = new String[CodecOption.values().length];
-			for (int i = 0; i < CodecOption.values().length; i++) {
-				names[i] = CodecOption.values()[i].name;
+			String[] names = new String[Type.values().length];
+			for (int i = 0; i < Type.values().length; i++) {
+				names[i] = Type.values()[i].name;
 			}
 			return names;
 		}
@@ -96,12 +92,13 @@ public class Codec {
 		// gridData = new GridData();
 		// outputLabel.setLayoutData(gridData);
 
-		final Text outputText = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.MULTI);
+		final Text outputText = new Text(shell, SWT.BORDER | SWT.READ_ONLY);
 		gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.horizontalSpan = 5;
 		outputText.setLayoutData(gridData);
+		outputText.setBackground(inputText.getBackground());
 
 		final Label codecLabel = new Label(shell, SWT.NONE);
 		codecLabel.setText("Codec:");
@@ -109,42 +106,36 @@ public class Codec {
 		codecLabel.setLayoutData(gridData);
 
 		final Combo codecCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
-		codecCombo.setItems(CodecOption.getAll());
-		codecCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				System.out.println(CodecOption.values()[(codecCombo.getSelectionIndex())]);
-				codec = CodecOption.values()[(codecCombo.getSelectionIndex())];
-			}
-		});
+		codecCombo.setItems(Type.getAll());
 
-		inputText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-//				Color normalColor = outputText.getForeground();
-//				String input = inputText.getText();
-				String input = ((Text) e.widget).getText();
-				String output;
-				if (codec != null) {
-					switch (codec) {
-					case BASE64:
-						output = Base64.encodeBase64String(input.getBytes());
-						break;
-					default:
-						output = "-- Select codec --";
-					}
-				}
-				else {
-					output = "-- Select codec --";
-					outputText.getForeground();
-//					outputText.setForeground(outputText.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
-				}
-				outputText.setText(output);
-			}
-		});
+		/* Listener */
+		codecCombo.addSelectionListener(new CodecComboSelectionListener(this, codecCombo, inputText));
+		inputText.addModifyListener(new InputTextModifyListener(this, inputText, outputText));
 
 		shell.open();
 		return shell;
+	}
+
+	public Type getCodec() {
+		return codec;
+	}
+	
+	public void setCodec(Type co) {
+		codec = co;
+	}
+
+	public String encode(String input) {
+		if (codec != null) {
+			switch (codec) {
+			case BASE64:
+				return Base64.encodeBase64String(input.getBytes());
+			default:
+				return null;
+			}
+		}
+		else {
+			return null;
+		}
 	}
 
 }
