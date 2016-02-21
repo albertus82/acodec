@@ -1,5 +1,6 @@
 package it.albertus.codec.engine;
 
+import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -29,6 +30,8 @@ public class CodecEngine {
 
 	private String decode(String input) {
 		switch (algorithm) {
+		case BASE32:
+			return new String(new Base32().decode(input));
 		case BASE64:
 			return new String(Base64.decodeBase64(input));
 		default:
@@ -39,6 +42,8 @@ public class CodecEngine {
 
 	private String encode(String input) {
 		switch (algorithm) {
+		case BASE32:
+			return new Base32().encodeAsString(input.getBytes());
 		case BASE64:
 			return Base64.encodeBase64String(input.getBytes());
 		case MD2:
