@@ -3,6 +3,7 @@ package it.albertus.codec.engine;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.openjpa.lib.util.Base16Encoder;
 
 public class CodecEngine {
 
@@ -42,6 +43,8 @@ public class CodecEngine {
 
 	private String encode(String input) {
 		switch (algorithm) {
+		case BASE16:
+			return Base16Encoder.encode(input.getBytes());
 		case BASE32:
 			return new Base32().encodeAsString(input.getBytes());
 		case BASE64:
