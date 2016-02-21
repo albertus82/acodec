@@ -1,5 +1,8 @@
 package it.albertus.codec;
 
+import it.albertus.codec.engine.CodecEngine;
+import it.albertus.codec.engine.CodecMode;
+import it.albertus.codec.engine.CodecType;
 import it.albertus.codec.gui.CodecComboSelectionListener;
 import it.albertus.codec.gui.Images;
 import it.albertus.codec.gui.InputTextModifyListener;
@@ -16,15 +19,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class Codec {
-	
+
 	private final CodecEngine engine;
 
-	public Codec(CodecEngine codecEngine) {
-		this.engine = codecEngine;
+	public Codec() {
+		this.engine = new CodecEngine();
 	}
-
+	
 	public static void main(String[] args) {
-		Codec app = new Codec(new CodecEngine());
+		Codec app = new Codec();
 		if (args.length > 0) {
 			// TODO Console version
 		}
@@ -40,6 +43,7 @@ public class Codec {
 			display.dispose();
 		}
 	}
+
 
 	private Shell createShell(Display display) {
 		final Shell shell = new Shell(display);

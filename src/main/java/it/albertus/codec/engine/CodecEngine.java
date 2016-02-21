@@ -1,4 +1,4 @@
-package it.albertus.codec;
+package it.albertus.codec.engine;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -32,7 +32,7 @@ public class CodecEngine {
 		}
 	}
 
-	public String encode(String input) {
+	private String encode(String input) {
 		switch (codec) {
 		case BASE64:
 			return Base64.encodeBase64String(input.getBytes());

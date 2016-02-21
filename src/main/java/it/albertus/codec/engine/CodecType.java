@@ -1,4 +1,4 @@
-package it.albertus.codec;
+package it.albertus.codec.engine;
 
 public enum CodecType {
 	BASE64(0, "Base64");

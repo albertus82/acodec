@@ -1,7 +1,7 @@
 package it.albertus.codec.gui;
 
-import it.albertus.codec.CodecEngine;
-import it.albertus.codec.CodecType;
+import it.albertus.codec.engine.CodecEngine;
+import it.albertus.codec.engine.CodecType;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;

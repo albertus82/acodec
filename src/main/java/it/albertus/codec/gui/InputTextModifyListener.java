@@ -1,6 +1,6 @@
 package it.albertus.codec.gui;
 
-import it.albertus.codec.CodecEngine;
+import it.albertus.codec.engine.CodecEngine;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;

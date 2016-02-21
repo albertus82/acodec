@@ -1,4 +1,4 @@
-package it.albertus.codec;
+package it.albertus.codec.engine;
 
 public enum CodecMode {
 	ENCODE(0, "Encode"),
