@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public enum CodecAlgorithm {
-	BASE16("Base16", CodecMode.ENCODE),
+	BASE16("Base16"),
 	BASE32("Base32"),
 	BASE64("Base64"),
 	MD2("MD2", CodecMode.ENCODE),
