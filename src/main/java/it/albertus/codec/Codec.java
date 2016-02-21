@@ -3,11 +3,13 @@ package it.albertus.codec;
 import it.albertus.codec.gui.CodecComboSelectionListener;
 import it.albertus.codec.gui.Images;
 import it.albertus.codec.gui.InputTextModifyListener;
+import it.albertus.codec.gui.ModeRadioSelectionListener;
 
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -17,6 +19,34 @@ import org.eclipse.swt.widgets.Text;
 public class Codec {
 
 	private Type codec;
+	private Mode mode = Mode.ENCODE;
+
+	public enum Mode {
+		ENCODE(0, "Encode"),
+		DECODE(1, "Decode");
+
+		private final int index;
+		private final String name;
+
+		private Mode(int index, String name) {
+			this.index = index;
+			this.name = name;
+		}
+
+		public int getIndex() {
+			return index;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+
+	}
 
 	public enum Type {
 		BASE64(0, "Base64");
@@ -42,7 +72,7 @@ public class Codec {
 			return name;
 		}
 
-		public static String[] getAll() {
+		public static String[] getNames() {
 			String[] names = new String[Type.values().length];
 			for (int i = 0; i < Type.values().length; i++) {
 				names[i] = Type.values()[i].name;
@@ -77,6 +107,7 @@ public class Codec {
 		shell.setSize(500, 150);
 		shell.setLayout(new GridLayout(6, false));
 
+		/* Input text */
 		final Label inputLabel = new Label(shell, SWT.NONE);
 		inputLabel.setText("Input:");
 
@@ -87,6 +118,7 @@ public class Codec {
 		gridData.horizontalSpan = 5;
 		inputText.setLayoutData(gridData);
 
+		/* Output text */
 		final Label outputLabel = new Label(shell, SWT.NONE);
 		outputLabel.setText("Output:");
 		// gridData = new GridData();
@@ -100,13 +132,27 @@ public class Codec {
 		outputText.setLayoutData(gridData);
 		outputText.setBackground(inputText.getBackground());
 
+		/* Codec combo */
 		final Label codecLabel = new Label(shell, SWT.NONE);
 		codecLabel.setText("Codec:");
 		gridData = new GridData();
 		codecLabel.setLayoutData(gridData);
 
 		final Combo codecCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
-		codecCombo.setItems(Type.getAll());
+		codecCombo.setItems(Type.getNames());
+
+		/* Mode radio */
+		final Label modeLabel = new Label(shell, SWT.NONE);
+		modeLabel.setText("Mode:");
+		gridData = new GridData();
+		modeLabel.setLayoutData(gridData);
+
+		for (Mode mode : Mode.values()) {
+			Button radio = new Button(shell, SWT.RADIO);
+			radio.setSelection(this.mode.equals(mode));
+			radio.setText(mode.getName());
+			radio.addSelectionListener(new ModeRadioSelectionListener(this, radio, mode, inputText));
+		}
 
 		/* Listener */
 		codecCombo.addSelectionListener(new CodecComboSelectionListener(this, codecCombo, inputText));
@@ -119,7 +165,7 @@ public class Codec {
 	public Type getCodec() {
 		return codec;
 	}
-	
+
 	public void setCodec(Type co) {
 		codec = co;
 	}
@@ -128,7 +174,12 @@ public class Codec {
 		if (codec != null) {
 			switch (codec) {
 			case BASE64:
-				return Base64.encodeBase64String(input.getBytes());
+				switch (mode) {
+				case DECODE:
+					return new String(Base64.decodeBase64(input));
+				case ENCODE:
+					return Base64.encodeBase64String(input.getBytes());
+				}
 			default:
 				return null;
 			}
@@ -136,6 +187,14 @@ public class Codec {
 		else {
 			return null;
 		}
+	}
+
+	public Mode getMode() {
+		return mode;
+	}
+
+	public void setMode(Mode mode) {
+		this.mode = mode;
 	}
 
 }
