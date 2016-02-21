@@ -5,14 +5,14 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 public class CodecEngine {
 
-	private CodecType codec;
+	private CodecAlgorithm algorithm;
 	private CodecMode mode = CodecMode.ENCODE;
 
 	public String run(String input) {
 		if (input.length() == 0) {
 			throw new IllegalStateException("Write some text in input");
 		}
-		if (codec != null) {
+		if (algorithm != null) {
 			switch (mode) {
 			case DECODE:
 				return decode(input);
@@ -28,17 +28,17 @@ public class CodecEngine {
 	}
 
 	private String decode(String input) {
-		switch (codec) {
+		switch (algorithm) {
 		case BASE64:
 			return new String(Base64.decodeBase64(input));
 		default:
 			break;
 		}
-		throw new IllegalStateException("Cannot decode " + codec.getName());
+		throw new IllegalStateException("Cannot decode " + algorithm.getName());
 	}
 
 	private String encode(String input) {
-		switch (codec) {
+		switch (algorithm) {
 		case BASE64:
 			return Base64.encodeBase64String(input.getBytes());
 		case MD2:
@@ -56,15 +56,15 @@ public class CodecEngine {
 		default:
 			break;
 		}
-		throw new IllegalStateException("Cannot encode "+ codec.getName());
+		throw new IllegalStateException("Cannot encode " + algorithm.getName());
 	}
 
-	public CodecType getCodec() {
-		return codec;
+	public CodecAlgorithm getAlgorithm() {
+		return algorithm;
 	}
 
-	public void setCodec(CodecType codec) {
-		this.codec = codec;
+	public void setAlgorithm(CodecAlgorithm algorithm) {
+		this.algorithm = algorithm;
 	}
 
 	public CodecMode getMode() {

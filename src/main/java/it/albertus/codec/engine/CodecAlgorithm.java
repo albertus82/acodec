@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public enum CodecType {
+public enum CodecAlgorithm {
 	BASE64(0, "Base64"),
 	MD2(1, "MD2", CodecMode.ENCODE),
 	MD5(2, "MD5", CodecMode.ENCODE),
@@ -17,7 +17,7 @@ public enum CodecType {
 	private final String name;
 	private final Set<CodecMode> modes;
 
-	private CodecType(final int index, final String name, final CodecMode... modes) {
+	private CodecAlgorithm(final int index, final String name, final CodecMode... modes) {
 		this.index = index;
 		this.name = name;
 		this.modes = new HashSet<CodecMode>(Arrays.asList(modes.length == 0 ? CodecMode.values() : modes));
@@ -41,9 +41,9 @@ public enum CodecType {
 	}
 
 	public static String[] getNames() {
-		String[] names = new String[CodecType.values().length];
-		for (int i = 0; i < CodecType.values().length; i++) {
-			names[i] = CodecType.values()[i].name;
+		String[] names = new String[CodecAlgorithm.values().length];
+		for (int i = 0; i < CodecAlgorithm.values().length; i++) {
+			names[i] = CodecAlgorithm.values()[i].name;
 		}
 		return names;
 	}

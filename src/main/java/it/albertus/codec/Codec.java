@@ -1,10 +1,10 @@
 package it.albertus.codec;
 
+import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecEngine;
 import it.albertus.codec.engine.CodecMode;
-import it.albertus.codec.engine.CodecType;
 import it.albertus.codec.gui.AboutButtonSelectionListener;
-import it.albertus.codec.gui.CodecComboSelectionListener;
+import it.albertus.codec.gui.AlgorithmComboSelectionListener;
 import it.albertus.codec.gui.ExitButtonSelectionListener;
 import it.albertus.codec.gui.Images;
 import it.albertus.codec.gui.InputTextModifyListener;
@@ -35,7 +35,7 @@ public class Codec {
 	public static void main(final String[] args) {
 		Codec app = new Codec();
 		if (args.length > 0) {
-			// TODO Console version
+			app.console(args);
 		}
 		else {
 			final Display display = new Display();
@@ -77,7 +77,7 @@ public class Codec {
 		final Label outputLabel = new Label(shell, SWT.NONE);
 		outputLabel.setText("Output:");
 
-		final Text outputText = new Text(shell, SWT.READ_ONLY|  SWT.BORDER | SWT.WRAP | SWT.MULTI );
+		final Text outputText = new Text(shell, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI);
 		gridData = new GridData();
 		gridData.horizontalSpan = 6;
 		gridData.horizontalAlignment = SWT.FILL;
@@ -89,13 +89,13 @@ public class Codec {
 		outputText.addKeyListener(new TextKeyListener(outputText));
 
 		/* Codec combo */
-		final Label codecLabel = new Label(shell, SWT.NONE);
-		codecLabel.setText("Algorithm:");
+		final Label algorithmLabel = new Label(shell, SWT.NONE);
+		algorithmLabel.setText("Algorithm:");
 		gridData = new GridData();
-		codecLabel.setLayoutData(gridData);
+		algorithmLabel.setLayoutData(gridData);
 
-		final Combo codecCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
-		codecCombo.setItems(CodecType.getNames());
+		final Combo algorithmCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
+		algorithmCombo.setItems(CodecAlgorithm.getNames());
 
 		/* Mode radio */
 		final Label modeLabel = new Label(shell, SWT.NONE);
@@ -122,10 +122,58 @@ public class Codec {
 		exitButton.addSelectionListener(new ExitButtonSelectionListener(shell));
 
 		/* Listener */
-		codecCombo.addSelectionListener(new CodecComboSelectionListener(engine, codecCombo, inputText, modeRadios));
+		algorithmCombo.addSelectionListener(new AlgorithmComboSelectionListener(engine, algorithmCombo, inputText, modeRadios));
 		inputText.addModifyListener(new InputTextModifyListener(engine, inputText, outputText));
 
 		return shell;
+	}
+
+	/* java -jar codec.jar e|d base64|md2|md5|...|sha-512 "text to encode" */
+	private void console(String[] args) {
+		CodecMode mode = null;
+		CodecAlgorithm algorithm = null;
+
+		if (args.length < 3) {
+			System.out.println("Missing parameter");
+			return;
+		}
+
+		/* Mode */
+		final char modeArg = args[0].trim().toUpperCase().charAt(0);
+		for (final CodecMode cm : CodecMode.values()) {
+			if (cm.getAbbreviation() == modeArg) {
+				mode = cm;
+				break;
+			}
+		}
+		if (mode == null) {
+			System.out.println("Invalid mode");
+			return;
+		}
+
+		/* Algorithm */
+		final String algorithmArg = args[1].trim();
+		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
+			if (ca.getName().equalsIgnoreCase(algorithmArg)) {
+				algorithm = ca;
+				break;
+			}
+		}
+		if (algorithm == null) {
+			System.out.println("Invalid algorithm");
+			return;
+		}
+
+		engine.setAlgorithm(algorithm);
+		engine.setMode(mode);
+
+		/* Execution */
+		try {
+			System.out.println(engine.run(args[2]));
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 }
