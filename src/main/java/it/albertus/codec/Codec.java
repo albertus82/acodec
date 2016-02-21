@@ -40,8 +40,6 @@ public class Codec {
 		else {
 			final Display display = new Display();
 			final Shell shell = app.createShell(display);
-			shell.pack();
-			shell.setMinimumSize(shell.getSize());
 			shell.open();
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
@@ -124,6 +122,9 @@ public class Codec {
 		/* Listener */
 		algorithmCombo.addSelectionListener(new AlgorithmComboSelectionListener(engine, algorithmCombo, inputText, modeRadios));
 		inputText.addModifyListener(new InputTextModifyListener(engine, inputText, outputText));
+
+		shell.pack();
+		shell.setMinimumSize(shell.getSize());
 
 		return shell;
 	}
