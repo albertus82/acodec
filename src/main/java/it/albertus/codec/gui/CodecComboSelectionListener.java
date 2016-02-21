@@ -31,18 +31,23 @@ public class CodecComboSelectionListener extends SelectionAdapter {
 	public void widgetSelected(SelectionEvent e) {
 		CodecType codec = CodecType.values()[(codecCombo.getSelectionIndex())];
 		engine.setCodec(codec);
-		
+
 		/* Gestione radio */
 		Button encodeRadio = modeRadios.get(CodecMode.ENCODE);
 		Button decodeRadio = modeRadios.get(CodecMode.DECODE);
-		if (!codec.getModes().contains(CodecMode.DECODE)) {
-			decodeRadio.setEnabled(false);
-			decodeRadio.setSelection(false);
-			encodeRadio.setSelection(true);
-			encodeRadio.notifyListeners(SWT.Selection, null);
+
+		if (codec.getModes().contains(CodecMode.DECODE)) {
+			if (!decodeRadio.getEnabled()) {
+				decodeRadio.setEnabled(true);
+			}
 		}
 		else {
-			decodeRadio.setEnabled(true);
+			if (decodeRadio.getEnabled()) {
+				decodeRadio.setSelection(false);
+				decodeRadio.setEnabled(false);
+				encodeRadio.setSelection(true);
+				encodeRadio.notifyListeners(SWT.Selection, null);
+			}
 		}
 
 		inputText.notifyListeners(SWT.Modify, null);

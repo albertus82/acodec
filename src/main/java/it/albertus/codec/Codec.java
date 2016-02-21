@@ -3,26 +3,23 @@ package it.albertus.codec;
 import it.albertus.codec.engine.CodecEngine;
 import it.albertus.codec.engine.CodecMode;
 import it.albertus.codec.engine.CodecType;
+import it.albertus.codec.gui.AboutButtonSelectionListener;
 import it.albertus.codec.gui.CodecComboSelectionListener;
+import it.albertus.codec.gui.ExitButtonSelectionListener;
 import it.albertus.codec.gui.Images;
 import it.albertus.codec.gui.InputTextModifyListener;
 import it.albertus.codec.gui.ModeRadioSelectionListener;
-import it.albertus.util.NewLine;
-import it.albertus.util.Version;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -112,24 +109,11 @@ public class Codec {
 		/* Buttons */
 		Button aboutButton = new Button(shell, SWT.NULL);
 		aboutButton.setText("About");
-		aboutButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				MessageBox messageBox = new MessageBox(shell, SWT.ICON_INFORMATION);
-				messageBox.setText("About Codec");
-				messageBox.setMessage("Version " + Version.getInstance().getNumber() + " (" + Version.getInstance().getDate() + ')' + NewLine.CRLF + "Icon by www.aha-soft.com");
-				messageBox.open();
-			}
-		});
+		aboutButton.addSelectionListener(new AboutButtonSelectionListener(shell));
 
 		Button exitButton = new Button(shell, SWT.NULL);
 		exitButton.setText("Exit");
-		exitButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				shell.dispose();
-			}
-		});
+		exitButton.addSelectionListener(new ExitButtonSelectionListener(shell));
 
 		/* Listener */
 		codecCombo.addSelectionListener(new CodecComboSelectionListener(engine, codecCombo, inputText, modeRadios));
