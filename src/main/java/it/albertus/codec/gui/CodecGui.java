@@ -25,7 +25,7 @@ public class CodecGui extends Codec {
 
 	public Shell createShell(final Display display) {
 		final Shell shell = new Shell(display);
-		shell.setImages(Images.ICONS);
+		shell.setImages(Images.MAIN_ICONS);
 		shell.setText(Resources.get("lbl.title"));
 		shell.setLayout(new GridLayout(7, false));
 

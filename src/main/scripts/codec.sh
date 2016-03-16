@@ -1,3 +1,4 @@
+#!/bin/sh
 if [ "$1" = "" ]
   then if [ "$JAVA_HOME" != "" ]
   then "$JAVA_HOME/bin/java" -Xms8m -Xmx32m -jar codec.jar
