@@ -35,7 +35,7 @@ public class CodecConsole extends Codec {
 		CodecAlgorithm algorithm = null;
 
 		if (args.length != 3) {
-			System.out.println(Resources.get("msg.help.head", Version.getInstance().getNumber(), Version.getInstance().getDate()) + NewLine.SYSTEM_LINE_SEPARATOR + NewLine.SYSTEM_LINE_SEPARATOR + HELP);
+			System.out.println(Resources.get("msg.application.name") + ' ' + Resources.get("msg.version", Version.getInstance().getNumber(), Version.getInstance().getDate()) + " [" + Resources.get("msg.website") + ']' + NewLine.SYSTEM_LINE_SEPARATOR + NewLine.SYSTEM_LINE_SEPARATOR + HELP);
 			return;
 		}
 

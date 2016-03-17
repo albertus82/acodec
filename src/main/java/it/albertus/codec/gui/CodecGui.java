@@ -40,7 +40,7 @@ public class CodecGui extends Codec implements IShellProvider {
 	public Shell createShell(final Display display) {
 		shell = new Shell(display);
 		shell.setImages(Images.MAIN_ICONS);
-		shell.setText(Resources.get("lbl.title"));
+		shell.setText(Resources.get("msg.application.name"));
 		shell.setLayout(new GridLayout(7, false));
 
 		/* Input text */
