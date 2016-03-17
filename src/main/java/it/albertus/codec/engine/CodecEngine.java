@@ -12,7 +12,7 @@ public class CodecEngine {
 
 	private CodecAlgorithm algorithm;
 	private CodecMode mode = CodecMode.ENCODE;
-	private String charsetName = "UTF-8"; /* Charset.defaultCharset().name(); */
+	private String charsetName = CodecCharset.UTF_8.getName();
 
 	public String run(final String input) {
 		if (input.length() == 0) {
