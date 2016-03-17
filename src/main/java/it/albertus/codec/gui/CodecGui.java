@@ -36,6 +36,7 @@ public class CodecGui extends Codec implements IShellProvider {
 	private final Text inputText;
 	private final Text outputText;
 	private final Combo algorithmCombo;
+	private final Label charsetLabel;
 	private final Combo charsetCombo;
 	private final EnumMap<CodecMode, Button> modeRadios = new EnumMap<CodecMode, Button>(CodecMode.class);
 	private final Button aboutButton;
@@ -89,7 +90,7 @@ public class CodecGui extends Codec implements IShellProvider {
 		algorithmCombo.setLayoutData(new GridData());
 
 		/* Charset combo */
-		final Label charsetLabel = new Label(shell, SWT.NONE);
+		charsetLabel = new Label(shell, SWT.NONE);
 		charsetLabel.setText(Resources.get("lbl.charset"));
 		charsetLabel.setLayoutData(new GridData());
 
@@ -150,6 +151,10 @@ public class CodecGui extends Codec implements IShellProvider {
 
 	public Combo getAlgorithmCombo() {
 		return algorithmCombo;
+	}
+
+	public Label getCharsetLabel() {
+		return charsetLabel;
 	}
 
 	public Combo getCharsetCombo() {
