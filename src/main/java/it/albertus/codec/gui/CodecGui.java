@@ -33,7 +33,7 @@ public class CodecGui extends Codec implements IShellProvider {
 	private Text inputText;
 	private Text outputText;
 	private Combo algorithmCombo;
-	private EnumMap<CodecMode, Button> modeRadios;
+	private final EnumMap<CodecMode, Button> modeRadios = new EnumMap<CodecMode, Button>(CodecMode.class);
 	private Button aboutButton;
 	private Button closeButton;
 
@@ -84,7 +84,6 @@ public class CodecGui extends Codec implements IShellProvider {
 		gridData = new GridData();
 		modeLabel.setLayoutData(gridData);
 
-		modeRadios = new EnumMap<CodecMode, Button>(CodecMode.class);
 		for (final CodecMode mode : CodecMode.values()) {
 			final Button radio = new Button(shell, SWT.RADIO);
 			radio.setSelection(getEngine().getMode().equals(mode));
