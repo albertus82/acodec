@@ -34,15 +34,20 @@ public class CodecEngine {
 	}
 
 	private String decode(final String input) {
-		switch (algorithm) {
-		case BASE16:
-			return new String(Base16.decode(input));
-		case BASE32:
-			return new String(new Base32().decode(input));
-		case BASE64:
-			return new String(Base64.decodeBase64(input));
-		default:
-			break;
+		try {
+			switch (algorithm) {
+			case BASE16:
+				return new String(Base16.decode(input), charsetName);
+			case BASE32:
+				return new String(new Base32().decode(input), charsetName);
+			case BASE64:
+				return new String(Base64.decodeBase64(input), charsetName);
+			default:
+				break;
+			}
+		}
+		catch (final UnsupportedEncodingException uee) {
+			throw new RuntimeException(Resources.get("err.cannot.decode", algorithm.getName()), uee);
 		}
 		throw new IllegalStateException(Resources.get("err.cannot.decode", algorithm.getName()));
 	}
@@ -73,7 +78,7 @@ public class CodecEngine {
 			}
 		}
 		catch (final UnsupportedEncodingException uee) {
-			throw new RuntimeException(uee);
+			throw new RuntimeException(Resources.get("err.cannot.decode", algorithm.getName()), uee);
 		}
 		throw new IllegalStateException(Resources.get("err.cannot.encode", algorithm.getName()));
 	}
@@ -98,7 +103,7 @@ public class CodecEngine {
 		return charsetName;
 	}
 
-	public void setCharsetName(String charsetName) {
+	public void setCharsetName(final String charsetName) {
 		this.charsetName = charsetName;
 	}
 
