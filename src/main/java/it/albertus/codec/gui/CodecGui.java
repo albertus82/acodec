@@ -46,6 +46,7 @@ public class CodecGui extends Codec implements IShellProvider {
 		/* Input text */
 		final Label inputLabel = new Label(shell, SWT.NONE);
 		inputLabel.setText(Resources.get("lbl.input"));
+		inputLabel.setLayoutData(new GridData());
 
 		inputText = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true, 6, 1);
@@ -59,6 +60,7 @@ public class CodecGui extends Codec implements IShellProvider {
 		/* Output text */
 		final Label outputLabel = new Label(shell, SWT.NONE);
 		outputLabel.setText(Resources.get("lbl.output"));
+		outputLabel.setLayoutData(new GridData());
 
 		outputText = new Text(shell, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 		gridData = new GridData(SWT.FILL, SWT.FILL, true, true, 6, 1);
@@ -72,8 +74,7 @@ public class CodecGui extends Codec implements IShellProvider {
 		/* Codec combo */
 		final Label algorithmLabel = new Label(shell, SWT.NONE);
 		algorithmLabel.setText(Resources.get("lbl.algorithm"));
-		gridData = new GridData();
-		algorithmLabel.setLayoutData(gridData);
+		algorithmLabel.setLayoutData(new GridData());
 
 		algorithmCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
 		algorithmCombo.setItems(CodecAlgorithm.getNames());
@@ -81,8 +82,7 @@ public class CodecGui extends Codec implements IShellProvider {
 		/* Mode radio */
 		final Label modeLabel = new Label(shell, SWT.NONE);
 		modeLabel.setText(Resources.get("lbl.mode"));
-		gridData = new GridData();
-		modeLabel.setLayoutData(gridData);
+		modeLabel.setLayoutData(new GridData());
 
 		for (final CodecMode mode : CodecMode.values()) {
 			final Button radio = new Button(shell, SWT.RADIO);
