@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Text;
 public class CodecGui extends Codec implements IShellProvider {
 
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
-	private static final int TEXT_HEIGHT_MULTIPLIER = 2;
+	private static final int TEXT_HEIGHT_MULTIPLIER = 3;
 
 	private final Shell shell;
 	private final Text inputText;
