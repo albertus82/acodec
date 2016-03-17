@@ -1,8 +1,8 @@
 #!/bin/sh
 if [ "$1" = "" ]
   then if [ "$JAVA_HOME" != "" ]
-  then "$JAVA_HOME/bin/java" -Xms8m -Xmx32m -jar codec.jar
-  else java -Xms8m -Xmx32m -jar codec.jar
+  then "$JAVA_HOME/bin/java" -Xms4m -Xmx32m -jar codec.jar
+  else java -Xms4m -Xmx32m -jar codec.jar
   fi
 else
   if [ "$JAVA_HOME" != "" ]
