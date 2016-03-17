@@ -12,7 +12,7 @@ public class CodecConsole extends Codec {
 	private static final String HELP;
 
 	static {
-		StringBuilder help = new StringBuilder();
+		final StringBuilder help = new StringBuilder();
 		help.append(Resources.get("msg.help.usage"));
 		help.append(NewLine.SYSTEM_LINE_SEPARATOR).append(NewLine.SYSTEM_LINE_SEPARATOR);
 		help.append(Resources.get("msg.help.modes")).append(NewLine.SYSTEM_LINE_SEPARATOR);
