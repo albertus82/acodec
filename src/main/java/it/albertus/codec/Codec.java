@@ -21,7 +21,7 @@ public class Codec {
 		}
 		else {
 			final Display display = new Display();
-			final Shell shell = new CodecGui().createShell(display);
+			final Shell shell = new CodecGui(display).getShell();
 			shell.open();
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {

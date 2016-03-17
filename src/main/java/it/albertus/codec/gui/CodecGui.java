@@ -29,15 +29,15 @@ public class CodecGui extends Codec implements IShellProvider {
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
 	private static final int TEXT_HEIGHT_MULTIPLIER = 2;
 
-	private Shell shell;
-	private Text inputText;
-	private Text outputText;
-	private Combo algorithmCombo;
+	private final Shell shell;
+	private final Text inputText;
+	private final Text outputText;
+	private final Combo algorithmCombo;
 	private final EnumMap<CodecMode, Button> modeRadios = new EnumMap<CodecMode, Button>(CodecMode.class);
-	private Button aboutButton;
-	private Button closeButton;
+	private final Button aboutButton;
+	private final Button closeButton;
 
-	public Shell createShell(final Display display) {
+	public CodecGui(final Display display) {
 		shell = new Shell(display);
 		shell.setImages(Images.MAIN_ICONS);
 		shell.setText(Resources.get("msg.application.name"));
@@ -109,8 +109,6 @@ public class CodecGui extends Codec implements IShellProvider {
 
 		shell.pack();
 		shell.setMinimumSize(shell.getSize());
-
-		return shell;
 	}
 
 	@Override
