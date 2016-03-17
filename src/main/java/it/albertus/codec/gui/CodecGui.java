@@ -49,11 +49,13 @@ public class CodecGui extends Codec implements IShellProvider {
 		inputLabel.setLayoutData(new GridData());
 
 		inputText = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
-		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true, 6, 1);
-		if (TEXT_HEIGHT_MULTIPLIER > 1) {
-			gridData.heightHint = inputText.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+		{
+			final GridData inputTextGridData = new GridData(SWT.FILL, SWT.FILL, true, true, 6, 1);
+			if (TEXT_HEIGHT_MULTIPLIER > 1) {
+				inputTextGridData.heightHint = inputText.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+			}
+			inputText.setLayoutData(inputTextGridData);
 		}
-		inputText.setLayoutData(gridData);
 		inputText.setTextLimit(TEXT_LIMIT_CHARS);
 		inputText.addKeyListener(new TextKeyListener(inputText));
 
@@ -63,11 +65,13 @@ public class CodecGui extends Codec implements IShellProvider {
 		outputLabel.setLayoutData(new GridData());
 
 		outputText = new Text(shell, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
-		gridData = new GridData(SWT.FILL, SWT.FILL, true, true, 6, 1);
-		if (TEXT_HEIGHT_MULTIPLIER > 1) {
-			gridData.heightHint = outputText.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+		{
+			final GridData outputTextGridData = new GridData(SWT.FILL, SWT.FILL, true, true, 6, 1);
+			if (TEXT_HEIGHT_MULTIPLIER > 1) {
+				outputTextGridData.heightHint = outputText.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+			}
+			outputText.setLayoutData(outputTextGridData);
 		}
-		outputText.setLayoutData(gridData);
 		outputText.setBackground(inputText.getBackground());
 		outputText.addKeyListener(new TextKeyListener(outputText));
 
@@ -78,6 +82,7 @@ public class CodecGui extends Codec implements IShellProvider {
 
 		algorithmCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
 		algorithmCombo.setItems(CodecAlgorithm.getNames());
+		algorithmCombo.setLayoutData(new GridData());
 
 		/* Mode radio */
 		final Label modeLabel = new Label(shell, SWT.NONE);
@@ -88,6 +93,7 @@ public class CodecGui extends Codec implements IShellProvider {
 			final Button radio = new Button(shell, SWT.RADIO);
 			radio.setSelection(getEngine().getMode().equals(mode));
 			radio.setText(mode.getName());
+			radio.setLayoutData(new GridData());
 			radio.addSelectionListener(new ModeRadioSelectionListener(this, radio, mode));
 			modeRadios.put(mode, radio);
 		}
@@ -95,10 +101,12 @@ public class CodecGui extends Codec implements IShellProvider {
 		/* Buttons */
 		aboutButton = new Button(shell, SWT.NULL);
 		aboutButton.setText(Resources.get("lbl.about"));
+		aboutButton.setLayoutData(new GridData());
 		aboutButton.addSelectionListener(new AboutSelectionListener(this));
 
 		closeButton = new Button(shell, SWT.NULL);
 		closeButton.setText(Resources.get("lbl.close"));
+		closeButton.setLayoutData(new GridData());
 		closeButton.addSelectionListener(new CloseSelectionListener(this));
 
 		/* Listener */
