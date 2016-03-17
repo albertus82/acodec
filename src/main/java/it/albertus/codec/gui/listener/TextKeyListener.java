@@ -1,4 +1,6 @@
-package it.albertus.codec.gui;
+package it.albertus.codec.gui.listener;
+
+import it.albertus.codec.gui.Utils;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;

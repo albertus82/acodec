@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class Codec {
 
-	protected final CodecEngine engine;
+	private final CodecEngine engine;
 
 	public Codec() {
 		this.engine = new CodecEngine();
@@ -30,6 +30,10 @@ public class Codec {
 			}
 			display.dispose();
 		}
+	}
+
+	public CodecEngine getEngine() {
+		return engine;
 	}
 
 }

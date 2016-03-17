@@ -67,12 +67,12 @@ public class CodecConsole extends Codec {
 			return;
 		}
 
-		engine.setAlgorithm(algorithm);
-		engine.setMode(mode);
+		getEngine().setAlgorithm(algorithm);
+		getEngine().setMode(mode);
 
 		/* Execution */
 		try {
-			System.out.println(engine.run(args[2]));
+			System.out.println(getEngine().run(args[2]));
 		}
 		catch (Exception e) {
 			System.err.println(Resources.get("err.generic", e.getMessage()) + NewLine.SYSTEM_LINE_SEPARATOR);
