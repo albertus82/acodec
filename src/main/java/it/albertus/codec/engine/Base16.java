@@ -1,10 +1,12 @@
 package it.albertus.codec.engine;
 
 import it.albertus.codec.resources.Resources;
+import it.albertus.util.NewLine;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import org.apache.openjpa.lib.util.Base16Encoder;
 
@@ -17,7 +19,7 @@ public class Base16 {
 	}
 
 	public static byte[] decode(String encoded) {
-		encoded = encoded.toUpperCase();
+		encoded = encoded.toUpperCase().replace(NewLine.CRLF.toString(), "");
 		if (encoded.matches("[" + ALPHABET + "]*")) {
 			return Base16Encoder.decode(encoded);
 		}
@@ -27,10 +29,17 @@ public class Base16 {
 	}
 
 	public static void encode(final InputStream input, final OutputStream output) throws IOException {
+		int position = 0;
 		int readInt;
 		while ((readInt = input.read()) != -1) {
 			final byte readByte = (byte) readInt;
-			output.write(Base16Encoder.encode(new byte[] { readByte }).getBytes());
+			final byte[] toWrite = Base16Encoder.encode(new byte[] { readByte }).getBytes();
+			if (position + toWrite.length >= 79) {
+				output.write(NewLine.CRLF.toString().getBytes());
+				position = 0;
+			}
+			output.write(toWrite);
+			position += toWrite.length;
 		}
 		output.flush();
 	}
@@ -38,7 +47,9 @@ public class Base16 {
 	public static void decode(final InputStream input, final OutputStream output) throws IOException {
 		final byte[] read = new byte[2];
 		while (input.read(read) != -1) {
-			output.write(Base16Encoder.decode(new String(read)));
+			if (!Arrays.equals(read, NewLine.CRLF.toString().getBytes())) {
+				output.write(Base16Encoder.decode(new String(read)));
+			}
 		}
 		output.flush();
 	}
