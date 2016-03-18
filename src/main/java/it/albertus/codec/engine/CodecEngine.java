@@ -85,7 +85,7 @@ public class CodecEngine {
 		switch (algorithm) {
 		case BASE16:
 			outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
-			outputStream.write(Base16.encode(IOUtils.toByteArray(inputStream)).getBytes(charset)); // TODO
+			Base16.encode(inputStream, outputStream);
 			break;
 		case BASE32:
 			outputStream = new BaseNCodecOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)), new Base32(79), true);
@@ -154,7 +154,7 @@ public class CodecEngine {
 		OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
 		switch (algorithm) {
 		case BASE16:
-			outputStream.write(Base16.decode(IOUtils.toString(inputStream, charset))); // TODO
+			Base16.decode(inputStream, outputStream);
 			break;
 		case BASE32:
 			inputStream = new Base32InputStream(inputStream);
