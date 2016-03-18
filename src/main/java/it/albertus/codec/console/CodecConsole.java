@@ -29,36 +29,54 @@ public class CodecConsole extends Codec {
 		help.append(NewLine.SYSTEM_LINE_SEPARATOR);
 
 		/* Algorithms */
-		help.append(Resources.get("msg.help.algorithms")).append(NewLine.SYSTEM_LINE_SEPARATOR);
-		for (final CodecAlgorithm algorithm : CodecAlgorithm.values()) {
-			help.append("    ").append(algorithm.getName()).append(NewLine.SYSTEM_LINE_SEPARATOR);
+		{
+			final StringBuilder algorithms = new StringBuilder(Resources.get("msg.help.algorithms"));
+			algorithms.append(' ');
+			int cursorPosition = algorithms.length();
+			final int offset = cursorPosition;
+			for (final CodecAlgorithm algorithm : CodecAlgorithm.values()) {
+				final String toPrint = algorithm.getName() + ", ";
+				if (cursorPosition + toPrint.length() >= 80) {
+					algorithms.append(NewLine.SYSTEM_LINE_SEPARATOR);
+					for (int i = 0; i < offset; i++) {
+						algorithms.append(' ');
+					}
+					cursorPosition = offset;
+				}
+				algorithms.append(toPrint);
+				cursorPosition += toPrint.length();
+			}
+			help.append(algorithms.replace(algorithms.length() - 2, algorithms.length(), NewLine.SYSTEM_LINE_SEPARATOR));
+			help.append(NewLine.SYSTEM_LINE_SEPARATOR);
 		}
-		help.append(NewLine.SYSTEM_LINE_SEPARATOR);
 
 		/* Charsets */
-		final StringBuilder charsets = new StringBuilder(Resources.get("msg.help.charsets"));
-		charsets.append(' ');
-		int pos = charsets.length();
-		final int offset = pos;
-		for (final String charsetName : Charset.availableCharsets().keySet()) {
-			final String toPrint = charsetName + ", ";
-			if (pos + toPrint.length() >= 80) {
-				charsets.append(NewLine.SYSTEM_LINE_SEPARATOR);
-				for (int i = 0; i < offset; i++) {
-					charsets.append(' ');
+		{
+			final StringBuilder charsets = new StringBuilder(Resources.get("msg.help.charsets"));
+			charsets.append(' ');
+			int cursorPosition = charsets.length();
+			final int offset = cursorPosition;
+			for (final String charsetName : Charset.availableCharsets().keySet()) {
+				final String toPrint = charsetName + ", ";
+				if (cursorPosition + toPrint.length() >= 80) {
+					charsets.append(NewLine.SYSTEM_LINE_SEPARATOR);
+					for (int i = 0; i < offset; i++) {
+						charsets.append(' ');
+					}
+					cursorPosition = offset;
 				}
-				pos = offset;
+				charsets.append(toPrint);
+				cursorPosition += toPrint.length();
 			}
-			charsets.append(toPrint);
-			pos += toPrint.length();
+			charsets.replace(charsets.length() - 2, charsets.length(), NewLine.SYSTEM_LINE_SEPARATOR);
+			charsets.append(' ').append(Resources.get("msg.help.default.charset", Charset.defaultCharset().name()));
+			help.append(charsets);
+			help.append(NewLine.SYSTEM_LINE_SEPARATOR).append(NewLine.SYSTEM_LINE_SEPARATOR);
 		}
-		help.append(charsets.replace(charsets.length() - 2, charsets.length(), NewLine.SYSTEM_LINE_SEPARATOR));
-		help.append(NewLine.SYSTEM_LINE_SEPARATOR);
 
 		/* Example */
 		help.append(Resources.get("msg.help.example"));
-		help.append(NewLine.SYSTEM_LINE_SEPARATOR);
-		HELP = help.toString();
+		HELP = help.toString().trim();
 	}
 
 	/* java -jar codec.jar e|d base64|md2|md5|...|sha-512 "text to encode" */
@@ -150,7 +168,7 @@ public class CodecConsole extends Codec {
 	}
 
 	private void printHelp() {
-		System.out.println(Resources.get("msg.application.name") + ' ' + Resources.get("msg.version", Version.getInstance().getNumber(), Version.getInstance().getDate()) + " [" + Resources.get("msg.website") + ']' + NewLine.SYSTEM_LINE_SEPARATOR + NewLine.SYSTEM_LINE_SEPARATOR + HELP);
+		System.out.println(Resources.get("msg.application.name") + ' ' + Resources.get("msg.version", Version.getInstance().getNumber(), Version.getInstance().getDate()) + " [" + Resources.get("msg.website") + ']' + NewLine.SYSTEM_LINE_SEPARATOR + NewLine.SYSTEM_LINE_SEPARATOR + HELP + NewLine.SYSTEM_LINE_SEPARATOR);
 	}
 
 }
