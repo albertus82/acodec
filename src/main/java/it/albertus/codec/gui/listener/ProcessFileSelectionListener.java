@@ -30,9 +30,15 @@ public class ProcessFileSelectionListener extends SelectionAdapter {
 		if (sourceFileName != null && sourceFileName.length() > 0) {
 			/* Selezione file destinazione */
 			final FileDialog saveDialog = new FileDialog(gui.getShell(), SWT.SAVE);
+			saveDialog.setOverwrite(true);
 			if (CodecMode.ENCODE.equals(gui.getEngine().getMode())) {
 				saveDialog.setFilterExtensions(new String[] { "*." + gui.getEngine().getAlgorithm().name().toLowerCase() + "; *." + gui.getEngine().getAlgorithm().name().toUpperCase(), "*.*" });
 				saveDialog.setFileName(sourceFileName + '.' + gui.getEngine().getAlgorithm().name().toLowerCase());
+			}
+			else {
+				if (sourceFileName.indexOf('.') != -1) {
+					saveDialog.setFileName(sourceFileName.substring(0, sourceFileName.lastIndexOf('.')));
+				}
 			}
 			final String destinationFileName = saveDialog.open();
 			if (destinationFileName != null && destinationFileName.length() > 0) {
