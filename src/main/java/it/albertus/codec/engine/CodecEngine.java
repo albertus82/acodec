@@ -3,13 +3,18 @@ package it.albertus.codec.engine;
 import it.albertus.codec.resources.Resources;
 
 import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.mina.proxy.utils.MD4Provider;
 
 public class CodecEngine {
+
+	private static final MD4Provider MD4_PROVIDER = new MD4Provider();
 
 	private CodecAlgorithm algorithm;
 	private CodecMode mode = CodecMode.ENCODE;
@@ -58,6 +63,13 @@ public class CodecEngine {
 			return Base64.encodeBase64String(input.getBytes(charset));
 		case MD2:
 			return Hex.encodeHexString(DigestUtils.getMd2Digest().digest(input.getBytes(charset)));
+		case MD4:
+			try {
+				return Hex.encodeHexString(MessageDigest.getInstance(CodecAlgorithm.MD4.getName(), MD4_PROVIDER).digest(input.getBytes(charset)));
+			}
+			catch (NoSuchAlgorithmException nsae) {
+				break;
+			}
 		case MD5:
 			return Hex.encodeHexString(DigestUtils.getMd5Digest().digest(input.getBytes(charset)));
 		case SHA1:
