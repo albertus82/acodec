@@ -11,7 +11,7 @@ public class Codec {
 
 	private final CodecEngine engine;
 
-	public Codec() {
+	protected Codec() {
 		this.engine = new CodecEngine();
 	}
 

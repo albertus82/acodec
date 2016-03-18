@@ -22,6 +22,11 @@ public class AlgorithmComboSelectionListener extends SelectionAdapter {
 		final CodecAlgorithm algorithm = CodecAlgorithm.values()[(gui.getAlgorithmCombo().getSelectionIndex())];
 		gui.getEngine().setAlgorithm(algorithm);
 
+		/* Attivazione pulsante elaborazione file */
+		if (!gui.getProcessFileButton().getEnabled()) {
+			gui.getProcessFileButton().setEnabled(true);
+		}
+
 		/* Gestione radio */
 		final Button encodeRadio = gui.getModeRadios().get(CodecMode.ENCODE);
 		final Button decodeRadio = gui.getModeRadios().get(CodecMode.DECODE);
