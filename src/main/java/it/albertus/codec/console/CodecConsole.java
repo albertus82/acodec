@@ -2,12 +2,16 @@ package it.albertus.codec.console;
 
 import it.albertus.codec.Codec;
 import it.albertus.codec.engine.CodecAlgorithm;
+import it.albertus.codec.engine.CodecCharset;
 import it.albertus.codec.engine.CodecMode;
 import it.albertus.codec.resources.Resources;
 import it.albertus.util.NewLine;
 import it.albertus.util.Version;
 
 public class CodecConsole extends Codec {
+
+	private static final String ARG_CHARSET = "-c";
+	private static final String ARG_HELP = "--help";
 
 	private static final String HELP;
 
@@ -26,6 +30,7 @@ public class CodecConsole extends Codec {
 		}
 		help.append(NewLine.SYSTEM_LINE_SEPARATOR);
 		help.append(Resources.get("msg.help.example"));
+		help.append(NewLine.SYSTEM_LINE_SEPARATOR);
 		HELP = help.toString();
 	}
 
@@ -33,16 +38,26 @@ public class CodecConsole extends Codec {
 	public void execute(String[] args) {
 		CodecMode mode = null;
 		CodecAlgorithm algorithm = null;
+		String charset = CodecCharset.UTF_8.getName();
+		
+		final String stringToProcess;
 
-		if (args.length != 3) {
-			System.out.println(Resources.get("msg.application.name") + ' ' + Resources.get("msg.version", Version.getInstance().getNumber(), Version.getInstance().getDate()) + " [" + Resources.get("msg.website") + ']' + NewLine.SYSTEM_LINE_SEPARATOR + NewLine.SYSTEM_LINE_SEPARATOR + HELP);
+		if (args.length < 3) {
+			printHelp();
 			return;
 		}
 
+		for (final String arg : args) {
+			if (arg.equalsIgnoreCase(ARG_HELP)) {
+				printHelp();
+				return;
+			}
+		}
+
 		/* Mode */
-		final char modeArg = args[0].trim().toLowerCase().charAt(0);
+		final String modeArg = args[0].trim();
 		for (final CodecMode cm : CodecMode.values()) {
-			if (cm.getAbbreviation() == modeArg) {
+			if (modeArg.equalsIgnoreCase(Character.toString(cm.getAbbreviation()))) {
 				mode = cm;
 				break;
 			}
@@ -67,16 +82,39 @@ public class CodecConsole extends Codec {
 			return;
 		}
 
+		/* Charset */
+		if (ARG_CHARSET.equalsIgnoreCase(args[2].trim())) {
+			if (args.length != 5) {
+				printHelp();
+				return;
+			}
+			stringToProcess = args[4];
+			charset = args[3].trim();
+		}
+		else {
+			if (args.length != 3) {
+				printHelp();
+				return;
+			}
+			stringToProcess = args[2];
+		}
+
 		getEngine().setAlgorithm(algorithm);
 		getEngine().setMode(mode);
+		getEngine().setCharsetName(charset);
 
 		/* Execution */
 		try {
-			System.out.println(getEngine().run(args[2]));
+			System.out.println(getEngine().run(stringToProcess));
+			System.out.println();
 		}
 		catch (Exception e) {
 			System.err.println(Resources.get("err.generic", e.getMessage()) + NewLine.SYSTEM_LINE_SEPARATOR);
 		}
+	}
+
+	private void printHelp() {
+		System.out.println(Resources.get("msg.application.name") + ' ' + Resources.get("msg.version", Version.getInstance().getNumber(), Version.getInstance().getDate()) + " [" + Resources.get("msg.website") + ']' + NewLine.SYSTEM_LINE_SEPARATOR + NewLine.SYSTEM_LINE_SEPARATOR + HELP);
 	}
 
 }

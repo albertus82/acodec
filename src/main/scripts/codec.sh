@@ -6,7 +6,7 @@ if [ "$1" = "" ]
   fi
 else
   if [ "$JAVA_HOME" != "" ]
-  then "$JAVA_HOME/bin/java" -Xms4m -Xmx8m -jar codec.jar $1 $2 $3 $4
-  else java -Xms4m -Xmx8m -jar codec.jar $1 $2 $3 $4
+  then "$JAVA_HOME/bin/java" -Xms4m -Xmx8m -jar codec.jar $1 $2 $3 $4 $5 $6
+  else java -Xms4m -Xmx8m -jar codec.jar $1 $2 $3 $4 $5 $6
   fi
 fi

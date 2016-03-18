@@ -47,7 +47,7 @@ public class CodecEngine {
 			}
 		}
 		catch (final UnsupportedEncodingException uee) {
-			throw new RuntimeException(Resources.get("err.cannot.decode", algorithm.getName()), uee);
+			throw new RuntimeException(Resources.get("err.cannot.decode", charsetName), uee);
 		}
 		throw new IllegalStateException(Resources.get("err.cannot.decode", algorithm.getName()));
 	}
@@ -78,7 +78,7 @@ public class CodecEngine {
 			}
 		}
 		catch (final UnsupportedEncodingException uee) {
-			throw new RuntimeException(Resources.get("err.cannot.decode", algorithm.getName()), uee);
+			throw new RuntimeException(Resources.get("err.cannot.encode", charsetName), uee);
 		}
 		throw new IllegalStateException(Resources.get("err.cannot.encode", algorithm.getName()));
 	}
