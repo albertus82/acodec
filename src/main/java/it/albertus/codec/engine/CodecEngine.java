@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
 public class CodecEngine {
@@ -56,17 +57,17 @@ public class CodecEngine {
 		case BASE64:
 			return Base64.encodeBase64String(input.getBytes(charset));
 		case MD2:
-			return DigestUtils.md2Hex(input);
+			return Hex.encodeHexString(DigestUtils.getMd2Digest().digest(input.getBytes(charset)));
 		case MD5:
-			return DigestUtils.md5Hex(input);
+			return Hex.encodeHexString(DigestUtils.getMd5Digest().digest(input.getBytes(charset)));
 		case SHA1:
-			return DigestUtils.sha1Hex(input);
+			return Hex.encodeHexString(DigestUtils.getSha1Digest().digest(input.getBytes(charset)));
 		case SHA256:
-			return DigestUtils.sha256Hex(input);
+			return Hex.encodeHexString(DigestUtils.getSha256Digest().digest(input.getBytes(charset)));
 		case SHA384:
-			return DigestUtils.sha384Hex(input);
+			return Hex.encodeHexString(DigestUtils.getSha384Digest().digest(input.getBytes(charset)));
 		case SHA512:
-			return DigestUtils.sha512Hex(input);
+			return Hex.encodeHexString(DigestUtils.getSha512Digest().digest(input.getBytes(charset)));
 		default:
 			break;
 		}

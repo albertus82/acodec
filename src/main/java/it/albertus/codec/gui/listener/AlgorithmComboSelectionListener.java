@@ -27,23 +27,11 @@ public class AlgorithmComboSelectionListener extends SelectionAdapter {
 		final Button decodeRadio = gui.getModeRadios().get(CodecMode.DECODE);
 
 		if (algorithm.getModes().contains(CodecMode.DECODE)) {
-			if (!gui.getCharsetCombo().getEnabled()) {
-				gui.getCharsetCombo().setEnabled(true);
-			}
-			if (!gui.getCharsetLabel().getEnabled()) {
-				gui.getCharsetLabel().setEnabled(true);
-			}
 			if (!decodeRadio.getEnabled()) {
 				decodeRadio.setEnabled(true);
 			}
 		}
 		else {
-			if (gui.getCharsetCombo().getEnabled()) {
-				gui.getCharsetCombo().setEnabled(false);
-			}
-			if (gui.getCharsetLabel().getEnabled()) {
-				gui.getCharsetLabel().setEnabled(false);
-			}
 			if (decodeRadio.getEnabled()) {
 				decodeRadio.setSelection(false);
 				decodeRadio.setEnabled(false);
