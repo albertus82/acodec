@@ -6,6 +6,7 @@ import it.albertus.util.NewLine;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import org.apache.openjpa.lib.util.Base16Encoder;
 
@@ -44,10 +45,11 @@ public class Base16 {
 	}
 
 	public static void decode(final InputStream input, final OutputStream output) throws IOException {
-		final byte[] read = new byte[2 * 4096];
+		final int bufferSize = 2 * 4096;
+		final byte[] read = new byte[bufferSize];
 		int count = 0;
 		while ((count = input.read(read)) != -1) {
-			output.write(Base16Encoder.decode(new String(read).substring(0, count).replace(NewLine.CRLF.toString(), "")));
+			output.write(Base16Encoder.decode(new String(count == bufferSize ? read : Arrays.copyOfRange(read, 0, count)).replace(NewLine.CRLF.toString(), "")));
 		}
 		output.flush();
 	}
