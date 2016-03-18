@@ -17,19 +17,45 @@ public class CodecConsole extends Codec {
 	private static final String HELP;
 
 	static {
-		final StringBuilder help = new StringBuilder();
-		help.append(Resources.get("msg.help.usage"));
+		/* Usage */
+		final StringBuilder help = new StringBuilder(Resources.get("msg.help.usage"));
 		help.append(NewLine.SYSTEM_LINE_SEPARATOR).append(NewLine.SYSTEM_LINE_SEPARATOR);
+
+		/* Modes */
 		help.append(Resources.get("msg.help.modes")).append(NewLine.SYSTEM_LINE_SEPARATOR);
 		for (final CodecMode mode : CodecMode.values()) {
 			help.append("    ").append(mode.getAbbreviation()).append("    ").append(mode.getName()).append(NewLine.SYSTEM_LINE_SEPARATOR);
 		}
 		help.append(NewLine.SYSTEM_LINE_SEPARATOR);
+
+		/* Algorithms */
 		help.append(Resources.get("msg.help.algorithms")).append(NewLine.SYSTEM_LINE_SEPARATOR);
 		for (final CodecAlgorithm algorithm : CodecAlgorithm.values()) {
 			help.append("    ").append(algorithm.getName()).append(NewLine.SYSTEM_LINE_SEPARATOR);
 		}
 		help.append(NewLine.SYSTEM_LINE_SEPARATOR);
+
+		/* Charsets */
+		final StringBuilder charsets = new StringBuilder(Resources.get("msg.help.charsets"));
+		charsets.append(' ');
+		int pos = charsets.length();
+		final int offset = pos;
+		for (final String charsetName : Charset.availableCharsets().keySet()) {
+			final String toPrint = charsetName + ", ";
+			if (pos + toPrint.length() >= 80) {
+				charsets.append(NewLine.SYSTEM_LINE_SEPARATOR);
+				for (int i = 0; i < offset; i++) {
+					charsets.append(' ');
+				}
+				pos = offset;
+			}
+			charsets.append(toPrint);
+			pos += toPrint.length();
+		}
+		help.append(charsets.replace(charsets.length() - 2, charsets.length(), NewLine.SYSTEM_LINE_SEPARATOR));
+		help.append(NewLine.SYSTEM_LINE_SEPARATOR);
+
+		/* Example */
 		help.append(Resources.get("msg.help.example"));
 		help.append(NewLine.SYSTEM_LINE_SEPARATOR);
 		HELP = help.toString();
@@ -40,7 +66,7 @@ public class CodecConsole extends Codec {
 		CodecMode mode = null;
 		CodecAlgorithm algorithm = null;
 		String charsetName = null;
-		
+
 		final String stringToProcess;
 
 		if (args.length < 3) {
