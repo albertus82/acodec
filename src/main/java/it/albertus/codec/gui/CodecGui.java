@@ -140,6 +140,29 @@ public class CodecGui extends Codec implements IShellProvider {
 		shell.setMinimumSize(shell.getSize());
 	}
 
+	public void enableControls() {
+		inputText.setEnabled(true);
+		outputText.setEnabled(true);
+		algorithmCombo.setEnabled(true);
+		charsetCombo.setEnabled(true);
+		processFileButton.setEnabled(true);
+		for (final Button radio : modeRadios.values()) {
+			radio.setEnabled(true);
+		}
+		algorithmCombo.notifyListeners(SWT.Selection, null);
+	}
+
+	public void disableControls() {
+		inputText.setEnabled(false);
+		outputText.setEnabled(false);
+		algorithmCombo.setEnabled(false);
+		charsetCombo.setEnabled(false);
+		processFileButton.setEnabled(false);
+		for (final Button radio : modeRadios.values()) {
+			radio.setEnabled(false);
+		}
+	}
+
 	@Override
 	public Shell getShell() {
 		return shell;
