@@ -2,11 +2,12 @@ package it.albertus.codec.console;
 
 import it.albertus.codec.Codec;
 import it.albertus.codec.engine.CodecAlgorithm;
-import it.albertus.codec.engine.CodecCharset;
 import it.albertus.codec.engine.CodecMode;
 import it.albertus.codec.resources.Resources;
 import it.albertus.util.NewLine;
 import it.albertus.util.Version;
+
+import java.nio.charset.Charset;
 
 public class CodecConsole extends Codec {
 
@@ -38,7 +39,7 @@ public class CodecConsole extends Codec {
 	public void execute(String[] args) {
 		CodecMode mode = null;
 		CodecAlgorithm algorithm = null;
-		String charset = CodecCharset.UTF_8.getName();
+		String charsetName = null;
 		
 		final String stringToProcess;
 
@@ -89,7 +90,7 @@ public class CodecConsole extends Codec {
 				return;
 			}
 			stringToProcess = args[4];
-			charset = args[3].trim();
+			charsetName = args[3].trim();
 		}
 		else {
 			if (args.length != 3) {
@@ -101,7 +102,16 @@ public class CodecConsole extends Codec {
 
 		getEngine().setAlgorithm(algorithm);
 		getEngine().setMode(mode);
-		getEngine().setCharsetName(charset);
+		if (charsetName != null) {
+			try {
+				getEngine().setCharset(Charset.forName(charsetName));
+			}
+			catch (Exception e) {
+				System.err.println(Resources.get("err.invalid.charset", charsetName) + NewLine.SYSTEM_LINE_SEPARATOR);
+				System.out.println(HELP);
+				return;
+			}
+		}
 
 		/* Execution */
 		try {

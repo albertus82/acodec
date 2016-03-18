@@ -2,7 +2,6 @@ package it.albertus.codec.gui;
 
 import it.albertus.codec.Codec;
 import it.albertus.codec.engine.CodecAlgorithm;
-import it.albertus.codec.engine.CodecCharset;
 import it.albertus.codec.engine.CodecMode;
 import it.albertus.codec.gui.listener.AboutSelectionListener;
 import it.albertus.codec.gui.listener.AlgorithmComboSelectionListener;
@@ -95,9 +94,8 @@ public class CodecGui extends Codec implements IShellProvider {
 		charsetLabel.setLayoutData(new GridData());
 
 		charsetCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
-		charsetCombo.setItems(CodecCharset.getNames());
-		charsetCombo.add(Charset.defaultCharset().name());
-		charsetCombo.setText(CodecCharset.UTF_8.getName());
+		charsetCombo.setItems(Charset.availableCharsets().keySet().toArray(new String[0]));
+		charsetCombo.setText(Charset.defaultCharset().name());
 		charsetCombo.setLayoutData(new GridData());
 
 		/* Mode radio */

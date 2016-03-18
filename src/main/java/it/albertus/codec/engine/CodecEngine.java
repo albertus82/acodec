@@ -2,7 +2,7 @@ package it.albertus.codec.engine;
 
 import it.albertus.codec.resources.Resources;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
@@ -12,7 +12,7 @@ public class CodecEngine {
 
 	private CodecAlgorithm algorithm;
 	private CodecMode mode = CodecMode.ENCODE;
-	private String charsetName = CodecCharset.UTF_8.getName();
+	private Charset charset = Charset.defaultCharset();
 
 	public String run(final String input) {
 		if (input.length() == 0) {
@@ -34,51 +34,41 @@ public class CodecEngine {
 	}
 
 	private String decode(final String input) {
-		try {
-			switch (algorithm) {
-			case BASE16:
-				return new String(Base16.decode(input), charsetName);
-			case BASE32:
-				return new String(new Base32().decode(input), charsetName);
-			case BASE64:
-				return new String(Base64.decodeBase64(input), charsetName);
-			default:
-				break;
-			}
-		}
-		catch (final UnsupportedEncodingException uee) {
-			throw new RuntimeException(Resources.get("err.cannot.decode", charsetName), uee);
+		switch (algorithm) {
+		case BASE16:
+			return new String(Base16.decode(input), charset);
+		case BASE32:
+			return new String(new Base32().decode(input), charset);
+		case BASE64:
+			return new String(Base64.decodeBase64(input), charset);
+		default:
+			break;
 		}
 		throw new IllegalStateException(Resources.get("err.cannot.decode", algorithm.getName()));
 	}
 
 	private String encode(final String input) {
-		try {
-			switch (algorithm) {
-			case BASE16:
-				return Base16.encode(input.getBytes(charsetName));
-			case BASE32:
-				return new Base32().encodeAsString(input.getBytes(charsetName));
-			case BASE64:
-				return Base64.encodeBase64String(input.getBytes(charsetName));
-			case MD2:
-				return DigestUtils.md2Hex(input);
-			case MD5:
-				return DigestUtils.md5Hex(input);
-			case SHA1:
-				return DigestUtils.sha1Hex(input);
-			case SHA256:
-				return DigestUtils.sha256Hex(input);
-			case SHA384:
-				return DigestUtils.sha384Hex(input);
-			case SHA512:
-				return DigestUtils.sha512Hex(input);
-			default:
-				break;
-			}
-		}
-		catch (final UnsupportedEncodingException uee) {
-			throw new RuntimeException(Resources.get("err.cannot.encode", charsetName), uee);
+		switch (algorithm) {
+		case BASE16:
+			return Base16.encode(input.getBytes(charset));
+		case BASE32:
+			return new Base32().encodeAsString(input.getBytes(charset));
+		case BASE64:
+			return Base64.encodeBase64String(input.getBytes(charset));
+		case MD2:
+			return DigestUtils.md2Hex(input);
+		case MD5:
+			return DigestUtils.md5Hex(input);
+		case SHA1:
+			return DigestUtils.sha1Hex(input);
+		case SHA256:
+			return DigestUtils.sha256Hex(input);
+		case SHA384:
+			return DigestUtils.sha384Hex(input);
+		case SHA512:
+			return DigestUtils.sha512Hex(input);
+		default:
+			break;
 		}
 		throw new IllegalStateException(Resources.get("err.cannot.encode", algorithm.getName()));
 	}
@@ -99,12 +89,12 @@ public class CodecEngine {
 		this.mode = mode;
 	}
 
-	public String getCharsetName() {
-		return charsetName;
+	public Charset getCharset() {
+		return charset;
 	}
 
-	public void setCharsetName(final String charsetName) {
-		this.charsetName = charsetName;
+	public void setCharset(final Charset charset) {
+		this.charset = charset;
 	}
 
 }
