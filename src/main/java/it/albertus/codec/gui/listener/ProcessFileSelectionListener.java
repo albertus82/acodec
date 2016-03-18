@@ -3,8 +3,7 @@ package it.albertus.codec.gui.listener;
 import it.albertus.codec.engine.CodecMode;
 import it.albertus.codec.gui.CodecGui;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.swt.SWT;
@@ -38,7 +37,12 @@ public class ProcessFileSelectionListener extends SelectionAdapter {
 			final String destinationFileName = saveDialog.open();
 			if (destinationFileName != null && destinationFileName.length() > 0) {
 				try {
-					gui.getEngine().run(new FileInputStream(sourceFileName), new FileOutputStream(destinationFileName));
+					final String value = gui.getEngine().run(new File(sourceFileName), new File(destinationFileName));
+					if (value != null) {
+						gui.getInputText().setText(sourceFileName);
+						gui.getOutputText().setText(value);
+						gui.setDirty(true);
+					}
 				}
 				catch (IOException e) {
 					e.printStackTrace();

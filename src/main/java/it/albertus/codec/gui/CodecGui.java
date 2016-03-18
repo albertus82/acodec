@@ -42,6 +42,8 @@ public class CodecGui extends Codec implements IShellProvider {
 	private final Button aboutButton;
 	private final Button processFileButton;
 
+	private boolean dirty = false;
+
 	public CodecGui(final Display display) {
 		shell = new Shell(display);
 		shell.setImages(Images.MAIN_ICONS);
@@ -169,6 +171,14 @@ public class CodecGui extends Codec implements IShellProvider {
 
 	public Button getProcessFileButton() {
 		return processFileButton;
+	}
+
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
 	}
 
 }

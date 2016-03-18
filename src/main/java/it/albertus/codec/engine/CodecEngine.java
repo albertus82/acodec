@@ -2,6 +2,11 @@ package it.albertus.codec.engine;
 
 import it.albertus.codec.resources.Resources;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,18 +52,16 @@ public class CodecEngine {
 		}
 	}
 
-	public void run(final InputStream inputStream, final OutputStream outputStream) throws IOException {
-		if (inputStream.available() == 0) {
+	public String run(final File inputFile, final File outputFile) throws IOException {
+		if (!inputFile.exists()) {
 			throw new IllegalStateException(Resources.get("msg.missing.input"));
 		}
 		if (algorithm != null) {
 			switch (mode) {
 			case DECODE:
-				decode(inputStream, outputStream);
-				return;
+				return decode(inputFile, outputFile);
 			case ENCODE:
-				encode(inputStream, outputStream);
-				return;
+				return encode(inputFile, outputFile);
 			default:
 				throw new IllegalStateException("Invalid mode");
 			}
@@ -68,56 +71,90 @@ public class CodecEngine {
 		}
 	}
 
-	private void encode(final InputStream inputStream, OutputStream outputStream) throws IOException {
+	private String encode(final File inputFile, final File outputFile) throws IOException {
+		final String fileName;
+		if (inputFile.getParentFile().getAbsolutePath().equals(outputFile.getParentFile().getAbsolutePath())) {
+			fileName = inputFile.getName();
+		}
+		else {
+			fileName = inputFile.getAbsolutePath();
+		}
+		InputStream inputStream = new BufferedInputStream(new FileInputStream(inputFile));
+		OutputStream outputStream;
+		String value = null;
 		switch (algorithm) {
 		case BASE16:
-			outputStream.write(Base16.encode(IOUtils.toByteArray(inputStream)).getBytes(charset));
+			outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
+			outputStream.write(Base16.encode(IOUtils.toByteArray(inputStream)).getBytes(charset)); // TODO
 			break;
 		case BASE32:
-			outputStream = new BaseNCodecOutputStream(outputStream, new Base32(79), true);
+			outputStream = new BaseNCodecOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)), new Base32(79), true);
 			IOUtils.copyLarge(inputStream, outputStream);
 			break;
 		case BASE64:
-			outputStream = new Base64OutputStream(outputStream);
+			outputStream = new Base64OutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
 			IOUtils.copyLarge(inputStream, outputStream);
 			break;
 		case MD2:
-			IOUtils.write(Hex.encodeHexString(DigestUtils.md2(inputStream)), outputStream, charset);
+			value = DigestUtils.md2Hex(inputStream);
+			outputStream = new FileOutputStream(outputFile);
+			IOUtils.write(value + " *" + fileName, outputStream, charset);
 			break;
 		case MD4:
 			try {
-				IOUtils.write(Hex.encodeHexString(DigestUtils.updateDigest(MessageDigest.getInstance(CodecAlgorithm.MD4.getName(), MD4_PROVIDER), inputStream).digest()), outputStream, charset);
+				value = Hex.encodeHexString(DigestUtils.updateDigest(MessageDigest.getInstance(CodecAlgorithm.MD4.getName(), MD4_PROVIDER), inputStream).digest());
+				outputStream = new FileOutputStream(outputFile);
+				IOUtils.write(value + " *" + fileName, outputStream, charset);
 			}
 			catch (NoSuchAlgorithmException nsae) {
 				throw new IllegalStateException(Resources.get("err.cannot.encode", algorithm.getName()), nsae);
 			}
+			finally {
+				inputStream.close();
+				outputFile.delete();
+			}
 			break;
 		case MD5:
-			IOUtils.write(Hex.encodeHexString(DigestUtils.md5(inputStream)), outputStream, charset);
+			value = DigestUtils.md5Hex(inputStream);
+			outputStream = new FileOutputStream(outputFile);
+			IOUtils.write(value + " *" + fileName, outputStream, charset);
 			break;
 		case SHA1:
-			IOUtils.write(Hex.encodeHexString(DigestUtils.sha1(inputStream)), outputStream, charset);
+			value = DigestUtils.sha1Hex(inputStream);
+			outputStream = new FileOutputStream(outputFile);
+			IOUtils.write(value + " *" + fileName, outputStream, charset);
 			break;
 		case SHA256:
-			IOUtils.write(Hex.encodeHexString(DigestUtils.sha256(inputStream)), outputStream, charset);
+			value = DigestUtils.sha256Hex(inputStream);
+			outputStream = new FileOutputStream(outputFile);
+			IOUtils.write(value + " *" + fileName, outputStream, charset);
 			break;
 		case SHA384:
-			IOUtils.write(Hex.encodeHexString(DigestUtils.sha384(inputStream)), outputStream, charset);
+			value = DigestUtils.sha384Hex(inputStream);
+			outputStream = new FileOutputStream(outputFile);
+			IOUtils.write(value + " *" + fileName, outputStream, charset);
 			break;
 		case SHA512:
-			IOUtils.write(Hex.encodeHexString(DigestUtils.sha512(inputStream)), outputStream, charset);
+			value = DigestUtils.sha512Hex(inputStream);
+			outputStream = new FileOutputStream(outputFile);
+			IOUtils.write(value + " *" + fileName, outputStream, charset);
 			break;
 		default:
+			inputStream.close();
+			outputFile.delete();
 			throw new IllegalStateException(Resources.get("err.cannot.encode", algorithm.getName()));
 		}
 		outputStream.close();
 		inputStream.close();
+		return value;
 	}
 
-	private void decode(InputStream inputStream, final OutputStream outputStream) throws IOException {
+	private String decode(final File inputFile, final File outputFile) throws IOException {
+		InputStream inputStream = new BufferedInputStream(new FileInputStream(inputFile));
+		OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
 		switch (algorithm) {
 		case BASE16:
-			outputStream.write(Base16.decode(IOUtils.toString(inputStream, charset)));
+			outputStream.write(Base16.decode(IOUtils.toString(inputStream, charset))); // TODO
 			break;
 		case BASE32:
 			inputStream = new Base32InputStream(inputStream);
@@ -128,10 +165,14 @@ public class CodecEngine {
 			IOUtils.copyLarge(inputStream, outputStream);
 			break;
 		default:
+			outputStream.close();
+			inputStream.close();
+			outputFile.delete();
 			throw new IllegalStateException(Resources.get("err.cannot.decode", algorithm.getName()));
 		}
 		outputStream.close();
 		inputStream.close();
+		return null;
 	}
 
 	private String encode(final String input) {
@@ -143,7 +184,7 @@ public class CodecEngine {
 		case BASE64:
 			return Base64.encodeBase64String(input.getBytes(charset));
 		case MD2:
-			return Hex.encodeHexString(DigestUtils.getMd2Digest().digest(input.getBytes(charset)));
+			return DigestUtils.md2Hex(input.getBytes(charset));
 		case MD4:
 			try {
 				return Hex.encodeHexString(MessageDigest.getInstance(CodecAlgorithm.MD4.getName(), MD4_PROVIDER).digest(input.getBytes(charset)));
@@ -152,15 +193,15 @@ public class CodecEngine {
 				break;
 			}
 		case MD5:
-			return Hex.encodeHexString(DigestUtils.getMd5Digest().digest(input.getBytes(charset)));
+			return DigestUtils.md5Hex(input.getBytes(charset));
 		case SHA1:
-			return Hex.encodeHexString(DigestUtils.getSha1Digest().digest(input.getBytes(charset)));
+			return DigestUtils.sha1Hex(input.getBytes(charset));
 		case SHA256:
-			return Hex.encodeHexString(DigestUtils.getSha256Digest().digest(input.getBytes(charset)));
+			return DigestUtils.sha256Hex(input.getBytes(charset));
 		case SHA384:
-			return Hex.encodeHexString(DigestUtils.getSha384Digest().digest(input.getBytes(charset)));
+			return DigestUtils.sha384Hex(input.getBytes(charset));
 		case SHA512:
-			return Hex.encodeHexString(DigestUtils.getSha512Digest().digest(input.getBytes(charset)));
+			return DigestUtils.sha512Hex(input.getBytes(charset));
 		default:
 			break;
 		}
