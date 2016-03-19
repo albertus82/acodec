@@ -29,27 +29,23 @@ public class Base16 {
 	}
 
 	public static void encode(final InputStream input, final OutputStream output) throws IOException {
-		int position = 0;
-		int readInt;
-		while ((readInt = input.read()) != -1) {
-			final byte readByte = (byte) readInt;
-			final byte[] toWrite = Base16Encoder.encode(new byte[] { readByte }).getBytes();
-			if (position + toWrite.length >= 79) {
-				output.write(NewLine.CRLF.toString().getBytes());
-				position = 0;
-			}
+		final int bufferSize = 78 / 2;
+		final byte[] buffer = new byte[bufferSize];
+		int count;
+		while ((count = input.read(buffer)) != -1) {
+			final byte[] toWrite = Base16Encoder.encode(count == bufferSize ? buffer : Arrays.copyOfRange(buffer, 0, count)).getBytes();
 			output.write(toWrite);
-			position += toWrite.length;
+			output.write(NewLine.CRLF.toString().getBytes());
 		}
 		output.flush();
 	}
 
 	public static void decode(final InputStream input, final OutputStream output) throws IOException {
 		final int bufferSize = 2 * 4096;
-		final byte[] read = new byte[bufferSize];
-		int count = 0;
-		while ((count = input.read(read)) != -1) {
-			output.write(Base16Encoder.decode(new String(count == bufferSize ? read : Arrays.copyOfRange(read, 0, count)).replace(NewLine.CRLF.toString(), "")));
+		final byte[] buffer = new byte[bufferSize];
+		int count;
+		while ((count = input.read(buffer)) != -1) {
+			output.write(Base16Encoder.decode(new String(count == bufferSize ? buffer : Arrays.copyOfRange(buffer, 0, count)).replace(NewLine.CRLF.toString(), "")));
 		}
 		output.flush();
 	}
