@@ -16,6 +16,7 @@ public class Ascii85InputStream extends ASCII85InputStream {
 	}
 
 	private void discardStartDelimiter() {
+		input.mark(2);
 		try {
 			if (!(input.read() == '<' && input.read() == '~')) {
 				input.reset();
