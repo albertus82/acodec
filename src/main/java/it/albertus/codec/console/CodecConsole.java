@@ -7,11 +7,13 @@ import it.albertus.codec.resources.Resources;
 import it.albertus.util.NewLine;
 import it.albertus.util.Version;
 
+import java.io.File;
 import java.nio.charset.Charset;
 
 public class CodecConsole extends Codec {
 
-	private static final String ARG_CHARSET = "-c";
+	private static final char OPTION_CHARSET = 'c';
+	private static final char OPTION_FILE = 'f';
 	private static final String ARG_HELP = "--help";
 
 	/* java -jar codec.jar e|d base64|md2|md5|...|sha-512 "text to encode" */
@@ -20,7 +22,8 @@ public class CodecConsole extends Codec {
 		CodecAlgorithm algorithm = null;
 		String charsetName = null;
 
-		final String stringToProcess;
+		File inputFile = null;
+		File outputFile = null;
 
 		if (args.length < 3) {
 			printHelp();
@@ -62,21 +65,31 @@ public class CodecConsole extends Codec {
 			return;
 		}
 
-		/* Charset */
-		if (ARG_CHARSET.equalsIgnoreCase(args[2].trim())) {
-			if (args.length != 5) {
-				printHelp();
-				return;
+		final String stringToProcess = args[args.length - 1];
+
+		/* Options */
+		for (int i = 2; i < args.length; i++) {
+			if (args.length > i + 1 && args[i].length() == 2 && args[i].charAt(0) == '-') {
+				switch (Character.toLowerCase(args[i].charAt(1))) {
+				case OPTION_CHARSET:
+					charsetName = args[i + 1];
+					break;
+				case OPTION_FILE:
+					if (args.length > i + 2) {
+						inputFile = new File(args[args.length - 2]).getAbsoluteFile();
+						outputFile = new File(args[args.length - 1]).getAbsoluteFile();
+					}
+					else {
+						printHelp();
+						return;
+					}
+					break;
+				default:
+					System.err.println(Resources.get("err.invalid.option", args[i].charAt(1)) + NewLine.SYSTEM_LINE_SEPARATOR);
+					printHelp();
+					return;
+				}
 			}
-			stringToProcess = args[4];
-			charsetName = args[3].trim();
-		}
-		else {
-			if (args.length != 3) {
-				printHelp();
-				return;
-			}
-			stringToProcess = args[2];
 		}
 
 		getEngine().setAlgorithm(algorithm);
@@ -94,7 +107,13 @@ public class CodecConsole extends Codec {
 
 		/* Execution */
 		try {
-			System.out.println(getEngine().run(stringToProcess));
+			if (inputFile != null && outputFile != null) {
+				final String result = getEngine().run(inputFile, outputFile);
+				System.out.println(result != null ? result + " - " : "" + Resources.get("msg.file.process.ok.message"));
+			}
+			else {
+				System.out.println(getEngine().run(stringToProcess));
+			}
 		}
 		catch (Exception e) {
 			System.err.println(Resources.get("err.generic", e.getMessage()));
@@ -103,7 +122,7 @@ public class CodecConsole extends Codec {
 
 	private void printHelp() {
 		/* Usage */
-		final StringBuilder help = new StringBuilder(Resources.get("msg.help.usage"));
+		final StringBuilder help = new StringBuilder(Resources.get("msg.help.usage", OPTION_CHARSET, OPTION_FILE));
 		help.append(NewLine.SYSTEM_LINE_SEPARATOR).append(NewLine.SYSTEM_LINE_SEPARATOR);
 
 		/* Modes */
@@ -162,7 +181,8 @@ public class CodecConsole extends Codec {
 		/* Example */
 		help.append(Resources.get("msg.help.example"));
 
-		System.out.println(Resources.get("msg.application.name") + ' ' + Resources.get("msg.version", Version.getInstance().getNumber(), Version.getInstance().getDate()) + " [" + Resources.get("msg.website") + ']' + NewLine.SYSTEM_LINE_SEPARATOR + NewLine.SYSTEM_LINE_SEPARATOR + help.toString().trim());
+		System.out.println(Resources.get("msg.application.name") + ' ' + Resources.get("msg.version", Version.getInstance().getNumber(), Version.getInstance().getDate()) + " [" + Resources.get("msg.website") + ']'
+				+ NewLine.SYSTEM_LINE_SEPARATOR + NewLine.SYSTEM_LINE_SEPARATOR + help.toString().trim());
 	}
 
 }
