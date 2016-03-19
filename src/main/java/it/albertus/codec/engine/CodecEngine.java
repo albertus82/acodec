@@ -12,7 +12,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 
-import net.sourceforce.base91.b91cli;
+import net.sourceforge.base91.b91cli;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base32InputStream;

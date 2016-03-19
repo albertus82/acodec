@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import net.sourceforce.base91.b91cli;
+import net.sourceforge.base91.b91cli;
 
 import org.apache.commons.io.IOUtils;
 
