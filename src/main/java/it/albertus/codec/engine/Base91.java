@@ -1,41 +1,39 @@
 package it.albertus.codec.engine;
 
-import it.albertus.util.NewLine;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.apache.commons.io.IOUtils;
-import org.freehep.util.io.ASCII85OutputStream;
+import net.sourceforce.base91.b91cli;
 
-public class Ascii85 {
+import org.apache.commons.io.IOUtils;
+
+public class Base91 {
 
 	public static String encode(final byte[] byteArray) throws IOException {
 		final String value;
 		final ByteArrayInputStream inputStream = new ByteArrayInputStream(byteArray);
-		final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		final ASCII85OutputStream outputStream = new ASCII85OutputStream(byteArrayOutputStream);
+		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		try {
-			IOUtils.copy(inputStream, outputStream);
+			b91cli.encode(inputStream, outputStream);
 			outputStream.close();
 			inputStream.close();
-			value = byteArrayOutputStream.toString();
+			value = outputStream.toString();
 		}
 		catch (final IOException ioe) {
 			IOUtils.closeQuietly(outputStream);
 			IOUtils.closeQuietly(inputStream);
 			throw ioe;
 		}
-		return value.replaceAll("[" + NewLine.CRLF.toString() + "]+", "");
+		return value.trim();
 	}
 
 	public static byte[] decode(final String encoded) throws IOException {
 		final byte[] value;
-		final Ascii85InputStream inputStream = new Ascii85InputStream(new ByteArrayInputStream(encoded.getBytes()));
+		final ByteArrayInputStream inputStream = new ByteArrayInputStream(encoded.getBytes());
 		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		try {
-			IOUtils.copy(inputStream, outputStream);
+			b91cli.decode(inputStream, outputStream);
 			outputStream.close();
 			inputStream.close();
 			value = outputStream.toByteArray();

@@ -12,6 +12,8 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 
+import net.sourceforce.base91.b91cli;
+
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base32InputStream;
 import org.apache.commons.codec.binary.Base64;
@@ -100,6 +102,10 @@ public class CodecEngine {
 				outputStream = new ASCII85OutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
 				IOUtils.copyLarge(inputStream, outputStream);
 				break;
+			case BASE91:
+				outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
+				b91cli.encodeWrap(inputStream, outputStream);
+				break;
 			case MD2:
 				value = DigestUtils.md2Hex(inputStream);
 				outputStream = new FileOutputStream(outputFile);
@@ -177,6 +183,9 @@ public class CodecEngine {
 				inputStream = new Ascii85InputStream(inputStream);
 				IOUtils.copyLarge(inputStream, outputStream);
 				break;
+			case BASE91:
+				b91cli.decode(inputStream, outputStream);
+				break;
 			default:
 				outputFile.delete();
 				throw new IllegalStateException();
@@ -213,6 +222,9 @@ public class CodecEngine {
 			case ASCII85:
 				value = Ascii85.encode(input.getBytes(charset));
 				break;
+			case BASE91:
+				value = Base91.encode(input.getBytes(charset));
+				break;				
 			case MD2:
 				value = DigestUtils.md2Hex(input.getBytes(charset));
 				break;
@@ -259,6 +271,9 @@ public class CodecEngine {
 				break;
 			case ASCII85:
 				value = new String(Ascii85.decode(input), charset);
+				break;
+			case BASE91:
+				value = new String(Base91.decode(input), charset);
 				break;
 			default:
 				throw new IllegalStateException();

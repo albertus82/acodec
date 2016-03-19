@@ -9,6 +9,7 @@ public enum CodecAlgorithm {
 	BASE32("Base32"),
 	BASE64("Base64"),
 	ASCII85("Ascii85"),
+	BASE91("Base91"),
 	MD2("MD2", CodecMode.ENCODE),
 	MD4("MD4", CodecMode.ENCODE),
 	MD5("MD5", CodecMode.ENCODE),
