@@ -12,6 +12,21 @@ public class Ascii85InputStream extends ASCII85InputStream {
 	public Ascii85InputStream(InputStream input) {
 		super(input);
 		this.input = input;
+		discardStartDelimiter();
+	}
+
+	private void discardStartDelimiter() {
+		try {
+			if (!(input.read() == '<' && input.read() == '~')) {
+				input.reset();
+			}
+		}
+		catch (IOException ioe) {
+			try {
+				input.reset();
+			}
+			catch (IOException e) {}
+		}
 	}
 
 	@Override
