@@ -4,7 +4,7 @@ Codec
 **Graphical user interface available for Windows, Linux & OS X.**
 
 ```ruby
-Usage: codec <mode> <algorithm> [-c <charset>] <text to process> | -f <source file> <destination file>
+Usage: codec <mode> <algorithm> [-c <charset>] { <text to process> | -f <source file> <destination file> }
 
 Mode:
     e    Encode
