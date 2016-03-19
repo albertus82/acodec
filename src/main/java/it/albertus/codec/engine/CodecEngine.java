@@ -106,7 +106,7 @@ public class CodecEngine {
 				IOUtils.write(value + " *" + fileName, outputStream, charset);
 				break;
 			case MD4:
-				value = Hex.encodeHexString(DigestUtils.updateDigest(MessageDigest.getInstance(CodecAlgorithm.MD4.getName(), MD4_PROVIDER), inputStream).digest());
+				value = Hex.encodeHexString(DigestUtils.updateDigest(MessageDigest.getInstance(CodecAlgorithm.MD4.name(), MD4_PROVIDER), inputStream).digest());
 				outputStream = new FileOutputStream(outputFile);
 				IOUtils.write(value + " *" + fileName, outputStream, charset);
 				break;
@@ -217,7 +217,7 @@ public class CodecEngine {
 				value = DigestUtils.md2Hex(input.getBytes(charset));
 				break;
 			case MD4:
-				value = Hex.encodeHexString(MessageDigest.getInstance(CodecAlgorithm.MD4.getName(), MD4_PROVIDER).digest(input.getBytes(charset)));
+				value = Hex.encodeHexString(MessageDigest.getInstance(CodecAlgorithm.MD4.name(), MD4_PROVIDER).digest(input.getBytes(charset)));
 				break;
 			case MD5:
 				value = DigestUtils.md5Hex(input.getBytes(charset));
