@@ -95,10 +95,9 @@ public class CodecConsole extends Codec {
 		/* Execution */
 		try {
 			System.out.println(getEngine().run(stringToProcess));
-			System.out.println();
 		}
 		catch (Exception e) {
-			System.err.println(Resources.get("err.generic", e.getMessage()) + NewLine.SYSTEM_LINE_SEPARATOR);
+			System.err.println(Resources.get("err.generic", e.getMessage()));
 		}
 	}
 
