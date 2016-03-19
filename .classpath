@@ -6,6 +6,7 @@
 	<classpathentry kind="lib" path="lib/albertus-utils-2.0.3.jar" sourcepath="lib/src/albertus-utils-2.0.3-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.10.jar" sourcepath="lib/src/commons-codec-1.10-src.zip"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.4.jar" sourcepath="lib/src/commons-io-2.4-src.zip"/>
+	<classpathentry kind="lib" path="lib/freehep-io-2.2.2.jar" sourcepath="lib/src/freehep-io-2.2.2-sources.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.core.commands_3.6.100.v20140528-1422.jar" sourcepath="lib/src/org.eclipse.core.commands.source_3.6.100.v20140528-1422.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.core.jobs_3.6.1.v20141014-1248.jar" sourcepath="lib/src/org.eclipse.core.jobs.source_3.6.1.v20141014-1248.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar" sourcepath="lib/src/org.eclipse.equinox.common.source_3.6.200.v20130402-1505.jar"/>
