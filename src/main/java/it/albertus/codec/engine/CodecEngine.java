@@ -4,8 +4,6 @@ import it.albertus.codec.resources.Resources;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,8 +22,6 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.mina.proxy.utils.MD4Provider;
-import org.freehep.util.io.ASCII85InputStream;
-import org.freehep.util.io.ASCII85OutputStream;
 
 public class CodecEngine {
 
@@ -196,20 +192,7 @@ public class CodecEngine {
 				value = Base64.encodeBase64String(input.getBytes(charset));
 				break;
 			case ASCII85:
-				ByteArrayInputStream inputStream = new ByteArrayInputStream(input.getBytes(charset));
-				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-				ASCII85OutputStream outputStream = new ASCII85OutputStream(byteArrayOutputStream);
-				try {
-					IOUtils.copyLarge(inputStream, outputStream);
-					outputStream.close();
-					inputStream.close();
-					value = byteArrayOutputStream.toString(charset.name());
-				}
-				catch (Exception e) {
-					IOUtils.closeQuietly(outputStream);
-					IOUtils.closeQuietly(inputStream);
-					throw e;
-				}
+				value = Ascii85.encode(input.getBytes(charset));
 				break;
 			case MD2:
 				value = DigestUtils.md2Hex(input.getBytes(charset));
@@ -256,20 +239,8 @@ public class CodecEngine {
 				value = new String(Base64.decodeBase64(input), charset);
 				break;
 			case ASCII85:
-				ASCII85InputStream inputStream = new ASCII85InputStream(new ByteArrayInputStream(input.getBytes(charset)));
-				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-				try {
-					IOUtils.copyLarge(inputStream, outputStream);
-					outputStream.close();
-					inputStream.close();
-					value = outputStream.toString(charset.name());
-				}
-				catch (Exception e) {
-					IOUtils.closeQuietly(outputStream);
-					IOUtils.closeQuietly(inputStream);
-					throw e;
-				}
-				break;				
+				value = new String(Ascii85.decode(input), charset);
+				break;
 			default:
 				throw new IllegalStateException();
 			}
