@@ -224,7 +224,7 @@ public class CodecEngine {
 				break;
 			case BASE91:
 				value = Base91.encode(input.getBytes(charset));
-				break;				
+				break;
 			case MD2:
 				value = DigestUtils.md2Hex(input.getBytes(charset));
 				break;
