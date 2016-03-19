@@ -58,7 +58,7 @@ public class ProcessFileJob extends Job {
 				final MessageBox messageBox;
 				if (throwable != null) {
 					messageBox = new MessageBox(gui.getShell(), SWT.ICON_ERROR);
-					messageBox.setMessage(throwable.getLocalizedMessage());
+					messageBox.setMessage(Resources.get("msg.file.process.ko.message", throwable.getMessage()));
 				}
 				else {
 					messageBox = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
