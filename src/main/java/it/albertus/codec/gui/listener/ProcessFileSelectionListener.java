@@ -2,7 +2,7 @@ package it.albertus.codec.gui.listener;
 
 import it.albertus.codec.engine.CodecMode;
 import it.albertus.codec.gui.CodecGui;
-import it.albertus.codec.gui.FileJob;
+import it.albertus.codec.gui.ProcessFileJob;
 
 import java.io.File;
 
@@ -48,7 +48,7 @@ public class ProcessFileSelectionListener extends SelectionAdapter {
 				/* Impostazione puntatore del mouse "Occupato" */
 				gui.getShell().setCursor(gui.getShell().getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
 				
-				new FileJob(gui, new File(sourceFileName), new File(destinationFileName)).schedule();
+				new ProcessFileJob(gui, new File(sourceFileName), new File(destinationFileName)).schedule();
 			}
 		}
 	}

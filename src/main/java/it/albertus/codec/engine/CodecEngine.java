@@ -22,6 +22,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.mina.proxy.utils.MD4Provider;
+import org.freehep.util.io.ASCII85OutputStream;
 
 public class CodecEngine {
 
@@ -95,6 +96,10 @@ public class CodecEngine {
 				outputStream = new Base64OutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
 				IOUtils.copyLarge(inputStream, outputStream);
 				break;
+			case ASCII85:
+				outputStream = new ASCII85OutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
+				IOUtils.copyLarge(inputStream, outputStream);
+				break;
 			case MD2:
 				value = DigestUtils.md2Hex(inputStream);
 				outputStream = new FileOutputStream(outputFile);
@@ -135,6 +140,11 @@ public class CodecEngine {
 			}
 		}
 		catch (Exception e) {
+			IOUtils.closeQuietly(outputStream);
+			try {
+				outputFile.delete();
+			}
+			catch (Exception de) {}
 			throw new IllegalStateException(Resources.get("err.cannot.encode", algorithm.getName()), e);
 		}
 		finally {
@@ -163,12 +173,21 @@ public class CodecEngine {
 				inputStream = new Base64InputStream(inputStream);
 				IOUtils.copyLarge(inputStream, outputStream);
 				break;
+			case ASCII85:
+				inputStream = new Ascii85InputStream(inputStream);
+				IOUtils.copyLarge(inputStream, outputStream);
+				break;
 			default:
 				outputFile.delete();
 				throw new IllegalStateException();
 			}
 		}
 		catch (Exception e) {
+			IOUtils.closeQuietly(outputStream);
+			try {
+				outputFile.delete();
+			}
+			catch (Exception de) {}
 			throw new IllegalStateException(Resources.get("err.cannot.decode", algorithm.getName()), e);
 		}
 		finally {

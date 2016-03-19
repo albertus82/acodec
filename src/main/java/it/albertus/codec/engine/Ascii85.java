@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
-import org.freehep.util.io.ASCII85InputStream;
 import org.freehep.util.io.ASCII85OutputStream;
 
 public class Ascii85 {
@@ -16,7 +15,7 @@ public class Ascii85 {
 		final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		final ASCII85OutputStream outputStream = new ASCII85OutputStream(byteArrayOutputStream);
 		try {
-			IOUtils.copyLarge(inputStream, outputStream);
+			IOUtils.copy(inputStream, outputStream);
 			outputStream.close();
 			inputStream.close();
 			value = byteArrayOutputStream.toString();
@@ -31,10 +30,10 @@ public class Ascii85 {
 
 	public static byte[] decode(final String encoded) throws IOException {
 		final byte[] value;
-		final ASCII85InputStream inputStream = new ASCII85InputStream(new ByteArrayInputStream(encoded.getBytes()));
+		final Ascii85InputStream inputStream = new Ascii85InputStream(new ByteArrayInputStream(encoded.getBytes()));
 		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		try {
-			IOUtils.copyLarge(inputStream, outputStream);
+			IOUtils.copy(inputStream, outputStream);
 			outputStream.close();
 			inputStream.close();
 			value = outputStream.toByteArray();
