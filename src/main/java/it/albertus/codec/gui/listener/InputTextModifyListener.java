@@ -51,7 +51,7 @@ public class InputTextModifyListener implements ModifyListener {
 				gui.getOutputText().setForeground(defaultTextColor);
 			}
 		}
-		gui.getOutputText().setText(text);
+		gui.getOutputText().setText(text != null ? text : "");
 	}
 
 }
