@@ -65,19 +65,27 @@ public class CodecConsole extends Codec {
 			return;
 		}
 
-		final String stringToProcess = args[args.length - 1];
+		int expectedArgc = 3;
 
 		/* Options */
 		for (int i = 2; i < args.length; i++) {
-			if (args.length > i + 1 && args[i].length() == 2 && args[i].charAt(0) == '-') {
+			if (args[i].length() == 2 && args[i].charAt(0) == '-') {
 				switch (Character.toLowerCase(args[i].charAt(1))) {
 				case OPTION_CHARSET:
-					charsetName = args[i + 1];
+					if (args.length > i + 1 && i < args.length - 2) {
+						charsetName = args[i + 1];
+						expectedArgc += 2;
+					}
+					else {
+						printHelp();
+						return;
+					}
 					break;
 				case OPTION_FILE:
-					if (args.length > i + 2) {
-						inputFile = new File(args[args.length - 2]).getAbsoluteFile();
-						outputFile = new File(args[args.length - 1]).getAbsoluteFile();
+					if (args.length > i + 2 && i < args.length - 2) {
+						inputFile = new File(args[i + 1]).getAbsoluteFile();
+						outputFile = new File(args[i + 2]).getAbsoluteFile();
+						expectedArgc += 2;
 					}
 					else {
 						printHelp();
@@ -105,6 +113,12 @@ public class CodecConsole extends Codec {
 			}
 		}
 
+		/* Check arguments count */
+		if (expectedArgc != args.length) {
+			printHelp();
+			return;
+		}
+
 		/* Execution */
 		try {
 			if (inputFile != null && outputFile != null) {
@@ -112,7 +126,7 @@ public class CodecConsole extends Codec {
 				System.out.println(result != null ? result + " - " : "" + Resources.get("msg.file.process.ok.message"));
 			}
 			else {
-				System.out.println(getEngine().run(stringToProcess));
+				System.out.println(getEngine().run(args[args.length - 1]));
 			}
 		}
 		catch (Exception e) {
