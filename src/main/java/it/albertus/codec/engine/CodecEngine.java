@@ -78,11 +78,11 @@ public class CodecEngine {
 		OutputStream outputStream = null;
 		final String fileName;
 		try {
-			if (inputFile.getParentFile().getAbsolutePath().equals(outputFile.getParentFile().getAbsolutePath())) {
+			if (inputFile.getParentFile().getCanonicalPath().equals(outputFile.getParentFile().getCanonicalPath())) {
 				fileName = inputFile.getName();
 			}
 			else {
-				fileName = inputFile.getAbsolutePath();
+				fileName = inputFile.getCanonicalPath();
 			}
 			inputStream = new BufferedInputStream(new FileInputStream(inputFile));
 			switch (algorithm) {
