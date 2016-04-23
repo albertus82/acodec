@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/albertus-utils-2.0.3.jar" sourcepath="lib/src/albertus-utils-2.0.3-sources.jar"/>
+	<classpathentry kind="lib" path="lib/albertus-utils-2.0.4.jar" sourcepath="lib/src/albertus-utils-2.0.4-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.10.jar" sourcepath="lib/src/commons-codec-1.10-src.zip"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.4.jar" sourcepath="lib/src/commons-io-2.4-src.zip"/>
 	<classpathentry kind="lib" path="lib/freehep-io-2.2.2.jar" sourcepath="lib/src/freehep-io-2.2.2-sources.jar"/>
