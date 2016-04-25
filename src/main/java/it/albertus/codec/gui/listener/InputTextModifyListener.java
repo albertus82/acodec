@@ -18,8 +18,8 @@ public class InputTextModifyListener implements ModifyListener {
 
 	public InputTextModifyListener(final CodecGui gui) {
 		this.gui = gui;
-		this.defaultTextColor = gui.getOutputText().getForeground();
-		this.inactiveTextColor = gui.getOutputText().getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
+		this.defaultTextColor = gui.getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
+		this.inactiveTextColor = gui.getShell().getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
 	}
 
 	@Override
