@@ -79,7 +79,9 @@ public class CodecGui extends Codec implements IShellProvider {
 			}
 			outputText.setLayoutData(outputTextGridData);
 		}
-		outputText.setBackground(inputText.getBackground()); // Same as input!
+		if (SWT.getPlatform().toLowerCase().startsWith("win")) {
+			outputText.setBackground(inputText.getBackground());
+		}
 		outputText.addKeyListener(new TextKeyListener(outputText));
 
 		/* Codec combo */
