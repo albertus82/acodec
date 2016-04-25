@@ -79,7 +79,7 @@ public class CodecGui extends Codec implements IShellProvider {
 			}
 			outputText.setLayoutData(outputTextGridData);
 		}
-		outputText.setBackground(inputText.getBackground());
+		outputText.setBackground(inputText.getBackground()); // Same as input!
 		outputText.addKeyListener(new TextKeyListener(outputText));
 
 		/* Codec combo */
