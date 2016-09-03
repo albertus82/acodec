@@ -1,6 +1,6 @@
 package it.albertus.codec.engine;
 
-import it.albertus.codec.resources.Resources;
+import it.albertus.codec.resources.Messages;
 import it.albertus.util.NewLine;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class Base16 {
 			return Base16Encoder.decode(encoded);
 		}
 		else {
-			throw new IllegalArgumentException(Resources.get("err.invalid.input"));
+			throw new IllegalArgumentException(Messages.get("err.invalid.input"));
 		}
 	}
 

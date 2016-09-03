@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class Resources {
+public class Messages {
 
-	private static final String BASE_NAME = Resources.class.getName().toLowerCase();
+	private static final String BASE_NAME = Messages.class.getName().toLowerCase();
 
 	private static ResourceBundle resources = ResourceBundle.getBundle(BASE_NAME, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
 

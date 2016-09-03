@@ -3,7 +3,7 @@ package it.albertus.codec.console;
 import it.albertus.codec.Codec;
 import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecMode;
-import it.albertus.codec.resources.Resources;
+import it.albertus.codec.resources.Messages;
 import it.albertus.util.NewLine;
 import it.albertus.util.Version;
 
@@ -46,7 +46,7 @@ public class CodecConsole extends Codec {
 			}
 		}
 		if (mode == null) {
-			System.err.println(Resources.get("err.invalid.mode", args[0].trim()) + NewLine.SYSTEM_LINE_SEPARATOR);
+			System.err.println(Messages.get("err.invalid.mode", args[0].trim()) + NewLine.SYSTEM_LINE_SEPARATOR);
 			printHelp();
 			return;
 		}
@@ -60,7 +60,7 @@ public class CodecConsole extends Codec {
 			}
 		}
 		if (algorithm == null) {
-			System.err.println(Resources.get("err.invalid.algorithm", algorithmArg) + NewLine.SYSTEM_LINE_SEPARATOR);
+			System.err.println(Messages.get("err.invalid.algorithm", algorithmArg) + NewLine.SYSTEM_LINE_SEPARATOR);
 			printHelp();
 			return;
 		}
@@ -93,7 +93,7 @@ public class CodecConsole extends Codec {
 					}
 					break;
 				default:
-					System.err.println(Resources.get("err.invalid.option", args[i].charAt(1)) + NewLine.SYSTEM_LINE_SEPARATOR);
+					System.err.println(Messages.get("err.invalid.option", args[i].charAt(1)) + NewLine.SYSTEM_LINE_SEPARATOR);
 					printHelp();
 					return;
 				}
@@ -107,7 +107,7 @@ public class CodecConsole extends Codec {
 				getEngine().setCharset(Charset.forName(charsetName));
 			}
 			catch (Exception e) {
-				System.err.println(Resources.get("err.invalid.charset", charsetName) + NewLine.SYSTEM_LINE_SEPARATOR);
+				System.err.println(Messages.get("err.invalid.charset", charsetName) + NewLine.SYSTEM_LINE_SEPARATOR);
 				printHelp();
 				return;
 			}
@@ -123,24 +123,24 @@ public class CodecConsole extends Codec {
 		try {
 			if (inputFile != null && outputFile != null) {
 				final String result = getEngine().run(inputFile, outputFile);
-				System.out.println(result != null ? result + " - " : "" + Resources.get("msg.file.process.ok.message"));
+				System.out.println(result != null ? result + " - " : "" + Messages.get("msg.file.process.ok.message"));
 			}
 			else {
 				System.out.println(getEngine().run(args[args.length - 1]));
 			}
 		}
 		catch (Exception e) {
-			System.err.println(Resources.get("err.generic", e.getMessage()));
+			System.err.println(Messages.get("err.generic", e.getMessage()));
 		}
 	}
 
 	private void printHelp() {
 		/* Usage */
-		final StringBuilder help = new StringBuilder(Resources.get("msg.help.usage", OPTION_CHARSET, OPTION_FILE));
+		final StringBuilder help = new StringBuilder(Messages.get("msg.help.usage", OPTION_CHARSET, OPTION_FILE));
 		help.append(NewLine.SYSTEM_LINE_SEPARATOR).append(NewLine.SYSTEM_LINE_SEPARATOR);
 
 		/* Modes */
-		help.append(Resources.get("msg.help.modes")).append(NewLine.SYSTEM_LINE_SEPARATOR);
+		help.append(Messages.get("msg.help.modes")).append(NewLine.SYSTEM_LINE_SEPARATOR);
 		for (final CodecMode mode : CodecMode.values()) {
 			help.append("    ").append(mode.getAbbreviation()).append("    ").append(mode.getName()).append(NewLine.SYSTEM_LINE_SEPARATOR);
 		}
@@ -148,7 +148,7 @@ public class CodecConsole extends Codec {
 
 		/* Algorithms */
 		{
-			final StringBuilder algorithms = new StringBuilder(Resources.get("msg.help.algorithms"));
+			final StringBuilder algorithms = new StringBuilder(Messages.get("msg.help.algorithms"));
 			algorithms.append(' ');
 			int cursorPosition = algorithms.length();
 			final int offset = cursorPosition;
@@ -170,7 +170,7 @@ public class CodecConsole extends Codec {
 
 		/* Charsets */
 		{
-			final StringBuilder charsets = new StringBuilder(Resources.get("msg.help.charsets"));
+			final StringBuilder charsets = new StringBuilder(Messages.get("msg.help.charsets"));
 			charsets.append(' ');
 			int cursorPosition = charsets.length();
 			final int offset = cursorPosition;
@@ -187,15 +187,15 @@ public class CodecConsole extends Codec {
 				cursorPosition += toPrint.length();
 			}
 			charsets.replace(charsets.length() - 2, charsets.length(), NewLine.SYSTEM_LINE_SEPARATOR);
-			charsets.append(' ').append(Resources.get("msg.help.default.charset", Charset.defaultCharset().name()));
+			charsets.append(' ').append(Messages.get("msg.help.default.charset", Charset.defaultCharset().name()));
 			help.append(charsets);
 			help.append(NewLine.SYSTEM_LINE_SEPARATOR).append(NewLine.SYSTEM_LINE_SEPARATOR);
 		}
 
 		/* Example */
-		help.append(Resources.get("msg.help.example"));
+		help.append(Messages.get("msg.help.example"));
 
-		System.out.println(Resources.get("msg.application.name") + ' ' + Resources.get("msg.version", Version.getInstance().getNumber(), Version.getInstance().getDate()) + " [" + Resources.get("msg.website") + ']'
+		System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", Version.getInstance().getNumber(), Version.getInstance().getDate()) + " [" + Messages.get("msg.website") + ']'
 				+ NewLine.SYSTEM_LINE_SEPARATOR + NewLine.SYSTEM_LINE_SEPARATOR + help.toString().trim());
 	}
 

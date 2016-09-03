@@ -1,6 +1,6 @@
 package it.albertus.codec.engine;
 
-import it.albertus.codec.resources.Resources;
+import it.albertus.codec.resources.Messages;
 
 public enum CodecMode {
 	ENCODE("lbl.mode.encode", 'e'),
@@ -10,7 +10,7 @@ public enum CodecMode {
 	private final char abbreviation;
 
 	private CodecMode(final String key, final char abbreviation) {
-		this.label = Resources.get(key);
+		this.label = Messages.get(key);
 		this.abbreviation = abbreviation;
 	}
 

@@ -10,7 +10,7 @@ import it.albertus.codec.gui.listener.InputTextModifyListener;
 import it.albertus.codec.gui.listener.ModeRadioSelectionListener;
 import it.albertus.codec.gui.listener.ProcessFileSelectionListener;
 import it.albertus.codec.gui.listener.TextKeyListener;
-import it.albertus.codec.resources.Resources;
+import it.albertus.codec.resources.Messages;
 
 import java.nio.charset.Charset;
 import java.util.EnumMap;
@@ -47,12 +47,12 @@ public class CodecGui extends Codec implements IShellProvider {
 	public CodecGui(final Display display) {
 		shell = new Shell(display);
 		shell.setImages(Images.MAIN_ICONS);
-		shell.setText(Resources.get("msg.application.name"));
+		shell.setText(Messages.get("msg.application.name"));
 		shell.setLayout(new GridLayout(5, false));
 
 		/* Input text */
 		final Label inputLabel = new Label(shell, SWT.NONE);
-		inputLabel.setText(Resources.get("lbl.input"));
+		inputLabel.setText(Messages.get("lbl.input"));
 		inputLabel.setLayoutData(new GridData());
 
 		inputText = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
@@ -68,7 +68,7 @@ public class CodecGui extends Codec implements IShellProvider {
 
 		/* Output text */
 		final Label outputLabel = new Label(shell, SWT.NONE);
-		outputLabel.setText(Resources.get("lbl.output"));
+		outputLabel.setText(Messages.get("lbl.output"));
 		outputLabel.setLayoutData(new GridData());
 
 		outputText = new Text(shell, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
@@ -86,7 +86,7 @@ public class CodecGui extends Codec implements IShellProvider {
 
 		/* Codec combo */
 		final Label algorithmLabel = new Label(shell, SWT.NONE);
-		algorithmLabel.setText(Resources.get("lbl.algorithm"));
+		algorithmLabel.setText(Messages.get("lbl.algorithm"));
 		algorithmLabel.setLayoutData(new GridData());
 
 		algorithmCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -95,7 +95,7 @@ public class CodecGui extends Codec implements IShellProvider {
 
 		/* Charset combo */
 		final Label charsetLabel = new Label(shell, SWT.NONE);
-		charsetLabel.setText(Resources.get("lbl.charset"));
+		charsetLabel.setText(Messages.get("lbl.charset"));
 		charsetLabel.setLayoutData(new GridData());
 
 		charsetCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -106,13 +106,13 @@ public class CodecGui extends Codec implements IShellProvider {
 		/* File */
 		processFileButton = new Button(shell, SWT.NULL);
 		processFileButton.setEnabled(false);
-		processFileButton.setText(Resources.get("lbl.file.process"));
+		processFileButton.setText(Messages.get("lbl.file.process"));
 		processFileButton.setLayoutData(new GridData());
 		processFileButton.addSelectionListener(new ProcessFileSelectionListener(this));
 
 		/* Mode radio */
 		final Label modeLabel = new Label(shell, SWT.NONE);
-		modeLabel.setText(Resources.get("lbl.mode"));
+		modeLabel.setText(Messages.get("lbl.mode"));
 		modeLabel.setLayoutData(new GridData());
 
 		final Composite radioComposite = new Composite(shell, SWT.NONE);
@@ -127,7 +127,7 @@ public class CodecGui extends Codec implements IShellProvider {
 		}
 
 		aboutButton = new Button(shell, SWT.NULL);
-		aboutButton.setText(Resources.get("lbl.about"));
+		aboutButton.setText(Messages.get("lbl.about"));
 		aboutButton.setLayoutData(new GridData());
 		aboutButton.addSelectionListener(new AboutSelectionListener(this));
 

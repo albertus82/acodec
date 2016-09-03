@@ -1,6 +1,6 @@
 package it.albertus.codec.gui;
 
-import it.albertus.codec.resources.Resources;
+import it.albertus.codec.resources.Messages;
 
 import java.io.File;
 
@@ -58,13 +58,13 @@ public class ProcessFileJob extends Job {
 				final MessageBox messageBox;
 				if (throwable != null) {
 					messageBox = new MessageBox(gui.getShell(), SWT.ICON_ERROR);
-					messageBox.setMessage(Resources.get("msg.file.process.ko.message", throwable.getMessage()));
+					messageBox.setMessage(Messages.get("msg.file.process.ko.message", throwable.getMessage()));
 				}
 				else {
 					messageBox = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
-					messageBox.setMessage(Resources.get("msg.file.process.ok.message"));
+					messageBox.setMessage(Messages.get("msg.file.process.ok.message"));
 				}
-				messageBox.setText(Resources.get("msg.application.name"));
+				messageBox.setText(Messages.get("msg.application.name"));
 				messageBox.open();
 			}
 		});

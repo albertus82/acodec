@@ -1,6 +1,6 @@
 package it.albertus.codec.engine;
 
-import it.albertus.codec.resources.Resources;
+import it.albertus.codec.resources.Messages;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -36,7 +36,7 @@ public class CodecEngine {
 
 	public String run(final String input) {
 		if (input.length() == 0) {
-			throw new IllegalStateException(Resources.get("msg.missing.input"));
+			throw new IllegalStateException(Messages.get("msg.missing.input"));
 		}
 		if (algorithm != null) {
 			switch (mode) {
@@ -49,13 +49,13 @@ public class CodecEngine {
 			}
 		}
 		else {
-			throw new IllegalStateException(Resources.get("msg.missing.algorithm"));
+			throw new IllegalStateException(Messages.get("msg.missing.algorithm"));
 		}
 	}
 
 	public String run(final File inputFile, final File outputFile) {
 		if (!inputFile.exists()) {
-			throw new IllegalStateException(Resources.get("msg.missing.input"));
+			throw new IllegalStateException(Messages.get("msg.missing.input"));
 		}
 		if (algorithm != null) {
 			switch (mode) {
@@ -68,7 +68,7 @@ public class CodecEngine {
 			}
 		}
 		else {
-			throw new IllegalStateException(Resources.get("msg.missing.algorithm"));
+			throw new IllegalStateException(Messages.get("msg.missing.algorithm"));
 		}
 	}
 
@@ -151,7 +151,7 @@ public class CodecEngine {
 				outputFile.delete();
 			}
 			catch (Exception de) {}
-			throw new IllegalStateException(Resources.get("err.cannot.encode", algorithm.getName()), e);
+			throw new IllegalStateException(Messages.get("err.cannot.encode", algorithm.getName()), e);
 		}
 		finally {
 			IOUtils.closeQuietly(outputStream);
@@ -197,7 +197,7 @@ public class CodecEngine {
 				outputFile.delete();
 			}
 			catch (Exception de) {}
-			throw new IllegalStateException(Resources.get("err.cannot.decode", algorithm.getName()), e);
+			throw new IllegalStateException(Messages.get("err.cannot.decode", algorithm.getName()), e);
 		}
 		finally {
 			IOUtils.closeQuietly(outputStream);
@@ -251,7 +251,7 @@ public class CodecEngine {
 			}
 		}
 		catch (Exception e) {
-			throw new IllegalStateException(Resources.get("err.cannot.encode", algorithm.getName()), e);
+			throw new IllegalStateException(Messages.get("err.cannot.encode", algorithm.getName()), e);
 		}
 		return value;
 	}
@@ -280,7 +280,7 @@ public class CodecEngine {
 			}
 		}
 		catch (Exception e) {
-			throw new IllegalStateException(Resources.get("err.cannot.decode", algorithm.getName()), e);
+			throw new IllegalStateException(Messages.get("err.cannot.decode", algorithm.getName()), e);
 		}
 		return value;
 	}
