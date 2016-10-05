@@ -1,11 +1,13 @@
 package it.albertus.codec;
 
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import it.albertus.codec.console.CodecConsole;
 import it.albertus.codec.engine.CodecEngine;
 import it.albertus.codec.gui.CodecGui;
-
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import it.albertus.codec.resources.Messages;
+import it.albertus.util.Version;
 
 public class Codec {
 
@@ -20,7 +22,9 @@ public class Codec {
 			new CodecConsole().execute(args);
 		}
 		else {
-			final Display display = new Display();
+			Display.setAppName(Messages.get("msg.application.name"));
+			Display.setAppVersion(Version.getInstance().getNumber());
+			final Display display = Display.getDefault();
 			final Shell shell = new CodecGui(display).getShell();
 			shell.open();
 			while (!shell.isDisposed()) {
