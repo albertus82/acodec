@@ -1,20 +1,9 @@
 package it.albertus.codec.gui;
 
-import it.albertus.codec.Codec;
-import it.albertus.codec.engine.CodecAlgorithm;
-import it.albertus.codec.engine.CodecMode;
-import it.albertus.codec.gui.listener.AboutSelectionListener;
-import it.albertus.codec.gui.listener.AlgorithmComboSelectionListener;
-import it.albertus.codec.gui.listener.CharsetComboSelectionListener;
-import it.albertus.codec.gui.listener.InputTextModifyListener;
-import it.albertus.codec.gui.listener.ModeRadioSelectionListener;
-import it.albertus.codec.gui.listener.ProcessFileSelectionListener;
-import it.albertus.codec.gui.listener.TextKeyListener;
-import it.albertus.codec.resources.Messages;
-
 import java.nio.charset.Charset;
 import java.util.EnumMap;
 
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -27,6 +16,18 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import it.albertus.codec.Codec;
+import it.albertus.codec.engine.CodecAlgorithm;
+import it.albertus.codec.engine.CodecMode;
+import it.albertus.codec.gui.listener.AboutSelectionListener;
+import it.albertus.codec.gui.listener.AlgorithmComboSelectionListener;
+import it.albertus.codec.gui.listener.CharsetComboSelectionListener;
+import it.albertus.codec.gui.listener.InputTextModifyListener;
+import it.albertus.codec.gui.listener.ModeRadioSelectionListener;
+import it.albertus.codec.gui.listener.ProcessFileSelectionListener;
+import it.albertus.codec.gui.listener.TextKeyListener;
+import it.albertus.codec.resources.Messages;
 
 public class CodecGui extends Codec implements IShellProvider {
 
@@ -79,7 +80,7 @@ public class CodecGui extends Codec implements IShellProvider {
 			}
 			outputText.setLayoutData(outputTextGridData);
 		}
-		if (SWT.getPlatform().toLowerCase().startsWith("win")) {
+		if (Util.isWindows()) {
 			outputText.setBackground(inputText.getBackground());
 		}
 		outputText.addKeyListener(new TextKeyListener(outputText));
