@@ -1,11 +1,11 @@
 package it.albertus.codec.gui.listener;
 
-import it.albertus.codec.gui.Utils;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Text;
+
+import it.albertus.jface.SwtUtils;
 
 public class TextKeyListener extends KeyAdapter {
 
@@ -18,7 +18,7 @@ public class TextKeyListener extends KeyAdapter {
 	@Override
 	public void keyPressed(final KeyEvent e) {
 		// Supporto CTRL+A per "Seleziona tutto"...
-		if (e.stateMask == SWT.MOD1 && e.keyCode == Utils.KEY_SELECT_ALL) {
+		if (e.stateMask == SWT.MOD1 && e.keyCode == SwtUtils.KEY_SELECT_ALL) {
 			text.selectAll();
 		}
 	}

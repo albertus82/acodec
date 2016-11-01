@@ -20,14 +20,16 @@ import org.eclipse.swt.widgets.Text;
 import it.albertus.codec.Codec;
 import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecMode;
-import it.albertus.codec.gui.listener.AboutSelectionListener;
+import it.albertus.codec.gui.listener.AboutListener;
 import it.albertus.codec.gui.listener.AlgorithmComboSelectionListener;
 import it.albertus.codec.gui.listener.CharsetComboSelectionListener;
+import it.albertus.codec.gui.listener.CloseListener;
 import it.albertus.codec.gui.listener.InputTextModifyListener;
 import it.albertus.codec.gui.listener.ModeRadioSelectionListener;
 import it.albertus.codec.gui.listener.ProcessFileSelectionListener;
 import it.albertus.codec.gui.listener.TextKeyListener;
 import it.albertus.codec.resources.Messages;
+import it.albertus.jface.cocoa.CocoaUIEnhancer;
 
 public class CodecGui extends Codec implements IShellProvider {
 
@@ -50,6 +52,16 @@ public class CodecGui extends Codec implements IShellProvider {
 		shell.setImages(Images.MAIN_ICONS);
 		shell.setText(Messages.get("msg.application.name"));
 		shell.setLayout(new GridLayout(5, false));
+
+		final AboutListener aboutListener = new AboutListener(this);
+		if (Util.isCocoa()) {
+			try {
+				new CocoaUIEnhancer(display).hookApplicationMenu(new CloseListener(this), aboutListener, null);
+			}
+			catch (final Throwable t) {
+				t.printStackTrace();
+			}
+		}
 
 		/* Input text */
 		final Label inputLabel = new Label(shell, SWT.NONE);
@@ -130,7 +142,7 @@ public class CodecGui extends Codec implements IShellProvider {
 		aboutButton = new Button(shell, SWT.NULL);
 		aboutButton.setText(Messages.get("lbl.about"));
 		aboutButton.setLayoutData(new GridData());
-		aboutButton.addSelectionListener(new AboutSelectionListener(this));
+		aboutButton.addSelectionListener(aboutListener);
 
 		/* Listener */
 		algorithmCombo.addSelectionListener(new AlgorithmComboSelectionListener(this));
