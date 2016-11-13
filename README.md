@@ -5,7 +5,7 @@ Codec
 
 **Graphical user interface available for Windows, Linux & OS X.**
 
-![Screenshot](https://cloud.githubusercontent.com/assets/8672431/13903518/19a017d4-ee7f-11e5-81ea-5153a34c33a1.png)
+![Screenshot](https://cloud.githubusercontent.com/assets/8672431/20244550/45bb3182-a987-11e6-956d-5740d2e8f3ad.png)
 
 Command line reference:
 
