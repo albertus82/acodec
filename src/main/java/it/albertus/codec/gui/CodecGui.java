@@ -3,6 +3,7 @@ package it.albertus.codec.gui;
 import java.nio.charset.Charset;
 import java.util.EnumMap;
 
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
@@ -120,7 +121,7 @@ public class CodecGui extends Codec implements IShellProvider {
 		processFileButton = new Button(shell, SWT.NULL);
 		processFileButton.setEnabled(false);
 		processFileButton.setText(Messages.get("lbl.file.process"));
-		processFileButton.setLayoutData(new GridData());
+		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).applyTo(processFileButton);
 		processFileButton.addSelectionListener(new ProcessFileSelectionListener(this));
 
 		/* Mode radio */
@@ -141,7 +142,7 @@ public class CodecGui extends Codec implements IShellProvider {
 
 		aboutButton = new Button(shell, SWT.NULL);
 		aboutButton.setText(Messages.get("lbl.about"));
-		aboutButton.setLayoutData(new GridData());
+		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).applyTo(aboutButton);
 		aboutButton.addSelectionListener(aboutListener);
 
 		/* Listener */
