@@ -25,12 +25,10 @@
 	<condition property="innosetupcompiler" value="${innosetup.dir}\ISCC.exe">
 		<os family="windows" />
 	</condition>
-	<condition property="innosetupcompiler" value="${wine} ${innosetup.dir}/ISCC.exe">
-		<os family="unix" />
-	</condition>
-
-	<!-- Wine (/opt/wine-staging/bin/) -->
 	<condition property="wine" value="wine cmd.exe /c">
+		<os family="unix" />
+	</condition>	
+	<condition property="innosetupcompiler" value="${wine} ${innosetup.dir}/ISCC.exe">
 		<os family="unix" />
 	</condition>
 
