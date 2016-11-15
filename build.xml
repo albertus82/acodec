@@ -21,8 +21,24 @@
 	</condition>
 	<chmod perm="+x" file="${launch4j.bindir}/*" failonerror="false" failifexecutionfails="false" ignoremissing="true" />
 
+	<!-- InnoSetup Compiler -->
+	<condition property="innosetupcompiler" value="${innosetup.dir}\ISCC.exe">
+		<os family="windows" />
+	</condition>
+	<condition property="innosetupcompiler" value="${wine} ${innosetup.dir}/ISCC.exe">
+		<os family="unix" />
+	</condition>
+
+	<!-- Wine (/opt/wine-staging/bin/) -->
+	<condition property="wine" value="wine cmd.exe /c">
+		<os family="unix" />
+	</condition>
+
 	<target name="clean">
 		<delete dir="${build.directory}" />
+        <exec executable="${innosetupcompiler}" >
+			<arg value="/?" />
+        </exec>
 	</target>
 
 	<target name="compile" depends="clean">
