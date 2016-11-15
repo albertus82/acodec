@@ -34,7 +34,8 @@
 
 	<target name="clean">
 		<delete dir="${build.directory}" />
-        <exec executable="${innosetupcompiler}" >
+        <exec executable="${wine}" >
+        	<arg value="${innosetup.dir}/ISCC.exe" />
 			<arg value="/?" />
         </exec>
 	</target>
