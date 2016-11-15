@@ -25,7 +25,7 @@
 	<condition property="innosetupcompiler" value="${innosetup.dir}\ISCC.exe">
 		<os family="windows" />
 	</condition>
-	<condition property="wine" value="wine cmd.exe /c">
+	<condition property="wine" value="wine">
 		<os family="unix" />
 	</condition>	
 	<condition property="innosetupcompiler" value="${wine} ${innosetup.dir}/ISCC.exe">
