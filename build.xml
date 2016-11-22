@@ -393,6 +393,8 @@
 
 			[Icons]
 			Name: "{group}\${name}"; Filename: "{app}\${artifactId}.exe"
+			Name: "{commondesktop}\${name}"; Filename: "{app}\${artifactId}.exe"
+			Name: "{group}\Uninstall ${name}"; Filename: "{uninstallexe}"
 		</echo>
 
 		<exec osfamily="windows" executable="${innosetup.dir}/ISCC.exe">
@@ -432,6 +434,8 @@
 
 			[Icons]
 			Name: "{group}\${name}"; Filename: "{app}\${artifactId}.exe"
+			Name: "{commondesktop}\${name}"; Filename: "{app}\${artifactId}.exe"
+			Name: "{group}\Uninstall ${name}"; Filename: "{uninstallexe}"
 		</echo>
 
 		<exec osfamily="windows" executable="${innosetup.dir}/ISCC.exe">
