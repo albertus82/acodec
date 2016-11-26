@@ -91,14 +91,16 @@ public class MD4 extends MessageDigestSpi {
      *
      * @return the digest length in bytes.
      */
-    protected int engineGetDigestLength() {
+    @Override
+	protected int engineGetDigestLength() {
         return BYTE_DIGEST_LENGTH;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected void engineUpdate(byte b) {
+    @Override
+	protected void engineUpdate(byte b) {
         int pos = (int) (msgLength % BYTE_BLOCK_LENGTH);
         buffer[pos] = b;
         msgLength++;
@@ -112,7 +114,8 @@ public class MD4 extends MessageDigestSpi {
     /**
      * {@inheritDoc}
      */
-    protected void engineUpdate(byte[] b, int offset, int len) {
+    @Override
+	protected void engineUpdate(byte[] b, int offset, int len) {
         int pos = (int) (msgLength % BYTE_BLOCK_LENGTH);
         int nbOfCharsToFillBuf = BYTE_BLOCK_LENGTH - pos;
         int blkStart = 0;
@@ -138,7 +141,8 @@ public class MD4 extends MessageDigestSpi {
     /**
      * {@inheritDoc}
      */
-    protected byte[] engineDigest() {
+    @Override
+	protected byte[] engineDigest() {
         byte[] p = pad();
         engineUpdate(p, 0, p.length);
         byte[] digest = { (byte) a, (byte) (a >>> 8), (byte) (a >>> 16), (byte) (a >>> 24), (byte) b, (byte) (b >>> 8),
@@ -153,7 +157,8 @@ public class MD4 extends MessageDigestSpi {
     /**
      * {@inheritDoc}
      */
-    protected int engineDigest(byte[] buf, int offset, int len) throws DigestException {
+    @Override
+	protected int engineDigest(byte[] buf, int offset, int len) throws DigestException {
         if (offset < 0 || offset + len >= buf.length) {
             throw new DigestException("Wrong offset or not enough space to store the digest");
         }
@@ -165,7 +170,8 @@ public class MD4 extends MessageDigestSpi {
     /**
      * {@inheritDoc}
      */
-    protected void engineReset() {
+    @Override
+	protected void engineReset() {
         a = A;
         b = B;
         c = C;
