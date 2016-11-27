@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE project>
-<project name="Codec" default="release">
+<project name="Codec" default="all">
 
 	<property environment="env" />
 	<property name="env.JRE6_HOME" value="${env.JAVA_HOME}/../jdk1.6.0_45/jre" />
@@ -25,7 +25,7 @@
 		<delete dir="${build.directory}" />
 	</target>
 
-	<target name="compile" depends="clean">
+	<target name="compile">
 		<mkdir dir="${build.outputDirectory}" />
 		<javac srcdir="${build.sourceDirectory}" destdir="${build.outputDirectory}" source="${build.compiler.source}" target="${build.compiler.target}" debug="true" includeantruntime="false">
 			<classpath>
@@ -296,7 +296,7 @@
 		</jar>
 	</target>
 
-	<target name="release" depends="jar">
+	<target name="dist" depends="jar">
 		<!-- Mac OS X -->
 		<mkdir dir="${build.directory}/bundle/cocoa-macosx" />
 		<jarbundler vmoptions="${macosx.vmoptions}" dir="${build.directory}/bundle/cocoa-macosx" name="${name}" mainclass="${build.jar.archive.manifest.mainClass}" startonmainthread="true" version="${version.number}" icon="${build.distDirectory}/cocoa-macosx/${artifactId}/${artifactId}.icns" usejavaxkey="true" jvmversion="${build.compiler.target}+" stubfile="${jarbundler.dir}/JavaApplicationStub" highresolutioncapable="true">
@@ -309,7 +309,7 @@
 		<copy todir="${build.directory}/bundle/cocoa-macosx/${name}.app/Contents/SharedSupport">
 			<fileset refid="docs" />
 		</copy>
-		<tar destfile="${build.releaseDirectory}/${artifactId}-${version.number}-cocoa-macosx-bin.tar.gz" compression="gzip">
+		<tar destfile="${build.releaseDirectory}/${artifactId}-${version.number}-cocoa-macosx-app.tar.gz" compression="gzip">
 			<tarfileset dir="${build.directory}/bundle/cocoa-macosx" filemode="755">
 				<include name="${name}.app/Contents/MacOS/*" />
 				<include name="${name}.app/Contents/Resources/Java/*.command" />
@@ -332,7 +332,7 @@
 		<copy todir="${build.directory}/bundle/cocoa-macosx-x86_64/${name}.app/Contents/SharedSupport">
 			<fileset refid="docs" />
 		</copy>
-		<tar destfile="${build.releaseDirectory}/${artifactId}-${version.number}-cocoa-macosx-x86_64-bin.tar.gz" compression="gzip">
+		<tar destfile="${build.releaseDirectory}/${artifactId}-${version.number}-cocoa-macosx-x86_64-app.tar.gz" compression="gzip">
 			<tarfileset dir="${build.directory}/bundle/cocoa-macosx-x86_64" filemode="755">
 				<include name="${name}.app/Contents/MacOS/*" />
 				<include name="${name}.app/Contents/Resources/Java/*.command" />
@@ -377,7 +377,54 @@
 				<versionInfo fileversion="${version.number}.0" txtfileversion="${version.number}" filedescription="${name}" copyright="${name}" productversion="${version.number}.0" txtproductversion="${version.number}" productname="${name}" internalname="${artifactId}" originalfilename="${artifactId}.exe" />
 			</config>
 		</launch4j>
-		<zip destfile="${build.releaseDirectory}/${artifactId}-${version.number}-win32-win32-x86-bin.zip" basedir="${build.distDirectory}/win32-win32-x86" level="9" />
+		<echo file="${build.distDirectory}/win32-win32-x86/setup.iss">
+			[Setup]
+			AppName=${name}
+			AppVersion=${version.number}
+			AppId=${innosetup.AppId.x86}
+			AppPublisherURL=${innosetup.AppPublisherURL}
+			AppSupportURL=${innosetup.AppSupportURL}
+			AppUpdatesURL=${innosetup.AppUpdatesURL}
+			DefaultDirName={pf}\${name}
+			DefaultGroupName=${name}
+			UninstallDisplayIcon={app}\${artifactId}.exe
+			Compression=lzma2
+			SolidCompression=yes
+			ArchitecturesAllowed=x86
+
+			[Languages]
+			Name: "English"; MessagesFile: "compiler:Default.isl"; LicenseFile: "${artifactId}\LICENSE.txt"
+			Name: "Italiano"; MessagesFile: "compiler:Languages\Italian.isl"; LicenseFile: "${artifactId}\LICENSE.txt"
+
+			[Run]
+			Filename: "{app}\${artifactId}.exe"; Description: "{cm:LaunchProgram,${name}}"; Flags: nowait postinstall skipifsilent
+
+			[Tasks]
+			Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
+			[Icons]
+			Name: "{group}\${name}"; Filename: "{app}\${artifactId}.exe"
+			Name: "{group}\{cm:UninstallProgram,${name}}"; Filename: "{uninstallexe}"
+			Name: "{userdesktop}\${name}"; Filename: "{app}\${artifactId}.exe"; Tasks: desktopicon
+
+			[InstallDelete]
+			Type: files; Name: {app}\lib\*.jar
+
+			[Files]
+			Source: "${artifactId}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+		</echo>
+
+		<exec osfamily="windows" executable="${innosetup.dir}/ISCC.exe">
+			<arg value="${build.distDirectory}/win32-win32-x86/setup.iss" />
+			<arg value="/O${build.releaseDirectory}" />
+			<arg value="/F${artifactId}-${version.number}-win32-win32-x86-setup" />
+		</exec>
+		<exec osfamily="unix" executable="wine">
+			<arg value="${innosetup.dir}/ISCC.exe" />
+			<arg value="${build.distDirectory}/win32-win32-x86/setup.iss" />
+			<arg value="/O${build.releaseDirectory}" />
+			<arg value="/F${artifactId}-${version.number}-win32-win32-x86-setup" />
+		</exec>
 
 		<launch4j bindir="${launch4j.bindir}">
 			<config outfile="${build.distDirectory}/win32-win32-x86_64/${artifactId}/${artifactId}.exe" jarpath="${artifactId}.jar" headertype="${launch4j.headerType}" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir="." icon="${icons.directory}/main.ico">
@@ -387,7 +434,55 @@
 				<versionInfo fileversion="${version.number}.0" txtfileversion="${version.number}" filedescription="${name}" copyright="${name}" productversion="${version.number}.0" txtproductversion="${version.number}" productname="${name}" internalname="${artifactId}" originalfilename="${artifactId}.exe" />
 			</config>
 		</launch4j>
-		<zip destfile="${build.releaseDirectory}/${artifactId}-${version.number}-win32-win32-x86_64-bin.zip" basedir="${build.distDirectory}/win32-win32-x86_64" level="9" />
+		<echo file="${build.distDirectory}/win32-win32-x86_64/setup.iss">
+			[Setup]
+			AppName=${name}
+			AppVersion=${version.number}
+			AppId=${innosetup.AppId.x64}
+			AppPublisherURL=${innosetup.AppPublisherURL}
+			AppSupportURL=${innosetup.AppSupportURL}
+			AppUpdatesURL=${innosetup.AppUpdatesURL}
+			DefaultDirName={pf}\${name}
+			DefaultGroupName=${name}
+			UninstallDisplayIcon={app}\${artifactId}.exe
+			Compression=lzma2
+			SolidCompression=yes
+			ArchitecturesAllowed=x64
+			ArchitecturesInstallIn64BitMode=x64
+
+			[Languages]
+			Name: "English"; MessagesFile: "compiler:Default.isl"; LicenseFile: "${artifactId}\LICENSE.txt"
+			Name: "Italiano"; MessagesFile: "compiler:Languages\Italian.isl"; LicenseFile: "${artifactId}\LICENSE.txt"
+
+			[Run]
+			Filename: "{app}\${artifactId}.exe"; Description: "{cm:LaunchProgram,${name}}"; Flags: nowait postinstall skipifsilent
+
+			[Tasks]
+			Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
+			[Icons]
+			Name: "{group}\${name}"; Filename: "{app}\${artifactId}.exe"
+			Name: "{group}\{cm:UninstallProgram,${name}}"; Filename: "{uninstallexe}"
+			Name: "{userdesktop}\${name}"; Filename: "{app}\${artifactId}.exe"; Tasks: desktopicon
+
+			[InstallDelete]
+			Type: files; Name: {app}\lib\*.jar
+
+			[Files]
+			Source: "${artifactId}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+		</echo>
+
+		<exec osfamily="windows" executable="${innosetup.dir}/ISCC.exe">
+			<arg value="${build.distDirectory}/win32-win32-x86_64/setup.iss" />
+			<arg value="/O${build.releaseDirectory}" />
+			<arg value="/F${artifactId}-${version.number}-win32-win32-x86_64-setup" />
+		</exec>
+		<exec osfamily="unix" executable="wine">
+			<arg value="${innosetup.dir}/ISCC.exe" />
+			<arg value="${build.distDirectory}/win32-win32-x86_64/setup.iss" />
+			<arg value="/O${build.releaseDirectory}" />
+			<arg value="/F${artifactId}-${version.number}-win32-win32-x86_64-setup" />
+		</exec>
 
 		<!-- Other -->
 		<tar destfile="${build.releaseDirectory}/${artifactId}-${version.number}-other-bin.tar.gz" compression="gzip">
@@ -402,5 +497,7 @@
 			</tarfileset>
 		</tar>
 	</target>
+
+	<target name="all" depends="clean, dist" />
 
 </project>
