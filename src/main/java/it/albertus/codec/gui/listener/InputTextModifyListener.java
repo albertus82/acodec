@@ -1,11 +1,11 @@
 package it.albertus.codec.gui.listener;
 
-import it.albertus.codec.gui.CodecGui;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
+
+import it.albertus.codec.gui.CodecGui;
 
 public class InputTextModifyListener implements ModifyListener {
 
@@ -13,12 +13,11 @@ public class InputTextModifyListener implements ModifyListener {
 	private static final String ERROR_PREFIX = "-- ";
 
 	private final CodecGui gui;
-	private final Color defaultTextColor;
 	private final Color inactiveTextColor;
+	private Color defaultTextColor;
 
 	public InputTextModifyListener(final CodecGui gui) {
 		this.gui = gui;
-		this.defaultTextColor = gui.getOutputText().getForeground();
 		this.inactiveTextColor = gui.getShell().getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
 	}
 
@@ -40,6 +39,9 @@ public class InputTextModifyListener implements ModifyListener {
 	}
 
 	private void print(String text, final boolean error) {
+		if (defaultTextColor == null) { // Fix color issues on some Linux GUIs
+			defaultTextColor = gui.getOutputText().getForeground();
+		}
 		if (error) {
 			text = ERROR_PREFIX + text + ERROR_SUFFIX;
 			if (!gui.getOutputText().getForeground().equals(inactiveTextColor)) {

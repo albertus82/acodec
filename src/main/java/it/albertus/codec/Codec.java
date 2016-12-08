@@ -1,5 +1,6 @@
 package it.albertus.codec;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -25,8 +26,10 @@ public class Codec {
 			Display.setAppName(Messages.get("msg.application.name"));
 			Display.setAppVersion(Version.getInstance().getNumber());
 			final Display display = Display.getDefault();
-			final Shell shell = new CodecGui(display).getShell();
+			final CodecGui gui = new CodecGui(display);
+			final Shell shell = gui.getShell();
 			shell.open();
+			gui.getInputText().notifyListeners(SWT.Modify, null);
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();

@@ -150,8 +150,6 @@ public class CodecGui extends Codec implements IShellProvider {
 		charsetCombo.addSelectionListener(new CharsetComboSelectionListener(this));
 		inputText.addModifyListener(new InputTextModifyListener(this));
 
-		inputText.notifyListeners(SWT.Modify, null);
-
 		shell.pack();
 		shell.setMinimumSize(shell.getSize());
 	}
