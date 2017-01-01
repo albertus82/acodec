@@ -2,6 +2,7 @@ package it.albertus.codec.gui;
 
 import java.nio.charset.Charset;
 import java.util.EnumMap;
+import java.util.Map;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.util.Util;
@@ -69,34 +70,14 @@ public class CodecGui extends Codec implements IShellProvider {
 		inputLabel.setText(Messages.get("lbl.input"));
 		inputLabel.setLayoutData(new GridData());
 
-		inputText = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
-		{
-			final GridData inputTextGridData = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
-			if (TEXT_HEIGHT_MULTIPLIER > 1) {
-				inputTextGridData.heightHint = inputText.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
-			}
-			inputText.setLayoutData(inputTextGridData);
-		}
-		inputText.setTextLimit(TEXT_LIMIT_CHARS);
-		inputText.addKeyListener(new TextKeyListener(inputText));
+		inputText = createInputText();
 
 		/* Output text */
 		final Label outputLabel = new Label(shell, SWT.NONE);
 		outputLabel.setText(Messages.get("lbl.output"));
 		outputLabel.setLayoutData(new GridData());
 
-		outputText = new Text(shell, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
-		{
-			final GridData outputTextGridData = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
-			if (TEXT_HEIGHT_MULTIPLIER > 1) {
-				outputTextGridData.heightHint = outputText.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
-			}
-			outputText.setLayoutData(outputTextGridData);
-		}
-		if (Util.isWindows()) {
-			outputText.setBackground(inputText.getBackground());
-		}
-		outputText.addKeyListener(new TextKeyListener(outputText));
+		outputText = createOutputText();
 
 		/* Codec combo */
 		final Label algorithmLabel = new Label(shell, SWT.NONE);
@@ -154,6 +135,32 @@ public class CodecGui extends Codec implements IShellProvider {
 		shell.setMinimumSize(shell.getSize());
 	}
 
+	private Text createInputText() {
+		final Text text = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+		final GridData inputTextGridData = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
+		if (TEXT_HEIGHT_MULTIPLIER > 1) {
+			inputTextGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+		}
+		text.setLayoutData(inputTextGridData);
+		text.setTextLimit(TEXT_LIMIT_CHARS);
+		text.addKeyListener(new TextKeyListener(text));
+		return text;
+	}
+
+	private Text createOutputText() {
+		final Text text = new Text(shell, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+		final GridData outputTextGridData = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
+		if (TEXT_HEIGHT_MULTIPLIER > 1) {
+			outputTextGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+		}
+		text.setLayoutData(outputTextGridData);
+		if (Util.isWindows()) {
+			text.setBackground(inputText.getBackground());
+		}
+		text.addKeyListener(new TextKeyListener(text));
+		return text;
+	}
+
 	public void enableControls() {
 		inputText.setEnabled(true);
 		outputText.setEnabled(true);
@@ -198,7 +205,7 @@ public class CodecGui extends Codec implements IShellProvider {
 		return charsetCombo;
 	}
 
-	public EnumMap<CodecMode, Button> getModeRadios() {
+	public Map<CodecMode, Button> getModeRadios() {
 		return modeRadios;
 	}
 

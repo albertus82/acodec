@@ -1,13 +1,13 @@
 package it.albertus.codec.gui.listener;
 
-import it.albertus.codec.engine.CodecAlgorithm;
-import it.albertus.codec.engine.CodecMode;
-import it.albertus.codec.gui.CodecGui;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
+
+import it.albertus.codec.engine.CodecAlgorithm;
+import it.albertus.codec.engine.CodecMode;
+import it.albertus.codec.gui.CodecGui;
 
 public class AlgorithmComboSelectionListener extends SelectionAdapter {
 
@@ -19,7 +19,7 @@ public class AlgorithmComboSelectionListener extends SelectionAdapter {
 
 	@Override
 	public void widgetSelected(final SelectionEvent se) {
-		final CodecAlgorithm algorithm = CodecAlgorithm.values()[(gui.getAlgorithmCombo().getSelectionIndex())];
+		final CodecAlgorithm algorithm = CodecAlgorithm.values()[gui.getAlgorithmCombo().getSelectionIndex()];
 		gui.getEngine().setAlgorithm(algorithm);
 
 		/* Attivazione pulsante elaborazione file */

@@ -9,7 +9,7 @@ public class Ascii85InputStream extends ASCII85InputStream {
 
 	private final InputStream input;
 
-	public Ascii85InputStream(InputStream input) {
+	public Ascii85InputStream(final InputStream input) {
 		super(input);
 		this.input = input;
 		discardStartDelimiter();
@@ -22,11 +22,11 @@ public class Ascii85InputStream extends ASCII85InputStream {
 				input.reset();
 			}
 		}
-		catch (IOException ioe) {
+		catch (final IOException ioe) {
 			try {
 				input.reset();
 			}
-			catch (IOException e) {}
+			catch (final IOException e) {/* Ignore */}
 		}
 	}
 

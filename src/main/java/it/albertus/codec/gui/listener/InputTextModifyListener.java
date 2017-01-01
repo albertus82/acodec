@@ -23,7 +23,7 @@ public class InputTextModifyListener implements ModifyListener {
 
 	@Override
 	public void modifyText(final ModifyEvent event) {
-		String result = null;
+		String result;
 		if (gui.isDirty()) {
 			gui.setDirty(false);
 			gui.getInputText().setText("");

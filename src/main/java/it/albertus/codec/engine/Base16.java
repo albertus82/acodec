@@ -1,8 +1,5 @@
 package it.albertus.codec.engine;
 
-import it.albertus.codec.resources.Messages;
-import it.albertus.util.NewLine;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,18 +7,25 @@ import java.util.Arrays;
 
 import org.apache.openjpa.lib.util.Base16Encoder;
 
+import it.albertus.codec.resources.Messages;
+import it.albertus.util.NewLine;
+
 public class Base16 {
 
 	private static final CharSequence ALPHABET = "0123456789ABCDEF";
+
+	private Base16() {
+		throw new IllegalAccessError();
+	}
 
 	public static String encode(final byte[] byteArray) {
 		return Base16Encoder.encode(byteArray);
 	}
 
-	public static byte[] decode(String encoded) {
-		encoded = encoded.toUpperCase().replace(NewLine.CRLF.toString(), "");
-		if (encoded.matches("[" + ALPHABET + "]*")) {
-			return Base16Encoder.decode(encoded);
+	public static byte[] decode(final String encoded) {
+		final String cleaned = encoded.toUpperCase().replace(NewLine.CRLF.toString(), "");
+		if (cleaned.matches("[" + ALPHABET + "]*")) {
+			return Base16Encoder.decode(cleaned);
 		}
 		else {
 			throw new IllegalArgumentException(Messages.get("err.invalid.input"));

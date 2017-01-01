@@ -12,6 +12,10 @@ public class Messages {
 
 	private static ResourceBundle resources = ResourceBundle.getBundle(BASE_NAME, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
 
+	private Messages() {
+		throw new IllegalAccessError();
+	}
+
 	/** Aggiorna la lingua in cui vengono mostrati i messaggi. */
 	public static void setLanguage(final String language) {
 		if (language != null) {

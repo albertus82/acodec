@@ -526,6 +526,36 @@
 		</exec>
 	</target>
 
+	<target name="test" depends="dist">
+		<mkdir dir="${build.outputTestDirectory}" />
+		<javac srcdir="${build.testSourceDirectory}" destdir="${build.outputTestDirectory}" source="${build.compiler.source}" target="${build.compiler.target}" debug="true" includeantruntime="false">
+			<classpath path="${build.outputDirectory}">
+				<fileset dir="${dependencies.directory}">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+			<!-- Compilazione per JRE specifico -->
+			<bootclasspath path="${build.compiler.compilerArguments.bootclasspath}" />
+		</javac>
+
+		<junit printsummary="yes" haltonfailure="yes">
+			<classpath path="${build.outputTestDirectory}">
+				<fileset dir="${dependencies.directory}">
+					<include name="test/*.jar" />
+				</fileset>
+				<fileset dir="${build.distDirectory}">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+			<batchtest>
+				<fileset dir="${build.outputTestDirectory}">
+					<include name="**/*Test*" />
+				</fileset>
+			</batchtest>
+			<formatter type="plain" usefile="false" />
+		</junit>
+	</target>
+
 	<target name="sonar">
 		<echo file="sonar-project.properties">
 			sonar.projectKey=it.albertus:${artifactId}
@@ -536,10 +566,12 @@
 			sonar.java.source=${build.compiler.source}
 			sonar.java.target=${build.compiler.target}
 			sonar.java.libraries=${dependencies.directory}/**/*.jar
+			sonar.java.test.libraries=${dependencies.directory}/test/*.jar
+			sonar.java.test.binaries=${build.outputTestDirectory}
 			sonar.sourceEncoding=UTF-8
 		</echo>
 	</target>
 
-	<target name="all" depends="clean, dist, sonar" />
+	<target name="all" depends="clean, dist, test, sonar" />
 
 </project>

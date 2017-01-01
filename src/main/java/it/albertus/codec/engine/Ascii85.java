@@ -1,7 +1,5 @@
 package it.albertus.codec.engine;
 
-import it.albertus.util.NewLine;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,41 +7,50 @@ import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 import org.freehep.util.io.ASCII85OutputStream;
 
+import it.albertus.util.NewLine;
+
 public class Ascii85 {
+
+	private Ascii85() {
+		throw new IllegalAccessError();
+	}
 
 	public static String encode(final byte[] byteArray) throws IOException {
 		final String value;
-		final ByteArrayInputStream inputStream = new ByteArrayInputStream(byteArray);
-		final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		final ASCII85OutputStream outputStream = new ASCII85OutputStream(byteArrayOutputStream);
+		ByteArrayInputStream bais = null;
+		ByteArrayOutputStream baos = null;
+		ASCII85OutputStream a85os = null;
 		try {
-			IOUtils.copy(inputStream, outputStream);
-			outputStream.close();
-			inputStream.close();
-			value = byteArrayOutputStream.toString();
+			bais = new ByteArrayInputStream(byteArray);
+			baos = new ByteArrayOutputStream();
+			a85os = new ASCII85OutputStream(baos);
+			IOUtils.copy(bais, a85os);
+			value = baos.toString();
 		}
-		catch (final IOException ioe) {
-			IOUtils.closeQuietly(outputStream);
-			IOUtils.closeQuietly(inputStream);
-			throw ioe;
+		finally {
+			IOUtils.closeQuietly(a85os);
+			IOUtils.closeQuietly(baos);
+			IOUtils.closeQuietly(bais);
 		}
 		return value.replaceAll("[" + NewLine.CRLF.toString() + "]+", "");
 	}
 
 	public static byte[] decode(final String encoded) throws IOException {
 		final byte[] value;
-		final Ascii85InputStream inputStream = new Ascii85InputStream(new ByteArrayInputStream(encoded.getBytes()));
-		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		ByteArrayInputStream bais = null;
+		Ascii85InputStream a85is = null;
+		ByteArrayOutputStream baos = null;
 		try {
-			IOUtils.copy(inputStream, outputStream);
-			outputStream.close();
-			inputStream.close();
-			value = outputStream.toByteArray();
+			bais = new ByteArrayInputStream(encoded.getBytes());
+			a85is = new Ascii85InputStream(bais);
+			baos = new ByteArrayOutputStream();
+			IOUtils.copy(a85is, baos);
+			value = baos.toByteArray();
 		}
-		catch (final IOException ioe) {
-			IOUtils.closeQuietly(outputStream);
-			IOUtils.closeQuietly(inputStream);
-			throw ioe;
+		finally {
+			IOUtils.closeQuietly(baos);
+			IOUtils.closeQuietly(a85is);
+			IOUtils.closeQuietly(bais);
 		}
 		return value;
 	}

@@ -13,13 +13,17 @@ public class Images {
 	/* Icona principale dell'applicazione (in vari formati) */
 	static final Image[] MAIN_ICONS = loadIcons("main.ico");
 
+	private Images() {
+		throw new IllegalAccessError();
+	}
+
 	private static Image[] loadIcons(final String fileName) {
 		final InputStream is = Images.class.getResourceAsStream(fileName);
 		final ImageData[] images = new ImageLoader().load(is);
 		try {
 			is.close();
 		}
-		catch (IOException ioe) {}
+		catch (IOException ioe) {/* Ignore */}
 		final Image[] icons = new Image[images.length];
 		int i = 0;
 		for (final ImageData id : images) {

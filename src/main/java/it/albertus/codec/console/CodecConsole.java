@@ -1,14 +1,14 @@
 package it.albertus.codec.console;
 
+import java.io.File;
+import java.nio.charset.Charset;
+
 import it.albertus.codec.Codec;
 import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecMode;
 import it.albertus.codec.resources.Messages;
 import it.albertus.util.NewLine;
 import it.albertus.util.Version;
-
-import java.io.File;
-import java.nio.charset.Charset;
 
 public class CodecConsole extends Codec {
 
@@ -147,56 +147,60 @@ public class CodecConsole extends Codec {
 		help.append(NewLine.SYSTEM_LINE_SEPARATOR);
 
 		/* Algorithms */
-		{
-			final StringBuilder algorithms = new StringBuilder(Messages.get("msg.help.algorithms"));
-			algorithms.append(' ');
-			int cursorPosition = algorithms.length();
-			final int offset = cursorPosition;
-			for (final CodecAlgorithm algorithm : CodecAlgorithm.values()) {
-				final String toPrint = algorithm.getName() + ", ";
-				if (cursorPosition + toPrint.length() >= 80) {
-					algorithms.append(NewLine.SYSTEM_LINE_SEPARATOR);
-					for (int i = 0; i < offset; i++) {
-						algorithms.append(' ');
-					}
-					cursorPosition = offset;
-				}
-				algorithms.append(toPrint);
-				cursorPosition += toPrint.length();
-			}
-			help.append(algorithms.replace(algorithms.length() - 2, algorithms.length(), NewLine.SYSTEM_LINE_SEPARATOR));
-			help.append(NewLine.SYSTEM_LINE_SEPARATOR);
-		}
+		help.append(getAlgorithmsHelpBlock());
+		help.append(NewLine.SYSTEM_LINE_SEPARATOR);
 
 		/* Charsets */
-		{
-			final StringBuilder charsets = new StringBuilder(Messages.get("msg.help.charsets"));
-			charsets.append(' ');
-			int cursorPosition = charsets.length();
-			final int offset = cursorPosition;
-			for (final String charsetName : Charset.availableCharsets().keySet()) {
-				final String toPrint = charsetName + ", ";
-				if (cursorPosition + toPrint.length() >= 80) {
-					charsets.append(NewLine.SYSTEM_LINE_SEPARATOR);
-					for (int i = 0; i < offset; i++) {
-						charsets.append(' ');
-					}
-					cursorPosition = offset;
-				}
-				charsets.append(toPrint);
-				cursorPosition += toPrint.length();
-			}
-			charsets.replace(charsets.length() - 2, charsets.length(), NewLine.SYSTEM_LINE_SEPARATOR);
-			charsets.append(' ').append(Messages.get("msg.help.default.charset", Charset.defaultCharset().name()));
-			help.append(charsets);
-			help.append(NewLine.SYSTEM_LINE_SEPARATOR).append(NewLine.SYSTEM_LINE_SEPARATOR);
-		}
+		help.append(getCharsetsHelpBlock());
+		help.append(NewLine.SYSTEM_LINE_SEPARATOR).append(NewLine.SYSTEM_LINE_SEPARATOR);
 
 		/* Example */
 		help.append(Messages.get("msg.help.example"));
 
-		System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", Version.getInstance().getNumber(), Version.getInstance().getDate()) + " [" + Messages.get("msg.website") + ']'
-				+ NewLine.SYSTEM_LINE_SEPARATOR + NewLine.SYSTEM_LINE_SEPARATOR + help.toString().trim());
+		System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", Version.getInstance().getNumber(), Version.getInstance().getDate()) + " [" + Messages.get("msg.website") + ']' + NewLine.SYSTEM_LINE_SEPARATOR + NewLine.SYSTEM_LINE_SEPARATOR + help.toString().trim());
+	}
+
+	private String getCharsetsHelpBlock() {
+		final StringBuilder charsets = new StringBuilder(Messages.get("msg.help.charsets"));
+		charsets.append(' ');
+		int cursorPosition = charsets.length();
+		final int offset = cursorPosition;
+		for (final String charsetName : Charset.availableCharsets().keySet()) {
+			final String toPrint = charsetName + ", ";
+			if (cursorPosition + toPrint.length() >= 80) {
+				charsets.append(NewLine.SYSTEM_LINE_SEPARATOR);
+				for (int i = 0; i < offset; i++) {
+					charsets.append(' ');
+				}
+				cursorPosition = offset;
+			}
+			charsets.append(toPrint);
+			cursorPosition += toPrint.length();
+		}
+		charsets.replace(charsets.length() - 2, charsets.length(), NewLine.SYSTEM_LINE_SEPARATOR);
+		charsets.append(' ').append(Messages.get("msg.help.default.charset", Charset.defaultCharset().name()));
+		return charsets.toString();
+	}
+
+	private String getAlgorithmsHelpBlock() {
+		final StringBuilder algorithms = new StringBuilder(Messages.get("msg.help.algorithms"));
+		algorithms.append(' ');
+		int cursorPosition = algorithms.length();
+		final int offset = cursorPosition;
+		for (final CodecAlgorithm algorithm : CodecAlgorithm.values()) {
+			final String toPrint = algorithm.getName() + ", ";
+			if (cursorPosition + toPrint.length() >= 80) {
+				algorithms.append(NewLine.SYSTEM_LINE_SEPARATOR);
+				for (int i = 0; i < offset; i++) {
+					algorithms.append(' ');
+				}
+				cursorPosition = offset;
+			}
+			algorithms.append(toPrint);
+			cursorPosition += toPrint.length();
+		}
+		algorithms.replace(algorithms.length() - 2, algorithms.length(), NewLine.SYSTEM_LINE_SEPARATOR);
+		return algorithms.toString();
 	}
 
 }

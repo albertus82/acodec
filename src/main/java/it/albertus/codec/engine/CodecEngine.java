@@ -1,7 +1,5 @@
 package it.albertus.codec.engine;
 
-import it.albertus.codec.resources.Messages;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -11,8 +9,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
-
-import net.sourceforge.base91.b91cli;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base32InputStream;
@@ -26,6 +22,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.mina.proxy.utils.MD4Provider;
 import org.freehep.util.io.ASCII85OutputStream;
 
+import it.albertus.codec.resources.Messages;
+import net.sourceforge.base91.b91cli;
+
 public class CodecEngine {
 
 	private static final MD4Provider MD4_PROVIDER = new MD4Provider();
@@ -35,7 +34,7 @@ public class CodecEngine {
 	private Charset charset = Charset.defaultCharset();
 
 	public String run(final String input) {
-		if (input.length() == 0) {
+		if (input.isEmpty()) {
 			throw new IllegalStateException(Messages.get("msg.missing.input"));
 		}
 		if (algorithm != null) {
@@ -74,8 +73,11 @@ public class CodecEngine {
 
 	private String encode(final File inputFile, final File outputFile) {
 		String value = null;
-		InputStream inputStream = null;
-		OutputStream outputStream = null;
+		FileInputStream fis = null;
+		BufferedInputStream bis = null;
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
+		OutputStream eos = null;
 		final String fileName;
 		try {
 			if (inputFile.getParentFile().getCanonicalPath().equals(outputFile.getParentFile().getCanonicalPath())) {
@@ -84,124 +86,142 @@ public class CodecEngine {
 			else {
 				fileName = inputFile.getCanonicalPath();
 			}
-			inputStream = new BufferedInputStream(new FileInputStream(inputFile));
+			fis = new FileInputStream(inputFile);
+			bis = new BufferedInputStream(fis);
+			fos = new FileOutputStream(outputFile);
 			switch (algorithm) {
 			case BASE16:
-				outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
-				Base16.encode(inputStream, outputStream);
+				bos = new BufferedOutputStream(fos);
+				Base16.encode(bis, bos);
 				break;
 			case BASE32:
-				outputStream = new BaseNCodecOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)), new Base32(79), true);
-				IOUtils.copyLarge(inputStream, outputStream);
+				bos = new BufferedOutputStream(fos);
+				eos = new BaseNCodecOutputStream(bos, new Base32(79), true);
+				IOUtils.copyLarge(bis, eos);
 				break;
 			case BASE64:
-				outputStream = new Base64OutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
-				IOUtils.copyLarge(inputStream, outputStream);
+				bos = new BufferedOutputStream(fos);
+				eos = new Base64OutputStream(bos);
+				IOUtils.copyLarge(bis, eos);
 				break;
 			case ASCII85:
-				outputStream = new ASCII85OutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
-				IOUtils.copyLarge(inputStream, outputStream);
+				bos = new BufferedOutputStream(fos);
+				eos = new ASCII85OutputStream(bos);
+				IOUtils.copyLarge(bis, eos);
 				break;
 			case BASE91:
-				outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
-				b91cli.encodeWrap(inputStream, outputStream);
+				bos = new BufferedOutputStream(fos);
+				b91cli.encodeWrap(bis, bos);
 				break;
 			case MD2:
-				value = DigestUtils.md2Hex(inputStream);
-				outputStream = new FileOutputStream(outputFile);
-				IOUtils.write(value + " *" + fileName, outputStream, charset);
+				value = DigestUtils.md2Hex(bis);
+				IOUtils.write(value + " *" + fileName, fos, charset);
 				break;
 			case MD4:
-				value = Hex.encodeHexString(DigestUtils.updateDigest(MessageDigest.getInstance(CodecAlgorithm.MD4.name(), MD4_PROVIDER), inputStream).digest());
-				outputStream = new FileOutputStream(outputFile);
-				IOUtils.write(value + " *" + fileName, outputStream, charset);
+				value = Hex.encodeHexString(DigestUtils.updateDigest(MessageDigest.getInstance(CodecAlgorithm.MD4.name(), MD4_PROVIDER), bis).digest());
+				IOUtils.write(value + " *" + fileName, fos, charset);
 				break;
 			case MD5:
-				value = DigestUtils.md5Hex(inputStream);
-				outputStream = new FileOutputStream(outputFile);
-				IOUtils.write(value + " *" + fileName, outputStream, charset);
+				value = DigestUtils.md5Hex(bis);
+				IOUtils.write(value + " *" + fileName, fos, charset);
 				break;
 			case SHA1:
-				value = DigestUtils.sha1Hex(inputStream);
-				outputStream = new FileOutputStream(outputFile);
-				IOUtils.write(value + " *" + fileName, outputStream, charset);
+				value = DigestUtils.sha1Hex(bis);
+				IOUtils.write(value + " *" + fileName, fos, charset);
 				break;
 			case SHA256:
-				value = DigestUtils.sha256Hex(inputStream);
-				outputStream = new FileOutputStream(outputFile);
-				IOUtils.write(value + " *" + fileName, outputStream, charset);
+				value = DigestUtils.sha256Hex(bis);
+				IOUtils.write(value + " *" + fileName, fos, charset);
 				break;
 			case SHA384:
-				value = DigestUtils.sha384Hex(inputStream);
-				outputStream = new FileOutputStream(outputFile);
-				IOUtils.write(value + " *" + fileName, outputStream, charset);
+				value = DigestUtils.sha384Hex(bis);
+				IOUtils.write(value + " *" + fileName, fos, charset);
 				break;
 			case SHA512:
-				value = DigestUtils.sha512Hex(inputStream);
-				outputStream = new FileOutputStream(outputFile);
-				IOUtils.write(value + " *" + fileName, outputStream, charset);
+				value = DigestUtils.sha512Hex(bis);
+				IOUtils.write(value + " *" + fileName, fos, charset);
 				break;
 			default:
 				throw new IllegalStateException();
 			}
 		}
-		catch (Exception e) {
-			IOUtils.closeQuietly(outputStream);
+		catch (final Exception e) {
+			IOUtils.closeQuietly(eos);
+			IOUtils.closeQuietly(bos);
+			IOUtils.closeQuietly(fos);
 			try {
-				outputFile.delete();
+				if (!outputFile.delete()) {
+					outputFile.deleteOnExit();
+				}
 			}
-			catch (Exception de) {}
+			catch (final Exception de) {/* Ignore */}
 			throw new IllegalStateException(Messages.get("err.cannot.encode", algorithm.getName()), e);
 		}
 		finally {
-			IOUtils.closeQuietly(outputStream);
-			IOUtils.closeQuietly(inputStream);
+			IOUtils.closeQuietly(eos);
+			IOUtils.closeQuietly(bos);
+			IOUtils.closeQuietly(fos);
+			IOUtils.closeQuietly(bis);
+			IOUtils.closeQuietly(fis);
 		}
 		return value;
 	}
 
 	private String decode(final File inputFile, final File outputFile) {
 		String value = null;
-		InputStream inputStream = null;
-		OutputStream outputStream = null;
+		FileInputStream fis = null;
+		BufferedInputStream bis = null;
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
+		InputStream dis = null;
 		try {
-			inputStream = new BufferedInputStream(new FileInputStream(inputFile));
-			outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
+			fis = new FileInputStream(inputFile);
+			bis = new BufferedInputStream(fis);
+			fos = new FileOutputStream(outputFile);
+			bos = new BufferedOutputStream(fos);
 			switch (algorithm) {
 			case BASE16:
-				Base16.decode(inputStream, outputStream);
+				Base16.decode(bis, bos);
 				break;
 			case BASE32:
-				inputStream = new Base32InputStream(inputStream);
-				IOUtils.copyLarge(inputStream, outputStream);
+				dis = new Base32InputStream(bis);
+				IOUtils.copyLarge(dis, bos);
 				break;
 			case BASE64:
-				inputStream = new Base64InputStream(inputStream);
-				IOUtils.copyLarge(inputStream, outputStream);
+				dis = new Base64InputStream(bis);
+				IOUtils.copyLarge(dis, bos);
 				break;
 			case ASCII85:
-				inputStream = new Ascii85InputStream(inputStream);
-				IOUtils.copyLarge(inputStream, outputStream);
+				dis = new Ascii85InputStream(bis);
+				IOUtils.copyLarge(dis, bos);
 				break;
 			case BASE91:
-				b91cli.decode(inputStream, outputStream);
+				b91cli.decode(bis, bos);
 				break;
 			default:
-				outputFile.delete();
+				if (!outputFile.delete()) {
+					outputFile.deleteOnExit();
+				}
 				throw new IllegalStateException();
 			}
 		}
-		catch (Exception e) {
-			IOUtils.closeQuietly(outputStream);
+		catch (final Exception e) {
+			IOUtils.closeQuietly(bos);
+			IOUtils.closeQuietly(fos);
 			try {
-				outputFile.delete();
+				if (!outputFile.delete()) {
+					outputFile.deleteOnExit();
+				}
 			}
-			catch (Exception de) {}
+			catch (final Exception de) {/* Ignore */}
 			throw new IllegalStateException(Messages.get("err.cannot.decode", algorithm.getName()), e);
 		}
 		finally {
-			IOUtils.closeQuietly(outputStream);
-			IOUtils.closeQuietly(inputStream);
+			IOUtils.closeQuietly(bos);
+			IOUtils.closeQuietly(fos);
+			IOUtils.closeQuietly(dis);
+			IOUtils.closeQuietly(bis);
+			IOUtils.closeQuietly(fis);
 		}
 		return value;
 	}
@@ -250,7 +270,7 @@ public class CodecEngine {
 				throw new IllegalStateException();
 			}
 		}
-		catch (Exception e) {
+		catch (final Exception e) {
 			throw new IllegalStateException(Messages.get("err.cannot.encode", algorithm.getName()), e);
 		}
 		return value;
@@ -279,7 +299,7 @@ public class CodecEngine {
 				throw new IllegalStateException();
 			}
 		}
-		catch (Exception e) {
+		catch (final Exception e) {
 			throw new IllegalStateException(Messages.get("err.cannot.decode", algorithm.getName()), e);
 		}
 		return value;
