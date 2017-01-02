@@ -16,7 +16,6 @@ public class Ascii85 {
 	}
 
 	public static String encode(final byte[] byteArray) throws IOException {
-		final String value;
 		ByteArrayInputStream bais = null;
 		ByteArrayOutputStream baos = null;
 		ASCII85OutputStream a85os = null;
@@ -25,18 +24,16 @@ public class Ascii85 {
 			baos = new ByteArrayOutputStream();
 			a85os = new ASCII85OutputStream(baos);
 			IOUtils.copy(bais, a85os);
-			value = baos.toString();
 		}
 		finally {
 			IOUtils.closeQuietly(a85os);
 			IOUtils.closeQuietly(baos);
 			IOUtils.closeQuietly(bais);
 		}
-		return value.replaceAll("[" + NewLine.CRLF.toString() + "]+", "");
+		return baos.toString().replaceAll("[" + NewLine.CRLF.toString() + "]+", "");
 	}
 
 	public static byte[] decode(final String encoded) throws IOException {
-		final byte[] value;
 		ByteArrayInputStream bais = null;
 		Ascii85InputStream a85is = null;
 		ByteArrayOutputStream baos = null;
@@ -45,14 +42,13 @@ public class Ascii85 {
 			a85is = new Ascii85InputStream(bais);
 			baos = new ByteArrayOutputStream();
 			IOUtils.copy(a85is, baos);
-			value = baos.toByteArray();
 		}
 		finally {
 			IOUtils.closeQuietly(baos);
 			IOUtils.closeQuietly(a85is);
 			IOUtils.closeQuietly(bais);
 		}
-		return value;
+		return baos.toByteArray();
 	}
 
 }
