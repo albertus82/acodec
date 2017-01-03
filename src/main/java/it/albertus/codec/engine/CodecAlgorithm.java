@@ -10,20 +10,30 @@ public enum CodecAlgorithm {
 	BASE64("Base64"),
 	ASCII85("Ascii85"),
 	BASE91("basE91"),
-	MD2("MD2", CodecMode.ENCODE),
-	MD4("MD4", CodecMode.ENCODE),
-	MD5("MD5", CodecMode.ENCODE),
-	SHA1("SHA-1", CodecMode.ENCODE),
-	SHA256("SHA-256", CodecMode.ENCODE),
-	SHA384("SHA-384", CodecMode.ENCODE),
-	SHA512("SHA-512", CodecMode.ENCODE);
+	MD2("MD2", true),
+	MD4("MD4", true),
+	MD5("MD5", true),
+	SHA1("SHA-1", true),
+	SHA256("SHA-256", true),
+	SHA384("SHA-384", true),
+	SHA512("SHA-512", true);
 
 	private final String name;
+	private final boolean digest;
 	private final Set<CodecMode> modes;
 
-	private CodecAlgorithm(final String name, final CodecMode... modes) {
+	private CodecAlgorithm(final String name, final boolean digest, final CodecMode... modes) {
 		this.name = name;
-		this.modes = new HashSet<CodecMode>(Arrays.asList(modes.length == 0 ? CodecMode.values() : modes));
+		this.digest = digest;
+		this.modes = new HashSet<CodecMode>(Arrays.asList(modes));
+	}
+
+	private CodecAlgorithm(final String name, final boolean digest) {
+		this(name, digest, digest ? new CodecMode[] { CodecMode.ENCODE } : CodecMode.values());
+	}
+
+	private CodecAlgorithm(final String name) {
+		this(name, false, CodecMode.values());
 	}
 
 	@Override
@@ -37,6 +47,10 @@ public enum CodecAlgorithm {
 
 	public Set<CodecMode> getModes() {
 		return modes;
+	}
+
+	public final boolean isDigest() {
+		return digest;
 	}
 
 	public static String[] getNames() {
