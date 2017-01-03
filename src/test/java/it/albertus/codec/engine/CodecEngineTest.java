@@ -43,7 +43,7 @@ public class CodecEngineTest {
 	private static void createOriginalFile() throws IOException {
 		FileWriter fw = null;
 		try {
-			originalFile = File.createTempFile(CodecEngineTest.class.getSimpleName(), ".txt");
+			originalFile = File.createTempFile("original-", ".txt");
 			fw = new FileWriter(originalFile);
 			fw.write(originalString);
 			System.out.println("Created original file \"" + originalFile + '"');
@@ -73,7 +73,7 @@ public class CodecEngineTest {
 			File encodedFile;
 			FileWriter fw = null;
 			try {
-				encodedFile = File.createTempFile(CodecEngineTest.class.getSimpleName(), ".txt." + entry.getKey().name().toLowerCase());
+				encodedFile = File.createTempFile("encoded-", ".txt." + entry.getKey().name().toLowerCase());
 				fw = new FileWriter(encodedFile);
 				fw.write(entry.getValue());
 				System.out.println("Created temporary encoded file \"" + encodedFile + '"');
@@ -134,7 +134,8 @@ public class CodecEngineTest {
 	}
 
 	private String testFileEncoder(final CodecAlgorithm ca) throws IOException {
-		File outputFile = File.createTempFile(CodecMode.ENCODE.name().toLowerCase(), ca.name().toLowerCase());
+		final File outputFile = File.createTempFile(CodecMode.ENCODE.name().toLowerCase() + '-', '.' + ca.name().toLowerCase());
+		System.out.println("Created temporary encoded file \"" + outputFile + '"');
 		engine.run(originalFile, outputFile);
 		FileInputStream fis = null;
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -145,7 +146,11 @@ public class CodecEngineTest {
 		finally {
 			IOUtils.closeQuietly(baos);
 			IOUtils.closeQuietly(fis);
-			if (!outputFile.delete()) {
+			if (outputFile.delete()) {
+				System.out.println("Deleted temporary encoded file \"" + outputFile + '"');
+			}
+			else {
+				System.err.println("Cannot delete temporary encoded file \"" + outputFile + '"');
 				outputFile.deleteOnExit();
 			}
 		}
@@ -153,7 +158,8 @@ public class CodecEngineTest {
 	}
 
 	private String testFileDecoder(final CodecAlgorithm ca, final File file) throws IOException {
-		File outputFile = File.createTempFile(CodecMode.DECODE.name().toLowerCase(), ca.name().toLowerCase());
+		final File outputFile = File.createTempFile(CodecMode.DECODE.name().toLowerCase() + '-', ".txt");
+		System.out.println("Created temporary decoded file \"" + outputFile + '"');
 		engine.run(file, outputFile);
 		FileInputStream fis = null;
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -164,7 +170,11 @@ public class CodecEngineTest {
 		finally {
 			IOUtils.closeQuietly(baos);
 			IOUtils.closeQuietly(fis);
-			if (!outputFile.delete()) {
+			if (outputFile.delete()) {
+				System.out.println("Deleted temporary decoded file \"" + outputFile + '"');
+			}
+			else {
+				System.err.println("Cannot delete temporary decoded file \"" + outputFile + '"');
 				outputFile.deleteOnExit();
 			}
 		}
