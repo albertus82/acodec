@@ -3,6 +3,8 @@ package it.albertus.codec.gui;
 import java.nio.charset.Charset;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.util.Util;
@@ -32,8 +34,11 @@ import it.albertus.codec.gui.listener.ProcessFileSelectionListener;
 import it.albertus.codec.gui.listener.TextKeyListener;
 import it.albertus.codec.resources.Messages;
 import it.albertus.jface.cocoa.CocoaUIEnhancer;
+import it.albertus.util.logging.LoggerFactory;
 
 public class CodecGui extends Codec implements IShellProvider {
+
+	private static final Logger logger = LoggerFactory.getLogger(CodecGui.class);
 
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
@@ -51,7 +56,7 @@ public class CodecGui extends Codec implements IShellProvider {
 
 	public CodecGui(final Display display) {
 		shell = new Shell(display);
-		shell.setImages(Images.MAIN_ICONS);
+		shell.setImages(Images.getMainIcons());
 		shell.setText(Messages.get("msg.application.name"));
 		shell.setLayout(new GridLayout(5, false));
 
@@ -61,7 +66,7 @@ public class CodecGui extends Codec implements IShellProvider {
 				new CocoaUIEnhancer(display).hookApplicationMenu(new CloseListener(this), aboutListener, null);
 			}
 			catch (final Throwable t) {
-				t.printStackTrace();
+				logger.log(Level.WARNING, Messages.get("err.cocoa.enhancer"), t);
 			}
 		}
 
