@@ -10,6 +10,8 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -30,7 +32,8 @@ import it.albertus.codec.gui.listener.CharsetComboSelectionListener;
 import it.albertus.codec.gui.listener.CloseListener;
 import it.albertus.codec.gui.listener.InputTextModifyListener;
 import it.albertus.codec.gui.listener.ModeRadioSelectionListener;
-import it.albertus.codec.gui.listener.ProcessFileSelectionListener;
+import it.albertus.codec.gui.listener.ProcessFileButtonSelectionListener;
+import it.albertus.codec.gui.listener.ShellDropListener;
 import it.albertus.codec.gui.listener.TextKeyListener;
 import it.albertus.codec.resources.Messages;
 import it.albertus.jface.cocoa.CocoaUIEnhancer;
@@ -51,6 +54,7 @@ public class CodecGui extends Codec implements IShellProvider {
 	private final EnumMap<CodecMode, Button> modeRadios = new EnumMap<CodecMode, Button>(CodecMode.class);
 	private final Button aboutButton;
 	private final Button processFileButton;
+	private final DropTarget shellDropTarget;
 
 	private boolean dirty = false;
 
@@ -108,7 +112,7 @@ public class CodecGui extends Codec implements IShellProvider {
 		processFileButton.setEnabled(false);
 		processFileButton.setText(Messages.get("lbl.file.process"));
 		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).applyTo(processFileButton);
-		processFileButton.addSelectionListener(new ProcessFileSelectionListener(this));
+		processFileButton.addSelectionListener(new ProcessFileButtonSelectionListener(this));
 
 		/* Mode radio */
 		final Label modeLabel = new Label(shell, SWT.NONE);
@@ -135,6 +139,10 @@ public class CodecGui extends Codec implements IShellProvider {
 		algorithmCombo.addSelectionListener(new AlgorithmComboSelectionListener(this));
 		charsetCombo.addSelectionListener(new CharsetComboSelectionListener(this));
 		inputText.addModifyListener(new InputTextModifyListener(this));
+
+		/* Drag and drop */
+		shellDropTarget = new DropTarget(shell, DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK);
+		shellDropTarget.addDropListener(new ShellDropListener(this));
 
 		shell.pack();
 		shell.setMinimumSize(shell.getSize());
@@ -220,6 +228,10 @@ public class CodecGui extends Codec implements IShellProvider {
 
 	public Button getProcessFileButton() {
 		return processFileButton;
+	}
+
+	public DropTarget getShellDropTarget() {
+		return shellDropTarget;
 	}
 
 	public boolean isDirty() {

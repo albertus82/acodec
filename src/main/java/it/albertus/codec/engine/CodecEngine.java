@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base32InputStream;
@@ -23,9 +25,12 @@ import org.apache.mina.proxy.utils.MD4Provider;
 import org.freehep.util.io.ASCII85OutputStream;
 
 import it.albertus.codec.resources.Messages;
+import it.albertus.util.logging.LoggerFactory;
 import net.sourceforge.base91.b91cli;
 
 public class CodecEngine {
+
+	private static final Logger logger = LoggerFactory.getLogger(CodecEngine.class);
 
 	private static final MD4Provider MD4_PROVIDER = new MD4Provider();
 
@@ -34,26 +39,24 @@ public class CodecEngine {
 	private Charset charset = Charset.defaultCharset();
 
 	public String run(final String input) {
-		if (input.isEmpty()) {
+		if (algorithm == null) {
+			throw new IllegalStateException(Messages.get("msg.missing.algorithm"));
+		}
+		if (input == null || input.isEmpty()) {
 			throw new IllegalStateException(Messages.get("msg.missing.input"));
 		}
-		if (algorithm != null) {
-			switch (mode) {
-			case DECODE:
-				return decode(input);
-			case ENCODE:
-				return encode(input);
-			default:
-				throw new IllegalStateException("Invalid mode");
-			}
-		}
-		else {
-			throw new IllegalStateException(Messages.get("msg.missing.algorithm"));
+		switch (mode) {
+		case DECODE:
+			return decode(input);
+		case ENCODE:
+			return encode(input);
+		default:
+			throw new IllegalStateException("Invalid mode");
 		}
 	}
 
 	public String run(final File inputFile, final File outputFile) {
-		if (!inputFile.exists()) {
+		if (inputFile == null || !inputFile.exists()) {
 			throw new IllegalStateException(Messages.get("msg.missing.input"));
 		}
 		if (algorithm != null) {
@@ -154,7 +157,9 @@ public class CodecEngine {
 					outputFile.deleteOnExit();
 				}
 			}
-			catch (final Exception de) {/* Ignore */}
+			catch (final Exception de) {
+				logger.log(Level.WARNING, Messages.get("err.cannot.delete.file", outputFile), de);
+			}
 			throw new IllegalStateException(Messages.get("err.cannot.encode", algorithm.getName()), e);
 		}
 		finally {
@@ -213,7 +218,9 @@ public class CodecEngine {
 					outputFile.deleteOnExit();
 				}
 			}
-			catch (final Exception de) {/* Ignore */}
+			catch (final Exception de) {
+				logger.log(Level.WARNING, Messages.get("err.cannot.delete.file", outputFile), de);
+			}
 			throw new IllegalStateException(Messages.get("err.cannot.decode", algorithm.getName()), e);
 		}
 		finally {
