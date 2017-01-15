@@ -36,6 +36,7 @@ import it.albertus.codec.gui.listener.ProcessFileButtonSelectionListener;
 import it.albertus.codec.gui.listener.ShellDropListener;
 import it.albertus.codec.gui.listener.TextKeyListener;
 import it.albertus.codec.resources.Messages;
+import it.albertus.jface.cocoa.CocoaEnhancerException;
 import it.albertus.jface.cocoa.CocoaUIEnhancer;
 import it.albertus.util.logging.LoggerFactory;
 
@@ -69,8 +70,8 @@ public class CodecGui extends Codec implements IShellProvider {
 			try {
 				new CocoaUIEnhancer(display).hookApplicationMenu(new CloseListener(this), aboutListener, null);
 			}
-			catch (final Throwable t) {
-				logger.log(Level.WARNING, Messages.get("err.cocoa.enhancer"), t);
+			catch (final CocoaEnhancerException cee) {
+				logger.log(Level.WARNING, Messages.get("err.cocoa.enhancer"), cee);
 			}
 		}
 
