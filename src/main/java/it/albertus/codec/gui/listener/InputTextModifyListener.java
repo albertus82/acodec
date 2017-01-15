@@ -31,19 +31,24 @@ public class InputTextModifyListener implements ModifyListener {
 		try {
 			result = gui.getEngine().run(gui.getInputText().getText());
 		}
-		catch (Exception e) {
-			print(e.getMessage(), true);
+		catch (final Exception e) {
+			print(e);
 			return;
 		}
 		print(result, false);
 	}
 
-	private void print(String text, final boolean error) {
+	private void print(final Exception e) {
+		print(e.getMessage(), true);
+	}
+
+	private void print(final String text, final boolean error) {
+		String outputText = text != null ? text : "";
 		if (defaultTextColor == null) { // Fix color issues on some Linux GUIs
 			defaultTextColor = gui.getOutputText().getForeground();
 		}
 		if (error) {
-			text = ERROR_PREFIX + text + ERROR_SUFFIX;
+			outputText = new StringBuilder(outputText).insert(0, ERROR_PREFIX).append(ERROR_SUFFIX).toString();
 			if (!gui.getOutputText().getForeground().equals(inactiveTextColor)) {
 				gui.getOutputText().setForeground(inactiveTextColor);
 			}
@@ -53,7 +58,7 @@ public class InputTextModifyListener implements ModifyListener {
 				gui.getOutputText().setForeground(defaultTextColor);
 			}
 		}
-		gui.getOutputText().setText(text != null ? text : "");
+		gui.getOutputText().setText(outputText);
 	}
 
 }
