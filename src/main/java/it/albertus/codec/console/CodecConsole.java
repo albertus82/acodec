@@ -2,6 +2,8 @@ package it.albertus.codec.console;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import it.albertus.codec.Codec;
 import it.albertus.codec.engine.CodecAlgorithm;
@@ -9,8 +11,11 @@ import it.albertus.codec.engine.CodecMode;
 import it.albertus.codec.resources.Messages;
 import it.albertus.util.NewLine;
 import it.albertus.util.Version;
+import it.albertus.util.logging.LoggerFactory;
 
 public class CodecConsole extends Codec {
+
+	private static final Logger logger = LoggerFactory.getLogger(CodecConsole.class);
 
 	private static final char OPTION_CHARSET = 'c';
 	private static final char OPTION_FILE = 'f';
@@ -106,7 +111,8 @@ public class CodecConsole extends Codec {
 			try {
 				getEngine().setCharset(Charset.forName(charsetName));
 			}
-			catch (Exception e) {
+			catch (final Exception e) {
+				logger.log(Level.FINE, Messages.get("err.invalid.charset", charsetName), e);
 				System.err.println(Messages.get("err.invalid.charset", charsetName) + NewLine.SYSTEM_LINE_SEPARATOR);
 				printHelp();
 				return;
@@ -129,7 +135,8 @@ public class CodecConsole extends Codec {
 				System.out.println(getEngine().run(args[args.length - 1]));
 			}
 		}
-		catch (Exception e) {
+		catch (final Exception e) {
+			logger.log(Level.FINE, Messages.get("err.generic", e.getMessage()), e);
 			System.err.println(Messages.get("err.generic", e.getMessage()));
 		}
 	}
