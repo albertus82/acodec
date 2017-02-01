@@ -38,6 +38,7 @@ import it.albertus.codec.gui.listener.TextKeyListener;
 import it.albertus.codec.resources.Messages;
 import it.albertus.jface.cocoa.CocoaEnhancerException;
 import it.albertus.jface.cocoa.CocoaUIEnhancer;
+import it.albertus.util.Version;
 import it.albertus.util.logging.LoggerFactory;
 
 public class CodecGui extends Codec implements IShellProvider {
@@ -147,6 +148,23 @@ public class CodecGui extends Codec implements IShellProvider {
 
 		shell.pack();
 		shell.setMinimumSize(shell.getSize());
+	}
+
+	public static void start() {
+		Display.setAppName(Messages.get("msg.application.name"));
+		Display.setAppVersion(Version.getInstance().getNumber());
+		final Display display = Display.getDefault();
+		final CodecGui gui = new CodecGui(display);
+		final Shell shell = gui.getShell();
+		shell.addShellListener(new CloseListener(gui));
+		shell.open();
+		gui.getInputText().notifyListeners(SWT.Modify, null);
+		while (!shell.isDisposed()) {
+			if (!display.isDisposed() && !display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		display.dispose();
 	}
 
 	private Text createInputText() {

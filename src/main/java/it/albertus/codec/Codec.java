@@ -1,41 +1,19 @@
 package it.albertus.codec;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import it.albertus.codec.console.CodecConsole;
 import it.albertus.codec.engine.CodecEngine;
 import it.albertus.codec.gui.CodecGui;
-import it.albertus.codec.resources.Messages;
-import it.albertus.util.Version;
 
-public class Codec {
+public abstract class Codec {
 
-	private final CodecEngine engine;
-
-	protected Codec() {
-		this.engine = new CodecEngine();
-	}
+	private final CodecEngine engine = new CodecEngine();
 
 	public static void main(final String[] args) {
 		if (args.length > 0) {
-			new CodecConsole().execute(args);
+			CodecConsole.start(args);
 		}
 		else {
-			Display.setAppName(Messages.get("msg.application.name"));
-			Display.setAppVersion(Version.getInstance().getNumber());
-			final Display display = Display.getDefault();
-			final CodecGui gui = new CodecGui(display);
-			final Shell shell = gui.getShell();
-			shell.open();
-			gui.getInputText().notifyListeners(SWT.Modify, null);
-			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch()) {
-					display.sleep();
-				}
-			}
-			display.dispose();
+			CodecGui.start();
 		}
 	}
 
