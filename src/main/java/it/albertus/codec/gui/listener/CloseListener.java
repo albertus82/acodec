@@ -5,6 +5,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -16,22 +17,30 @@ public class CloseListener implements ShellListener, SelectionListener, Listener
 		this.provider = provider;
 	}
 
-	@Override
-	public void widgetSelected(final SelectionEvent event) {
+	private void disposeShellAndDisplay() {
 		provider.getShell().dispose();
-		event.display.dispose();
+		final Display display = Display.getCurrent();
+		if (display != null) {
+			display.dispose(); // Fix close not working on Windows 10 when iconified
+		}
 	}
 
+	/* OS X Menu */
 	@Override
 	public void handleEvent(final Event event) {
-		provider.getShell().dispose();
-		event.display.dispose();
+		disposeShellAndDisplay();
 	}
 
+	/* Menu */
+	@Override
+	public void widgetSelected(final SelectionEvent event) {
+		disposeShellAndDisplay();
+	}
+
+	/* Shell close command */
 	@Override
 	public void shellClosed(final ShellEvent event) {
-		provider.getShell().dispose();
-		event.display.dispose();
+		disposeShellAndDisplay();
 	}
 
 	@Override
