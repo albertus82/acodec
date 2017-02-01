@@ -8,6 +8,7 @@ public abstract class Codec {
 
 	private final CodecEngine engine = new CodecEngine();
 
+	/* Unique entry point */
 	public static void main(final String[] args) {
 		if (args.length > 0) {
 			CodecConsole.start(args);
