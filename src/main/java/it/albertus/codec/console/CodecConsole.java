@@ -2,6 +2,7 @@ package it.albertus.codec.console;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -168,7 +169,8 @@ public class CodecConsole extends Codec {
 		/* Example */
 		help.append(Messages.get("msg.help.example"));
 
-		System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", Version.getInstance().getNumber(), Version.getInstance().getDate()) + " [" + Messages.get("msg.website") + ']' + NewLine.SYSTEM_LINE_SEPARATOR + NewLine.SYSTEM_LINE_SEPARATOR + help.toString().trim());
+		final Version version = Version.getInstance();
+		System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(version.getDate())) + " [" + Messages.get("msg.website") + ']' + NewLine.SYSTEM_LINE_SEPARATOR + NewLine.SYSTEM_LINE_SEPARATOR + help.toString().trim());
 	}
 
 	private String getCharsetsHelpBlock() {

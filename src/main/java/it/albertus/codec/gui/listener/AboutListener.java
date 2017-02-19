@@ -1,5 +1,7 @@
 package it.albertus.codec.gui.listener;
 
+import java.text.DateFormat;
+
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -22,7 +24,8 @@ public class AboutListener extends SelectionAdapter implements Listener {
 	public void widgetSelected(final SelectionEvent se) {
 		final AboutDialog aboutDialog = new AboutDialog(gui.getShell());
 		aboutDialog.setText(Messages.get("lbl.about.title"));
-		aboutDialog.setMessage(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", Version.getInstance().getNumber(), Version.getInstance().getDate()));
+		final Version version = Version.getInstance();
+		aboutDialog.setMessage(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(version.getDate())));
 		aboutDialog.setApplicationUrl(Messages.get("msg.website"));
 		aboutDialog.setIconUrl(Messages.get("msg.info.icon.site"));
 		aboutDialog.open();
