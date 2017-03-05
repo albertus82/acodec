@@ -2,6 +2,7 @@ package it.albertus.codec.gui.listener;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,7 +28,7 @@ public class AlgorithmComboSelectionListener extends SelectionAdapter {
 		/* Attivazione drag and drop e pulsante elaborazione file */
 		if (!gui.getProcessFileButton().getEnabled()) {
 			gui.getProcessFileButton().setEnabled(true);
-			gui.getShellDropTarget().setTransfer(new Transfer[] { FileTransfer.getInstance() });
+			gui.getShellDropTarget().setTransfer(new Transfer[] { FileTransfer.getInstance(), TextTransfer.getInstance() });
 		}
 
 		/* Gestione radio */
