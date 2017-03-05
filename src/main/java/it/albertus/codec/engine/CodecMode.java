@@ -6,16 +6,16 @@ public enum CodecMode {
 	ENCODE("lbl.mode.encode", 'e'),
 	DECODE("lbl.mode.decode", 'd');
 
-	private final String label;
+	private final String labelKey;
 	private final char abbreviation;
 
-	private CodecMode(final String key, final char abbreviation) {
-		this.label = Messages.get(key);
+	private CodecMode(final String labelKey, final char abbreviation) {
+		this.labelKey = labelKey;
 		this.abbreviation = abbreviation;
 	}
 
 	public String getName() {
-		return label;
+		return Messages.get(labelKey);
 	}
 
 	public char getAbbreviation() {
@@ -24,7 +24,7 @@ public enum CodecMode {
 
 	@Override
 	public String toString() {
-		return label;
+		return getName();
 	}
 
 }

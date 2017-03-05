@@ -3,8 +3,7 @@ package it.albertus.codec.gui;
 import java.nio.charset.Charset;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map.Entry;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -37,19 +36,23 @@ import it.albertus.codec.gui.listener.ProcessFileButtonSelectionListener;
 import it.albertus.codec.gui.listener.ShellDropListener;
 import it.albertus.codec.gui.listener.TextKeyListener;
 import it.albertus.codec.resources.Messages;
-import it.albertus.jface.cocoa.CocoaEnhancerException;
-import it.albertus.jface.cocoa.CocoaUIEnhancer;
+import it.albertus.codec.resources.Messages.Language;
 import it.albertus.util.Version;
-import it.albertus.util.logging.LoggerFactory;
 
 public class CodecGui extends Codec implements IShellProvider {
-
-	private static final Logger logger = LoggerFactory.getLogger(CodecGui.class);
 
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
 
 	private final Shell shell;
+	private final MenuBar menuBar;
+
+	private final Label inputLabel;
+	private final Label outputLabel;
+	private final Label algorithmLabel;
+	private final Label charsetLabel;
+	private final Label modeLabel;
+
 	private final Text inputText;
 	private final Text outputText;
 	private final Combo algorithmCombo;
@@ -67,32 +70,24 @@ public class CodecGui extends Codec implements IShellProvider {
 		shell.setText(Messages.get("msg.application.name"));
 		shell.setLayout(new GridLayout(5, false));
 
-		final AboutListener aboutListener = new AboutListener(this);
-		if (Util.isCocoa()) {
-			try {
-				new CocoaUIEnhancer(display).hookApplicationMenu(new CloseListener(this), aboutListener, null);
-			}
-			catch (final CocoaEnhancerException cee) {
-				logger.log(Level.WARNING, Messages.get("err.cocoa.enhancer"), cee);
-			}
-		}
+		menuBar = new MenuBar(this);
 
 		/* Input text */
-		final Label inputLabel = new Label(shell, SWT.NONE);
+		inputLabel = new Label(shell, SWT.NONE);
 		inputLabel.setText(Messages.get("lbl.input"));
 		inputLabel.setLayoutData(new GridData());
 
 		inputText = createInputText();
 
 		/* Output text */
-		final Label outputLabel = new Label(shell, SWT.NONE);
+		outputLabel = new Label(shell, SWT.NONE);
 		outputLabel.setText(Messages.get("lbl.output"));
 		outputLabel.setLayoutData(new GridData());
 
 		outputText = createOutputText();
 
 		/* Codec combo */
-		final Label algorithmLabel = new Label(shell, SWT.NONE);
+		algorithmLabel = new Label(shell, SWT.NONE);
 		algorithmLabel.setText(Messages.get("lbl.algorithm"));
 		algorithmLabel.setLayoutData(new GridData());
 
@@ -101,7 +96,7 @@ public class CodecGui extends Codec implements IShellProvider {
 		algorithmCombo.setLayoutData(new GridData());
 
 		/* Charset combo */
-		final Label charsetLabel = new Label(shell, SWT.NONE);
+		charsetLabel = new Label(shell, SWT.NONE);
 		charsetLabel.setText(Messages.get("lbl.charset"));
 		charsetLabel.setLayoutData(new GridData());
 
@@ -125,10 +120,10 @@ public class CodecGui extends Codec implements IShellProvider {
 		aboutButton = new Button(buttonsComposite, SWT.NONE);
 		aboutButton.setText(Messages.get("lbl.about"));
 		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).applyTo(aboutButton);
-		aboutButton.addSelectionListener(aboutListener);
+		aboutButton.addSelectionListener(new AboutListener(this));
 
 		/* Mode radio */
-		final Label modeLabel = new Label(shell, SWT.NONE);
+		modeLabel = new Label(shell, SWT.NONE);
 		modeLabel.setText(Messages.get("lbl.mode"));
 		modeLabel.setLayoutData(new GridData());
 
@@ -222,6 +217,30 @@ public class CodecGui extends Codec implements IShellProvider {
 		}
 	}
 
+	public void setLanguage(final Language language) {
+		Messages.setLanguage(language);
+		shell.setRedraw(false);
+		this.updateTexts();
+		menuBar.updateTexts();
+		shell.layout(true, true);
+		shell.setMinimumSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+		shell.setRedraw(true);
+	}
+
+	public void updateTexts() {
+		inputLabel.setText(Messages.get("lbl.input"));
+		outputLabel.setText(Messages.get("lbl.output"));
+		algorithmLabel.setText(Messages.get("lbl.algorithm"));
+		charsetLabel.setText(Messages.get("lbl.charset"));
+		processFileButton.setText(Messages.get("lbl.file.process"));
+		aboutButton.setText(Messages.get("lbl.about"));
+		modeLabel.setText(Messages.get("lbl.mode"));
+		for (final Entry<CodecMode, Button> entry : modeRadios.entrySet()) {
+			entry.getValue().setText(entry.getKey().getName());
+		}
+		inputText.notifyListeners(SWT.Modify, null);
+	}
+
 	@Override
 	public Shell getShell() {
 		return shell;
@@ -257,6 +276,30 @@ public class CodecGui extends Codec implements IShellProvider {
 
 	public DropTarget getShellDropTarget() {
 		return shellDropTarget;
+	}
+
+	public MenuBar getMenuBar() {
+		return menuBar;
+	}
+
+	public Label getInputLabel() {
+		return inputLabel;
+	}
+
+	public Label getOutputLabel() {
+		return outputLabel;
+	}
+
+	public Label getAlgorithmLabel() {
+		return algorithmLabel;
+	}
+
+	public Label getCharsetLabel() {
+		return charsetLabel;
+	}
+
+	public Label getModeLabel() {
+		return modeLabel;
 	}
 
 	public boolean isDirty() {
