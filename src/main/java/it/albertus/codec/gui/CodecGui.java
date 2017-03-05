@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
@@ -14,7 +14,6 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -26,7 +25,6 @@ import org.eclipse.swt.widgets.Text;
 import it.albertus.codec.Codec;
 import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecMode;
-import it.albertus.codec.gui.listener.AboutListener;
 import it.albertus.codec.gui.listener.AlgorithmComboSelectionListener;
 import it.albertus.codec.gui.listener.CharsetComboSelectionListener;
 import it.albertus.codec.gui.listener.CloseListener;
@@ -58,7 +56,6 @@ public class CodecGui extends Codec implements IShellProvider {
 	private final Combo algorithmCombo;
 	private final Combo charsetCombo;
 	private final EnumMap<CodecMode, Button> modeRadios = new EnumMap<CodecMode, Button>(CodecMode.class);
-	private final Button aboutButton;
 	private final Button processFileButton;
 	private final DropTarget shellDropTarget;
 
@@ -105,22 +102,12 @@ public class CodecGui extends Codec implements IShellProvider {
 		charsetCombo.setText(Charset.defaultCharset().name());
 		charsetCombo.setLayoutData(new GridData());
 
-		final Composite buttonsComposite = new Composite(shell, SWT.NONE);
-		GridDataFactory.swtDefaults().span(1, 2).indent(0, -1).applyTo(buttonsComposite);
-		GridLayoutFactory.swtDefaults().margins(0, 0).applyTo(buttonsComposite);
-
 		// Process file button
-		processFileButton = new Button(buttonsComposite, SWT.NONE);
+		processFileButton = new Button(shell, SWT.NONE);
 		processFileButton.setEnabled(false);
 		processFileButton.setText(Messages.get("lbl.file.process"));
-		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).applyTo(processFileButton);
+		GridDataFactory.swtDefaults().span(1, 2).align(SWT.BEGINNING, SWT.FILL).applyTo(processFileButton);
 		processFileButton.addSelectionListener(new ProcessFileButtonSelectionListener(this));
-
-		// About button
-		aboutButton = new Button(buttonsComposite, SWT.NONE);
-		aboutButton.setText(Messages.get("lbl.about"));
-		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).applyTo(aboutButton);
-		aboutButton.addSelectionListener(new AboutListener(this));
 
 		/* Mode radio */
 		modeLabel = new Label(shell, SWT.NONE);
@@ -128,8 +115,8 @@ public class CodecGui extends Codec implements IShellProvider {
 		modeLabel.setLayoutData(new GridData());
 
 		final Composite radioComposite = new Composite(shell, SWT.NONE);
-		radioComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
-		radioComposite.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 3, 1));
+		RowLayoutFactory.swtDefaults().applyTo(radioComposite);
+		GridDataFactory.swtDefaults().span(3, 1).applyTo(radioComposite);
 		for (final CodecMode mode : CodecMode.values()) {
 			final Button radio = new Button(radioComposite, SWT.RADIO);
 			radio.setSelection(getEngine().getMode().equals(mode));
@@ -233,7 +220,6 @@ public class CodecGui extends Codec implements IShellProvider {
 		algorithmLabel.setText(Messages.get("lbl.algorithm"));
 		charsetLabel.setText(Messages.get("lbl.charset"));
 		processFileButton.setText(Messages.get("lbl.file.process"));
-		aboutButton.setText(Messages.get("lbl.about"));
 		modeLabel.setText(Messages.get("lbl.mode"));
 		for (final Entry<CodecMode, Button> entry : modeRadios.entrySet()) {
 			entry.getValue().setText(entry.getKey().getName());
@@ -264,10 +250,6 @@ public class CodecGui extends Codec implements IShellProvider {
 
 	public Map<CodecMode, Button> getModeRadios() {
 		return modeRadios;
-	}
-
-	public Button getAboutButton() {
-		return aboutButton;
 	}
 
 	public Button getProcessFileButton() {
