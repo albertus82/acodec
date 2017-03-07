@@ -7,7 +7,7 @@
 	<classpathentry kind="lib" path="lib/test/junit-4.12.jar" sourcepath="lib/test/src/junit-4.12-sources.jar"/>
 	<classpathentry kind="lib" path="lib/test/hamcrest-core-1.3.jar" sourcepath="lib/test/src/hamcrest-core-1.3-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.10.jar" sourcepath="lib/src/commons-codec-1.10-src.zip"/>
-	<classpathentry kind="lib" path="lib/commons-io-2.4.jar" sourcepath="lib/src/commons-io-2.4-src.zip"/>
+	<classpathentry kind="lib" path="lib/commons-io-2.5.jar" sourcepath="lib/src/commons-io-2.5-src.zip"/>
 	<classpathentry kind="lib" path="lib/freehep-io-2.2.2.jar" sourcepath="lib/src/freehep-io-2.2.2-sources.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.core.commands_3.6.100.v20140528-1422.jar" sourcepath="lib/src/org.eclipse.core.commands.source_3.6.100.v20140528-1422.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.core.jobs_3.6.1.v20141014-1248.jar" sourcepath="lib/src/org.eclipse.core.jobs.source_3.6.1.v20141014-1248.jar"/>
