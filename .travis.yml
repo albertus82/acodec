@@ -1,10 +1,16 @@
 language: java
 
-jdk:
-  - oraclejdk8
-  - oraclejdk7
-  - openjdk7
-  - openjdk6
+matrix:
+  include:
+    - os: linux
+      jdk: oraclejdk8
+    - os: linux
+      jdk: oraclejdk7
+    - os: linux
+      jdk: openjdk7
+    - os: linux
+      jdk: openjdk6
+    - os: osx
 
 addons:
   sonarqube: true
@@ -20,6 +26,9 @@ env:
   global:
     - secure: "GX8EGWbKLJQ/xGusrlJAlKCtQtdwnSjKeo01+pUtSMNY0/+6fk+17z73DY8Vmv9LACftx1dLtYpp9R48uQWt38cOHknIsCyK9b1940MB2FznkDfpNk7jCR5SzqzYzRBTeXCUI+uazdB4JhHBaWKm6SAj+QKJGzN28feL/RBlf6jQ7ZfXHPt+lg4ouf+Sb2zHabavD6VicXIwHwmd4tRrb6JaJl78xk8Xh6qjmoYQvPqP0ssHgE9FLOFJOoXUHOEBC9LkL+JYakD5BaA6Wts7yQdq1kQhJlXmUaDCKOxgvMiPllJ7jUyECEfOOXE24HXQzF0MHUNOp2gPbyE84WL2xR+Hp/LlILjuZ9HJhpYx+R5TieZQcK7oxw1y8imf6DRAisKKOnUzye+angZT4QZp5CCbK/6IlfJncT0jJClOBKJxDHgNVtEnyR/qZoUUq7JI/3s7CrSVWGMJxiy/qwJe5N1zlt06MihCVmUVjJlKWA3zm2pvF7iUcGBd4Cl47Tg8rf5M5GtJcFRndHMGZTGlYDrSfELyhFukruYLQ+zyweVsrkMGikqD/o/LaTdIQ2qgochYMpf2zF5ExnzLwgx3t+hGmRpNORQiwKWvnTHcgMTlIMl7i20v8EScmj2+NhArgG5BDCYUY5/DMiQlne197xAC/lUTb/pZSKk6OmVjtfA="
     - JRE6_HOME=/usr/lib/jvm/java-6-openjdk-amd64/jre
+
+before_install:
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install wine ant; fi;
 
 script:
   - ant all
