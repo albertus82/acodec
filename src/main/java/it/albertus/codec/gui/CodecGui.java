@@ -55,7 +55,7 @@ public class CodecGui extends Codec implements IShellProvider {
 	private final Text outputText;
 	private final Combo algorithmCombo;
 	private final Combo charsetCombo;
-	private final EnumMap<CodecMode, Button> modeRadios = new EnumMap<CodecMode, Button>(CodecMode.class);
+	private final EnumMap<CodecMode, Button> modeRadios = new EnumMap<>(CodecMode.class);
 	private final Button processFileButton;
 	private final DropTarget shellDropTarget;
 

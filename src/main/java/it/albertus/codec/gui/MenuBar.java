@@ -44,7 +44,7 @@ public class MenuBar {
 	private final MenuItem viewMenuHeader;
 	private final Menu viewLanguageSubMenu;
 	private final MenuItem viewLanguageSubMenuItem;
-	private final Map<Language, MenuItem> viewLanguageMenuItems = new EnumMap<Language, MenuItem>(Language.class);
+	private final Map<Language, MenuItem> viewLanguageMenuItems = new EnumMap<>(Language.class);
 
 	private Menu helpMenu;
 	private MenuItem helpMenuHeader;
