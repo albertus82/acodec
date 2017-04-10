@@ -3,7 +3,7 @@
 <project name="Codec" default="all">
 
 	<property environment="env" />
-	<property name="env.JRE6_HOME" value="${env.JAVA_HOME}/../jdk1.6.0_45/jre" />
+	<property name="env.JRE7_HOME" value="${env.JAVA_HOME}/../jdk1.7.0_79/jre" />
 
 	<property file="build.properties" />
 	<property file="${build.resourcesDirectory}/version.properties" />

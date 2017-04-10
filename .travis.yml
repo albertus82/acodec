@@ -8,8 +8,6 @@ matrix:
       jdk: oraclejdk7
     - os: linux
       jdk: openjdk7
-    - os: linux
-      jdk: openjdk6
     - os: osx
 
 addons:
