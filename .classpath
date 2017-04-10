@@ -16,6 +16,6 @@
 	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.10.2.v20150203-1939.jar" sourcepath="lib/src/org.eclipse.osgi.source_3.10.2.v20150203-1939.jar"/>
 	<classpathentry kind="lib" path="lib/platform/win32-win32-x86_64/swt-4.6.3-win32-win32-x86_64.jar" sourcepath="lib/platform/win32-win32-x86_64/src/swt-4.6.3-win32-win32-x86_64-src.zip"/>
 	<classpathentry kind="lib" path="lib/jface-utils-8.1.0.jar" sourcepath="lib/src/jface-utils-8.1.0-sources.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
