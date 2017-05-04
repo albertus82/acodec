@@ -5,6 +5,7 @@ import java.io.File;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 
+import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecMode;
 import it.albertus.codec.gui.CodecGui;
 import it.albertus.codec.gui.ProcessFileJob;
@@ -31,8 +32,16 @@ public class ProcessFileAction {
 		final FileDialog saveDialog = new FileDialog(gui.getShell(), SWT.SAVE);
 		saveDialog.setOverwrite(true);
 		if (CodecMode.ENCODE.equals(gui.getEngine().getMode())) {
-			saveDialog.setFilterExtensions(new String[] { "*." + gui.getEngine().getAlgorithm().name().toLowerCase() + "; *." + gui.getEngine().getAlgorithm().name().toUpperCase(), "*.*" });
-			saveDialog.setFileName(sourceFileName + '.' + gui.getEngine().getAlgorithm().name().toLowerCase());
+			final String extension;
+			final CodecAlgorithm algorithm = gui.getEngine().getAlgorithm();
+			if (CodecAlgorithm.CRC32.equals(algorithm)) {
+				extension = "sfv";
+			}
+			else {
+				extension = algorithm.name();
+			}
+			saveDialog.setFilterExtensions(new String[] { "*." + extension.toLowerCase() + ";*." + extension.toUpperCase(), "*.*" });
+			saveDialog.setFileName(sourceFileName + '.' + extension.toLowerCase());
 		}
 		else {
 			if (sourceFileName.indexOf('.') != -1) {

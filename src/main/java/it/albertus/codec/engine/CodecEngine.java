@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.CRC32;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base32InputStream;
@@ -25,6 +26,7 @@ import org.apache.mina.proxy.utils.MD4Provider;
 import org.freehep.util.io.ASCII85OutputStream;
 
 import it.albertus.codec.resources.Messages;
+import it.albertus.util.CRC32OutputStream;
 import it.albertus.util.logging.LoggerFactory;
 import net.sourceforge.base91.b91cli;
 
@@ -115,6 +117,20 @@ public class CodecEngine {
 			case BASE91:
 				bos = new BufferedOutputStream(fos);
 				b91cli.encodeWrap(bis, bos);
+				break;
+			case CRC16:
+				CRC16OutputStream c16os = new CRC16OutputStream();
+				IOUtils.copyLarge(bis, c16os);
+				c16os.close();
+				value = String.format("%04x", c16os.getValue());
+				IOUtils.write(value + " *" + fileName, fos, charset);
+				break;
+			case CRC32:
+				CRC32OutputStream c32os = new CRC32OutputStream();
+				IOUtils.copyLarge(bis, c32os);
+				c32os.close();
+				value = String.format("%08x", c32os.getValue());
+				IOUtils.write(fileName + ' ' + value, fos, charset); // sfv
 				break;
 			case MD2:
 				value = DigestUtils.md2Hex(bis);
@@ -251,6 +267,16 @@ public class CodecEngine {
 				break;
 			case BASE91:
 				value = Base91.encode(input.getBytes(charset));
+				break;
+			case CRC16:
+				final CRC16 crc16 = new CRC16();
+				crc16.update(input.getBytes(charset));
+				value = String.format("%04x", crc16.getValue());
+				break;
+			case CRC32:
+				final CRC32 crc32 = new CRC32();
+				crc32.update(input.getBytes(charset));
+				value = String.format("%08x", crc32.getValue());
 				break;
 			case MD2:
 				value = DigestUtils.md2Hex(input.getBytes(charset));

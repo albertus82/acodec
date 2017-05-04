@@ -10,6 +10,8 @@ public enum CodecAlgorithm {
 	BASE64("Base64"),
 	ASCII85("Ascii85"),
 	BASE91("basE91"),
+	CRC16("CRC-16", true),
+	CRC32("CRC-32", true),
 	MD2("MD2", true),
 	MD4("MD4", true),
 	MD5("MD5", true),
