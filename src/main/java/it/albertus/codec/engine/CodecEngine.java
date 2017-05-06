@@ -26,6 +26,8 @@ import org.apache.mina.proxy.utils.MD4Provider;
 import org.freehep.util.io.ASCII85OutputStream;
 
 import it.albertus.codec.resources.Messages;
+import it.albertus.util.CRC16;
+import it.albertus.util.CRC16OutputStream;
 import it.albertus.util.CRC32OutputStream;
 import it.albertus.util.logging.LoggerFactory;
 import net.sourceforge.base91.b91cli;
