@@ -6,7 +6,7 @@ Codec
 
 **Graphical user interface available for Windows, Linux & OS X.**
 
-![Screenshot](https://cloud.githubusercontent.com/assets/8672431/20244550/45bb3182-a987-11e6-956d-5740d2e8f3ad.png)
+![Screenshot](https://user-images.githubusercontent.com/8672431/27011383-cbf09962-4eba-11e7-9c7e-24215c5e06e4.png)
 
 Command line reference:
 
