@@ -75,6 +75,7 @@ public class MenuBar {
 
 		fileProcessMenuItem = new MenuItem(fileMenu, SWT.PUSH);
 		fileProcessMenuItem.setText(Messages.get("lbl.menu.item.process"));
+		fileProcessMenuItem.setEnabled(false);
 		fileProcessMenuItem.addSelectionListener(new ProcessFileButtonSelectionListener(gui));
 
 		if (!cocoaMenuCreated) {
