@@ -44,7 +44,7 @@ public final class Messages {
 
 	/** Instantiation not permitted. */
 	private Messages() {
-		new IllegalAccessError();
+		throw new IllegalAccessError();
 	}
 
 	/** Aggiorna la lingua in cui vengono mostrati i messaggi. */
