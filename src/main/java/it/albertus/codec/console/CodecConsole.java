@@ -64,7 +64,7 @@ public class CodecConsole extends Codec {
 		/* Algorithm */
 		final String algorithmArg = args[1].trim();
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
-			if (ca.getName().equalsIgnoreCase(algorithmArg)) {
+			if (ca.getName().equalsIgnoreCase(algorithmArg) || ca.name().equalsIgnoreCase(algorithmArg)) {
 				algorithm = ca;
 				break;
 			}
