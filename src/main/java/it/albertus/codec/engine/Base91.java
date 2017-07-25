@@ -2,7 +2,6 @@ package it.albertus.codec.engine;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
 
@@ -14,7 +13,7 @@ public class Base91 {
 		throw new IllegalAccessError();
 	}
 
-	public static String encode(final byte[] byteArray) throws IOException {
+	public static String encode(final byte[] byteArray) {
 		ByteArrayInputStream bais = null;
 		ByteArrayOutputStream baos = null;
 		try {
@@ -23,13 +22,12 @@ public class Base91 {
 			b91cli.encode(bais, baos);
 		}
 		finally {
-			IOUtils.closeQuietly(baos);
-			IOUtils.closeQuietly(bais);
+			IOUtils.closeQuietly(baos, bais);
 		}
 		return baos.toString().trim();
 	}
 
-	public static byte[] decode(final String encoded) throws IOException {
+	public static byte[] decode(final String encoded) {
 		ByteArrayInputStream bais = null;
 		ByteArrayOutputStream baos = null;
 		try {
@@ -38,8 +36,7 @@ public class Base91 {
 			b91cli.decode(bais, baos);
 		}
 		finally {
-			IOUtils.closeQuietly(baos);
-			IOUtils.closeQuietly(bais);
+			IOUtils.closeQuietly(baos, bais);
 		}
 		return baos.toByteArray();
 	}
