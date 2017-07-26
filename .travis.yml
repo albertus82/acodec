@@ -23,6 +23,7 @@ addons:
       - ant-optional
       - lib32ncurses5
       - lib32z1
+      - openjdk-6-jdk
       - winehq-stable
 
 env:
