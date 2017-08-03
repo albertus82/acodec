@@ -9,7 +9,9 @@ Codec
 
 ![Screenshot](https://user-images.githubusercontent.com/8672431/27011383-cbf09962-4eba-11e7-9c7e-24215c5e06e4.png)
 
-## [Download latest release](https://github.com/Albertus82/Codec/releases/latest)
+## Download
+
+Download the [latest release](https://github.com/Albertus82/Codec/releases/latest) from the [releases page](https://github.com/Albertus82/Codec/releases).
 
 ## Command line reference
 
