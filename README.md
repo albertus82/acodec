@@ -2,7 +2,7 @@ Codec
 =====
 
 [![Latest release](https://img.shields.io/github/release/Albertus82/Codec.svg)](https://github.com/Albertus82/Codec/releases/latest)
-[![Build Status](https://travis-ci.org/Albertus82/Codec.svg?branch=master)](https://travis-ci.org/Albertus82/Codec)
+[![Build status](https://travis-ci.org/Albertus82/Codec.svg?branch=master)](https://travis-ci.org/Albertus82/Codec)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/Albertus82/Codec?branch=master&svg=true)](https://ci.appveyor.com/project/Albertus82/Codec)
 
 **Graphical user interface available for Windows, Linux & OS X.**
