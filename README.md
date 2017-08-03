@@ -1,6 +1,7 @@
 Codec
 =====
 
+[![Latest release](https://img.shields.io/github/release/Albertus82/Codec.svg)](https://github.com/Albertus82/Codec/releases/latest)
 [![Build Status](https://travis-ci.org/Albertus82/Codec.svg?branch=master)](https://travis-ci.org/Albertus82/Codec)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/Albertus82/Codec?branch=master&svg=true)](https://ci.appveyor.com/project/Albertus82/Codec)
 
@@ -8,7 +9,9 @@ Codec
 
 ![Screenshot](https://user-images.githubusercontent.com/8672431/27011383-cbf09962-4eba-11e7-9c7e-24215c5e06e4.png)
 
-Command line reference:
+## [Download latest release](https://github.com/Albertus82/Codec/releases/latest)
+
+## Command line reference
 
 ```ruby
 Usage: codec <mode> <algorithm> [-c <charset>] { <text to process> | -f <source file> <destination file> }
