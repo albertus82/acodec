@@ -1,32 +1,30 @@
 package it.albertus.codec.gui;
 
-import it.albertus.codec.resources.Messages;
-
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 
-public class ProcessFileJob extends Job {
+import it.albertus.codec.resources.Messages;
+
+public class ProcessFileJob implements IRunnableWithProgress {
 
 	private final CodecGui gui;
 	private final File inputFile;
 	private final File outputFile;
 
 	public ProcessFileJob(final CodecGui gui, final File inputFile, final File outputFile) {
-		super(ProcessFileJob.class.getName());
 		this.gui = gui;
 		this.inputFile = inputFile;
 		this.outputFile = outputFile;
 	}
 
 	@Override
-	protected IStatus run(final IProgressMonitor monitor) {
-		monitor.beginTask(this.toString(), 1);
+	public void run(final IProgressMonitor monitor) throws InvocationTargetException {
+		monitor.beginTask(this.toString(), IProgressMonitor.UNKNOWN);
 
 		String result = null;
 		Throwable throwable = null;
@@ -34,14 +32,13 @@ public class ProcessFileJob extends Job {
 			result = gui.getEngine().run(inputFile, outputFile);
 		}
 		catch (Exception e) {
-			throwable = e;
+			throw new InvocationTargetException(e);
 		}
 
 		/* Riattivazione GUI al termine dell'operazione */
 		updateGui(result, throwable);
 
 		monitor.done();
-		return Status.OK_STATUS;
 	}
 
 	private void updateGui(final String result, final Throwable throwable) {
@@ -68,11 +65,6 @@ public class ProcessFileJob extends Job {
 				messageBox.open();
 			}
 		});
-	}
-
-	@Override
-	public String toString() {
-		return "FileJob [inputFile=" + inputFile + ", outputFile=" + outputFile + "]";
 	}
 
 }

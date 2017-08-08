@@ -1,7 +1,9 @@
 package it.albertus.codec.gui.listener;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 
@@ -59,7 +61,17 @@ public class ProcessFileAction {
 			/* Impostazione puntatore del mouse "Occupato" */
 			gui.getShell().setCursor(gui.getShell().getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
 
-			new ProcessFileJob(gui, new File(sourceFileName), new File(destinationFileName)).schedule();
+			try {
+				new ProgressMonitorDialog(gui.getShell()).run(true, false,new ProcessFileJob(gui, new File(sourceFileName), new File(destinationFileName)));
+			}
+			catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
