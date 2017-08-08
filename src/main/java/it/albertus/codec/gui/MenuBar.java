@@ -1,6 +1,5 @@
 package it.albertus.codec.gui;
 
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,17 +8,21 @@ import java.util.logging.Logger;
 
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import it.albertus.codec.gui.listener.AboutListener;
 import it.albertus.codec.gui.listener.CloseListener;
+import it.albertus.codec.gui.listener.HelpMenuListener;
 import it.albertus.codec.gui.listener.LanguageSelectionListener;
 import it.albertus.codec.gui.listener.ProcessFileButtonSelectionListener;
 import it.albertus.codec.resources.Messages;
 import it.albertus.codec.resources.Messages.Language;
 import it.albertus.jface.cocoa.CocoaEnhancerException;
 import it.albertus.jface.cocoa.CocoaUIEnhancer;
+import it.albertus.jface.sysinfo.SystemInformationDialog;
 import it.albertus.util.logging.LoggerFactory;
 
 /**
@@ -31,24 +34,29 @@ import it.albertus.util.logging.LoggerFactory;
  */
 public class MenuBar {
 
+	private static final String LBL_MENU_HEADER_FILE = "lbl.menu.header.file";
+	private static final String LBL_MENU_ITEM_PROCESS = "lbl.menu.item.process";
+	private static final String LBL_MENU_ITEM_EXIT = "lbl.menu.item.exit";
+	private static final String LBL_MENU_HEADER_VIEW = "lbl.menu.header.view";
+	private static final String LBL_MENU_ITEM_LANGUAGE = "lbl.menu.item.language";
+	private static final String LBL_MENU_HEADER_HELP = "lbl.menu.header.help";
+	private static final String LBL_MENU_HEADER_HELP_WINDOWS = "lbl.menu.header.help.windows";
+	private static final String LBL_MENU_ITEM_SYSTEM_INFO = "lbl.menu.item.system.info";
+	private static final String LBL_MENU_ITEM_ABOUT = "lbl.menu.item.about";
+
 	private static final Logger logger = LoggerFactory.getLogger(MenuBar.class);
 
-	private final Menu bar;
-
-	private final Menu fileMenu;
 	private final MenuItem fileMenuHeader;
 	private final MenuItem fileProcessMenuItem;
 	private MenuItem fileExitMenuItem;
 
-	private final Menu viewMenu;
 	private final MenuItem viewMenuHeader;
-	private final Menu viewLanguageSubMenu;
 	private final MenuItem viewLanguageSubMenuItem;
 	private final Map<Language, MenuItem> viewLanguageMenuItems = new EnumMap<Language, MenuItem>(Language.class);
 
-	private Menu helpMenu;
-	private MenuItem helpMenuHeader;
-	private MenuItem helpAboutMenuItem;
+	private final MenuItem helpMenuHeader;
+	private final MenuItem helpSystemInfoItem;
+	private MenuItem helpAboutItem;
 
 	MenuBar(final CodecGui gui) {
 		final CloseListener closeListener = new CloseListener(gui);
@@ -65,16 +73,16 @@ public class MenuBar {
 			}
 		}
 
-		bar = new Menu(gui.getShell(), SWT.BAR); // Barra
+		final Menu bar = new Menu(gui.getShell(), SWT.BAR); // Bar
 
 		// File
-		fileMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
+		final Menu fileMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
 		fileMenuHeader = new MenuItem(bar, SWT.CASCADE);
-		fileMenuHeader.setText(Messages.get("lbl.menu.header.file"));
+		fileMenuHeader.setText(Messages.get(LBL_MENU_HEADER_FILE));
 		fileMenuHeader.setMenu(fileMenu);
 
 		fileProcessMenuItem = new MenuItem(fileMenu, SWT.PUSH);
-		fileProcessMenuItem.setText(Messages.get("lbl.menu.item.process"));
+		fileProcessMenuItem.setText(Messages.get(LBL_MENU_ITEM_PROCESS));
 		fileProcessMenuItem.setEnabled(false);
 		fileProcessMenuItem.addSelectionListener(new ProcessFileButtonSelectionListener(gui));
 
@@ -82,20 +90,20 @@ public class MenuBar {
 			new MenuItem(fileMenu, SWT.SEPARATOR);
 
 			fileExitMenuItem = new MenuItem(fileMenu, SWT.PUSH);
-			fileExitMenuItem.setText(Messages.get("lbl.menu.item.exit"));
+			fileExitMenuItem.setText(Messages.get(LBL_MENU_ITEM_EXIT));
 			fileExitMenuItem.addSelectionListener(closeListener);
 		}
 
 		// View
-		viewMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
+		final Menu viewMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
 		viewMenuHeader = new MenuItem(bar, SWT.CASCADE);
-		viewMenuHeader.setText(Messages.get("lbl.menu.header.view"));
+		viewMenuHeader.setText(Messages.get(LBL_MENU_HEADER_VIEW));
 		viewMenuHeader.setMenu(viewMenu);
 
 		viewLanguageSubMenuItem = new MenuItem(viewMenu, SWT.CASCADE);
-		viewLanguageSubMenuItem.setText(Messages.get("lbl.menu.item.language"));
+		viewLanguageSubMenuItem.setText(Messages.get(LBL_MENU_ITEM_LANGUAGE));
 
-		viewLanguageSubMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
+		final Menu viewLanguageSubMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
 		viewLanguageSubMenuItem.setMenu(viewLanguageSubMenu);
 
 		final LanguageSelectionListener languageSelectionListener = new LanguageSelectionListener(gui);
@@ -111,88 +119,56 @@ public class MenuBar {
 		viewLanguageMenuItems.get(Messages.getLanguage()).setSelection(true); // Default
 
 		// Help
-		if (!cocoaMenuCreated) {
-			helpMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
-			helpMenuHeader = new MenuItem(bar, SWT.CASCADE);
-			helpMenuHeader.setText(Messages.get("lbl.menu.header.help"));
-			helpMenuHeader.setMenu(helpMenu);
+		final Menu helpMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
+		helpMenuHeader = new MenuItem(bar, SWT.CASCADE);
+		helpMenuHeader.setText(Messages.get(Util.isWindows() ? LBL_MENU_HEADER_HELP_WINDOWS : LBL_MENU_HEADER_HELP));
+		helpMenuHeader.setMenu(helpMenu);
 
-			helpAboutMenuItem = new MenuItem(helpMenu, SWT.PUSH);
-			helpAboutMenuItem.setText(Messages.get("lbl.menu.item.about"));
-			helpAboutMenuItem.addSelectionListener(aboutListener);
+		helpSystemInfoItem = new MenuItem(helpMenu, SWT.PUSH);
+		helpSystemInfoItem.setText(Messages.get(LBL_MENU_ITEM_SYSTEM_INFO));
+		helpSystemInfoItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				SystemInformationDialog.open(gui.getShell());
+			}
+		});
+
+		if (!cocoaMenuCreated) {
+			new MenuItem(helpMenu, SWT.SEPARATOR);
+
+			helpAboutItem = new MenuItem(helpMenu, SWT.PUSH);
+			helpAboutItem.setText(Messages.get(LBL_MENU_ITEM_ABOUT));
+			helpAboutItem.addSelectionListener(new AboutListener(gui));
 		}
+
+		final HelpMenuListener helpMenuListener = new HelpMenuListener(helpSystemInfoItem);
+		helpMenu.addMenuListener(helpMenuListener);
+		helpMenuHeader.addArmListener(helpMenuListener);
 
 		gui.getShell().setMenuBar(bar);
 	}
 
 	public void updateTexts() {
-		fileMenuHeader.setText(Messages.get("lbl.menu.header.file"));
-		fileProcessMenuItem.setText(Messages.get("lbl.menu.item.process"));
+		fileMenuHeader.setText(Messages.get(LBL_MENU_HEADER_FILE));
+		fileProcessMenuItem.setText(Messages.get(LBL_MENU_ITEM_PROCESS));
 		if (fileExitMenuItem != null && !fileExitMenuItem.isDisposed()) {
-			fileExitMenuItem.setText(Messages.get("lbl.menu.item.exit"));
+			fileExitMenuItem.setText(Messages.get(LBL_MENU_ITEM_EXIT));
 		}
 
-		viewMenuHeader.setText(Messages.get("lbl.menu.header.view"));
-		viewLanguageSubMenuItem.setText(Messages.get("lbl.menu.item.language"));
+		viewMenuHeader.setText(Messages.get(LBL_MENU_HEADER_VIEW));
+		viewLanguageSubMenuItem.setText(Messages.get(LBL_MENU_ITEM_LANGUAGE));
 		for (final Entry<Language, MenuItem> entry : viewLanguageMenuItems.entrySet()) {
 			entry.getValue().setText(entry.getKey().getLocale().getDisplayLanguage(entry.getKey().getLocale()));
 		}
-		if (helpMenuHeader != null && !helpMenuHeader.isDisposed()) {
-			helpMenuHeader.setText(Messages.get("lbl.menu.header.help"));
-			helpAboutMenuItem.setText(Messages.get("lbl.menu.item.about"));
+		helpMenuHeader.setText(Messages.get(Util.isWindows() ? LBL_MENU_HEADER_HELP_WINDOWS : LBL_MENU_HEADER_HELP));
+		helpSystemInfoItem.setText(Messages.get(LBL_MENU_ITEM_SYSTEM_INFO));
+		if (helpAboutItem != null && !helpAboutItem.isDisposed()) {
+			helpAboutItem.setText(Messages.get(LBL_MENU_ITEM_ABOUT));
 		}
-	}
-
-	public Map<Language, MenuItem> getViewLanguageMenuItems() {
-		return Collections.unmodifiableMap(viewLanguageMenuItems);
-	}
-
-	public Menu getBar() {
-		return bar;
-	}
-
-	public Menu getFileMenu() {
-		return fileMenu;
-	}
-
-	public MenuItem getFileMenuHeader() {
-		return fileMenuHeader;
 	}
 
 	public MenuItem getFileProcessMenuItem() {
 		return fileProcessMenuItem;
-	}
-
-	public MenuItem getFileExitMenuItem() {
-		return fileExitMenuItem;
-	}
-
-	public Menu getViewMenu() {
-		return viewMenu;
-	}
-
-	public MenuItem getViewMenuHeader() {
-		return viewMenuHeader;
-	}
-
-	public Menu getViewLanguageSubMenu() {
-		return viewLanguageSubMenu;
-	}
-
-	public MenuItem getViewLanguageSubMenuItem() {
-		return viewLanguageSubMenuItem;
-	}
-
-	public Menu getHelpMenu() {
-		return helpMenu;
-	}
-
-	public MenuItem getHelpMenuHeader() {
-		return helpMenuHeader;
-	}
-
-	public MenuItem getHelpAboutMenuItem() {
-		return helpAboutMenuItem;
 	}
 
 }
