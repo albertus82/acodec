@@ -5,8 +5,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 
@@ -72,6 +74,10 @@ public class ProcessFileAction {
 					public void create() {
 						super.create();
 						getShell().setText(Messages.get("lbl.process.file.dialog.title"));
+						final Button cancelButton = getButton(IDialogConstants.CANCEL_ID);
+						if (cancelButton != null && !cancelButton.isDisposed()) {
+							cancelButton.setText(Messages.get("lbl.process.file.dialog.button.cancel"));
+						}
 					}
 				}.run(true, false, job);
 			}
