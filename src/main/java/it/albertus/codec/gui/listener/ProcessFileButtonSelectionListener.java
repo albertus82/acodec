@@ -17,7 +17,7 @@ public class ProcessFileButtonSelectionListener extends ProcessFileAction implem
 		if (sourceFileName != null && sourceFileName.length() > 0) {
 			final String destinationFileName = getDestinationFile(sourceFileName);
 			if (destinationFileName != null && destinationFileName.length() > 0) {
-				run(sourceFileName, destinationFileName);
+				execute(sourceFileName, destinationFileName);
 			}
 		}
 	}

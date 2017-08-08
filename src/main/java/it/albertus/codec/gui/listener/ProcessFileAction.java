@@ -1,18 +1,27 @@
 package it.albertus.codec.gui.listener;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.MessageBox;
 
 import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecMode;
 import it.albertus.codec.gui.CodecGui;
+import it.albertus.codec.gui.Images;
 import it.albertus.codec.gui.ProcessFileJob;
+import it.albertus.codec.resources.Messages;
+import it.albertus.jface.EnhancedErrorDialog;
+import it.albertus.util.logging.LoggerFactory;
 
 public class ProcessFileAction {
+
+	private static final Logger logger = LoggerFactory.getLogger(ProcessFileAction.class);
 
 	protected final CodecGui gui;
 
@@ -20,7 +29,6 @@ public class ProcessFileAction {
 		this.gui = gui;
 	}
 
-	/* Selezione file sorgente */
 	protected String getSourceFile() {
 		final FileDialog openDialog = new FileDialog(gui.getShell(), SWT.OPEN);
 		if (CodecMode.DECODE.equals(gui.getEngine().getMode())) {
@@ -29,7 +37,6 @@ public class ProcessFileAction {
 		return openDialog.open();
 	}
 
-	/* Selezione file destinazione */
 	protected String getDestinationFile(final String sourceFileName) {
 		final FileDialog saveDialog = new FileDialog(gui.getShell(), SWT.SAVE);
 		saveDialog.setOverwrite(true);
@@ -53,24 +60,39 @@ public class ProcessFileAction {
 		return saveDialog.open();
 	}
 
-	protected void run(final String sourceFileName, final String destinationFileName) {
+	protected void execute(final String sourceFileName, final String destinationFileName) {
 		if (sourceFileName != null && destinationFileName != null) {
-			/* Disabilitazione controlli durante l'esecuzione */
-			gui.disableControls();
-
-			/* Impostazione puntatore del mouse "Occupato" */
-			gui.getShell().setCursor(gui.getShell().getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
-
+			ProcessFileJob job = null;
+			final File inputFile = new File(sourceFileName);
+			final File outputFile = new File(destinationFileName);
 			try {
-				new ProgressMonitorDialog(gui.getShell()).run(true, false,new ProcessFileJob(gui, new File(sourceFileName), new File(destinationFileName)));
+				job = new ProcessFileJob(gui.getEngine(), inputFile, outputFile);
+				new ProgressMonitorDialog(gui.getShell()) {
+					@Override
+					public void create() {
+						super.create();
+						getShell().setText(Messages.get("lbl.process.file.dialog.title"));
+					}
+				}.run(true, false, job);
 			}
-			catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			catch (final Exception e) {
+				throw new IllegalStateException(e);
 			}
-			catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+			if (job.getResult() != null) {
+				gui.getInputText().setText(inputFile.getName());
+				gui.getOutputText().setText(job.getResult());
+				gui.setDirty(true);
+			}
+			if (job.getException() != null) {
+				logger.log(Level.SEVERE, job.getException().toString(), job.getException());
+				EnhancedErrorDialog.openError(gui.getShell(), Messages.get("msg.application.name"), job.getException().toString(), IStatus.ERROR, job.getException(), Images.getMainIcons());
+			}
+			else {
+				final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
+				box.setMessage(Messages.get("msg.file.process.ok.message"));
+				box.setText(Messages.get("msg.application.name"));
+				box.open();
 			}
 		}
 	}
