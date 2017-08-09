@@ -5,7 +5,7 @@ Codec
 [![Build status](https://travis-ci.org/Albertus82/Codec.svg?branch=master)](https://travis-ci.org/Albertus82/Codec)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/Albertus82/Codec?branch=master&svg=true)](https://ci.appveyor.com/project/Albertus82/Codec)
 
-**Graphical user interface available for Windows, Linux & OS X.**
+**Graphical user interface available for Windows, Linux & macOS.**
 
 ![Screenshot](https://user-images.githubusercontent.com/8672431/27011383-cbf09962-4eba-11e7-9c7e-24215c5e06e4.png)
 
