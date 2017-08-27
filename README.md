@@ -26,3 +26,7 @@ Algorithms: Base16, Base32, Base64, Ascii85, basE91, CRC-16, CRC-32, MD2, MD4, M
 
 Example: codec e base64 -c UTF-8 "Lorem ipsum dolor sit amet"
 ```
+
+## Acknowledgements
+
+This application includes software developed by the **Eclipse Foundation** that is distributed under the [Eclipse Public License](https://eclipse.org/org/documents/epl-v10.php).
