@@ -37,7 +37,7 @@ public class ShellDropListener extends ProcessFileAction implements DropTargetLi
 			final String sourceFileName = file.getPath();
 			final String destinationFileName = getDestinationFile(sourceFileName);
 			if (destinationFileName != null && destinationFileName.length() > 0) {
-				run(sourceFileName, destinationFileName);
+				execute(sourceFileName, destinationFileName);
 			}
 		}
 	}
