@@ -13,6 +13,19 @@ Codec
 
 Download the [latest release](https://github.com/Albertus82/Codec/releases/latest) from the [releases page](https://github.com/Albertus82/Codec/releases).
 
+## Installation
+
+* **Windows**: run the installer to install the application.
+
+  If Windows complains with a ***Windows protected your PC*** popup, you may need to click ***Run anyway*** to proceed with the installation.
+
+  ![Windows protected your PC](https://user-images.githubusercontent.com/8672431/31048995-7145b034-a62a-11e7-860b-c477237145ce.png)
+
+  In order to enable the *Run anyway* button, you may need to open the *Properties* of the installer, tab *General*, section *Security* (if available), and check the ***Unblock*** option.
+* **Linux** & **macOS**: unpack the archive.
+
+**This application requires [Java SE Runtime Environment (JRE)](https://www.java.com) v1.7 (or newer) to run.**
+
 ## Command line reference
 
 ```ruby
