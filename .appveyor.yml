@@ -38,9 +38,9 @@ install:
 before_build:
   - cmd: java -Xmx32m -version
   - cmd: javac -J-Xmx32m -version
+  - ant -diagnostics
 
 build_script:
-  - ant -diagnostics
   - ant all
 
 after_build:
