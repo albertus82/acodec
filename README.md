@@ -1,9 +1,9 @@
 Codec
 =====
 
-[![Latest release](https://img.shields.io/github/release/Albertus82/Codec.svg)](https://github.com/Albertus82/Codec/releases/latest)
-[![Build status](https://travis-ci.org/Albertus82/Codec.svg?branch=master)](https://travis-ci.org/Albertus82/Codec)
-[![Build status](https://ci.appveyor.com/api/projects/status/github/Albertus82/Codec?branch=master&svg=true)](https://ci.appveyor.com/project/Albertus82/Codec)
+[![Latest release](https://img.shields.io/github/release/albertus82/codec.svg)](https://github.com/albertus82/codec/releases/latest)
+[![Build status](https://travis-ci.org/albertus82/codec.svg?branch=master)](https://travis-ci.org/albertus82/codec)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/albertus82/codec?branch=master&svg=true)](https://ci.appveyor.com/project/albertus82/codec)
 
 **Graphical user interface available for Windows, Linux & macOS.**
 
@@ -11,7 +11,7 @@ Codec
 
 ## Download
 
-Download the [latest release](https://github.com/Albertus82/Codec/releases/latest) from the [releases page](https://github.com/Albertus82/Codec/releases).
+Download the [latest release](https://github.com/albertus82/codec/releases/latest) from the [releases page](https://github.com/albertus82/codec/releases).
 
 ## Installation
 
@@ -24,7 +24,7 @@ Download the [latest release](https://github.com/Albertus82/Codec/releases/lates
   In order to enable the *Run anyway* button, you may need to open the *Properties* of the installer, tab *General*, section *Security* (if available), and check the ***Unblock*** option.
 * **Linux** & **macOS**: unpack the archive.
 
-**This application requires [Java SE Runtime Environment (JRE)](https://www.java.com) v1.7 (or newer) to run.**
+**This application requires [Java SE Runtime Environment (JRE)](https://www.java.com) v1.6 (or newer) to run.**
 
 ## Command line reference
 
