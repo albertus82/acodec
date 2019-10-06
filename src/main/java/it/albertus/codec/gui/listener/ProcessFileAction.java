@@ -47,6 +47,8 @@ public class ProcessFileAction {
 	protected String getDestinationFile(final String sourceFileName) {
 		final FileDialog saveDialog = new FileDialog(gui.getShell(), SWT.SAVE);
 		saveDialog.setOverwrite(true);
+		final File sourceFile = new File(sourceFileName);
+		saveDialog.setFilterPath(sourceFile.getParent());
 		if (CodecMode.ENCODE.equals(gui.getEngine().getMode())) {
 			final String extension;
 			final CodecAlgorithm algorithm = gui.getEngine().getAlgorithm();
@@ -57,11 +59,11 @@ public class ProcessFileAction {
 				extension = algorithm.name();
 			}
 			saveDialog.setFilterExtensions(new String[] { "*." + extension.toLowerCase() + ";*." + extension.toUpperCase(), "*.*" });
-			saveDialog.setFileName(sourceFileName + '.' + extension.toLowerCase());
+			saveDialog.setFileName(sourceFile.getName() + '.' + extension.toLowerCase());
 		}
 		else {
-			if (sourceFileName.indexOf('.') != -1) {
-				saveDialog.setFileName(sourceFileName.substring(0, sourceFileName.lastIndexOf('.')));
+			if (sourceFile.getName().indexOf('.') != -1) {
+				saveDialog.setFileName(sourceFile.getName().substring(0, sourceFile.getName().lastIndexOf('.')));
 			}
 		}
 		return saveDialog.open();
