@@ -4,6 +4,7 @@ Codec
 [![Latest release](https://img.shields.io/github/release/albertus82/codec.svg)](https://github.com/albertus82/codec/releases/latest)
 [![Build status](https://travis-ci.org/albertus82/codec.svg?branch=master)](https://travis-ci.org/albertus82/codec)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/albertus82/codec?branch=master&svg=true)](https://ci.appveyor.com/project/albertus82/codec)
+[![Build status](https://github.com/albertus82/codec/workflows/build/badge.svg)](https://github.com/albertus82/codec/actions)
 
 **Graphical user interface available for Windows, Linux & macOS.**
 
