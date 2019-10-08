@@ -17,13 +17,13 @@ Download the [latest release](https://github.com/albertus82/codec/releases/lates
 
 ## Installation
 
-* **Windows**: run the installer to install the application.
+* **Windows**: if you downloaded a ZIP package, simply unpack the archive; otherwise run the installer (EXE) to install the application.
 
   If Windows complains with a ***Windows protected your PC*** popup, you may need to click ***Run anyway*** to proceed with the installation.
 
   ![Windows protected your PC](https://user-images.githubusercontent.com/8672431/31048995-7145b034-a62a-11e7-860b-c477237145ce.png)
 
-  In order to enable the *Run anyway* button, you may need to open the *Properties* of the installer, tab *General*, section *Security* (if available), and check the ***Unblock*** option.
+  In order to enable the *Run anyway* button, you may need to open the *Properties* of the installer, tab *General*, section *Security* (if available), and tick the ***Unblock*** option.
 * **Linux** & **macOS**: unpack the archive.
 
 **This application requires [Java SE Runtime Environment (JRE)](https://www.java.com) v1.6 (or newer) to run.**
