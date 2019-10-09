@@ -12,6 +12,8 @@ import it.albertus.util.ISupplier;
 
 public class ProcessFileRunnable implements IRunnableWithProgress {
 
+	private static final short TOTAL_WORK = 1000;
+
 	private final ProcessFileTask task;
 	private String result;
 
@@ -21,31 +23,37 @@ public class ProcessFileRunnable implements IRunnableWithProgress {
 
 	@Override
 	public void run(final IProgressMonitor monitor) throws InterruptedException {
-		monitor.beginTask(Messages.get("msg.file.process.task.name", task.getInputFile().getName(), 0), 1000);
-		new Thread() {
-			@Override
-			public void run() {
-				final long fileLength = task.getInputFile().length();
-				int done = 0;
-				while (!monitor.isCanceled()) {
-					final long byteCount = task.getByteCount();
-					final int partsPerThousand = (int) (byteCount / (double) fileLength * 1000);
-					monitor.worked(partsPerThousand - done);
-					done = partsPerThousand;
-					monitor.setTaskName(Messages.get("msg.file.process.task.name", task.getInputFile().getName(), partsPerThousand / 10));
-					if (fileLength == byteCount) {
-						break;
-					}
-					try {
-						TimeUnit.MILLISECONDS.sleep(500);
-					}
-					catch (final InterruptedException e) {
-						Thread.currentThread().interrupt();
-					}
-				}
-			}
-		}.start();
+		final String fileName = task.getInputFile().getName();
+		final long fileLength = task.getInputFile().length();
 		try {
+			if (fileLength <= 0) {
+				monitor.beginTask(Messages.get("msg.file.process.task.name", fileName), IProgressMonitor.UNKNOWN);
+			}
+			else {
+				monitor.beginTask(Messages.get("msg.file.process.task.name.progress", fileName, 0), TOTAL_WORK);
+				new Thread() {
+					@Override
+					public void run() {
+						int done = 0;
+						while (!monitor.isCanceled()) {
+							final long byteCount = task.getByteCount();
+							final int partsPerThousand = (int) (byteCount / (double) fileLength * TOTAL_WORK);
+							monitor.worked(partsPerThousand - done);
+							done = partsPerThousand;
+							monitor.setTaskName(Messages.get("msg.file.process.task.name.progress", fileName, partsPerThousand / 10));
+							if (byteCount >= fileLength) {
+								break;
+							}
+							try {
+								TimeUnit.MILLISECONDS.sleep(500);
+							}
+							catch (final InterruptedException e) {
+								Thread.currentThread().interrupt();
+							}
+						}
+					}
+				}.start();
+			}
 			result = task.run(new ISupplier<Boolean>() {
 				@Override
 				public Boolean get() {
