@@ -16,6 +16,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import it.albertus.util.ISupplier;
 import it.albertus.util.NewLine;
 
 public class CodecEngineTest {
@@ -112,7 +113,7 @@ public class CodecEngineTest {
 	}
 
 	@Test
-	public void testFileEncoder() throws IOException {
+	public void testFileEncoder() throws IOException, CancelException {
 		engine.setMode(CodecMode.ENCODE);
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(CodecMode.ENCODE)) {
@@ -136,7 +137,7 @@ public class CodecEngineTest {
 	}
 
 	@Test
-	public void testFileDecoder() throws IOException {
+	public void testFileDecoder() throws IOException, CancelException {
 		engine.setMode(CodecMode.DECODE);
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(CodecMode.DECODE)) {
@@ -147,10 +148,15 @@ public class CodecEngineTest {
 		}
 	}
 
-	private String testFileEncoder(final CodecAlgorithm ca) throws IOException {
+	private String testFileEncoder(final CodecAlgorithm ca) throws IOException, CancelException {
 		final File outputFile = File.createTempFile(CodecMode.ENCODE.name().toLowerCase() + '-', '.' + ca.name().toLowerCase());
 		System.out.println("Created temporary encoded file \"" + outputFile + '"');
-		engine.run(originalFile, outputFile);
+		new ProcessFileTask(engine, originalFile, outputFile).run(new ISupplier<Boolean>() {
+			@Override
+			public Boolean get() {
+				return false;
+			}
+		});
 		FileInputStream fis = null;
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
@@ -171,10 +177,15 @@ public class CodecEngineTest {
 		return baos.toString(CHARSET).replaceAll("[" + NewLine.CRLF.toString() + "]+", "");
 	}
 
-	private String testFileDecoder(final CodecAlgorithm ca, final File file) throws IOException {
+	private String testFileDecoder(final CodecAlgorithm ca, final File file) throws IOException, CancelException {
 		final File outputFile = File.createTempFile(CodecMode.DECODE.name().toLowerCase() + '-', ".txt");
 		System.out.println("Created temporary decoded file \"" + outputFile + '"');
-		engine.run(file, outputFile);
+		new ProcessFileTask(engine, file, outputFile).run(new ISupplier<Boolean>() {
+			@Override
+			public Boolean get() {
+				return false;
+			}
+		});
 		FileInputStream fis = null;
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {

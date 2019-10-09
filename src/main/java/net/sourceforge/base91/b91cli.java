@@ -34,26 +34,26 @@ import java.io.*;
 
 public class b91cli
 {
-	public static void encode(InputStream is, OutputStream os)
+	public static void encode(InputStream is, OutputStream os) throws IOException
 	{
 		int s;
 		byte[] ibuf = new byte[53248];
 		byte[] obuf = new byte[65536];
 		basE91 b91 = new basE91();
 
-		try {
+//		try {
 			while ((s = is.read(ibuf)) > 0) {
 				s = b91.encode(ibuf, s, obuf);
 				os.write(obuf, 0, s);
 			}
 			s = b91.encEnd(obuf);
 			os.write(obuf, 0, s);
-		} catch (Exception e) {
-			System.err.println(e);
-		}
+//		} catch (Exception e) {
+//			System.err.println(e);
+//		}
 	}
 
-	public static void encodeWrap(InputStream is, OutputStream os)
+	public static void encodeWrap(InputStream is, OutputStream os) throws IOException
 	{
 		int i, s;
 		int n = 0;
@@ -62,7 +62,7 @@ public class b91cli
 		char[] line = new char[76];
 		basE91 b91 = new basE91();
 
-		try {
+//		try {
 			PrintStream ps = new PrintStream(os, false, "US-ASCII");
 
 			while ((s = is.read(ibuf)) > 0) {
@@ -85,28 +85,28 @@ public class b91cli
 			}
 			if (n > 0)
 				ps.println(new String(line, 0, n));
-		} catch (Exception e) {
-			System.err.println(e);
-		}
+//		} catch (Exception e) {
+//			System.err.println(e);
+//		}
 	}
 
-	public static void decode(InputStream is, OutputStream os)
+	public static void decode(InputStream is, OutputStream os) throws IOException
 	{
 		int s;
 		byte[] ibuf = new byte[65536];
 		byte[] obuf = new byte[57344];
 		basE91 b91 = new basE91();
 
-		try {
+//		try {
 			while ((s = is.read(ibuf)) > 0) {
 				s = b91.decode(ibuf, s, obuf);
 				os.write(obuf, 0, s);
 			}
 			s = b91.decEnd(obuf);
 			os.write(obuf, 0, s);
-		} catch (Exception e) {
-			System.err.println(e);
-		}
+//		} catch (Exception e) {
+//			System.err.println(e);
+//		}
 	}
 
 	private static void errExit(String msg)

@@ -9,7 +9,9 @@ import java.util.logging.Logger;
 import it.albertus.codec.Codec;
 import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecMode;
+import it.albertus.codec.engine.ProcessFileTask;
 import it.albertus.codec.resources.Messages;
+import it.albertus.util.ISupplier;
 import it.albertus.util.NewLine;
 import it.albertus.util.Version;
 import it.albertus.util.logging.LoggerFactory;
@@ -133,7 +135,12 @@ public class CodecConsole extends Codec {
 		/* Execution */
 		try {
 			if (inputFile != null && outputFile != null) {
-				final String result = getEngine().run(inputFile, outputFile);
+				final String result = new ProcessFileTask(getEngine(), inputFile, outputFile).run(new ISupplier<Boolean>() {
+					@Override
+					public Boolean get() {
+						return false;
+					}
+				});
 				System.out.println(result != null ? result + " - " : "" + Messages.get("msg.file.process.ok.message"));
 			}
 			else {

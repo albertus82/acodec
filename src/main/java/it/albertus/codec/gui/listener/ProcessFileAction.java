@@ -8,15 +8,16 @@ import java.util.logging.Logger;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
+import it.albertus.codec.engine.Cancelable;
 import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecMode;
+import it.albertus.codec.engine.ProcessFileTask;
 import it.albertus.codec.gui.CodecGui;
 import it.albertus.codec.gui.Images;
 import it.albertus.codec.gui.ProcessFileRunnable;
@@ -76,15 +77,23 @@ public class ProcessFileAction {
 		try {
 			final File inputFile = new File(sourceFileName);
 			final File outputFile = new File(destinationFileName);
-			final ProcessFileRunnable runnable = new ProcessFileRunnable(gui.getEngine(), inputFile, outputFile);
-			new LocalizedProgressMonitorDialog(gui.getShell()).run(runnable); // execute in separate thread
+			final ProcessFileTask task = new ProcessFileTask(gui.getEngine(), inputFile, outputFile);
+			final ProcessFileRunnable runnable = new ProcessFileRunnable(task);
+			new LocalizedProgressMonitorDialog(gui.getShell(), task).run(true, true, runnable); // execute in separate thread
 			if (runnable.getResult() != null) { // result can be null in certain cases
+				gui.setDirty(false);
 				gui.getInputText().setText(inputFile.getName());
 				gui.getOutputText().setText(runnable.getResult());
 				gui.setDirty(true);
 			}
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
 			box.setMessage(Messages.get("msg.file.process.ok.message"));
+			box.setText(Messages.get(MSG_APPLICATION_NAME));
+			box.open();
+		}
+		catch (final InterruptedException e) { // NOSONAR
+			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_WARNING);
+			box.setMessage(Messages.get("msg.file.process.cancel.message"));
 			box.setText(Messages.get(MSG_APPLICATION_NAME));
 			box.open();
 		}
@@ -110,8 +119,11 @@ public class ProcessFileAction {
 
 	private static class LocalizedProgressMonitorDialog extends ProgressMonitorDialog {
 
-		private LocalizedProgressMonitorDialog(final Shell parent) {
-			super(parent);
+		private final Cancelable cancelable;
+
+		private LocalizedProgressMonitorDialog(final Shell shell, final Cancelable cancelable) {
+			super(shell);
+			this.cancelable = cancelable;
 		}
 
 		@Override // improved localization
@@ -124,8 +136,11 @@ public class ProcessFileAction {
 			}
 		}
 
-		private void run(final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-			super.run(true, false, runnable);
+		@Override
+		protected void cancelPressed() {
+			super.cancelPressed();
+			progressIndicator.showError();
+			cancelable.cancel();
 		}
 	}
 
