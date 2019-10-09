@@ -151,12 +151,19 @@ public class CodecEngineTest {
 	private String testFileEncoder(final CodecAlgorithm ca) throws IOException, CancelException {
 		final File outputFile = File.createTempFile(CodecMode.ENCODE.name().toLowerCase() + '-', '.' + ca.name().toLowerCase());
 		System.out.println("Created temporary encoded file \"" + outputFile + '"');
-		new ProcessFileTask(engine, originalFile, outputFile).run(new ISupplier<Boolean>() {
+		final String value = new ProcessFileTask(engine, originalFile, outputFile).run(new ISupplier<Boolean>() {
 			@Override
 			public Boolean get() {
 				return false;
 			}
 		});
+		if (ca.isDigest()) {
+			Assert.assertNotNull(value);
+			Assert.assertFalse(value.isEmpty());
+		}
+		else {
+			Assert.assertNull(value);
+		}
 		FileInputStream fis = null;
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
