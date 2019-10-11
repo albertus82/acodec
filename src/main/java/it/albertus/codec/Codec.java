@@ -10,12 +10,12 @@ public abstract class Codec {
 
 	/* Unique entry point */
 	public static void main(final String[] args) {
-		final String headerType = System.getProperty("launch4j.headerType");
-		if (headerType != null) {
-			if ("console".equalsIgnoreCase(headerType)) {
+		final String mode = System.getProperty(Codec.class.getName() + ".main.mode");
+		if (mode != null) {
+			if ("console".equalsIgnoreCase(mode)) {
 				CodecConsole.start(args);
 			}
-			else if ("gui".equalsIgnoreCase(headerType)) {
+			else if ("gui".equalsIgnoreCase(mode)) {
 				CodecGui.start();
 			}
 		}
