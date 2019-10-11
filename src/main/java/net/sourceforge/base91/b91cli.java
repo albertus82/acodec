@@ -109,74 +109,74 @@ public class b91cli
 //		}
 	}
 
-	private static void errExit(String msg)
-	{
-		System.err.println("syntax error - " + msg + "\nTry `-h' option for more information.");
-		System.exit(3);
-	}
-
-	public static void main(String[] args)
-	{
-		int i;
-		boolean enc = true;
-		boolean lbr = true;
-		String ifn = null;
-		String ofn = null;
-
-		for (i = 0; i < args.length; ++i)
-			if (args[i].length() == 2 && args[i].charAt(0) == '-')
-				switch (args[i].charAt(1)) {
-				case 'd':
-					enc = false;
-					break;
-				case 'u':
-					lbr = false;
-					break;
-				case 'h':
-					System.out.println("Usage: base91 [OPTION] infile [outfile]\n\n  -d\tdecode a basE91 encoded file\n  -u\tleave encoder output unformatted (disable line wrapping)\n  -h\tdisplay this help and exit\n  -V\toutput version information and exit");
-					return;
-				case 'V':
-					System.out.println("base91 0.6.0\nCopyright (c) 2000-2006 Joachim Henke");
-					return;
-				default:
-					errExit("invalid option: " + args[i]);
-				}
-			else if (ifn == null)
-				ifn = args[i];
-			else if (ofn == null)
-				ofn = args[i];
-			else
-				errExit("too many arguments: " + args[i]);
-		if (ifn == null)
-			errExit("file name missing");
-		if (ofn == null)
-			if (enc)
-				ofn = ifn + (lbr ? "_b91.txt" : ".b91");
-			else {
-				String lifn = ifn.toLowerCase();
-				if (ifn.length() > 4 && lifn.endsWith(".b91"))
-					ofn = ifn.substring(0, ifn.length() - 4);
-				else if (ifn.length() > 8 && lifn.endsWith("_b91.txt"))
-					ofn = ifn.substring(0, ifn.length() - 8);
-				else
-					ofn = ifn + ".bin";
-			}
-
-		try {
-			FileInputStream ifs = new FileInputStream(ifn);
-			FileOutputStream ofs = new FileOutputStream(ofn);
-
-			if (enc)
-				if (lbr)
-					encodeWrap(ifs, ofs);
-				else
-					encode(ifs, ofs);
-			else
-				decode(ifs, ofs);
-			ifs.close();
-			ofs.close();
-		} catch (Exception e) {
-			System.err.println(e);
-		}
-	}
+//	private static void errExit(String msg)
+//	{
+//		System.err.println("syntax error - " + msg + "\nTry `-h' option for more information.");
+//		System.exit(3);
+//	}
+//
+//	public static void main(String[] args)
+//	{
+//		int i;
+//		boolean enc = true;
+//		boolean lbr = true;
+//		String ifn = null;
+//		String ofn = null;
+//
+//		for (i = 0; i < args.length; ++i)
+//			if (args[i].length() == 2 && args[i].charAt(0) == '-')
+//				switch (args[i].charAt(1)) {
+//				case 'd':
+//					enc = false;
+//					break;
+//				case 'u':
+//					lbr = false;
+//					break;
+//				case 'h':
+//					System.out.println("Usage: base91 [OPTION] infile [outfile]\n\n  -d\tdecode a basE91 encoded file\n  -u\tleave encoder output unformatted (disable line wrapping)\n  -h\tdisplay this help and exit\n  -V\toutput version information and exit");
+//					return;
+//				case 'V':
+//					System.out.println("base91 0.6.0\nCopyright (c) 2000-2006 Joachim Henke");
+//					return;
+//				default:
+//					errExit("invalid option: " + args[i]);
+//				}
+//			else if (ifn == null)
+//				ifn = args[i];
+//			else if (ofn == null)
+//				ofn = args[i];
+//			else
+//				errExit("too many arguments: " + args[i]);
+//		if (ifn == null)
+//			errExit("file name missing");
+//		if (ofn == null)
+//			if (enc)
+//				ofn = ifn + (lbr ? "_b91.txt" : ".b91");
+//			else {
+//				String lifn = ifn.toLowerCase();
+//				if (ifn.length() > 4 && lifn.endsWith(".b91"))
+//					ofn = ifn.substring(0, ifn.length() - 4);
+//				else if (ifn.length() > 8 && lifn.endsWith("_b91.txt"))
+//					ofn = ifn.substring(0, ifn.length() - 8);
+//				else
+//					ofn = ifn + ".bin";
+//			}
+//
+//		try {
+//			FileInputStream ifs = new FileInputStream(ifn);
+//			FileOutputStream ofs = new FileOutputStream(ofn);
+//
+//			if (enc)
+//				if (lbr)
+//					encodeWrap(ifs, ofs);
+//				else
+//					encode(ifs, ofs);
+//			else
+//				decode(ifs, ofs);
+//			ifs.close();
+//			ofs.close();
+//		} catch (Exception e) {
+//			System.err.println(e);
+//		}
+//	}
 }
