@@ -39,7 +39,6 @@ import it.albertus.codec.gui.listener.TextKeyListener;
 import it.albertus.codec.resources.Messages;
 import it.albertus.codec.resources.Messages.Language;
 import it.albertus.jface.EnhancedErrorDialog;
-import it.albertus.jface.JFaceMessages;
 import it.albertus.util.Version;
 import it.albertus.util.logging.LoggerFactory;
 
@@ -222,8 +221,7 @@ public class CodecGui extends Codec implements IShellProvider {
 	}
 
 	public void setLanguage(final Language language) {
-		Messages.setLanguage(language);
-		JFaceMessages.setLanguage(language.getLocale().getLanguage());
+		Messages.setLanguage(language.getLocale().getLanguage());
 		shell.setRedraw(false);
 		this.updateTexts();
 		menuBar.updateTexts();
