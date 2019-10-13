@@ -36,7 +36,7 @@ public class ProcessFileTask implements Cancelable {
 
 	private static final Logger logger = LoggerFactory.getLogger(ProcessFileTask.class);
 
-	private static final int BASE_N_LINE_LENGTH = 76;
+	private static final int BASE_N_LINE_LENGTH = 79;
 
 	private final LinkedList<InputStream> inputStreams = new LinkedList<InputStream>();
 	private final LinkedList<OutputStream> outputStreams = new LinkedList<OutputStream>();
