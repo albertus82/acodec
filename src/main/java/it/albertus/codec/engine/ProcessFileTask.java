@@ -36,6 +36,8 @@ public class ProcessFileTask implements Cancelable {
 
 	private static final Logger logger = LoggerFactory.getLogger(ProcessFileTask.class);
 
+	private static final int BASE_N_LINE_LENGTH = 76;
+
 	private final LinkedList<InputStream> inputStreams = new LinkedList<InputStream>();
 	private final LinkedList<OutputStream> outputStreams = new LinkedList<OutputStream>();
 
@@ -89,7 +91,7 @@ public class ProcessFileTask implements Cancelable {
 				Base16.encode(inputStreams.getLast(), outputStreams.getLast());
 				break;
 			case BASE32:
-				outputStreams.add(new BaseNCodecOutputStream(outputStreams.getLast(), new Base32(79), true));
+				outputStreams.add(new BaseNCodecOutputStream(outputStreams.getLast(), new Base32(BASE_N_LINE_LENGTH), true));
 				IOUtils.copyLarge(inputStreams.getLast(), outputStreams.getLast());
 				break;
 			case BASE64:
@@ -104,31 +106,31 @@ public class ProcessFileTask implements Cancelable {
 				b91cli.encodeWrap(inputStreams.getLast(), outputStreams.getLast());
 				break;
 			case CRC16:
-				CRC16OutputStream crcos = null;
+				CRC16OutputStream crc16os = null;
 				try {
-					crcos = new CRC16OutputStream();
-					IOUtils.copyLarge(inputStreams.getLast(), crcos);
+					crc16os = new CRC16OutputStream();
+					IOUtils.copyLarge(inputStreams.getLast(), crc16os);
 				}
 				finally {
-					if (crcos != null) {
-						crcos.close();
+					if (crc16os != null) {
+						crc16os.close();
 					}
 				}
-				value = String.format("%04x", crcos.getValue());
+				value = String.format("%04x", crc16os.getValue());
 				IOUtils.write(value + " *" + fileName, outputStreams.getLast(), engine.getCharset());
 				break;
 			case CRC32:
-				CRC32OutputStream c32os = null;
+				CRC32OutputStream crc32os = null;
 				try {
-					c32os = new CRC32OutputStream();
-					IOUtils.copyLarge(inputStreams.getLast(), c32os);
+					crc32os = new CRC32OutputStream();
+					IOUtils.copyLarge(inputStreams.getLast(), crc32os);
 				}
 				finally {
-					if (c32os != null) {
-						c32os.close();
+					if (crc32os != null) {
+						crc32os.close();
 					}
 				}
-				value = String.format("%08x", c32os.getValue());
+				value = String.format("%08x", crc32os.getValue());
 				IOUtils.write(fileName + ' ' + value, outputStreams.getLast(), engine.getCharset()); // sfv
 				break;
 			case MD2:
