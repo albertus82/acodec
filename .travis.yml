@@ -1,46 +1,26 @@
 language: java
 
-dist: trusty
-
-env:
-  global:
-    - JRE6_HOME=/usr/lib/jvm/java-6-openjdk-amd64/jre
-
 matrix:
   include:
     - os: linux
       jdk: oraclejdk11
-#      env:
-#        - secure: "GX8EGWbKLJQ/xGusrlJAlKCtQtdwnSjKeo01+pUtSMNY0/+6fk+17z73DY8Vmv9LACftx1dLtYpp9R48uQWt38cOHknIsCyK9b1940MB2FznkDfpNk7jCR5SzqzYzRBTeXCUI+uazdB4JhHBaWKm6SAj+QKJGzN28feL/RBlf6jQ7ZfXHPt+lg4ouf+Sb2zHabavD6VicXIwHwmd4tRrb6JaJl78xk8Xh6qjmoYQvPqP0ssHgE9FLOFJOoXUHOEBC9LkL+JYakD5BaA6Wts7yQdq1kQhJlXmUaDCKOxgvMiPllJ7jUyECEfOOXE24HXQzF0MHUNOp2gPbyE84WL2xR+Hp/LlILjuZ9HJhpYx+R5TieZQcK7oxw1y8imf6DRAisKKOnUzye+angZT4QZp5CCbK/6IlfJncT0jJClOBKJxDHgNVtEnyR/qZoUUq7JI/3s7CrSVWGMJxiy/qwJe5N1zlt06MihCVmUVjJlKWA3zm2pvF7iUcGBd4Cl47Tg8rf5M5GtJcFRndHMGZTGlYDrSfELyhFukruYLQ+zyweVsrkMGikqD/o/LaTdIQ2qgochYMpf2zF5ExnzLwgx3t+hGmRpNORQiwKWvnTHcgMTlIMl7i20v8EScmj2+NhArgG5BDCYUY5/DMiQlne197xAC/lUTb/pZSKk6OmVjtfA="
-#      before_script:
-#        - git fetch --unshallow
-#      after_success:
-#        - sonar-scanner -Dsonar.login=$SONAR_TOKEN
     - os: linux
       jdk: oraclejdk8
-    - os: linux
-      jdk: openjdk7
     - os: osx
       before_install:
         - brew update
-        - brew install wine ant
+        - brew install ant
 
 addons:
-#  sonarcloud:
-#    organization: "albertus82-github"
   apt:
-    sources:
-      - sourceline: 'deb https://dl.winehq.org/wine-builds/ubuntu/ trusty main'
-        key_url: https://dl.winehq.org/wine-builds/winehq.key
     packages:
-      - ant-optional
-      - lib32ncurses5
-      - lib32z1
-      - openjdk-6-jdk
-      - winehq-stable
+      - wine32
+
+before_install:
+  - sudo dpkg --add-architecture i386
 
 before_script:
   - ant -diagnostics
 
 script:
-  - ant all
+  - ant -noinput -DignoreWineErrors=true
