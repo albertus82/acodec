@@ -15,9 +15,7 @@ addons:
   apt:
     packages:
       - wine32
-
-before_install:
-  - sudo dpkg --add-architecture i386
+      - wine-stable
 
 before_script:
   - ant -diagnostics
