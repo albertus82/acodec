@@ -2,9 +2,9 @@ Codec
 =====
 
 [![Latest release](https://img.shields.io/github/release/albertus82/codec.svg)](https://github.com/albertus82/codec/releases/latest)
-[![Build status](https://ci.appveyor.com/api/projects/status/github/albertus82/codec?branch=master&svg=true)](https://ci.appveyor.com/project/albertus82/codec)
 [![Build status](https://github.com/albertus82/codec/workflows/build/badge.svg)](https://github.com/albertus82/codec/actions)
-[![Build status](https://dev.azure.com/albertus82/codec/_apis/build/status/master)](https://dev.azure.com/albertus82/codec/_build/latest)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/albertus82/codec?branch=master&svg=true)](https://ci.appveyor.com/project/albertus82/codec)
+[![Build status](https://dev.azure.com/albertus82/codec/_apis/build/status/master)](https://dev.azure.com/albertus82/codec/_build/)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=it.albertus%3Acodec&metric=alert_status)](https://sonarcloud.io/dashboard?id=it.albertus%3Acodec)
 
 **Graphical user interface available for Windows, Linux & macOS.**
