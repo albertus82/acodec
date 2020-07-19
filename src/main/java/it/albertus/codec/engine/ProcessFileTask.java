@@ -110,7 +110,7 @@ public class ProcessFileTask implements Cancelable {
 					IOUtils.write(fileName + ' ' + value, cs.getOutputStreams().getLast(), engine.getCharset()); // sfv
 					break;
 				case MD4:
-					value = Hex.encodeHexString(DigestUtils.updateDigest(MessageDigest.getInstance(CodecAlgorithm.MD4.name(), CodecEngine.getMd4Provider()), cs.getInputStreams().getLast()).digest());
+					value = Hex.encodeHexString(DigestUtils.updateDigest(MessageDigest.getInstance(CodecAlgorithm.MD4.name()), cs.getInputStreams().getLast()).digest());
 					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
 					break;
 				default:

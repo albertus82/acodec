@@ -11,7 +11,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
-import org.apache.mina.proxy.utils.MD4Provider;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import it.albertus.codec.resources.Messages;
@@ -22,8 +21,6 @@ public class CodecEngine {
 	static {
 		Security.addProvider(new BouncyCastleProvider());
 	}
-
-	private static final MD4Provider MD4_PROVIDER = new MD4Provider();
 
 	private CodecAlgorithm algorithm;
 	private CodecMode mode = CodecMode.ENCODE;
@@ -76,7 +73,7 @@ public class CodecEngine {
 				value = String.format("%08x", crc32.getValue());
 				break;
 			case MD4:
-				value = Hex.encodeHexString(MessageDigest.getInstance(CodecAlgorithm.MD4.name(), MD4_PROVIDER).digest(input.getBytes(charset)));
+				value = Hex.encodeHexString(MessageDigest.getInstance(CodecAlgorithm.MD4.name()).digest(input.getBytes(charset)));
 				break;
 			default:
 				if (Arrays.stream(MessageDigestAlgorithms.values()).noneMatch(algorithm.getName()::equalsIgnoreCase)) {
@@ -142,10 +139,6 @@ public class CodecEngine {
 
 	public void setCharset(final Charset charset) {
 		this.charset = charset;
-	}
-
-	public static MD4Provider getMd4Provider() {
-		return MD4_PROVIDER;
 	}
 
 }
