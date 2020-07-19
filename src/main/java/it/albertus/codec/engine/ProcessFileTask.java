@@ -1,19 +1,10 @@
 package it.albertus.codec.engine;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.security.MessageDigest;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.function.BooleanSupplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +17,6 @@ import org.apache.commons.codec.binary.BaseNCodecOutputStream;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.input.CountingInputStream;
 import org.freehep.util.io.ASCII85OutputStream;
 
 import it.albertus.codec.resources.Messages;
@@ -41,14 +31,11 @@ public class ProcessFileTask implements Cancelable {
 
 	private static final int BASE_N_LINE_LENGTH = 79;
 
-	private final LinkedList<InputStream> inputStreams = new LinkedList<>();
-	private final LinkedList<OutputStream> outputStreams = new LinkedList<>();
-
-	private CountingInputStream cis;
-
 	private final CodecEngine engine;
 	private final File inputFile;
 	private final File outputFile;
+
+	private CloseableStreams streams;
 
 	public ProcessFileTask(final CodecEngine engine, final File inputFile, final File outputFile) {
 		this.engine = engine;
@@ -75,7 +62,9 @@ public class ProcessFileTask implements Cancelable {
 
 	@Override
 	public void cancel() {
-		closeStreams();
+		if (streams != null) {
+			streams.close();
+		}
 	}
 
 	private String encode(final BooleanSupplier canceled) throws CancelException {
@@ -88,66 +77,67 @@ public class ProcessFileTask implements Cancelable {
 			else {
 				fileName = inputFile.getCanonicalPath();
 			}
-			createStreams();
-			switch (engine.getAlgorithm()) {
-			case BASE16:
-				Base16.encode(inputStreams.getLast(), outputStreams.getLast());
-				break;
-			case BASE32:
-				outputStreams.add(new BaseNCodecOutputStream(outputStreams.getLast(), new Base32(BASE_N_LINE_LENGTH), true));
-				IOUtils.copyLarge(inputStreams.getLast(), outputStreams.getLast());
-				break;
-			case BASE64:
-				outputStreams.add(new Base64OutputStream(outputStreams.getLast()));
-				IOUtils.copyLarge(inputStreams.getLast(), outputStreams.getLast());
-				break;
-			case ASCII85:
-				outputStreams.add(new ASCII85OutputStream(outputStreams.getLast()));
-				IOUtils.copyLarge(inputStreams.getLast(), outputStreams.getLast());
-				break;
-			case BASE91:
-				b91cli.encodeWrap(inputStreams.getLast(), outputStreams.getLast());
-				break;
-			case CRC16:
-				CRC16OutputStream crc16os = getCRC16OutputStream(inputStreams.getLast());
-				value = String.format("%04x", crc16os.getValue());
-				IOUtils.write(value + " *" + fileName, outputStreams.getLast(), engine.getCharset());
-				break;
-			case CRC32:
-				CRC32OutputStream crc32os = getCRC32OutputStream(inputStreams.getLast());
-				value = String.format("%08x", crc32os.getValue());
-				IOUtils.write(fileName + ' ' + value, outputStreams.getLast(), engine.getCharset()); // sfv
-				break;
-			case MD2:
-				value = DigestUtils.md2Hex(inputStreams.getLast());
-				IOUtils.write(value + " *" + fileName, outputStreams.getLast(), engine.getCharset());
-				break;
-			case MD4:
-				value = Hex.encodeHexString(DigestUtils.updateDigest(MessageDigest.getInstance(CodecAlgorithm.MD4.name(), CodecEngine.getMd4Provider()), inputStreams.getLast()).digest());
-				IOUtils.write(value + " *" + fileName, outputStreams.getLast(), engine.getCharset());
-				break;
-			case MD5:
-				value = DigestUtils.md5Hex(inputStreams.getLast());
-				IOUtils.write(value + " *" + fileName, outputStreams.getLast(), engine.getCharset());
-				break;
-			case SHA1:
-				value = DigestUtils.sha1Hex(inputStreams.getLast());
-				IOUtils.write(value + " *" + fileName, outputStreams.getLast(), engine.getCharset());
-				break;
-			case SHA256:
-				value = DigestUtils.sha256Hex(inputStreams.getLast());
-				IOUtils.write(value + " *" + fileName, outputStreams.getLast(), engine.getCharset());
-				break;
-			case SHA384:
-				value = DigestUtils.sha384Hex(inputStreams.getLast());
-				IOUtils.write(value + " *" + fileName, outputStreams.getLast(), engine.getCharset());
-				break;
-			case SHA512:
-				value = DigestUtils.sha512Hex(inputStreams.getLast());
-				IOUtils.write(value + " *" + fileName, outputStreams.getLast(), engine.getCharset());
-				break;
-			default:
-				throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", engine.getAlgorithm().getName()));
+			try (final CloseableStreams cs = createStreams()) {
+				switch (engine.getAlgorithm()) {
+				case BASE16:
+					Base16.encode(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+					break;
+				case BASE32:
+					cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(BASE_N_LINE_LENGTH), true));
+					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+					break;
+				case BASE64:
+					cs.getOutputStreams().add(new Base64OutputStream(cs.getOutputStreams().getLast()));
+					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+					break;
+				case ASCII85:
+					cs.getOutputStreams().add(new ASCII85OutputStream(cs.getOutputStreams().getLast()));
+					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+					break;
+				case BASE91:
+					b91cli.encodeWrap(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+					break;
+				case CRC16:
+					CRC16OutputStream crc16os = getCRC16OutputStream(cs.getInputStreams().getLast());
+					value = String.format("%04x", crc16os.getValue());
+					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
+					break;
+				case CRC32:
+					CRC32OutputStream crc32os = getCRC32OutputStream(cs.getInputStreams().getLast());
+					value = String.format("%08x", crc32os.getValue());
+					IOUtils.write(fileName + ' ' + value, cs.getOutputStreams().getLast(), engine.getCharset()); // sfv
+					break;
+				case MD2:
+					value = DigestUtils.md2Hex(cs.getInputStreams().getLast());
+					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
+					break;
+				case MD4:
+					value = Hex.encodeHexString(DigestUtils.updateDigest(MessageDigest.getInstance(CodecAlgorithm.MD4.name(), CodecEngine.getMd4Provider()), cs.getInputStreams().getLast()).digest());
+					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
+					break;
+				case MD5:
+					value = DigestUtils.md5Hex(cs.getInputStreams().getLast());
+					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
+					break;
+				case SHA1:
+					value = DigestUtils.sha1Hex(cs.getInputStreams().getLast());
+					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
+					break;
+				case SHA256:
+					value = DigestUtils.sha256Hex(cs.getInputStreams().getLast());
+					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
+					break;
+				case SHA384:
+					value = DigestUtils.sha384Hex(cs.getInputStreams().getLast());
+					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
+					break;
+				case SHA512:
+					value = DigestUtils.sha512Hex(cs.getInputStreams().getLast());
+					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
+					break;
+				default:
+					throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", engine.getAlgorithm().getName()));
+				}
 			}
 		}
 		catch (final Exception e) {
@@ -156,8 +146,46 @@ public class ProcessFileTask implements Cancelable {
 				throw new IllegalStateException(Messages.get("err.cannot.encode", engine.getAlgorithm().getName()), e);
 			}
 		}
-		finally {
-			closeStreams();
+		if (canceled.getAsBoolean()) {
+			deleteOutputFile();
+			throw new CancelException(Messages.get("msg.file.process.cancel.message"));
+		}
+		else {
+			return value;
+		}
+	}
+
+	private String decode(final BooleanSupplier canceled) throws CancelException {
+		String value = null;
+		try (final CloseableStreams cs = createStreams()) {
+			switch (engine.getAlgorithm()) {
+			case BASE16:
+				Base16.decode(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				break;
+			case BASE32:
+				cs.getInputStreams().add(new Base32InputStream(cs.getInputStreams().getLast()));
+				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				break;
+			case BASE64:
+				cs.getInputStreams().add(new Base64InputStream(cs.getInputStreams().getLast()));
+				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				break;
+			case ASCII85:
+				cs.getInputStreams().add(new Ascii85InputStream(cs.getInputStreams().getLast()));
+				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				break;
+			case BASE91:
+				b91cli.decode(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				break;
+			default:
+				throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", engine.getAlgorithm().getName()));
+			}
+		}
+		catch (final Exception e) {
+			deleteOutputFile();
+			if (!canceled.getAsBoolean()) {
+				throw new IllegalStateException(Messages.get("err.cannot.decode", engine.getAlgorithm().getName()), e);
+			}
 		}
 		if (canceled.getAsBoolean()) {
 			deleteOutputFile();
@@ -166,6 +194,33 @@ public class ProcessFileTask implements Cancelable {
 		else {
 			return value;
 		}
+	}
+
+	private void deleteOutputFile() {
+		try {
+			Files.deleteIfExists(outputFile.toPath());
+		}
+		catch (final Exception e) {
+			logger.log(Level.WARNING, Messages.get("err.cannot.delete.file", outputFile), e);
+			outputFile.deleteOnExit();
+		}
+	}
+
+	private CloseableStreams createStreams() throws IOException {
+		streams = new CloseableStreams(inputFile.toPath(), outputFile.toPath());
+		return streams;
+	}
+
+	public File getInputFile() {
+		return inputFile;
+	}
+
+	public File getOutputFile() {
+		return outputFile;
+	}
+
+	public long getByteCount() {
+		return streams != null ? streams.getBytesRead() : 0;
 	}
 
 	private static CRC16OutputStream getCRC16OutputStream(final InputStream is) throws IOException {
@@ -180,120 +235,6 @@ public class ProcessFileTask implements Cancelable {
 			IOUtils.copyLarge(is, os);
 			return os;
 		}
-	}
-
-	private String decode(final BooleanSupplier canceled) throws CancelException {
-		String value = null;
-		try {
-			createStreams();
-			switch (engine.getAlgorithm()) {
-			case BASE16:
-				Base16.decode(inputStreams.getLast(), outputStreams.getLast());
-				break;
-			case BASE32:
-				inputStreams.add(new Base32InputStream(inputStreams.getLast()));
-				IOUtils.copyLarge(inputStreams.getLast(), outputStreams.getLast());
-				break;
-			case BASE64:
-				inputStreams.add(new Base64InputStream(inputStreams.getLast()));
-				IOUtils.copyLarge(inputStreams.getLast(), outputStreams.getLast());
-				break;
-			case ASCII85:
-				inputStreams.add(new Ascii85InputStream(inputStreams.getLast()));
-				IOUtils.copyLarge(inputStreams.getLast(), outputStreams.getLast());
-				break;
-			case BASE91:
-				b91cli.decode(inputStreams.getLast(), outputStreams.getLast());
-				break;
-			default:
-				throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", engine.getAlgorithm().getName()));
-			}
-		}
-		catch (final Exception e) {
-			deleteOutputFile();
-			if (!canceled.getAsBoolean()) {
-				throw new IllegalStateException(Messages.get("err.cannot.decode", engine.getAlgorithm().getName()), e);
-			}
-		}
-		finally {
-			closeStreams();
-		}
-		if (canceled.getAsBoolean()) {
-			deleteOutputFile();
-			throw new CancelException(Messages.get("msg.file.process.cancel.message"));
-		}
-		else {
-			return value;
-		}
-	}
-
-	private void deleteOutputFile() {
-		closeOutputStreams();
-		try {
-			Files.deleteIfExists(outputFile.toPath());
-		}
-		catch (final Exception e) {
-			logger.log(Level.WARNING, Messages.get("err.cannot.delete.file", outputFile), e);
-			outputFile.deleteOnExit();
-		}
-	}
-
-	private void createStreams() throws FileNotFoundException {
-		createInputStreams();
-		createOutputStreams();
-	}
-
-	private synchronized void createInputStreams() throws FileNotFoundException {
-		if (!inputStreams.isEmpty()) {
-			throw new IllegalStateException("InputStream collection is not empty!");
-		}
-		inputStreams.add(new FileInputStream(inputFile));
-		inputStreams.add(new BufferedInputStream(inputStreams.getLast()));
-		cis = new CountingInputStream(inputStreams.getLast());
-		inputStreams.add(cis);
-	}
-
-	private synchronized void createOutputStreams() throws FileNotFoundException {
-		if (!outputStreams.isEmpty()) {
-			throw new IllegalStateException("OutputStream collection is not empty!");
-		}
-		outputStreams.add(new FileOutputStream(outputFile));
-		outputStreams.add(new BufferedOutputStream(outputStreams.getLast()));
-	}
-
-	private void closeStreams() {
-		closeOutputStreams();
-		closeInputStreams();
-	}
-
-	private synchronized void closeOutputStreams() {
-		final Iterator<OutputStream> iterator = outputStreams.descendingIterator();
-		while (iterator.hasNext()) {
-			final Closeable closeable = iterator.next();
-			IOUtils.closeQuietly(closeable, e -> logger.log(Level.WARNING, e, () -> "Cannot close " + closeable + ':'));
-		}
-		outputStreams.clear();
-	}
-
-	private synchronized void closeInputStreams() {
-		final Iterator<InputStream> iterator = inputStreams.descendingIterator();
-		while (iterator.hasNext()) {
-			final Closeable closeable = iterator.next();
-			IOUtils.closeQuietly(closeable, e -> logger.log(Level.WARNING, e, () -> "Cannot close " + closeable + ':'));
-		}
-		inputStreams.clear();
-	}
-
-	public File getInputFile() {
-		return inputFile;
-	}
-
-	public File getOutputFile() {
-		return outputFile;
-	}
-
-	public long getByteCount() {
-		return cis != null ? cis.getByteCount() : 0;
 	}
 
 }
