@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,18 +17,17 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.albertus.util.ISupplier;
 import it.albertus.util.NewLine;
 
 public class CodecEngineTest {
 
-	private static final String CHARSET = "UTF-8";
+	private static final Charset CHARSET = StandardCharsets.UTF_8;
 	private static final String DIGEST_SEPARATOR = " *";
 
 	private static final String originalString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 	private static File originalFile;
-	private static final Map<CodecAlgorithm, String> encodedStrings = new EnumMap<CodecAlgorithm, String>(CodecAlgorithm.class);
-	private static final Map<CodecAlgorithm, File> encodedFiles = new EnumMap<CodecAlgorithm, File>(CodecAlgorithm.class);
+	private static final Map<CodecAlgorithm, String> encodedStrings = new EnumMap<>(CodecAlgorithm.class);
+	private static final Map<CodecAlgorithm, File> encodedFiles = new EnumMap<>(CodecAlgorithm.class);
 
 	private static CodecEngine engine;
 
@@ -38,20 +38,15 @@ public class CodecEngineTest {
 		createEncodedFiles();
 
 		engine = new CodecEngine();
-		engine.setCharset(Charset.forName(CHARSET));
+		engine.setCharset(CHARSET);
 	}
 
 	private static void createOriginalFile() throws IOException {
-		FileWriter fw = null;
-		try {
-			originalFile = File.createTempFile("original-", ".txt");
-			fw = new FileWriter(originalFile);
+		originalFile = File.createTempFile("original-", ".txt");
+		try (final FileWriter fw = new FileWriter(originalFile)) {
 			fw.write(originalString);
-			System.out.println("Created original file \"" + originalFile + '"');
 		}
-		finally {
-			IOUtils.closeQuietly(fw);
-		}
+		System.out.println("Created original file \"" + originalFile + '"');
 	}
 
 	private static void createEncodedStrings() {
@@ -74,16 +69,11 @@ public class CodecEngineTest {
 	private static void createEncodedFiles() throws IOException {
 		for (final Entry<CodecAlgorithm, String> entry : encodedStrings.entrySet()) {
 			File encodedFile;
-			FileWriter fw = null;
-			try {
-				encodedFile = File.createTempFile("encoded-", ".txt." + entry.getKey().name().toLowerCase());
-				fw = new FileWriter(encodedFile);
+			encodedFile = File.createTempFile("encoded-", ".txt." + entry.getKey().name().toLowerCase());
+			try (FileWriter fw = new FileWriter(encodedFile)) {
 				fw.write(entry.getValue());
-				System.out.println("Created temporary encoded file \"" + encodedFile + '"');
 			}
-			finally {
-				IOUtils.closeQuietly(fw);
-			}
+			System.out.println("Created temporary encoded file \"" + encodedFile + '"');
 			encodedFiles.put(entry.getKey(), encodedFile);
 		}
 	}
@@ -151,12 +141,7 @@ public class CodecEngineTest {
 	private String testFileEncoder(final CodecAlgorithm ca) throws IOException, CancelException {
 		final File outputFile = File.createTempFile(CodecMode.ENCODE.name().toLowerCase() + '-', '.' + ca.name().toLowerCase());
 		System.out.println("Created temporary encoded file \"" + outputFile + '"');
-		final String value = new ProcessFileTask(engine, originalFile, outputFile).run(new ISupplier<Boolean>() {
-			@Override
-			public Boolean get() {
-				return false;
-			}
-		});
+		final String value = new ProcessFileTask(engine, originalFile, outputFile).run(() -> false);
 		if (ca.isDigest()) {
 			Assert.assertNotNull(value);
 			Assert.assertFalse(value.isEmpty());
@@ -181,18 +166,13 @@ public class CodecEngineTest {
 				outputFile.deleteOnExit();
 			}
 		}
-		return baos.toString(CHARSET).replaceAll("[" + NewLine.CRLF.toString() + "]+", "");
+		return baos.toString(CHARSET.name()).replaceAll("[" + NewLine.CRLF.toString() + "]+", "");
 	}
 
 	private String testFileDecoder(final CodecAlgorithm ca, final File file) throws IOException, CancelException {
 		final File outputFile = File.createTempFile(CodecMode.DECODE.name().toLowerCase() + '-', ".txt");
 		System.out.println("Created temporary decoded file \"" + outputFile + '"');
-		new ProcessFileTask(engine, file, outputFile).run(new ISupplier<Boolean>() {
-			@Override
-			public Boolean get() {
-				return false;
-			}
-		});
+		new ProcessFileTask(engine, file, outputFile).run(() -> false);
 		FileInputStream fis = null;
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
@@ -210,7 +190,7 @@ public class CodecEngineTest {
 				outputFile.deleteOnExit();
 			}
 		}
-		return baos.toString(CHARSET);
+		return baos.toString(CHARSET.name());
 	}
 
 	@AfterClass

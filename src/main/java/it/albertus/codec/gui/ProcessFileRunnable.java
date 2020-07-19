@@ -8,7 +8,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import it.albertus.codec.engine.CancelException;
 import it.albertus.codec.engine.ProcessFileTask;
 import it.albertus.codec.resources.Messages;
-import it.albertus.util.ISupplier;
 
 public class ProcessFileRunnable implements IRunnableWithProgress {
 
@@ -33,12 +32,7 @@ public class ProcessFileRunnable implements IRunnableWithProgress {
 			else {
 				monitor.beginTask(Messages.get("msg.file.process.task.name", task.getInputFile().getName()), IProgressMonitor.UNKNOWN);
 			}
-			result = task.run(new ISupplier<Boolean>() {
-				@Override
-				public Boolean get() {
-					return monitor.isCanceled();
-				}
-			});
+			result = task.run(monitor::isCanceled);
 		}
 		catch (final CancelException e) {
 			throw new InterruptedException(e.getMessage());

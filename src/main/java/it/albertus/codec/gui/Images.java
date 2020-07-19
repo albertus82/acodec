@@ -14,7 +14,7 @@ import it.albertus.util.IOUtils;
 public class Images {
 
 	// Main application icon (in various formats)
-	private static final Collection<Image> mainIcons = new LinkedHashSet<Image>();
+	private static final Collection<Image> mainIcons = new LinkedHashSet<>();
 
 	private Images() {
 		throw new IllegalAccessError();

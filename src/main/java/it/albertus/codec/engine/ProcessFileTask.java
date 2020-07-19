@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.function.BooleanSupplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +29,6 @@ import org.freehep.util.io.ASCII85OutputStream;
 import it.albertus.codec.resources.Messages;
 import it.albertus.util.CRC16OutputStream;
 import it.albertus.util.CRC32OutputStream;
-import it.albertus.util.ISupplier;
 import it.albertus.util.logging.LoggerFactory;
 import net.sourceforge.base91.b91cli;
 
@@ -38,8 +38,8 @@ public class ProcessFileTask implements Cancelable {
 
 	private static final int BASE_N_LINE_LENGTH = 79;
 
-	private final LinkedList<InputStream> inputStreams = new LinkedList<InputStream>();
-	private final LinkedList<OutputStream> outputStreams = new LinkedList<OutputStream>();
+	private final LinkedList<InputStream> inputStreams = new LinkedList<>();
+	private final LinkedList<OutputStream> outputStreams = new LinkedList<>();
 
 	private CountingInputStream cis;
 
@@ -53,7 +53,7 @@ public class ProcessFileTask implements Cancelable {
 		this.outputFile = outputFile;
 	}
 
-	public String run(final ISupplier<Boolean> canceled) throws CancelException {
+	public String run(final BooleanSupplier canceled) throws CancelException {
 		if (engine.getAlgorithm() == null) {
 			throw new IllegalStateException(Messages.get("msg.missing.algorithm"));
 		}
@@ -75,7 +75,7 @@ public class ProcessFileTask implements Cancelable {
 		closeStreams();
 	}
 
-	private String encode(final ISupplier<Boolean> canceled) throws CancelException {
+	private String encode(final BooleanSupplier canceled) throws CancelException {
 		String value = null;
 		final String fileName;
 		try {
@@ -167,14 +167,14 @@ public class ProcessFileTask implements Cancelable {
 		}
 		catch (final Exception e) {
 			deleteOutputFile();
-			if (Boolean.FALSE.equals(canceled.get())) {
+			if (!canceled.getAsBoolean()) {
 				throw new IllegalStateException(Messages.get("err.cannot.encode", engine.getAlgorithm().getName()), e);
 			}
 		}
 		finally {
 			closeStreams();
 		}
-		if (Boolean.TRUE.equals(canceled.get())) {
+		if (canceled.getAsBoolean()) {
 			deleteOutputFile();
 			throw new CancelException(Messages.get("msg.file.process.cancel.message"));
 		}
@@ -183,7 +183,7 @@ public class ProcessFileTask implements Cancelable {
 		}
 	}
 
-	private String decode(final ISupplier<Boolean> canceled) throws CancelException {
+	private String decode(final BooleanSupplier canceled) throws CancelException {
 		String value = null;
 		try {
 			createStreams();
@@ -212,14 +212,14 @@ public class ProcessFileTask implements Cancelable {
 		}
 		catch (final Exception e) {
 			deleteOutputFile();
-			if (Boolean.FALSE.equals(canceled.get())) {
+			if (!canceled.getAsBoolean()) {
 				throw new IllegalStateException(Messages.get("err.cannot.decode", engine.getAlgorithm().getName()), e);
 			}
 		}
 		finally {
 			closeStreams();
 		}
-		if (Boolean.TRUE.equals(canceled.get())) {
+		if (canceled.getAsBoolean()) {
 			deleteOutputFile();
 			throw new CancelException(Messages.get("msg.file.process.cancel.message"));
 		}

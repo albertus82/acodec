@@ -3,7 +3,6 @@ package it.albertus.codec.gui.listener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
@@ -29,7 +28,7 @@ public class AlgorithmComboSelectionListener extends SelectionAdapter {
 		if (!gui.getProcessFileButton().getEnabled()) {
 			gui.getProcessFileButton().setEnabled(true);
 			gui.getMenuBar().getFileProcessMenuItem().setEnabled(true);
-			gui.getShellDropTarget().setTransfer(new Transfer[] { FileTransfer.getInstance(), TextTransfer.getInstance() });
+			gui.getShellDropTarget().setTransfer(FileTransfer.getInstance(), TextTransfer.getInstance());
 		}
 
 		/* Gestione radio */
