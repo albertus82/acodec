@@ -61,9 +61,16 @@ public class CodecEngineTest {
 		encodedStrings.put(CodecAlgorithm.MD4, "8db2ba4980fa7d57725e42782ab47b42");
 		encodedStrings.put(CodecAlgorithm.MD5, "db89bb5ceab87f9c0fcc2ab36c189c2c");
 		encodedStrings.put(CodecAlgorithm.SHA1, "cd36b370758a259b34845084a6cc38473cb95e27");
+		encodedStrings.put(CodecAlgorithm.SHA224, "b2d9d497bcc3e5be0ca67f08c86087a51322ae48b220ed9241cad7a5");
 		encodedStrings.put(CodecAlgorithm.SHA256, "2d8c2f6d978ca21712b5f6de36c9d31fa8e96a4fa5d8ff8b0188dfb9e7c171bb");
 		encodedStrings.put(CodecAlgorithm.SHA384, "d3b5710e17da84216f1bf08079bbbbf45303baefc6ecd677910a1c33c86cb164281f0f2dcab55bbadc5e8606bdbc16b6");
 		encodedStrings.put(CodecAlgorithm.SHA512, "8ba760cac29cb2b2ce66858ead169174057aa1298ccd581514e6db6dee3285280ee6e3a54c9319071dc8165ff061d77783100d449c937ff1fb4cd1bb516a69b9");
+		encodedStrings.put(CodecAlgorithm.SHA512_224, "6183ece65d9b205ae5a5da08ab39200584e4e893e65b75bf3f7503f5");
+		encodedStrings.put(CodecAlgorithm.SHA512_256, "06ae84e5d26e5537ee9b7b732fb2c091f72884b920102e5ecf3f2b13a6dd1933");
+		encodedStrings.put(CodecAlgorithm.SHA3_224, "06774e56a376c3de431f20d1760c289ec07ce8a420e4c9b1c08cbc16");
+		encodedStrings.put(CodecAlgorithm.SHA3_256, "bde3f269175e1dcda13848278aa6046bd643cea85b84c8b8bb80952e70b6eae0");
+		encodedStrings.put(CodecAlgorithm.SHA3_384, "e297fd85a77fe4f0005785b830dc8e872fb3b5f3349c0181e4d0e4c5ad677512497d5cfe08e753bee70626ba96a47d35");
+		encodedStrings.put(CodecAlgorithm.SHA3_512, "f32a9423551351df0a07c0b8c20eb972367c398d61066038e16986448ebfbc3d15ede0ed3693e3905e9a8c601d9d002a06853b9797ef9ab10cbde1009c7d0f09");
 	}
 
 	private static void createEncodedFiles() throws IOException {
