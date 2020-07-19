@@ -2,6 +2,7 @@ package it.albertus.codec.engine;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -268,7 +269,8 @@ public class ProcessFileTask implements Cancelable {
 	private synchronized void closeOutputStreams() {
 		final Iterator<OutputStream> iterator = outputStreams.descendingIterator();
 		while (iterator.hasNext()) {
-			IOUtils.closeQuietly(iterator.next(), e -> logger.log(Level.WARNING,e.toString(),e ));
+			final Closeable closeable = iterator.next();
+			IOUtils.closeQuietly(closeable, e -> logger.log(Level.WARNING, e, () -> "Cannot close " + closeable + ':'));
 		}
 		outputStreams.clear();
 	}
@@ -276,7 +278,8 @@ public class ProcessFileTask implements Cancelable {
 	private synchronized void closeInputStreams() {
 		final Iterator<InputStream> iterator = inputStreams.descendingIterator();
 		while (iterator.hasNext()) {
-			IOUtils.closeQuietly(iterator.next());
+			final Closeable closeable = iterator.next();
+			IOUtils.closeQuietly(closeable, e -> logger.log(Level.WARNING, e, () -> "Cannot close " + closeable + ':'));
 		}
 		inputStreams.clear();
 	}
