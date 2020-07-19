@@ -2,18 +2,26 @@ package it.albertus.codec.engine;
 
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
+import java.security.Security;
+import java.util.Arrays;
 import java.util.zip.CRC32;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.mina.proxy.utils.MD4Provider;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import it.albertus.codec.resources.Messages;
 import it.albertus.util.CRC16;
 
 public class CodecEngine {
+
+	static {
+		Security.addProvider(new BouncyCastleProvider());
+	}
 
 	private static final MD4Provider MD4_PROVIDER = new MD4Provider();
 
@@ -67,29 +75,14 @@ public class CodecEngine {
 				crc32.update(input.getBytes(charset));
 				value = String.format("%08x", crc32.getValue());
 				break;
-			case MD2:
-				value = DigestUtils.md2Hex(input.getBytes(charset));
-				break;
 			case MD4:
 				value = Hex.encodeHexString(MessageDigest.getInstance(CodecAlgorithm.MD4.name(), MD4_PROVIDER).digest(input.getBytes(charset)));
 				break;
-			case MD5:
-				value = DigestUtils.md5Hex(input.getBytes(charset));
-				break;
-			case SHA1:
-				value = DigestUtils.sha1Hex(input.getBytes(charset));
-				break;
-			case SHA256:
-				value = DigestUtils.sha256Hex(input.getBytes(charset));
-				break;
-			case SHA384:
-				value = DigestUtils.sha384Hex(input.getBytes(charset));
-				break;
-			case SHA512:
-				value = DigestUtils.sha512Hex(input.getBytes(charset));
-				break;
 			default:
-				throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", algorithm.getName()));
+				if (Arrays.stream(MessageDigestAlgorithms.values()).noneMatch(algorithm.getName()::equalsIgnoreCase)) {
+					throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", algorithm.getName()));
+				}
+				value = new DigestUtils(algorithm.getName()).digestAsHex(input.getBytes(charset));
 			}
 		}
 		catch (final Exception e) {

@@ -4,6 +4,7 @@
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="src" path="src/test/resources"/>
+	<classpathentry kind="lib" path="lib/compile/common/bcprov-jdk15on-166.jar" sourcepath="lib/compile/common/src/bcprov-jdk15on-1.66-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/commons-codec-1.14.jar" sourcepath="lib/compile/common/src/commons-codec-1.14-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/commons-io-2.7.jar" sourcepath="lib/compile/common/src/commons-io-2.7-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/freehep-io-2.2.2.jar" sourcepath="lib/compile/common/src/freehep-io-2.2.2-sources.jar"/>

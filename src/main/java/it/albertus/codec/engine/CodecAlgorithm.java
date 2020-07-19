@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
+
 public enum CodecAlgorithm {
 	BASE16("Base16"),
 	BASE32("Base32"),
@@ -12,13 +14,20 @@ public enum CodecAlgorithm {
 	BASE91("basE91"),
 	CRC16("CRC-16", true),
 	CRC32("CRC-32", true),
-	MD2("MD2", true),
+	MD2(MessageDigestAlgorithms.MD2, true),
 	MD4("MD4", true),
-	MD5("MD5", true),
-	SHA1("SHA-1", true),
-	SHA256("SHA-256", true),
-	SHA384("SHA-384", true),
-	SHA512("SHA-512", true);
+	MD5(MessageDigestAlgorithms.MD5, true),
+	SHA1(MessageDigestAlgorithms.SHA_1, true),
+	SHA224(MessageDigestAlgorithms.SHA_224, true),
+	SHA256(MessageDigestAlgorithms.SHA_256, true),
+	SHA384(MessageDigestAlgorithms.SHA_384, true),
+	SHA512(MessageDigestAlgorithms.SHA_512, true),
+	SHA512_224(MessageDigestAlgorithms.SHA_512_224, true),
+	SHA512_256(MessageDigestAlgorithms.SHA_512_256, true),
+	SHA3_224(MessageDigestAlgorithms.SHA3_224, true),
+	SHA3_256(MessageDigestAlgorithms.SHA3_256, true),
+	SHA3_384(MessageDigestAlgorithms.SHA3_384, true),
+	SHA3_512(MessageDigestAlgorithms.SHA3_512, true);
 
 	private final String name;
 	private final boolean digest;

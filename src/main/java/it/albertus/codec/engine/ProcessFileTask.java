@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.security.MessageDigest;
+import java.util.Arrays;
 import java.util.function.BooleanSupplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +17,7 @@ import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.codec.binary.BaseNCodecOutputStream;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.io.IOUtils;
 import org.freehep.util.io.ASCII85OutputStream;
 
@@ -107,36 +109,17 @@ public class ProcessFileTask implements Cancelable {
 					value = String.format("%08x", crc32os.getValue());
 					IOUtils.write(fileName + ' ' + value, cs.getOutputStreams().getLast(), engine.getCharset()); // sfv
 					break;
-				case MD2:
-					value = DigestUtils.md2Hex(cs.getInputStreams().getLast());
-					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
-					break;
 				case MD4:
 					value = Hex.encodeHexString(DigestUtils.updateDigest(MessageDigest.getInstance(CodecAlgorithm.MD4.name(), CodecEngine.getMd4Provider()), cs.getInputStreams().getLast()).digest());
 					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
 					break;
-				case MD5:
-					value = DigestUtils.md5Hex(cs.getInputStreams().getLast());
-					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
-					break;
-				case SHA1:
-					value = DigestUtils.sha1Hex(cs.getInputStreams().getLast());
-					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
-					break;
-				case SHA256:
-					value = DigestUtils.sha256Hex(cs.getInputStreams().getLast());
-					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
-					break;
-				case SHA384:
-					value = DigestUtils.sha384Hex(cs.getInputStreams().getLast());
-					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
-					break;
-				case SHA512:
-					value = DigestUtils.sha512Hex(cs.getInputStreams().getLast());
-					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
-					break;
 				default:
-					throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", engine.getAlgorithm().getName()));
+					if (Arrays.stream(MessageDigestAlgorithms.values()).noneMatch(engine.getAlgorithm().getName()::equalsIgnoreCase)) {
+						throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", engine.getAlgorithm().getName()));
+					}
+					value = new DigestUtils(engine.getAlgorithm().getName()).digestAsHex(cs.getInputStreams().getLast());
+					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
+					break;
 				}
 			}
 		}
