@@ -1,7 +1,7 @@
 package it.albertus.codec.engine;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 public enum CodecAlgorithm {
@@ -10,6 +10,8 @@ public enum CodecAlgorithm {
 	BASE64("Base64"),
 	ASCII85("Ascii85"),
 	BASE91("basE91"),
+	CRC16("CRC-16", true),
+	CRC32("CRC-32", true),
 	MD2("MD2", true),
 	MD4("MD4", true),
 	MD5("MD5", true),
@@ -25,7 +27,7 @@ public enum CodecAlgorithm {
 	private CodecAlgorithm(final String name, final boolean digest, final CodecMode... modes) {
 		this.name = name;
 		this.digest = digest;
-		this.modes = new HashSet<>(Arrays.asList(modes));
+		this.modes = EnumSet.copyOf(Arrays.asList(modes));
 	}
 
 	private CodecAlgorithm(final String name, final boolean digest) {

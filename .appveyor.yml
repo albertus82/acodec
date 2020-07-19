@@ -4,37 +4,38 @@ clone_depth: 50
 
 environment:
   JRE7_HOME: $(ProgramFiles)\Java\jdk1.7.0\jre
-  ANT_VERSION: 1.10.0
 
   matrix:
     - platform: x86
       JAVA_HOME: ${ProgramFiles(x86)}\Java\jdk1.7.0
-      ANT_VERSION: 1.9.8
+      ANT_VERSION: 1.9.9
     - platform: x86
       JAVA_HOME: ${ProgramFiles(x86)}\Java\jdk1.8.0
+      ANT_VERSION: 1.10.5
     - platform: x64
       JAVA_HOME: $(ProgramFiles)\Java\jdk1.7.0
-      ANT_VERSION: 1.9.8
+      ANT_VERSION: 1.9.9
     - platform: x64
       JAVA_HOME: $(ProgramFiles)\Java\jdk1.8.0
-
-cache:
-  - $(ChocolateyInstall)\lib\ant -> .appveyor.yml
+      ANT_VERSION: 1.10.5
+    - platform: x64
+      JAVA_HOME: $(ProgramFiles)\Java\jdk11
+      ANT_VERSION: 1.10.5
+      VT_API_KEY:
+        secure: 3sqJDjLAS708tR/LiAqKLZTnLLrhGJuWVzzI4nCjLbUUsZB+PPRG3y0BWWnMo14CDhBT4v6yjHTA23RdopoHDWJlBcGhKELKZOLhHsnJLU8=
 
 install:
-  - ps: if (!(Test-Path -Path ($env:ChocolateyInstall + '\lib\ant\apache-ant-' + $env:ANT_VERSION))) { cinst ant -i --version $env:ANT_VERSION }
-  - cmd: PATH %ChocolateyInstall%\lib\ant\apache-ant-%ANT_VERSION%\bin;%JAVA_HOME%\bin;%PATH%
+  - cinst ant -i --version %ANT_VERSION%
+  - PATH %ANT_HOME%\bin;%PATH%
 
 before_build:
-  - cmd: java -Xmx32m -version
-  - cmd: javac -J-Xmx32m -version
-  - cmd: ant -version
+  - ant -diagnostics
 
 build_script:
-  - ant all
+  - ant -noinput
 
 after_build:
-  - ps: If ($env:APPVEYOR_REPO_TAG -eq 'true' -and $env:JAVA_HOME -eq ($env:ProgramFiles + '\Java\jdk1.8.0')) { $env:ARTIFACTS_PATH = 'target\*.*' }
+  - IF "%APPVEYOR_REPO_TAG%" == "true" IF DEFINED VT_API_KEY SET ARTIFACTS_PATH=build\*.* & FOR /R build %%f IN (*.exe *.tar.gz *.zip) DO IF NOT %%~xf == .exec ECHO Submitting file "%%f" to VirusTotal... & curl -v -F "file=@%%f" -F apikey=%VT_API_KEY% https://www.virustotal.com/vtapi/v2/file/scan & ECHO File "%%f" submitted to VirusTotal. & TIMEOUT 15 /NOBREAK
 
 artifacts:
   - path: $(ARTIFACTS_PATH)

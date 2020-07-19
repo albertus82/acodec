@@ -16,6 +16,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import it.albertus.util.ISupplier;
 import it.albertus.util.NewLine;
 
 public class CodecEngineTest {
@@ -59,6 +60,8 @@ public class CodecEngineTest {
 		encodedStrings.put(CodecAlgorithm.BASE64, "TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdCwgc2VkIGRvIGVpdXNtb2QgdGVtcG9yIGluY2lkaWR1bnQgdXQgbGFib3JlIGV0IGRvbG9yZSBtYWduYSBhbGlxdWEuIFV0IGVuaW0gYWQgbWluaW0gdmVuaWFtLCBxdWlzIG5vc3RydWQgZXhlcmNpdGF0aW9uIHVsbGFtY28gbGFib3JpcyBuaXNpIHV0IGFsaXF1aXAgZXggZWEgY29tbW9kbyBjb25zZXF1YXQuIER1aXMgYXV0ZSBpcnVyZSBkb2xvciBpbiByZXByZWhlbmRlcml0IGluIHZvbHVwdGF0ZSB2ZWxpdCBlc3NlIGNpbGx1bSBkb2xvcmUgZXUgZnVnaWF0IG51bGxhIHBhcmlhdHVyLiBFeGNlcHRldXIgc2ludCBvY2NhZWNhdCBjdXBpZGF0YXQgbm9uIHByb2lkZW50LCBzdW50IGluIGN1bHBhIHF1aSBvZmZpY2lhIGRlc2VydW50IG1vbGxpdCBhbmltIGlkIGVzdCBsYWJvcnVtLg==");
 		encodedStrings.put(CodecAlgorithm.ASCII85, "9Q+r_D'3P3F*2=BA8c:&EZfF;F<G\"/ATTIG@rH7+ARfgnFEMUH@:X(kBldcuDJ()'Ch[uB+EM+)+CoC5ASH:.D/Wr-FCf<.DfQt7DI[BkBk2@(F<G^J+DbIqDfTD3ATT&*Des?4AKYhuB5V-#@;KXtF^ZmF<HK?pDJ<r1@:UKtBl7X%+Eh=6Bjkj0+E;O<F!,@=F*)GFA0>H.ATD9pFCB9*Df-\\?Ci!Ns@rEK+@:F.qBlbD7Bldu2F`\\a7Ch[m3BlG2+GT^R++Cf>,D/Ws'+Cf>-F(K?6@<=+E7!33b+CTD7AKY]-F`M%9A8c:&EZf(6+ED%4Eb/oqDId=!BlkJ3DBO+@Cis]=@<?''G%GK(F<G.9F(HJ(Bl%U.D'3A-Ci=?*+D#[<Ap%a#@<<W0F_kl&+E1b0Bjl++E\\8J'G[k<(FCfT8+EM77F<GL3@prqY@<<W%F`;&*@<>q\"+Du+8+E2@>Bk1dmF=\\PUF`):DBl5&'F_l#*+E;O<+E(k(Bk(jc+Co&)ATDp2F<GF=Ci!g-+CT/%D'3P'+D#V9+DbIqDfTu;/c~>");
 		encodedStrings.put(CodecAlgorithm.BASE91, "Drzg`<fz+$Q;/ETj~i/2:WP1qU2uG9_ou\"L^;meP(Ig,!eLU2u8Pwn32Wf7=YC,RY6LycLeP;Im+oC.!L;e9QnJB%g`<>{KU=53mFlmaef!=yC2U7tAQ2i>z^IL,yC4!t!kb9j_kH<6=MCHRY6W9Yiw\")wlLto+f/W6Y$yY6JQrmW!_1N:Z;/HJ*lQ1o(nc=[[6e8RU0y9Uola(g=[${lT&:+xXi6J.JE<jN1Tb6GF&m32YJi]yCHRY6W9HlVB[I<W=H$y7&G9Qnbrh+e>bT=!P;axeQ3L:gP[eG6U!09MVo_z^Im+|*1T6tM.kLdP[2f,melT20ZQ`o9Z$JH^|*6U*/ax9jW!^IN:yC.!h.pE>i^iDg~<TX1T$&a9jLR8>vz]]0LR7tJ9MmAE=Cw)N1LRR;x.cLZ)WfE?!e6U6tcQ;mZBa=[*Yes!9/QjZpyaef=[6Y$F%&=EnnprYJc,_Y:H^,9.`o9Z$J%*I++$xtV9HlyqB2L::0LR:yTm9je8$J;W.{FTY6KFOiwa4J`/SC.!+/nuXiZrzg~<BB");
+		encodedStrings.put(CodecAlgorithm.CRC16, "a8e2");
+		encodedStrings.put(CodecAlgorithm.CRC32, "98b2c5bd");
 		encodedStrings.put(CodecAlgorithm.MD2, "4b2ffc802c256a38fd6ccb575cccc27c");
 		encodedStrings.put(CodecAlgorithm.MD4, "8db2ba4980fa7d57725e42782ab47b42");
 		encodedStrings.put(CodecAlgorithm.MD5, "db89bb5ceab87f9c0fcc2ab36c189c2c");
@@ -110,19 +113,31 @@ public class CodecEngineTest {
 	}
 
 	@Test
-	public void testFileEncoder() throws IOException {
+	public void testFileEncoder() throws IOException, CancelException {
 		engine.setMode(CodecMode.ENCODE);
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(CodecMode.ENCODE)) {
 				engine.setAlgorithm(ca);
 				System.out.println("Testing file encoding " + ca);
-				Assert.assertEquals(ca.toString(), encodedStrings.get(ca) + (ca.isDigest() ? DIGEST_SEPARATOR + originalFile.getName() : ""), testFileEncoder(ca));
+				final String expected;
+				if (ca.isDigest()) {
+					if (CodecAlgorithm.CRC32.equals(ca)) {
+						expected = originalFile.getName() + ' ' + encodedStrings.get(ca);
+					}
+					else {
+						expected = encodedStrings.get(ca) + DIGEST_SEPARATOR + originalFile.getName();
+					}
+				}
+				else {
+					expected = encodedStrings.get(ca);
+				}
+				Assert.assertEquals(ca.toString(), expected, testFileEncoder(ca));
 			}
 		}
 	}
 
 	@Test
-	public void testFileDecoder() throws IOException {
+	public void testFileDecoder() throws IOException, CancelException {
 		engine.setMode(CodecMode.DECODE);
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(CodecMode.DECODE)) {
@@ -133,10 +148,22 @@ public class CodecEngineTest {
 		}
 	}
 
-	private String testFileEncoder(final CodecAlgorithm ca) throws IOException {
+	private String testFileEncoder(final CodecAlgorithm ca) throws IOException, CancelException {
 		final File outputFile = File.createTempFile(CodecMode.ENCODE.name().toLowerCase() + '-', '.' + ca.name().toLowerCase());
 		System.out.println("Created temporary encoded file \"" + outputFile + '"');
-		engine.run(originalFile, outputFile);
+		final String value = new ProcessFileTask(engine, originalFile, outputFile).run(new ISupplier<Boolean>() {
+			@Override
+			public Boolean get() {
+				return false;
+			}
+		});
+		if (ca.isDigest()) {
+			Assert.assertNotNull(value);
+			Assert.assertFalse(value.isEmpty());
+		}
+		else {
+			Assert.assertNull(value);
+		}
 		FileInputStream fis = null;
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
@@ -157,10 +184,15 @@ public class CodecEngineTest {
 		return baos.toString(CHARSET).replaceAll("[" + NewLine.CRLF.toString() + "]+", "");
 	}
 
-	private String testFileDecoder(final CodecAlgorithm ca, final File file) throws IOException {
+	private String testFileDecoder(final CodecAlgorithm ca, final File file) throws IOException, CancelException {
 		final File outputFile = File.createTempFile(CodecMode.DECODE.name().toLowerCase() + '-', ".txt");
 		System.out.println("Created temporary decoded file \"" + outputFile + '"');
-		engine.run(file, outputFile);
+		new ProcessFileTask(engine, file, outputFile).run(new ISupplier<Boolean>() {
+			@Override
+			public Boolean get() {
+				return false;
+			}
+		});
 		FileInputStream fis = null;
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {

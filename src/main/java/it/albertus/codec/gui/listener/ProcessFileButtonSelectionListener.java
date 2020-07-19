@@ -14,10 +14,10 @@ public class ProcessFileButtonSelectionListener extends ProcessFileAction implem
 	@Override
 	public void widgetSelected(final SelectionEvent event) {
 		final String sourceFileName = getSourceFile();
-		if (sourceFileName != null && sourceFileName.length() > 0) {
+		if (sourceFileName != null && !sourceFileName.isEmpty()) {
 			final String destinationFileName = getDestinationFile(sourceFileName);
-			if (destinationFileName != null && destinationFileName.length() > 0) {
-				run(sourceFileName, destinationFileName);
+			if (destinationFileName != null && !destinationFileName.isEmpty()) {
+				execute(sourceFileName, destinationFileName);
 			}
 		}
 	}

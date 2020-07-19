@@ -4,7 +4,10 @@ import java.nio.charset.Charset;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.jface.util.Util;
@@ -35,9 +38,13 @@ import it.albertus.codec.gui.listener.ShellDropListener;
 import it.albertus.codec.gui.listener.TextKeyListener;
 import it.albertus.codec.resources.Messages;
 import it.albertus.codec.resources.Messages.Language;
+import it.albertus.jface.EnhancedErrorDialog;
 import it.albertus.util.Version;
+import it.albertus.util.logging.LoggerFactory;
 
 public class CodecGui extends Codec implements IShellProvider {
+
+	private static final Logger logger = LoggerFactory.getLogger(CodecGui.class);
 
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
@@ -145,14 +152,23 @@ public class CodecGui extends Codec implements IShellProvider {
 		final CodecGui gui = new CodecGui(display);
 		final Shell shell = gui.getShell();
 		shell.addShellListener(new CloseListener(gui));
-		shell.open();
-		gui.getInputText().notifyListeners(SWT.Modify, null);
-		while (!shell.isDisposed()) {
-			if (!display.isDisposed() && !display.readAndDispatch()) {
-				display.sleep();
+		try {
+			shell.open();
+			gui.getInputText().notifyListeners(SWT.Modify, null);
+			while (!shell.isDisposed()) {
+				if (!display.isDisposed() && !display.readAndDispatch()) {
+					display.sleep();
+				}
 			}
 		}
-		display.dispose();
+		catch (final Exception e) {
+			final String message = e.toString();
+			logger.log(Level.SEVERE, message, e);
+			EnhancedErrorDialog.openError(shell, Messages.get("msg.error"), message, IStatus.ERROR, e, Images.getMainIcons());
+		}
+		finally {
+			display.dispose();
+		}
 	}
 
 	private Text createInputText() {
@@ -205,7 +221,7 @@ public class CodecGui extends Codec implements IShellProvider {
 	}
 
 	public void setLanguage(final Language language) {
-		Messages.setLanguage(language);
+		Messages.setLanguage(language.getLocale().getLanguage());
 		shell.setRedraw(false);
 		this.updateTexts();
 		menuBar.updateTexts();

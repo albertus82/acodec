@@ -12,12 +12,12 @@ done
 PRGDIR=`dirname "$PRG"`
 if [ "$1" = "" ]
   then if [ "$JAVA_HOME" != "" ]
-  then "$JAVA_HOME/bin/java" -Xms4m -Xmx32m -classpath "$PRGDIR/codec.jar:$PRGDIR/lib/*" it.albertus.codec.Codec
-  else java -Xms4m -Xmx32m -classpath "$PRGDIR/codec.jar:$PRGDIR/lib/*" it.albertus.codec.Codec
+  then "$JAVA_HOME/bin/java" -DSWT_GTK3=0 -Xms@vm.initialHeapSize@m -Xmx@vm.maxHeapSize@m -D@mainClass@.main.mode=gui -classpath "$PRGDIR/@linux.jarFileName@:$PRGDIR/lib/*" @mainClass@
+  else java -DSWT_GTK3=0 -Xms@vm.initialHeapSize@m -Xmx@vm.maxHeapSize@m -D@mainClass@.main.mode=gui -classpath "$PRGDIR/@linux.jarFileName@:$PRGDIR/lib/*" @mainClass@
   fi
 else
   if [ "$JAVA_HOME" != "" ]
-  then "$JAVA_HOME/bin/java" -Xms4m -Xmx8m -classpath "$PRGDIR/codec.jar:$PRGDIR/lib/*" it.albertus.codec.Codec $1 $2 $3 $4 $5 $6
-  else java -Xms4m -Xmx8m -classpath "$PRGDIR/codec.jar:$PRGDIR/lib/*" it.albertus.codec.Codec $1 $2 $3 $4 $5 $6
+  then "$JAVA_HOME/bin/java" -Xms@console.vm.initialHeapSize@m -Xmx@console.vm.maxHeapSize@m -D@mainClass@.main.mode=console -classpath "$PRGDIR/@linux.jarFileName@:$PRGDIR/lib/*" @mainClass@ $1 $2 $3 $4 $5 $6
+  else java -Xms@console.vm.initialHeapSize@m -Xmx@console.vm.maxHeapSize@m -D@mainClass@.main.mode=console -classpath "$PRGDIR/@linux.jarFileName@:$PRGDIR/lib/*" @mainClass@ $1 $2 $3 $4 $5 $6
   fi
 fi
