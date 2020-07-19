@@ -6,7 +6,7 @@ jobs:
   build:
     strategy:
       matrix:
-        java: [ '8', '9', '10', '11' ]
+        java: [ '8', '9', '10', '11', '12', '13', '14' ]
         os: [ 'windows-latest', 'ubuntu-latest', 'macOS-latest' ]
     runs-on: ${{ matrix.os }}
     steps:
@@ -20,6 +20,8 @@ jobs:
         java-version: ${{ matrix.java }}
     - run: ant -diagnostics
     - run: ant -noinput -DignoreWineErrors=true
+    - if: matrix.os == 'ubuntu-latest' && matrix.java == '11'
+      run: git fetch --unshallow
     - if: matrix.os == 'ubuntu-latest' && matrix.java == '11'
       uses: sonarsource/sonarcloud-github-action@master
       env:
