@@ -11,12 +11,13 @@ import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecMode;
 import it.albertus.codec.engine.ProcessFileTask;
 import it.albertus.codec.resources.Messages;
-import it.albertus.util.NewLine;
 import it.albertus.util.Version;
 import it.albertus.util.logging.LoggerFactory;
 
 @SuppressWarnings("java:S106") // "Standard outputs should not be used directly to log anything"
 public class CodecConsole extends Codec {
+
+	private static final String SYSTEM_LINE_SEPARATOR = System.lineSeparator();
 
 	private static final Logger logger = LoggerFactory.getLogger(CodecConsole.class);
 
@@ -58,7 +59,7 @@ public class CodecConsole extends Codec {
 			}
 		}
 		if (mode == null) {
-			System.err.println(Messages.get("err.invalid.mode", args[0].trim()) + NewLine.SYSTEM_LINE_SEPARATOR);
+			System.err.println(Messages.get("err.invalid.mode", args[0].trim()) + SYSTEM_LINE_SEPARATOR);
 			printHelp();
 			return;
 		}
@@ -72,7 +73,7 @@ public class CodecConsole extends Codec {
 			}
 		}
 		if (algorithm == null) {
-			System.err.println(Messages.get("err.invalid.algorithm", algorithmArg) + NewLine.SYSTEM_LINE_SEPARATOR);
+			System.err.println(Messages.get("err.invalid.algorithm", algorithmArg) + SYSTEM_LINE_SEPARATOR);
 			printHelp();
 			return;
 		}
@@ -105,7 +106,7 @@ public class CodecConsole extends Codec {
 					}
 					break;
 				default:
-					System.err.println(Messages.get("err.invalid.option", args[i].charAt(1)) + NewLine.SYSTEM_LINE_SEPARATOR);
+					System.err.println(Messages.get("err.invalid.option", args[i].charAt(1)) + SYSTEM_LINE_SEPARATOR);
 					printHelp();
 					return;
 				}
@@ -120,7 +121,7 @@ public class CodecConsole extends Codec {
 			}
 			catch (final Exception e) {
 				logger.log(Level.FINE, Messages.get("err.invalid.charset", charsetName), e);
-				System.err.println(Messages.get("err.invalid.charset", charsetName) + NewLine.SYSTEM_LINE_SEPARATOR);
+				System.err.println(Messages.get("err.invalid.charset", charsetName) + SYSTEM_LINE_SEPARATOR);
 				printHelp();
 				return;
 			}
@@ -151,28 +152,28 @@ public class CodecConsole extends Codec {
 	private void printHelp() {
 		/* Usage */
 		final StringBuilder help = new StringBuilder(Messages.get("msg.help.usage", OPTION_CHARSET, OPTION_FILE));
-		help.append(NewLine.SYSTEM_LINE_SEPARATOR).append(NewLine.SYSTEM_LINE_SEPARATOR);
+		help.append(SYSTEM_LINE_SEPARATOR).append(SYSTEM_LINE_SEPARATOR);
 
 		/* Modes */
-		help.append(Messages.get("msg.help.modes")).append(NewLine.SYSTEM_LINE_SEPARATOR);
+		help.append(Messages.get("msg.help.modes")).append(SYSTEM_LINE_SEPARATOR);
 		for (final CodecMode mode : CodecMode.values()) {
-			help.append("    ").append(mode.getAbbreviation()).append("    ").append(mode.getName()).append(NewLine.SYSTEM_LINE_SEPARATOR);
+			help.append("    ").append(mode.getAbbreviation()).append("    ").append(mode.getName()).append(SYSTEM_LINE_SEPARATOR);
 		}
-		help.append(NewLine.SYSTEM_LINE_SEPARATOR);
+		help.append(SYSTEM_LINE_SEPARATOR);
 
 		/* Algorithms */
 		help.append(getAlgorithmsHelpBlock());
-		help.append(NewLine.SYSTEM_LINE_SEPARATOR);
+		help.append(SYSTEM_LINE_SEPARATOR);
 
 		/* Charsets */
 		help.append(getCharsetsHelpBlock());
-		help.append(NewLine.SYSTEM_LINE_SEPARATOR).append(NewLine.SYSTEM_LINE_SEPARATOR);
+		help.append(SYSTEM_LINE_SEPARATOR).append(SYSTEM_LINE_SEPARATOR);
 
 		/* Example */
 		help.append(Messages.get("msg.help.example"));
 
 		final Version version = Version.getInstance();
-		System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(version.getDate())) + " [" + Messages.get("msg.website") + ']' + NewLine.SYSTEM_LINE_SEPARATOR + NewLine.SYSTEM_LINE_SEPARATOR + help.toString().trim());
+		System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(version.getDate())) + " [" + Messages.get("msg.website") + ']' + SYSTEM_LINE_SEPARATOR + SYSTEM_LINE_SEPARATOR + help.toString().trim());
 	}
 
 	private String getCharsetsHelpBlock() {
@@ -183,7 +184,7 @@ public class CodecConsole extends Codec {
 		for (final String charsetName : Charset.availableCharsets().keySet()) {
 			final String toPrint = charsetName + ", ";
 			if (cursorPosition + toPrint.length() >= 80) {
-				charsets.append(NewLine.SYSTEM_LINE_SEPARATOR);
+				charsets.append(SYSTEM_LINE_SEPARATOR);
 				for (int i = 0; i < offset; i++) {
 					charsets.append(' ');
 				}
@@ -192,7 +193,7 @@ public class CodecConsole extends Codec {
 			charsets.append(toPrint);
 			cursorPosition += toPrint.length();
 		}
-		charsets.replace(charsets.length() - 2, charsets.length(), NewLine.SYSTEM_LINE_SEPARATOR);
+		charsets.replace(charsets.length() - 2, charsets.length(), SYSTEM_LINE_SEPARATOR);
 		charsets.append(' ').append(Messages.get("msg.help.default.charset", Charset.defaultCharset().name()));
 		return charsets.toString();
 	}
@@ -205,7 +206,7 @@ public class CodecConsole extends Codec {
 		for (final CodecAlgorithm algorithm : CodecAlgorithm.values()) {
 			final String toPrint = algorithm.getName() + ", ";
 			if (cursorPosition + toPrint.length() >= 80) {
-				algorithms.append(NewLine.SYSTEM_LINE_SEPARATOR);
+				algorithms.append(SYSTEM_LINE_SEPARATOR);
 				for (int i = 0; i < offset; i++) {
 					algorithms.append(' ');
 				}
@@ -214,7 +215,7 @@ public class CodecConsole extends Codec {
 			algorithms.append(toPrint);
 			cursorPosition += toPrint.length();
 		}
-		algorithms.replace(algorithms.length() - 2, algorithms.length(), NewLine.SYSTEM_LINE_SEPARATOR);
+		algorithms.replace(algorithms.length() - 2, algorithms.length(), SYSTEM_LINE_SEPARATOR);
 		return algorithms.toString();
 	}
 
