@@ -733,7 +733,7 @@
 			<entry key="sonar.java.libraries" value="${dependencies.directory}/compile/common/*.jar,${dependencies.directory}/compile/platform-dependent/**/*.jar" />
 			<entry key="sonar.java.binaries" value="${build.outputDirectory}" />
 			<entry key="sonar.sourceEncoding" value="UTF-8" />
-			<entry key="sonar.exclusions" value="src/main/java/org/apache/**, src/main/java/net/sourceforge/**" />
+			<entry key="sonar.exclusions" value="${build.sourceDirectory}/org/apache/**,${build.sourceDirectory}/net/sourceforge/**" />
 		</propertyfile>
 	</target>
 

@@ -15,6 +15,7 @@ import it.albertus.util.NewLine;
 import it.albertus.util.Version;
 import it.albertus.util.logging.LoggerFactory;
 
+@SuppressWarnings("java:S106") // "Standard outputs should not be used directly to log anything"
 public class CodecConsole extends Codec {
 
 	private static final Logger logger = LoggerFactory.getLogger(CodecConsole.class);

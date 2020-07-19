@@ -6,8 +6,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -106,30 +108,12 @@ public class ProcessFileTask implements Cancelable {
 				b91cli.encodeWrap(inputStreams.getLast(), outputStreams.getLast());
 				break;
 			case CRC16:
-				CRC16OutputStream crc16os = null;
-				try {
-					crc16os = new CRC16OutputStream();
-					IOUtils.copyLarge(inputStreams.getLast(), crc16os);
-				}
-				finally {
-					if (crc16os != null) {
-						crc16os.close();
-					}
-				}
+				CRC16OutputStream crc16os = getCRC16OutputStream(inputStreams.getLast());
 				value = String.format("%04x", crc16os.getValue());
 				IOUtils.write(value + " *" + fileName, outputStreams.getLast(), engine.getCharset());
 				break;
 			case CRC32:
-				CRC32OutputStream crc32os = null;
-				try {
-					crc32os = new CRC32OutputStream();
-					IOUtils.copyLarge(inputStreams.getLast(), crc32os);
-				}
-				finally {
-					if (crc32os != null) {
-						crc32os.close();
-					}
-				}
+				CRC32OutputStream crc32os = getCRC32OutputStream(inputStreams.getLast());
 				value = String.format("%08x", crc32os.getValue());
 				IOUtils.write(fileName + ' ' + value, outputStreams.getLast(), engine.getCharset()); // sfv
 				break;
@@ -183,6 +167,20 @@ public class ProcessFileTask implements Cancelable {
 		}
 	}
 
+	private static CRC16OutputStream getCRC16OutputStream(final InputStream is) throws IOException {
+		try (final CRC16OutputStream os = new CRC16OutputStream()) {
+			IOUtils.copyLarge(is, os);
+			return os;
+		}
+	}
+
+	private static CRC32OutputStream getCRC32OutputStream(final InputStream is) throws IOException {
+		try (final CRC32OutputStream os = new CRC32OutputStream()) {
+			IOUtils.copyLarge(is, os);
+			return os;
+		}
+	}
+
 	private String decode(final BooleanSupplier canceled) throws CancelException {
 		String value = null;
 		try {
@@ -231,12 +229,11 @@ public class ProcessFileTask implements Cancelable {
 	private void deleteOutputFile() {
 		closeOutputStreams();
 		try {
-			if (!outputFile.delete()) {
-				outputFile.deleteOnExit();
-			}
+			Files.deleteIfExists(outputFile.toPath());
 		}
 		catch (final Exception e) {
 			logger.log(Level.WARNING, Messages.get("err.cannot.delete.file", outputFile), e);
+			outputFile.deleteOnExit();
 		}
 	}
 
