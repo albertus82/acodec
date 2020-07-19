@@ -268,7 +268,7 @@ public class ProcessFileTask implements Cancelable {
 	private synchronized void closeOutputStreams() {
 		final Iterator<OutputStream> iterator = outputStreams.descendingIterator();
 		while (iterator.hasNext()) {
-			IOUtils.closeQuietly(iterator.next());
+			IOUtils.closeQuietly(iterator.next(), e -> logger.log(Level.WARNING,e.toString(),e ));
 		}
 		outputStreams.clear();
 	}
