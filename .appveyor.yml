@@ -3,18 +3,12 @@ version: '{build}'
 clone_depth: 50
 
 environment:
-  JRE7_HOME: $(ProgramFiles)\Java\jdk1.7.0\jre
+  JRE8_HOME: $(ProgramFiles)\Java\jdk1.8.0\jre
 
   matrix:
     - platform: x86
-      JAVA_HOME: ${ProgramFiles(x86)}\Java\jdk1.7.0
-      ANT_VERSION: 1.9.9
-    - platform: x86
       JAVA_HOME: ${ProgramFiles(x86)}\Java\jdk1.8.0
       ANT_VERSION: 1.10.5
-    - platform: x64
-      JAVA_HOME: $(ProgramFiles)\Java\jdk1.7.0
-      ANT_VERSION: 1.9.9
     - platform: x64
       JAVA_HOME: $(ProgramFiles)\Java\jdk1.8.0
       ANT_VERSION: 1.10.5
