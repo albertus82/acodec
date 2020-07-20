@@ -2,14 +2,17 @@ package it.albertus.codec.engine;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
@@ -18,8 +21,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import it.albertus.util.NewLine;
+import it.albertus.util.logging.LoggerFactory;
 
 public class CodecEngineTest {
+
+	private static final Logger log = LoggerFactory.getLogger(CodecEngineTest.class);
 
 	private static final Charset CHARSET = StandardCharsets.UTF_8;
 	private static final String DIGEST_SEPARATOR = " *";
@@ -46,10 +52,10 @@ public class CodecEngineTest {
 		try (final FileWriter fw = new FileWriter(originalFile)) {
 			fw.write(originalString);
 		}
-		System.out.println("Created original file \"" + originalFile + '"');
+		log.log(Level.INFO, "Created original file \"{0}\"", originalFile);
 	}
 
-	private static void createEncodedStrings() {
+	private static void createEncodedStrings() { // @formatter:off
 		encodedStrings.put(CodecAlgorithm.BASE16, "4C6F72656D20697073756D20646F6C6F722073697420616D65742C20636F6E73656374657475722061646970697363696E6720656C69742C2073656420646F20656975736D6F642074656D706F7220696E6369646964756E74207574206C61626F726520657420646F6C6F7265206D61676E6120616C697175612E20557420656E696D206164206D696E696D2076656E69616D2C2071756973206E6F737472756420657865726369746174696F6E20756C6C616D636F206C61626F726973206E69736920757420616C697175697020657820656120636F6D6D6F646F20636F6E7365717561742E2044756973206175746520697275726520646F6C6F7220696E20726570726568656E646572697420696E20766F6C7570746174652076656C697420657373652063696C6C756D20646F6C6F726520657520667567696174206E756C6C612070617269617475722E204578636570746575722073696E74206F6363616563617420637570696461746174206E6F6E2070726F6964656E742C2073756E7420696E2063756C706120717569206F666669636961206465736572756E74206D6F6C6C697420616E696D20696420657374206C61626F72756D2E");
 		encodedStrings.put(CodecAlgorithm.BASE32, "JRXXEZLNEBUXA43VNUQGI33MN5ZCA43JOQQGC3LFOQWCAY3PNZZWKY3UMV2HK4RAMFSGS4DJONRWS3THEBSWY2LUFQQHGZLEEBSG6IDFNF2XG3LPMQQHIZLNOBXXEIDJNZRWSZDJMR2W45BAOV2CA3DBMJXXEZJAMV2CAZDPNRXXEZJANVQWO3TBEBQWY2LROVQS4ICVOQQGK3TJNUQGCZBANVUW42LNEB3GK3TJMFWSYIDROVUXGIDON5ZXI4TVMQQGK6DFOJRWS5DBORUW63RAOVWGYYLNMNXSA3DBMJXXE2LTEBXGS43JEB2XIIDBNRUXC5LJOAQGK6BAMVQSAY3PNVWW6ZDPEBRW63TTMVYXKYLUFYQEI5LJOMQGC5LUMUQGS4TVOJSSAZDPNRXXEIDJNYQHEZLQOJSWQZLOMRSXE2LUEBUW4IDWN5WHK4DUMF2GKIDWMVWGS5BAMVZXGZJAMNUWY3DVNUQGI33MN5ZGKIDFOUQGM5LHNFQXIIDOOVWGYYJAOBQXE2LBOR2XELRAIV4GGZLQORSXK4RAONUW45BAN5RWGYLFMNQXIIDDOVYGSZDBORQXIIDON5XCA4DSN5UWIZLOOQWCA43VNZ2CA2LOEBRXK3DQMEQHC5LJEBXWMZTJMNUWCIDEMVZWK4TVNZ2CA3LPNRWGS5BAMFXGS3JANFSCAZLTOQQGYYLCN5ZHK3JO");
 		encodedStrings.put(CodecAlgorithm.BASE64, "TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdCwgc2VkIGRvIGVpdXNtb2QgdGVtcG9yIGluY2lkaWR1bnQgdXQgbGFib3JlIGV0IGRvbG9yZSBtYWduYSBhbGlxdWEuIFV0IGVuaW0gYWQgbWluaW0gdmVuaWFtLCBxdWlzIG5vc3RydWQgZXhlcmNpdGF0aW9uIHVsbGFtY28gbGFib3JpcyBuaXNpIHV0IGFsaXF1aXAgZXggZWEgY29tbW9kbyBjb25zZXF1YXQuIER1aXMgYXV0ZSBpcnVyZSBkb2xvciBpbiByZXByZWhlbmRlcml0IGluIHZvbHVwdGF0ZSB2ZWxpdCBlc3NlIGNpbGx1bSBkb2xvcmUgZXUgZnVnaWF0IG51bGxhIHBhcmlhdHVyLiBFeGNlcHRldXIgc2ludCBvY2NhZWNhdCBjdXBpZGF0YXQgbm9uIHByb2lkZW50LCBzdW50IGluIGN1bHBhIHF1aSBvZmZpY2lhIGRlc2VydW50IG1vbGxpdCBhbmltIGlkIGVzdCBsYWJvcnVtLg==");
@@ -71,7 +77,7 @@ public class CodecEngineTest {
 		encodedStrings.put(CodecAlgorithm.SHA3_256, "bde3f269175e1dcda13848278aa6046bd643cea85b84c8b8bb80952e70b6eae0");
 		encodedStrings.put(CodecAlgorithm.SHA3_384, "e297fd85a77fe4f0005785b830dc8e872fb3b5f3349c0181e4d0e4c5ad677512497d5cfe08e753bee70626ba96a47d35");
 		encodedStrings.put(CodecAlgorithm.SHA3_512, "f32a9423551351df0a07c0b8c20eb972367c398d61066038e16986448ebfbc3d15ede0ed3693e3905e9a8c601d9d002a06853b9797ef9ab10cbde1009c7d0f09");
-	}
+	} // @formatter:on
 
 	private static void createEncodedFiles() throws IOException {
 		for (final Entry<CodecAlgorithm, String> entry : encodedStrings.entrySet()) {
@@ -80,7 +86,7 @@ public class CodecEngineTest {
 			try (FileWriter fw = new FileWriter(encodedFile)) {
 				fw.write(entry.getValue());
 			}
-			System.out.println("Created temporary encoded file \"" + encodedFile + '"');
+			log.log(Level.INFO, "Created temporary encoded file \"{0}\"", encodedFile);
 			encodedFiles.put(entry.getKey(), encodedFile);
 		}
 	}
@@ -91,7 +97,7 @@ public class CodecEngineTest {
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(CodecMode.ENCODE)) {
 				engine.setAlgorithm(ca);
-				System.out.println("Testing string encoding " + ca);
+				log.log(Level.INFO, "Testing string encoding {0}", ca);
 				Assert.assertEquals(ca.toString(), encodedStrings.get(ca), engine.run(originalString));
 			}
 		}
@@ -103,7 +109,7 @@ public class CodecEngineTest {
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(CodecMode.DECODE)) {
 				engine.setAlgorithm(ca);
-				System.out.println("Testing string decoding " + ca);
+				log.log(Level.INFO, "Testing string decoding {0}", ca);
 				Assert.assertEquals(ca.toString(), originalString, engine.run(encodedStrings.get(ca)));
 			}
 		}
@@ -115,7 +121,7 @@ public class CodecEngineTest {
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(CodecMode.ENCODE)) {
 				engine.setAlgorithm(ca);
-				System.out.println("Testing file encoding " + ca);
+				log.log(Level.INFO, "Testing file encoding {0}", ca);
 				final String expected;
 				if (ca.isDigest()) {
 					if (CodecAlgorithm.CRC32.equals(ca)) {
@@ -139,15 +145,15 @@ public class CodecEngineTest {
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(CodecMode.DECODE)) {
 				engine.setAlgorithm(ca);
-				System.out.println("Testing file decoding " + ca);
-				Assert.assertEquals(ca.toString(), originalString, testFileDecoder(ca, encodedFiles.get(ca)));
+				log.log(Level.INFO, "Testing file decoding {0}", ca);
+				Assert.assertEquals(ca.toString(), originalString, testFileDecoder(encodedFiles.get(ca)));
 			}
 		}
 	}
 
 	private String testFileEncoder(final CodecAlgorithm ca) throws IOException, CancelException {
 		final File outputFile = File.createTempFile(CodecMode.ENCODE.name().toLowerCase() + '-', '.' + ca.name().toLowerCase());
-		System.out.println("Created temporary encoded file \"" + outputFile + '"');
+		log.log(Level.INFO, "Created temporary encoded file \"{0}\"", outputFile);
 		final String value = new ProcessFileTask(engine, originalFile, outputFile).run(() -> false);
 		if (ca.isDigest()) {
 			Assert.assertNotNull(value);
@@ -156,44 +162,40 @@ public class CodecEngineTest {
 		else {
 			Assert.assertNull(value);
 		}
-		FileInputStream fis = null;
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try {
-			fis = new FileInputStream(outputFile);
+		try (final InputStream fis = Files.newInputStream(outputFile.toPath())) {
 			IOUtils.copy(fis, baos);
 		}
 		finally {
-			IOUtils.closeQuietly(baos);
-			IOUtils.closeQuietly(fis);
-			if (outputFile.delete()) {
-				System.out.println("Deleted temporary encoded file \"" + outputFile + '"');
+			try {
+				if (Files.deleteIfExists(outputFile.toPath())) {
+					log.log(Level.INFO, "Deleted temporary encoded file \"{0}\"", outputFile);
+				}
 			}
-			else {
-				System.err.println("Cannot delete temporary encoded file \"" + outputFile + '"');
+			catch (final IOException e) {
+				log.log(Level.SEVERE, e, () -> "Cannot delete temporary encoded file \"" + outputFile + "\":");
 				outputFile.deleteOnExit();
 			}
 		}
 		return baos.toString(CHARSET.name()).replaceAll("[" + NewLine.CRLF.toString() + "]+", "");
 	}
 
-	private String testFileDecoder(final CodecAlgorithm ca, final File file) throws IOException, CancelException {
+	private String testFileDecoder(final File file) throws IOException, CancelException {
 		final File outputFile = File.createTempFile(CodecMode.DECODE.name().toLowerCase() + '-', ".txt");
-		System.out.println("Created temporary decoded file \"" + outputFile + '"');
+		log.log(Level.INFO, "Created temporary decoded file \"{0}\"", outputFile);
 		new ProcessFileTask(engine, file, outputFile).run(() -> false);
-		FileInputStream fis = null;
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try {
-			fis = new FileInputStream(outputFile);
+		try (final InputStream fis = Files.newInputStream(outputFile.toPath())) {
 			IOUtils.copy(fis, baos);
 		}
 		finally {
-			IOUtils.closeQuietly(baos);
-			IOUtils.closeQuietly(fis);
-			if (outputFile.delete()) {
-				System.out.println("Deleted temporary decoded file \"" + outputFile + '"');
+			try {
+				if (Files.deleteIfExists(outputFile.toPath())) {
+					log.log(Level.INFO, "Deleted temporary decoded file \"{0}\"", outputFile);
+				}
 			}
-			else {
-				System.err.println("Cannot delete temporary decoded file \"" + outputFile + '"');
+			catch (final IOException e) {
+				log.log(Level.SEVERE, e, () -> "Cannot delete temporary decoded file \"" + outputFile + "\":");
 				outputFile.deleteOnExit();
 			}
 		}
@@ -202,19 +204,23 @@ public class CodecEngineTest {
 
 	@AfterClass
 	public static void destroy() {
-		if (originalFile.delete()) {
-			System.out.println("Deleted original file \"" + originalFile + '"');
+		try {
+			if (Files.deleteIfExists(originalFile.toPath())) {
+				log.log(Level.INFO, "Deleted original file \"{0}\"", originalFile);
+			}
 		}
-		else {
-			System.err.println("Cannot delete original file \"" + originalFile + '"');
+		catch (final IOException e) {
+			log.log(Level.SEVERE, e, () -> "Cannot delete original file \"" + originalFile + "\":");
 			originalFile.deleteOnExit();
 		}
 		for (final File encodedFile : encodedFiles.values()) {
-			if (encodedFile.delete()) {
-				System.out.println("Deleted temporary encoded file \"" + encodedFile + '"');
+			try {
+				if (Files.deleteIfExists(encodedFile.toPath())) {
+					log.log(Level.INFO, "Deleted temporary encoded file \"{0}\"", encodedFile);
+				}
 			}
-			else {
-				System.err.println("Cannot delete temporary encoded file \"" + encodedFile + '"');
+			catch (final IOException e) {
+				log.log(Level.SEVERE, e, () -> "Cannot delete temporary encoded file \"" + encodedFile + "\":");
 				encodedFile.deleteOnExit();
 			}
 		}
