@@ -48,27 +48,18 @@ public class CloseableStreams implements Closeable {
 	}
 
 	@Override
-	public void close() {
-		closeOutputStreams();
-		closeInputStreams();
+	public synchronized void close() {
+		closeStreams(outputStreams);
+		closeStreams(inputStreams);
 	}
 
-	private synchronized void closeOutputStreams() {
-		final Iterator<OutputStream> iterator = outputStreams.descendingIterator();
+	private static void closeStreams(final LinkedList<? extends Closeable> streams) {
+		final Iterator<? extends Closeable> iterator = streams.descendingIterator();
 		while (iterator.hasNext()) {
 			final Closeable closeable = iterator.next();
 			IOUtils.closeQuietly(closeable, e -> logger.log(Level.WARNING, e, () -> "Cannot close " + closeable + ':'));
 		}
-		outputStreams.clear();
-	}
-
-	private synchronized void closeInputStreams() {
-		final Iterator<InputStream> iterator = inputStreams.descendingIterator();
-		while (iterator.hasNext()) {
-			final Closeable closeable = iterator.next();
-			IOUtils.closeQuietly(closeable, e -> logger.log(Level.WARNING, e, () -> "Cannot close " + closeable + ':'));
-		}
-		inputStreams.clear();
+		streams.clear();
 	}
 
 	public LinkedList<InputStream> getInputStreams() { // NOSONAR
