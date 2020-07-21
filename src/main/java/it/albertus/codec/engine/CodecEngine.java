@@ -1,16 +1,12 @@
 package it.albertus.codec.engine;
 
 import java.nio.charset.Charset;
-import java.security.MessageDigest;
 import java.security.Security;
-import java.util.Arrays;
 import java.util.zip.CRC32;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import it.albertus.codec.resources.Messages;
@@ -44,69 +40,48 @@ public class CodecEngine {
 	}
 
 	private String encode(final String input) {
-		String value = null;
 		try {
 			switch (algorithm) {
 			case BASE16:
-				value = Base16.encode(input.getBytes(charset));
-				break;
+				return Base16.encode(input.getBytes(charset));
 			case BASE32:
-				value = new Base32().encodeAsString(input.getBytes(charset));
-				break;
+				return new Base32().encodeAsString(input.getBytes(charset));
 			case BASE64:
-				value = Base64.encodeBase64String(input.getBytes(charset));
-				break;
+				return Base64.encodeBase64String(input.getBytes(charset));
 			case ASCII85:
-				value = Ascii85.encode(input.getBytes(charset));
-				break;
+				return Ascii85.encode(input.getBytes(charset));
 			case BASE91:
-				value = Base91.encode(input.getBytes(charset));
-				break;
+				return Base91.encode(input.getBytes(charset));
 			case CRC16:
 				final CRC16 crc16 = new CRC16();
 				crc16.update(input.getBytes(charset));
-				value = String.format("%04x", crc16.getValue());
-				break;
+				return String.format("%04x", crc16.getValue());
 			case CRC32:
 				final CRC32 crc32 = new CRC32();
 				crc32.update(input.getBytes(charset));
-				value = String.format("%08x", crc32.getValue());
-				break;
-			case MD4:
-				value = Hex.encodeHexString(MessageDigest.getInstance(CodecAlgorithm.MD4.name()).digest(input.getBytes(charset)));
-				break;
+				return String.format("%08x", crc32.getValue());
 			default:
-				if (Arrays.stream(MessageDigestAlgorithms.values()).noneMatch(algorithm.getName()::equalsIgnoreCase)) {
-					throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", algorithm.getName()));
-				}
-				value = new DigestUtils(algorithm.getName()).digestAsHex(input.getBytes(charset));
+				return new DigestUtils(algorithm.getName()).digestAsHex(input.getBytes(charset));
 			}
 		}
 		catch (final Exception e) {
 			throw new IllegalStateException(Messages.get("err.cannot.encode", algorithm.getName()), e);
 		}
-		return value;
 	}
 
 	private String decode(final String input) {
-		String value = null;
 		try {
 			switch (algorithm) {
 			case BASE16:
-				value = new String(Base16.decode(input), charset);
-				break;
+				return new String(Base16.decode(input), charset);
 			case BASE32:
-				value = new String(new Base32().decode(input), charset);
-				break;
+				return new String(new Base32().decode(input), charset);
 			case BASE64:
-				value = new String(Base64.decodeBase64(input), charset);
-				break;
+				return new String(Base64.decodeBase64(input), charset);
 			case ASCII85:
-				value = new String(Ascii85.decode(input), charset);
-				break;
+				return new String(Ascii85.decode(input), charset);
 			case BASE91:
-				value = new String(Base91.decode(input), charset);
-				break;
+				return new String(Base91.decode(input), charset);
 			default:
 				throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", algorithm.getName()));
 			}
@@ -114,7 +89,6 @@ public class CodecEngine {
 		catch (final Exception e) {
 			throw new IllegalStateException(Messages.get("err.cannot.decode", algorithm.getName()), e);
 		}
-		return value;
 	}
 
 	public CodecAlgorithm getAlgorithm() {

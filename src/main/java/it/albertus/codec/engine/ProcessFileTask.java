@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.security.MessageDigest;
-import java.util.Arrays;
 import java.util.function.BooleanSupplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,9 +13,7 @@ import org.apache.commons.codec.binary.Base32InputStream;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.codec.binary.BaseNCodecOutputStream;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.io.IOUtils;
 import org.freehep.util.io.ASCII85OutputStream;
 
@@ -109,14 +105,7 @@ public class ProcessFileTask implements Cancelable {
 					value = String.format("%08x", crc32os.getValue());
 					IOUtils.write(fileName + ' ' + value, cs.getOutputStreams().getLast(), engine.getCharset()); // sfv
 					break;
-				case MD4:
-					value = Hex.encodeHexString(DigestUtils.updateDigest(MessageDigest.getInstance(CodecAlgorithm.MD4.name()), cs.getInputStreams().getLast()).digest());
-					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
-					break;
 				default:
-					if (Arrays.stream(MessageDigestAlgorithms.values()).noneMatch(engine.getAlgorithm().getName()::equalsIgnoreCase)) {
-						throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", engine.getAlgorithm().getName()));
-					}
 					value = new DigestUtils(engine.getAlgorithm().getName()).digestAsHex(cs.getInputStreams().getLast());
 					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
 					break;
