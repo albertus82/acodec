@@ -48,7 +48,11 @@ public enum CodecAlgorithm {
 
 	private static final Logger logger = LoggerFactory.getLogger(CodecAlgorithm.class);
 
-	private static final Future<Void> bouncyCastleInitialization = CompletableFuture.runAsync(() -> Security.addProvider(new BouncyCastleProvider()));
+	private static final Future<Void> bouncyCastleInitialization = CompletableFuture.runAsync(() -> Security.addProvider(new BouncyCastleProvider()), runnable -> {
+		final Thread backgroundThread = new Thread(runnable);
+		backgroundThread.setPriority(Thread.MIN_PRIORITY);
+		backgroundThread.start();
+	});
 
 	private final String name;
 	private final boolean digest;
