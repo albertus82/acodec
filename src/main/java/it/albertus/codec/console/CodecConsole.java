@@ -173,7 +173,14 @@ public class CodecConsole extends Codec {
 		help.append(Messages.get("msg.help.example"));
 
 		final Version version = Version.getInstance();
-		System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(version.getDate())) + " [" + Messages.get("msg.website") + ']' + SYSTEM_LINE_SEPARATOR + SYSTEM_LINE_SEPARATOR + help.toString().trim());
+		try {
+			System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(version.getDate())) + " [" + Messages.get("msg.website") + ']');
+			System.out.println();
+		}
+		catch (final RuntimeException e) {
+			logger.log(Level.WARNING, e.toString(), e);
+		}
+		System.out.println(help.toString().trim());
 	}
 
 	private String getCharsetsHelpBlock() {

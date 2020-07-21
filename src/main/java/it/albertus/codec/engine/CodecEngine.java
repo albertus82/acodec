@@ -6,7 +6,6 @@ import java.util.zip.CRC32;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import it.albertus.codec.resources.Messages;
@@ -61,7 +60,7 @@ public class CodecEngine {
 				crc32.update(input.getBytes(charset));
 				return String.format("%08x", crc32.getValue());
 			default:
-				return new DigestUtils(algorithm.getName()).digestAsHex(input.getBytes(charset));
+				return algorithm.createDigestUtils().digestAsHex(input.getBytes(charset));
 			}
 		}
 		catch (final Exception e) {

@@ -13,7 +13,6 @@ import org.apache.commons.codec.binary.Base32InputStream;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.codec.binary.BaseNCodecOutputStream;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.freehep.util.io.ASCII85OutputStream;
 
@@ -106,7 +105,7 @@ public class ProcessFileTask implements Cancelable {
 					IOUtils.write(fileName + ' ' + value, cs.getOutputStreams().getLast(), engine.getCharset()); // sfv
 					break;
 				default:
-					value = new DigestUtils(engine.getAlgorithm().getName()).digestAsHex(cs.getInputStreams().getLast());
+					value = engine.getAlgorithm().createDigestUtils().digestAsHex(cs.getInputStreams().getLast());
 					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
 					break;
 				}

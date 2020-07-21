@@ -1,50 +1,56 @@
 package it.albertus.codec.engine;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 
+import it.albertus.util.logging.LoggerFactory;
+
 public enum CodecAlgorithm {
-	BASE16("Base16"),
-	BASE32("Base32"),
-	BASE64("Base64"),
-	ASCII85("Ascii85"),
-	BASE91("basE91"),
+	BASE16("Base16", false),
+	BASE32("Base32", false),
+	BASE64("Base64", false),
+	ASCII85("Ascii85", false),
+	BASE91("basE91", false),
 	CRC16("CRC-16", true),
 	CRC32("CRC-32", true),
 	MD2(MessageDigestAlgorithms.MD2, true),
 	MD4("MD4", true),
 	MD5(MessageDigestAlgorithms.MD5, true),
-	SHA1(MessageDigestAlgorithms.SHA_1, true),
-	SHA224(MessageDigestAlgorithms.SHA_224, true),
-	SHA256(MessageDigestAlgorithms.SHA_256, true),
-	SHA384(MessageDigestAlgorithms.SHA_384, true),
-	SHA512(MessageDigestAlgorithms.SHA_512, true),
-	SHA512_224(MessageDigestAlgorithms.SHA_512_224, true),
-	SHA512_256(MessageDigestAlgorithms.SHA_512_256, true),
+	SHA_1(MessageDigestAlgorithms.SHA_1, true),
+	SHA_224(MessageDigestAlgorithms.SHA_224, true),
+	SHA_256(MessageDigestAlgorithms.SHA_256, true),
+	SHA_384(MessageDigestAlgorithms.SHA_384, true),
+	SHA_512(MessageDigestAlgorithms.SHA_512, true),
+	SHA_512_224(MessageDigestAlgorithms.SHA_512_224, true),
+	SHA_512_256(MessageDigestAlgorithms.SHA_512_256, true),
 	SHA3_224(MessageDigestAlgorithms.SHA3_224, true),
 	SHA3_256(MessageDigestAlgorithms.SHA3_256, true),
 	SHA3_384(MessageDigestAlgorithms.SHA3_384, true),
-	SHA3_512(MessageDigestAlgorithms.SHA3_512, true);
+	SHA3_512(MessageDigestAlgorithms.SHA3_512, true),
+	RIPEMD_128("RIPEMD-128", true, "RIPEMD128"),
+	RIPEMD_160("RIPEMD-160", true, "RIPEMD160"),
+	RIPEMD_256("RIPEMD-256", true, "RIPEMD256"),
+	RIPEMD_320("RIPEMD-320", true, "RIPEMD320"),
+	WHIRLPOOL("Whirlpool", true);
+
+	private static final Logger logger = LoggerFactory.getLogger(CodecAlgorithm.class);
 
 	private final String name;
 	private final boolean digest;
-	private final Set<CodecMode> modes;
+	private final String[] aliases;
 
-	private CodecAlgorithm(final String name, final boolean digest, final CodecMode... modes) {
+	private CodecAlgorithm(final String name, final boolean digest, final String... aliases) {
 		this.name = name;
 		this.digest = digest;
-		this.modes = EnumSet.copyOf(Arrays.asList(modes));
-	}
-
-	private CodecAlgorithm(final String name, final boolean digest) {
-		this(name, digest, digest ? new CodecMode[] { CodecMode.ENCODE } : CodecMode.values());
-	}
-
-	private CodecAlgorithm(final String name) {
-		this(name, false, CodecMode.values());
+		this.aliases = aliases;
 	}
 
 	@Override
@@ -56,8 +62,12 @@ public enum CodecAlgorithm {
 		return name;
 	}
 
+	public Set<String> getAliases() {
+		return new TreeSet<>(Arrays.asList(aliases));
+	}
+
 	public Set<CodecMode> getModes() {
-		return modes;
+		return digest ? EnumSet.of(CodecMode.ENCODE) : EnumSet.allOf(CodecMode.class);
 	}
 
 	public final boolean isDigest() {
@@ -70,6 +80,27 @@ public enum CodecAlgorithm {
 			names[i] = CodecAlgorithm.values()[i].name;
 		}
 		return names;
+	}
+
+	public DigestUtils createDigestUtils() throws NoSuchAlgorithmException {
+		if (!digest) {
+			throw new UnsupportedOperationException();
+		}
+		try {
+			return new DigestUtils(name);
+		}
+		catch (final RuntimeException e1) {
+			logger.log(Level.FINE, name, e1);
+			for (final String alias : aliases) {
+				try {
+					return new DigestUtils(alias);
+				}
+				catch (final RuntimeException e2) {
+					logger.log(Level.FINE, alias, e2);
+				}
+			}
+		}
+		throw new NoSuchAlgorithmException(name);
 	}
 
 }
