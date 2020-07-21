@@ -1,21 +1,15 @@
 package it.albertus.codec.engine;
 
 import java.nio.charset.Charset;
-import java.security.Security;
 import java.util.zip.CRC32;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import it.albertus.codec.resources.Messages;
 import it.albertus.util.CRC16;
 
 public class CodecEngine {
-
-	static {
-		Security.addProvider(new BouncyCastleProvider());
-	}
 
 	private CodecAlgorithm algorithm;
 	private CodecMode mode = CodecMode.ENCODE;

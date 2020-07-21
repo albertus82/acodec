@@ -1,15 +1,20 @@
 package it.albertus.codec.engine;
 
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import it.albertus.util.logging.LoggerFactory;
 
@@ -42,6 +47,8 @@ public enum CodecAlgorithm {
 	WHIRLPOOL("Whirlpool", true);
 
 	private static final Logger logger = LoggerFactory.getLogger(CodecAlgorithm.class);
+
+	private static final Future<Void> bouncyCastleInitialization = CompletableFuture.runAsync(() -> Security.addProvider(new BouncyCastleProvider()));
 
 	private final String name;
 	private final boolean digest;
@@ -86,6 +93,20 @@ public enum CodecAlgorithm {
 		if (!digest) {
 			throw new UnsupportedOperationException();
 		}
+
+		// Ensure BouncyCastle is fully initialized
+		try {
+			bouncyCastleInitialization.get();
+		}
+		catch (final InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new IllegalStateException(e);
+		}
+		catch (final ExecutionException e) {
+			throw new IllegalStateException(e);
+		}
+
+		// Create DigestUtils object
 		try {
 			return new DigestUtils(name);
 		}
