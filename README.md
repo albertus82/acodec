@@ -26,7 +26,7 @@ Download the [latest release](https://github.com/albertus82/codec/releases/lates
   In order to enable the *Run anyway* button, you may need to open the *Properties* of the installer, tab *General*, section *Security* (if available), and tick the ***Unblock*** option.
 * **Linux** & **macOS**: unpack the archive.
 
-**This application requires [Java SE Runtime Environment (JRE)](https://www.java.com) v1.6 (or newer) to run.**
+**This application requires [Java SE Runtime Environment (JRE)](https://www.java.com) v1.8 (or newer) to run.**
 
 ## Command line reference
 
