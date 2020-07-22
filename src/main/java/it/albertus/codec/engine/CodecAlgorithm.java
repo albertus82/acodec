@@ -19,6 +19,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import it.albertus.util.logging.LoggerFactory;
 
 public enum CodecAlgorithm {
+
 	BASE16("Base16", false),
 	BASE32("Base32", false),
 	BASE64("Base64", false),
