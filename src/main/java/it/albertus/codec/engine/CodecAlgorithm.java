@@ -51,6 +51,7 @@ public enum CodecAlgorithm {
 
 	private static final Future<Void> bouncyCastleInitialization = CompletableFuture.runAsync(() -> Security.addProvider(new BouncyCastleProvider()), runnable -> {
 		final Thread backgroundThread = new Thread(runnable);
+		backgroundThread.setDaemon(true);
 		backgroundThread.setPriority(Thread.MIN_PRIORITY);
 		backgroundThread.start();
 	});
