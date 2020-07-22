@@ -37,7 +37,9 @@ Mode:
     e    Encode
     d    Decode
 
-Algorithms: Base16, Base32, Base64, Ascii85, basE91, CRC-16, CRC-32, MD2, MD4, MD5, SHA-1, SHA-256, SHA-384, SHA-512
+Algorithms: Base16, Base32, Base64, Ascii85, basE91, CRC-16, CRC-32, MD2, MD4, MD5, SHA-1,
+            SHA-224, SHA-256, SHA-384, SHA-512, SHA-512/224, SHA-512/256, SHA3-224, SHA3-256,
+            SHA3-384, SHA3-512, RIPEMD-128, RIPEMD-160, RIPEMD-256, RIPEMD-320, Whirlpool
 
 Example: codec e base64 -c UTF-8 "Lorem ipsum dolor sit amet"
 ```
