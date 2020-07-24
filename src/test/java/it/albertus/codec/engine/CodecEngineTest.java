@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -86,9 +87,8 @@ public class CodecEngineTest {
 
 	private static void createEncodedFiles() throws IOException {
 		for (final Entry<CodecAlgorithm, String> entry : encodedStrings.entrySet()) {
-			File encodedFile;
-			encodedFile = File.createTempFile("encoded-", ".txt." + entry.getKey().name().toLowerCase());
-			try (FileWriter fw = new FileWriter(encodedFile)) {
+			final File encodedFile = File.createTempFile("encoded-", ".txt." + entry.getKey().getFileExtension());
+			try (final Writer fw = Files.newBufferedWriter(encodedFile.toPath())) {
 				fw.write(entry.getValue());
 			}
 			log.log(Level.INFO, "Created temporary encoded file \"{0}\"", encodedFile);

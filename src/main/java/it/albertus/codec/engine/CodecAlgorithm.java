@@ -26,7 +26,7 @@ public enum CodecAlgorithm {
 	ASCII85("Ascii85", false),
 	BASE91("basE91", false),
 	CRC16("CRC-16", true),
-	CRC32("CRC-32", true),
+	CRC32("CRC-32", "sfv", true),
 	MD2(MessageDigestAlgorithms.MD2, true),
 	MD4("MD4", true),
 	MD5(MessageDigestAlgorithms.MD5, true),
@@ -35,12 +35,12 @@ public enum CodecAlgorithm {
 	SHA_256(MessageDigestAlgorithms.SHA_256, true),
 	SHA_384(MessageDigestAlgorithms.SHA_384, true),
 	SHA_512(MessageDigestAlgorithms.SHA_512, true),
-	SHA_512_224(MessageDigestAlgorithms.SHA_512_224, true),
-	SHA_512_256(MessageDigestAlgorithms.SHA_512_256, true),
-	SHA3_224(MessageDigestAlgorithms.SHA3_224, true),
-	SHA3_256(MessageDigestAlgorithms.SHA3_256, true),
-	SHA3_384(MessageDigestAlgorithms.SHA3_384, true),
-	SHA3_512(MessageDigestAlgorithms.SHA3_512, true),
+	SHA_512_224(MessageDigestAlgorithms.SHA_512_224, "sha512-224", true),
+	SHA_512_256(MessageDigestAlgorithms.SHA_512_256, "sha512-256", true),
+	SHA3_224(MessageDigestAlgorithms.SHA3_224, "sha3-224", true),
+	SHA3_256(MessageDigestAlgorithms.SHA3_256, "sha3-256", true),
+	SHA3_384(MessageDigestAlgorithms.SHA3_384, "sha3-384", true),
+	SHA3_512(MessageDigestAlgorithms.SHA3_512, "sha3-512", true),
 	RIPEMD_128("RIPEMD-128", true, "RIPEMD128"),
 	RIPEMD_160("RIPEMD-160", true, "RIPEMD160"),
 	RIPEMD_256("RIPEMD-256", true, "RIPEMD256"),
@@ -57,13 +57,19 @@ public enum CodecAlgorithm {
 	});
 
 	private final String name;
+	private final String fileExtension;
 	private final boolean digest;
 	private final String[] aliases;
 
-	private CodecAlgorithm(final String name, final boolean digest, final String... aliases) {
+	private CodecAlgorithm(final String name, final String fileExtension, final boolean digest, final String... aliases) {
 		this.name = name;
+		this.fileExtension = fileExtension;
 		this.digest = digest;
 		this.aliases = aliases;
+	}
+
+	private CodecAlgorithm(final String name, final boolean digest, final String... aliases) {
+		this(name, name.toLowerCase().replaceAll("[^0-9a-z]", ""), digest, aliases);
 	}
 
 	@Override
@@ -73,6 +79,10 @@ public enum CodecAlgorithm {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getFileExtension() {
+		return fileExtension;
 	}
 
 	public Set<String> getAliases() {

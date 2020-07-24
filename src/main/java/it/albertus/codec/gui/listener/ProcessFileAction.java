@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import it.albertus.codec.engine.Cancelable;
-import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecMode;
 import it.albertus.codec.engine.ProcessFileTask;
 import it.albertus.codec.gui.CodecGui;
@@ -51,14 +50,7 @@ public class ProcessFileAction {
 		final File sourceFile = new File(sourceFileName);
 		saveDialog.setFilterPath(sourceFile.getParent());
 		if (CodecMode.ENCODE.equals(gui.getEngine().getMode())) {
-			final String extension;
-			final CodecAlgorithm algorithm = gui.getEngine().getAlgorithm();
-			if (CodecAlgorithm.CRC32.equals(algorithm)) {
-				extension = "sfv";
-			}
-			else {
-				extension = algorithm.name();
-			}
+			final String extension = gui.getEngine().getAlgorithm().getFileExtension();
 			saveDialog.setFilterExtensions(new String[] { "*." + extension.toLowerCase() + ";*." + extension.toUpperCase(), "*.*" });
 			saveDialog.setFileName(sourceFile.getName() + '.' + extension.toLowerCase());
 		}
