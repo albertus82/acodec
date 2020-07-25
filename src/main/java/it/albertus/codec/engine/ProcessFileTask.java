@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.concurrent.CancellationException;
 import java.util.function.BooleanSupplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +41,7 @@ public class ProcessFileTask implements Cancelable {
 		this.outputFile = outputFile;
 	}
 
-	public String run(final BooleanSupplier canceled) throws CancelException {
+	public String run(final BooleanSupplier canceled) {
 		if (engine.getAlgorithm() == null) {
 			throw new IllegalStateException(Messages.get("msg.missing.algorithm"));
 		}
@@ -64,7 +65,7 @@ public class ProcessFileTask implements Cancelable {
 		}
 	}
 
-	private String encode(final BooleanSupplier canceled) throws CancelException {
+	private String encode(final BooleanSupplier canceled) {
 		String value = null;
 		final String fileName;
 		try {
@@ -119,14 +120,14 @@ public class ProcessFileTask implements Cancelable {
 		}
 		if (canceled.getAsBoolean()) {
 			deleteOutputFile();
-			throw new CancelException(Messages.get("msg.file.process.cancel.message"));
+			throw new CancellationException(Messages.get("msg.file.process.cancel.message"));
 		}
 		else {
 			return value;
 		}
 	}
 
-	private String decode(final BooleanSupplier canceled) throws CancelException {
+	private String decode(final BooleanSupplier canceled) {
 		String value = null;
 		try (final CloseableStreams cs = createStreams()) {
 			switch (engine.getAlgorithm()) {
@@ -160,7 +161,7 @@ public class ProcessFileTask implements Cancelable {
 		}
 		if (canceled.getAsBoolean()) {
 			deleteOutputFile();
-			throw new CancelException(Messages.get("msg.file.process.cancel.message"));
+			throw new CancellationException(Messages.get("msg.file.process.cancel.message"));
 		}
 		else {
 			return value;

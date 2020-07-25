@@ -1,11 +1,11 @@
 package it.albertus.codec.gui;
 
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-import it.albertus.codec.engine.CancelException;
 import it.albertus.codec.engine.ProcessFileTask;
 import it.albertus.codec.resources.Messages;
 
@@ -34,7 +34,7 @@ public class ProcessFileRunnable implements IRunnableWithProgress {
 			}
 			result = task.run(monitor::isCanceled);
 		}
-		catch (final CancelException e) {
+		catch (final CancellationException e) {
 			throw new InterruptedException(e.getMessage());
 		}
 		finally {

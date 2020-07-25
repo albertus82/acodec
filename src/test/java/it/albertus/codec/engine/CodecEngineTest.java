@@ -121,7 +121,7 @@ public class CodecEngineTest {
 	}
 
 	@Test
-	public void testFileEncoder() throws IOException, CancelException {
+	public void testFileEncoder() throws IOException {
 		engine.setMode(CodecMode.ENCODE);
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(CodecMode.ENCODE)) {
@@ -145,7 +145,7 @@ public class CodecEngineTest {
 	}
 
 	@Test
-	public void testFileDecoder() throws IOException, CancelException {
+	public void testFileDecoder() throws IOException {
 		engine.setMode(CodecMode.DECODE);
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(CodecMode.DECODE)) {
@@ -156,7 +156,7 @@ public class CodecEngineTest {
 		}
 	}
 
-	private String testFileEncoder(final CodecAlgorithm ca) throws IOException, CancelException {
+	private String testFileEncoder(final CodecAlgorithm ca) throws IOException {
 		final File outputFile = File.createTempFile(CodecMode.ENCODE.name().toLowerCase() + '-', '.' + ca.name().toLowerCase());
 		log.log(Level.INFO, "Created temporary encoded file \"{0}\"", outputFile);
 		final String value = new ProcessFileTask(engine, originalFile, outputFile).run(() -> false);
@@ -185,7 +185,7 @@ public class CodecEngineTest {
 		return baos.toString(CHARSET.name()).replaceAll("[" + NewLine.CRLF.toString() + "]+", "");
 	}
 
-	private String testFileDecoder(final File file) throws IOException, CancelException {
+	private String testFileDecoder(final File file) throws IOException {
 		final File outputFile = File.createTempFile(CodecMode.DECODE.name().toLowerCase() + '-', ".txt");
 		log.log(Level.INFO, "Created temporary decoded file \"{0}\"", outputFile);
 		new ProcessFileTask(engine, file, outputFile).run(() -> false);
