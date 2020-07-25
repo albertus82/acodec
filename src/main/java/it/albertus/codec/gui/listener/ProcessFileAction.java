@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import it.albertus.codec.engine.Cancelable;
+import it.albertus.codec.engine.CodecAlgorithm;
 import it.albertus.codec.engine.CodecMode;
 import it.albertus.codec.engine.ProcessFileTask;
 import it.albertus.codec.gui.CodecGui;
@@ -39,7 +40,7 @@ public class ProcessFileAction {
 	protected String getSourceFile() {
 		final FileDialog openDialog = new FileDialog(gui.getShell(), SWT.OPEN);
 		if (CodecMode.DECODE.equals(gui.getEngine().getMode())) {
-			openDialog.setFilterExtensions(new String[] { "*." + gui.getEngine().getAlgorithm().name().toLowerCase() + "; *." + gui.getEngine().getAlgorithm().name().toUpperCase(), "*.*" });
+			openDialog.setFilterExtensions(buildFilterExtensions(gui.getEngine().getAlgorithm()));
 		}
 		return openDialog.open();
 	}
@@ -50,9 +51,9 @@ public class ProcessFileAction {
 		final File sourceFile = new File(sourceFileName);
 		saveDialog.setFilterPath(sourceFile.getParent());
 		if (CodecMode.ENCODE.equals(gui.getEngine().getMode())) {
-			final String extension = gui.getEngine().getAlgorithm().getFileExtension();
-			saveDialog.setFilterExtensions(new String[] { "*." + extension.toLowerCase() + ";*." + extension.toUpperCase(), "*.*" });
-			saveDialog.setFileName(sourceFile.getName() + '.' + extension.toLowerCase());
+			final CodecAlgorithm algorithm = gui.getEngine().getAlgorithm();
+			saveDialog.setFilterExtensions(buildFilterExtensions(algorithm));
+			saveDialog.setFileName(sourceFile.getName() + '.' + algorithm.getFileExtension().toLowerCase());
 		}
 		else {
 			if (sourceFile.getName().indexOf('.') != -1) {
@@ -60,6 +61,11 @@ public class ProcessFileAction {
 			}
 		}
 		return saveDialog.open();
+	}
+
+	static String[] buildFilterExtensions(final CodecAlgorithm algorithm) {
+		final String extension = algorithm.getFileExtension();
+		return new String[] { "*." + extension.toLowerCase() + ";*." + extension.toUpperCase(), "*.*" };
 	}
 
 	protected void execute(final String sourceFileName, final String destinationFileName) {

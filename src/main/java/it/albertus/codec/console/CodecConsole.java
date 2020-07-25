@@ -26,7 +26,7 @@ public class CodecConsole extends Codec {
 	private static final String ARG_HELP = "--help";
 
 	/* java -jar codec.jar e|d base64|md2|md5|...|sha-512 "text to encode" */
-	public static void start(final String[] args) {
+	public static void main(final String... args) {
 		new CodecConsole().execute(args);
 	}
 

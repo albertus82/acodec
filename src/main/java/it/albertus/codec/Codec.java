@@ -9,22 +9,22 @@ public abstract class Codec {
 	private final CodecEngine engine = new CodecEngine();
 
 	/* Unique entry point */
-	public static void main(final String[] args) {
+	public static void main(final String... args) {
 		final String mode = System.getProperty(Codec.class.getName() + ".main.mode");
 		if (mode != null) {
 			if ("console".equalsIgnoreCase(mode)) {
-				CodecConsole.start(args);
+				CodecConsole.main(args);
 			}
 			else if ("gui".equalsIgnoreCase(mode)) {
-				CodecGui.start();
+				CodecGui.main();
 			}
 		}
 		else {
 			if (args.length > 0) {
-				CodecConsole.start(args);
+				CodecConsole.main(args);
 			}
 			else {
-				CodecGui.start();
+				CodecGui.main();
 			}
 		}
 	}

@@ -93,16 +93,12 @@ public enum CodecAlgorithm {
 		return digest ? EnumSet.of(CodecMode.ENCODE) : EnumSet.allOf(CodecMode.class);
 	}
 
-	public final boolean isDigest() {
+	public boolean isDigest() {
 		return digest;
 	}
 
 	public static String[] getNames() {
-		final String[] names = new String[CodecAlgorithm.values().length];
-		for (int i = 0; i < CodecAlgorithm.values().length; i++) {
-			names[i] = CodecAlgorithm.values()[i].name;
-		}
-		return names;
+		return Arrays.stream(CodecAlgorithm.values()).map(CodecAlgorithm::getName).toArray(String[]::new);
 	}
 
 	public DigestUtils createDigestUtils() throws NoSuchAlgorithmException {

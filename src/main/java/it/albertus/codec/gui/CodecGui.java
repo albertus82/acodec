@@ -145,7 +145,7 @@ public class CodecGui extends Codec implements IShellProvider {
 		shell.setMinimumSize(shell.getSize());
 	}
 
-	public static void start() {
+	public static void main(final String... args) {
 		Display.setAppName(Messages.get("msg.application.name"));
 		Display.setAppVersion(Version.getInstance().getNumber());
 		final Display display = Display.getDefault();
