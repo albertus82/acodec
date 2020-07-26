@@ -22,10 +22,12 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -75,7 +77,7 @@ public class AboutDialog extends Dialog {
 		shell.open();
 	}
 
-	private void createContents(final Shell shell) {
+	private static void createContents(final Shell shell) {
 		GridLayoutFactory.swtDefaults().applyTo(shell);
 
 		final LinkSelectionListener linkSelectionListener = new LinkSelectionListener();
@@ -134,7 +136,7 @@ public class AboutDialog extends Dialog {
 		shell.setDefaultButton(okButton);
 	}
 
-	private void constrainShellSize(final Shell shell) {
+	private static void constrainShellSize(final Shell shell) {
 		final int preferredWidth = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
 		final int clientWidth = shell.getMonitor().getClientArea().width;
 		if (preferredWidth > clientWidth / MONITOR_SIZE_DIVISOR) {
@@ -165,7 +167,7 @@ public class AboutDialog extends Dialog {
 		return text.length() <= System.lineSeparator().length() ? "" : text.substring(System.lineSeparator().length());
 	}
 
-	private void createThirdPartySoftwareTable(final Composite parent) {
+	private static void createThirdPartySoftwareTable(final Composite parent) {
 		final TableViewer tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
 		final Table table = tableViewer.getTable();
 		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).applyTo(table);
@@ -184,27 +186,38 @@ public class AboutDialog extends Dialog {
 		});
 
 		final TableViewerColumn licenseColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		licenseColumn.setLabelProvider(new CellLabelProvider() {
+		licenseColumn.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
 			@Override
 			public void update(final ViewerCell cell) {
-				cell.setText(Messages.get("lbl.about.thirdparty.license"));
 				cell.setForeground(table.getDisplay().getSystemColor(SWT.COLOR_LINK_FOREGROUND));
+				final String text = Messages.get("lbl.about.thirdparty.license");
+				cell.setText(text);
+				final StyleRange styleRange = new StyleRange();
+				styleRange.underline = true;
+				styleRange.length = text.length();
+				cell.setStyleRanges(new StyleRange[] { styleRange });
+				super.update(cell);
 			}
 		});
 
 		final TableViewerColumn homePageColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		homePageColumn.setLabelProvider(new CellLabelProvider() {
+		homePageColumn.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
 			@Override
 			public void update(final ViewerCell cell) {
-				cell.setText(Messages.get("lbl.about.thirdparty.homepage"));
 				cell.setForeground(table.getDisplay().getSystemColor(SWT.COLOR_LINK_FOREGROUND));
+				final String text = Messages.get("lbl.about.thirdparty.homepage");
+				cell.setText(text);
+				final StyleRange styleRange = new StyleRange();
+				styleRange.underline = true;
+				styleRange.length = text.length();
+				cell.setStyleRanges(new StyleRange[] { styleRange });
+				super.update(cell);
 			}
 		});
 
 		tableViewer.add(ThirdPartySoftware.loadFromProperties().toArray());
-
-		for (final TableColumn tc : table.getColumns()) {
-			tc.pack();
+		for (final TableColumn column : table.getColumns()) {
+			column.pack();
 		}
 
 		table.addMouseListener(new MouseAdapter() {
@@ -222,6 +235,18 @@ public class AboutDialog extends Dialog {
 						}
 					}
 				}
+			}
+		});
+
+		table.addMouseMoveListener(e -> {
+			final ViewerCell cell = tableViewer.getCell(new Point(e.x, e.y));
+			if (cell != null && cell.getColumnIndex() != 0) {
+				if (parent.getCursor() == null) {
+					parent.setCursor(parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+				}
+			}
+			else if (parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND).equals(parent.getCursor())) {
+				parent.setCursor(null);
 			}
 		});
 	}
