@@ -157,7 +157,7 @@ public class CodecEngineTest {
 	}
 
 	private String testFileEncoder(final CodecAlgorithm ca) throws IOException {
-		final File outputFile = File.createTempFile(CodecMode.ENCODE.name().toLowerCase() + '-', '.' + ca.name().toLowerCase());
+		final File outputFile = File.createTempFile(CodecMode.ENCODE.name().toLowerCase() + '-', '.' + ca.getFileExtension());
 		log.log(Level.INFO, "Created temporary encoded file \"{0}\"", outputFile);
 		final String value = new ProcessFileTask(engine, originalFile, outputFile).run(() -> false);
 		if (ca.isDigest()) {
