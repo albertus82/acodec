@@ -70,7 +70,7 @@ public class CodecGui extends Codec implements IShellProvider {
 
 	public CodecGui(final Display display) {
 		shell = new Shell(display);
-		shell.setImages(Images.getMainIcons());
+		shell.setImages(Images.getMainIconArray());
 		shell.setText(Messages.get("msg.application.name"));
 		shell.setLayout(new GridLayout(5, false));
 
@@ -164,7 +164,7 @@ public class CodecGui extends Codec implements IShellProvider {
 		catch (final Exception e) {
 			final String message = e.toString();
 			logger.log(Level.SEVERE, message, e);
-			EnhancedErrorDialog.openError(shell, Messages.get("msg.error"), message, IStatus.ERROR, e, Images.getMainIcons());
+			EnhancedErrorDialog.openError(shell, Messages.get("msg.error"), message, IStatus.ERROR, e, Images.getMainIconArray());
 		}
 		finally {
 			display.dispose();

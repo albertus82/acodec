@@ -107,11 +107,11 @@ public class ProcessFileAction {
 				message = e.getMessage() != null ? e.getMessage() : e.toString();
 				throwable = e;
 			}
-			EnhancedErrorDialog.openError(gui.getShell(), Messages.get(MSG_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIcons());
+			EnhancedErrorDialog.openError(gui.getShell(), Messages.get(MSG_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIconArray());
 		}
 		catch (final Exception e) {
 			logger.log(Level.SEVERE, e.toString(), e);
-			EnhancedErrorDialog.openError(gui.getShell(), Messages.get(MSG_APPLICATION_NAME), e.toString(), IStatus.ERROR, e, Images.getMainIcons());
+			EnhancedErrorDialog.openError(gui.getShell(), Messages.get(MSG_APPLICATION_NAME), e.toString(), IStatus.ERROR, e, Images.getMainIconArray());
 		}
 	}
 

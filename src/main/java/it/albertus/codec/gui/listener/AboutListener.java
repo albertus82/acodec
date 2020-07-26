@@ -1,53 +1,36 @@
 package it.albertus.codec.gui.listener;
 
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.eclipse.jface.window.IShellProvider;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import it.albertus.codec.gui.AboutDialog;
-import it.albertus.codec.resources.Messages;
-import it.albertus.util.Version;
-import it.albertus.util.logging.LoggerFactory;
 
-public class AboutListener extends SelectionAdapter implements Listener {
+public class AboutListener implements SelectionListener, Listener {
 
-	private static final Logger logger = LoggerFactory.getLogger(AboutListener.class);
+	private final IShellProvider provider;
 
-	private final IShellProvider gui;
-
-	public AboutListener(final IShellProvider gui) {
-		this.gui = gui;
+	public AboutListener(final IShellProvider provider) {
+		this.provider = provider;
 	}
 
 	@Override
 	public void widgetSelected(final SelectionEvent se) {
-		final AboutDialog aboutDialog = new AboutDialog(gui.getShell());
-		aboutDialog.setText(Messages.get("lbl.about.title"));
-		final Version version = Version.getInstance();
-		Date versionDate;
-		try {
-			versionDate = version.getDate();
-		}
-		catch (final Exception e) {
-			logger.log(Level.WARNING, e.toString(), e);
-			versionDate = new Date();
-		}
-		aboutDialog.setMessage(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(versionDate)));
-		aboutDialog.setApplicationUrl(Messages.get("msg.website"));
-		aboutDialog.setIconUrl(Messages.get("msg.info.icon.site"));
-		aboutDialog.open();
+		execute();
 	}
 
 	@Override
 	public void handleEvent(final Event event) {
-		widgetSelected(null);
+		execute();
+	}
+
+	@Override
+	public void widgetDefaultSelected(final SelectionEvent e) {/* Ignore */}
+
+	private void execute() {
+		new AboutDialog(provider.getShell()).open();
 	}
 
 }
