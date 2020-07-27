@@ -37,10 +37,10 @@ public class Images {
 	private static final Map<Rectangle, Image> mainIconMap;
 
 	static {
-		mainIconMap = loadImagesFromResource("main.ico");
+		mainIconMap = loadFromResource("main.ico");
 	}
 
-	private static Map<Rectangle, Image> loadImagesFromResource(final String resourceName) {
+	private static Map<Rectangle, Image> loadFromResource(final String resourceName) {
 		final Map<Rectangle, Image> map = new TreeMap<>(areaComparatorDescending);
 		try (final InputStream stream = Images.class.getResourceAsStream(resourceName)) {
 			for (final ImageData data : new ImageLoader().load(stream)) {
