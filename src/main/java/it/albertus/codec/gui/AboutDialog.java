@@ -22,6 +22,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -169,6 +170,7 @@ public class AboutDialog extends Dialog {
 
 	private static void createThirdPartySoftwareTable(final Composite parent) {
 		final TableViewer tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
+		ColumnViewerToolTipSupport.enableFor(tableViewer);
 		final Table table = tableViewer.getTable();
 		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).applyTo(table);
 		table.setLinesVisible(true);
@@ -198,6 +200,17 @@ public class AboutDialog extends Dialog {
 				cell.setStyleRanges(new StyleRange[] { styleRange });
 				super.update(cell);
 			}
+
+			@Override
+			public String getToolTipText(final Object o) {
+				if (o instanceof ThirdPartySoftware) {
+					final ThirdPartySoftware element = (ThirdPartySoftware) o;
+					return element.getLicenseUri().toString();
+				}
+				else {
+					return super.getToolTipText(o);
+				}
+			}
 		});
 
 		final TableViewerColumn homePageColumn = new TableViewerColumn(tableViewer, SWT.NONE);
@@ -212,6 +225,17 @@ public class AboutDialog extends Dialog {
 				styleRange.length = text.length();
 				cell.setStyleRanges(new StyleRange[] { styleRange });
 				super.update(cell);
+			}
+
+			@Override
+			public String getToolTipText(final Object o) {
+				if (o instanceof ThirdPartySoftware) {
+					final ThirdPartySoftware element = (ThirdPartySoftware) o;
+					return element.getHomePageUri().toString();
+				}
+				else {
+					return super.getToolTipText(o);
+				}
 			}
 		});
 
