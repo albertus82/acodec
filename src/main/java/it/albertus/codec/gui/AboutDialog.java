@@ -58,6 +58,10 @@ public class AboutDialog extends Dialog {
 
 	private static final String SYM_NAME_FONT_DEFAULT = AboutDialog.class.getName().toLowerCase() + ".default";
 
+	private static final int COL_IDX_THIRDPARTY_AUTHOR = 0;
+	private static final int COL_IDX_THIRDPARTY_LICENSE = 1;
+	private static final int COL_IDX_THIRDPARTY_HOMEPAGE = 2;
+
 	private static final Logger logger = LoggerFactory.getLogger(AboutDialog.class);
 
 	public AboutDialog(final Shell parent) {
@@ -239,10 +243,10 @@ public class AboutDialog extends Dialog {
 					final ViewerCell cell = tableViewer.getCell(new Point(e.x, e.y));
 					if (cell != null && cell.getElement() instanceof ThirdPartySoftware) {
 						final ThirdPartySoftware element = (ThirdPartySoftware) cell.getElement();
-						if (cell.getColumnIndex() == 1) {
+						if (cell.getColumnIndex() == COL_IDX_THIRDPARTY_LICENSE) {
 							Program.launch(element.getLicenseUri().toString());
 						}
-						else if (cell.getColumnIndex() == 2) {
+						else if (cell.getColumnIndex() == COL_IDX_THIRDPARTY_HOMEPAGE) {
 							Program.launch(element.getHomePageUri().toString());
 						}
 					}
@@ -252,7 +256,7 @@ public class AboutDialog extends Dialog {
 
 		table.addMouseMoveListener(e -> {
 			final ViewerCell cell = tableViewer.getCell(new Point(e.x, e.y));
-			if (cell != null && cell.getColumnIndex() != 0) {
+			if (cell != null && cell.getColumnIndex() != COL_IDX_THIRDPARTY_AUTHOR) {
 				if (parent.getCursor() == null) {
 					parent.setCursor(parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 				}
