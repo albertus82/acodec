@@ -14,12 +14,13 @@ import org.apache.commons.codec.binary.Base32InputStream;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.codec.binary.BaseNCodecOutputStream;
+import org.apache.commons.codec.digest.PureJavaCrc32;
 import org.apache.commons.io.IOUtils;
 import org.freehep.util.io.ASCII85OutputStream;
 
 import it.albertus.codec.resources.Messages;
 import it.albertus.util.CRC16OutputStream;
-import it.albertus.util.CRC32OutputStream;
+import it.albertus.util.ChecksumOutputStream;
 import it.albertus.util.logging.LoggerFactory;
 import net.sourceforge.base91.b91cli;
 
@@ -101,7 +102,7 @@ public class ProcessFileTask implements Cancelable {
 					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
 					break;
 				case CRC32:
-					CRC32OutputStream crc32os = getCRC32OutputStream(cs.getInputStreams().getLast());
+					ChecksumOutputStream<PureJavaCrc32> crc32os = getCRC32OutputStream(cs.getInputStreams().getLast());
 					value = String.format("%08x", crc32os.getValue());
 					IOUtils.write(fileName + ' ' + value, cs.getOutputStreams().getLast(), engine.getCharset()); // sfv
 					break;
@@ -202,8 +203,8 @@ public class ProcessFileTask implements Cancelable {
 		}
 	}
 
-	private static CRC32OutputStream getCRC32OutputStream(final InputStream is) throws IOException {
-		try (final CRC32OutputStream os = new CRC32OutputStream()) {
+	private static ChecksumOutputStream<PureJavaCrc32> getCRC32OutputStream(final InputStream is) throws IOException {
+		try (final ChecksumOutputStream<PureJavaCrc32> os = new ChecksumOutputStream<PureJavaCrc32>(new PureJavaCrc32(), 32)) {
 			IOUtils.copyLarge(is, os);
 			return os;
 		}

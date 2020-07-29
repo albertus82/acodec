@@ -1,10 +1,10 @@
 package it.albertus.codec.engine;
 
 import java.nio.charset.Charset;
-import java.util.zip.CRC32;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.PureJavaCrc32;
 
 import it.albertus.codec.resources.Messages;
 import it.albertus.util.CRC16;
@@ -34,27 +34,28 @@ public class CodecEngine {
 
 	private String encode(final String input) {
 		try {
+			final byte[] bytes = input.getBytes(charset);
 			switch (algorithm) {
 			case BASE16:
-				return Base16.encode(input.getBytes(charset));
+				return Base16.encode(bytes);
 			case BASE32:
-				return new Base32().encodeAsString(input.getBytes(charset));
+				return new Base32().encodeAsString(bytes);
 			case BASE64:
-				return Base64.encodeBase64String(input.getBytes(charset));
+				return Base64.encodeBase64String(bytes);
 			case ASCII85:
-				return Ascii85.encode(input.getBytes(charset));
+				return Ascii85.encode(bytes);
 			case BASE91:
-				return Base91.encode(input.getBytes(charset));
+				return Base91.encode(bytes);
 			case CRC16:
 				final CRC16 crc16 = new CRC16();
-				crc16.update(input.getBytes(charset));
+				crc16.update(bytes);
 				return String.format("%04x", crc16.getValue());
 			case CRC32:
-				final CRC32 crc32 = new CRC32();
-				crc32.update(input.getBytes(charset));
+				final PureJavaCrc32 crc32 = new PureJavaCrc32();
+				crc32.update(bytes, 0, bytes.length);
 				return String.format("%08x", crc32.getValue());
 			default:
-				return algorithm.createDigestUtils().digestAsHex(input.getBytes(charset));
+				return algorithm.createDigestUtils().digestAsHex(bytes);
 			}
 		}
 		catch (final Exception e) {
