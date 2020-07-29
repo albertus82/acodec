@@ -204,7 +204,7 @@ public class ProcessFileTask implements Cancelable {
 	}
 
 	private static ChecksumOutputStream<PureJavaCrc32> getCRC32OutputStream(final InputStream is) throws IOException {
-		try (final ChecksumOutputStream<PureJavaCrc32> os = new ChecksumOutputStream<PureJavaCrc32>(new PureJavaCrc32(), 32)) {
+		try (final ChecksumOutputStream<PureJavaCrc32> os = new ChecksumOutputStream<>(new PureJavaCrc32(), 32)) {
 			IOUtils.copyLarge(is, os);
 			return os;
 		}

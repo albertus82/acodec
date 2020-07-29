@@ -191,13 +191,7 @@ public class AboutDialog extends Dialog {
 		licenseColumn.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
 			@Override
 			public void update(final ViewerCell cell) {
-				cell.setForeground(table.getDisplay().getSystemColor(SWT.COLOR_LINK_FOREGROUND));
-				final String text = Messages.get("lbl.about.thirdparty.license");
-				cell.setText(text);
-				final StyleRange styleRange = new StyleRange();
-				styleRange.underline = true;
-				styleRange.length = text.length();
-				cell.setStyleRanges(new StyleRange[] { styleRange });
+				setLinkStyle(cell, Messages.get("lbl.about.thirdparty.license"));
 				super.update(cell);
 			}
 
@@ -217,13 +211,7 @@ public class AboutDialog extends Dialog {
 		homePageColumn.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
 			@Override
 			public void update(final ViewerCell cell) {
-				cell.setForeground(table.getDisplay().getSystemColor(SWT.COLOR_LINK_FOREGROUND));
-				final String text = Messages.get("lbl.about.thirdparty.homepage");
-				cell.setText(text);
-				final StyleRange styleRange = new StyleRange();
-				styleRange.underline = true;
-				styleRange.length = text.length();
-				cell.setStyleRanges(new StyleRange[] { styleRange });
+				setLinkStyle(cell, Messages.get("lbl.about.thirdparty.homepage"));
 				super.update(cell);
 			}
 
@@ -273,6 +261,15 @@ public class AboutDialog extends Dialog {
 				parent.setCursor(null);
 			}
 		});
+	}
+
+	private static void setLinkStyle(final ViewerCell cell, final String label) {
+		cell.setForeground(cell.getControl().getDisplay().getSystemColor(SWT.COLOR_LINK_FOREGROUND));
+		cell.setText(label);
+		final StyleRange styleRange = new StyleRange();
+		styleRange.underline = true;
+		styleRange.length = label.length();
+		cell.setStyleRanges(new StyleRange[] { styleRange });
 	}
 
 	private static class ThirdPartySoftware implements Comparable<ThirdPartySoftware> {
