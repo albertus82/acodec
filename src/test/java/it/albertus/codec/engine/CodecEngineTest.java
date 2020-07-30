@@ -83,6 +83,7 @@ public class CodecEngineTest {
 		encodedStrings.put(CodecAlgorithm.RIPEMD_160, "c4e3cc08809d907e233a24c10056c9951a67ffe2");
 		encodedStrings.put(CodecAlgorithm.RIPEMD_256, "1cfb5d43f287a960ba3181f28225609bbddc2c82bef041d0c462a29f522fa583");
 		encodedStrings.put(CodecAlgorithm.RIPEMD_320, "82dc8378303b1317a6d491534b928b68aa0c0803c9e996aadedeb0b97bbecaf118064ca2eb7191b6");
+		encodedStrings.put(CodecAlgorithm.TIGER, "761a2fc1c5ab4f8853d71b1a6d1443fd7b5734d378da37c8");
 		encodedStrings.put(CodecAlgorithm.WHIRLPOOL, "61d98a2b91d48ae02385aafcf568da1ba973cd401aee273cfd4a4837b4cfbe61adaa6c87c246e4ab83f8f4bb798ce57830c05c0917e7990cbb1fae14ed84b07b");
 	} // @formatter:on
 

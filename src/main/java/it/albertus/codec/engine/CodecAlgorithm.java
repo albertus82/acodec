@@ -46,6 +46,7 @@ public enum CodecAlgorithm {
 	RIPEMD_160("RIPEMD-160", true, "RIPEMD160"),
 	RIPEMD_256("RIPEMD-256", true, "RIPEMD256"),
 	RIPEMD_320("RIPEMD-320", true, "RIPEMD320"),
+	TIGER("Tiger", true),
 	WHIRLPOOL("Whirlpool", true);
 
 	private static final Logger logger = LoggerFactory.getLogger(CodecAlgorithm.class);
