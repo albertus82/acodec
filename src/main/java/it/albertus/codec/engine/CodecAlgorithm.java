@@ -22,7 +22,7 @@ public enum CodecAlgorithm {
 
 	BASE16("Base16", false),
 	BASE32("Base32", false),
-	BASE64("Base64", false),
+	BASE64("Base64", "b64", false),
 	ASCII85("Ascii85", false),
 	BASE91("basE91", false),
 	CRC16("CRC-16", true),
