@@ -1,6 +1,7 @@
 package it.albertus.codec.engine;
 
 import java.nio.charset.Charset;
+import java.util.zip.Adler32;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
@@ -54,6 +55,10 @@ public class CodecEngine {
 				final PureJavaCrc32 crc32 = new PureJavaCrc32();
 				crc32.update(bytes, 0, bytes.length);
 				return String.format("%08x", crc32.getValue());
+			case ADLER32:
+				final Adler32 adler32 = new Adler32();
+				adler32.update(bytes);
+				return String.format("%08x", adler32.getValue());
 			default:
 				return algorithm.createDigestUtils().digestAsHex(bytes);
 			}

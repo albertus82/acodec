@@ -8,6 +8,7 @@ import java.util.concurrent.CancellationException;
 import java.util.function.BooleanSupplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.Adler32;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base32InputStream;
@@ -105,6 +106,11 @@ public class ProcessFileTask implements Cancelable {
 					ChecksumOutputStream<PureJavaCrc32> crc32os = getCRC32OutputStream(cs.getInputStreams().getLast());
 					value = String.format("%08x", crc32os.getValue());
 					IOUtils.write(fileName + ' ' + value, cs.getOutputStreams().getLast(), engine.getCharset()); // sfv
+					break;
+				case ADLER32:
+					ChecksumOutputStream<Adler32> adler32os = getAdler32OutputStream(cs.getInputStreams().getLast());
+					value = String.format("%08x", adler32os.getValue());
+					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
 					break;
 				default:
 					value = engine.getAlgorithm().createDigestUtils().digestAsHex(cs.getInputStreams().getLast());
@@ -205,6 +211,13 @@ public class ProcessFileTask implements Cancelable {
 
 	private static ChecksumOutputStream<PureJavaCrc32> getCRC32OutputStream(final InputStream is) throws IOException {
 		try (final ChecksumOutputStream<PureJavaCrc32> os = new ChecksumOutputStream<>(new PureJavaCrc32(), 32)) {
+			IOUtils.copyLarge(is, os);
+			return os;
+		}
+	}
+
+	private static ChecksumOutputStream<Adler32> getAdler32OutputStream(final InputStream is) throws IOException {
+		try (final ChecksumOutputStream<Adler32> os = new ChecksumOutputStream<>(new Adler32(), 32)) {
 			IOUtils.copyLarge(is, os);
 			return os;
 		}

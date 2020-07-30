@@ -27,6 +27,7 @@ public enum CodecAlgorithm {
 	BASE91("basE91", false),
 	CRC16("CRC-16", true),
 	CRC32("CRC-32", "sfv", true),
+	ADLER32("Adler-32", true),
 	MD2(MessageDigestAlgorithms.MD2, true),
 	MD4("MD4", true),
 	MD5(MessageDigestAlgorithms.MD5, true),
