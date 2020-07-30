@@ -130,7 +130,7 @@ public class CodecEngineTest {
 				engine.setAlgorithm(ca);
 				log.log(Level.INFO, "Testing file encoding {0}", ca);
 				final String expected;
-				if (ca.isDigest()) {
+				if (!AlgorithmType.ENCODING.equals(ca.getType())) {
 					if (CodecAlgorithm.CRC32.equals(ca)) {
 						expected = originalFile.getName() + ' ' + encodedStrings.get(ca);
 					}
@@ -162,7 +162,7 @@ public class CodecEngineTest {
 		final File outputFile = File.createTempFile(CodecMode.ENCODE.name().toLowerCase() + '-', '.' + ca.getFileExtension());
 		log.log(Level.INFO, "Created temporary encoded file \"{0}\"", outputFile);
 		final String value = new ProcessFileTask(engine, originalFile, outputFile).run(() -> false);
-		if (ca.isDigest()) {
+		if (!AlgorithmType.ENCODING.equals(ca.getType())) {
 			Assert.assertNotNull(value);
 			Assert.assertFalse(value.isEmpty());
 		}
