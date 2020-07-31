@@ -99,23 +99,19 @@ public class ProcessFileTask implements Cancelable {
 					b91cli.encodeWrap(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 					break;
 				case CRC16:
-					final CRC16OutputStream crc16os = getCRC16OutputStream(cs.getInputStreams().getLast());
-					value = crc16os.toString();
+					value = computeCrc16(cs.getInputStreams().getLast());
 					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
 					break;
 				case CRC32:
-					final ChecksumOutputStream<PureJavaCrc32> crc32os = getCRC32OutputStream(cs.getInputStreams().getLast());
-					value = crc32os.toString();
+					value = computeCrc32(cs.getInputStreams().getLast());
 					IOUtils.write(fileName + ' ' + value, cs.getOutputStreams().getLast(), engine.getCharset()); // sfv
 					break;
 				case CRC32C:
-					final ChecksumOutputStream<PureJavaCrc32C> crc32cos = getCRC32COutputStream(cs.getInputStreams().getLast());
-					value = crc32cos.toString();
+					value = computeCrc32C(cs.getInputStreams().getLast());
 					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
 					break;
 				case ADLER32:
-					final ChecksumOutputStream<Adler32> adler32os = getAdler32OutputStream(cs.getInputStreams().getLast());
-					value = adler32os.toString();
+					value = computeAdler32(cs.getInputStreams().getLast());
 					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
 					break;
 				default:
@@ -208,31 +204,31 @@ public class ProcessFileTask implements Cancelable {
 		return streams != null ? streams.getBytesRead() : 0;
 	}
 
-	private static CRC16OutputStream getCRC16OutputStream(final InputStream is) throws IOException {
+	private static String computeCrc16(final InputStream is) throws IOException {
 		try (final CRC16OutputStream os = new CRC16OutputStream()) {
 			IOUtils.copyLarge(is, os);
-			return os;
+			return os.toString();
 		}
 	}
 
-	private static ChecksumOutputStream<PureJavaCrc32> getCRC32OutputStream(final InputStream is) throws IOException {
+	private static String computeCrc32(final InputStream is) throws IOException {
 		try (final ChecksumOutputStream<PureJavaCrc32> os = new ChecksumOutputStream<>(new PureJavaCrc32(), 32)) {
 			IOUtils.copyLarge(is, os);
-			return os;
+			return os.toString();
 		}
 	}
 
-	private static ChecksumOutputStream<PureJavaCrc32C> getCRC32COutputStream(final InputStream is) throws IOException {
+	private static String computeCrc32C(final InputStream is) throws IOException {
 		try (final ChecksumOutputStream<PureJavaCrc32C> os = new ChecksumOutputStream<>(new PureJavaCrc32C(), 32)) {
 			IOUtils.copyLarge(is, os);
-			return os;
+			return os.toString();
 		}
 	}
 
-	private static ChecksumOutputStream<Adler32> getAdler32OutputStream(final InputStream is) throws IOException {
+	private static String computeAdler32(final InputStream is) throws IOException {
 		try (final ChecksumOutputStream<Adler32> os = new ChecksumOutputStream<>(new Adler32(), 32)) {
 			IOUtils.copyLarge(is, os);
-			return os;
+			return os.toString();
 		}
 	}
 
