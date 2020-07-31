@@ -29,7 +29,7 @@ public class AlgorithmComboSelectionListener extends SelectionAdapter {
 		if (!gui.getProcessFileButton().getEnabled()) {
 			gui.getProcessFileButton().setEnabled(true);
 			gui.getMenuBar().getFileProcessMenuItem().setEnabled(true);
-			gui.getShellDropTarget().setTransfer(new Transfer[] { FileTransfer.getInstance(), TextTransfer.getInstance() });
+			gui.getShellDropTarget().setTransfer(new Transfer[] { FileTransfer.getInstance(), TextTransfer.getInstance() }); // NOSONAR SWT v4.3.2 does not have the vararg.
 		}
 
 		/* Gestione radio */
