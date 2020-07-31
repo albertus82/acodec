@@ -64,6 +64,7 @@ public class CodecEngineTest {
 		encodedStrings.put(CodecAlgorithm.BASE91, "Drzg`<fz+$Q;/ETj~i/2:WP1qU2uG9_ou\"L^;meP(Ig,!eLU2u8Pwn32Wf7=YC,RY6LycLeP;Im+oC.!L;e9QnJB%g`<>{KU=53mFlmaef!=yC2U7tAQ2i>z^IL,yC4!t!kb9j_kH<6=MCHRY6W9Yiw\")wlLto+f/W6Y$yY6JQrmW!_1N:Z;/HJ*lQ1o(nc=[[6e8RU0y9Uola(g=[${lT&:+xXi6J.JE<jN1Tb6GF&m32YJi]yCHRY6W9HlVB[I<W=H$y7&G9Qnbrh+e>bT=!P;axeQ3L:gP[eG6U!09MVo_z^Im+|*1T6tM.kLdP[2f,melT20ZQ`o9Z$JH^|*6U*/ax9jW!^IN:yC.!h.pE>i^iDg~<TX1T$&a9jLR8>vz]]0LR7tJ9MmAE=Cw)N1LRR;x.cLZ)WfE?!e6U6tcQ;mZBa=[*Yes!9/QjZpyaef=[6Y$F%&=EnnprYJc,_Y:H^,9.`o9Z$J%*I++$xtV9HlyqB2L::0LR:yTm9je8$J;W.{FTY6KFOiwa4J`/SC.!+/nuXiZrzg~<BB");
 		encodedStrings.put(CodecAlgorithm.CRC16, "a8e2");
 		encodedStrings.put(CodecAlgorithm.CRC32, "98b2c5bd");
+		encodedStrings.put(CodecAlgorithm.CRC32C, "95dc2e4b");
 		encodedStrings.put(CodecAlgorithm.ADLER32, "a05ca509");
 		encodedStrings.put(CodecAlgorithm.MD2, "4b2ffc802c256a38fd6ccb575cccc27c");
 		encodedStrings.put(CodecAlgorithm.MD4, "8db2ba4980fa7d57725e42782ab47b42");

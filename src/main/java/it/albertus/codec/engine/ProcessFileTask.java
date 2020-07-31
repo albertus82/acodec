@@ -16,6 +16,7 @@ import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.codec.binary.BaseNCodecOutputStream;
 import org.apache.commons.codec.digest.PureJavaCrc32;
+import org.apache.commons.codec.digest.PureJavaCrc32C;
 import org.apache.commons.io.IOUtils;
 import org.freehep.util.io.ASCII85OutputStream;
 
@@ -98,18 +99,23 @@ public class ProcessFileTask implements Cancelable {
 					b91cli.encodeWrap(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 					break;
 				case CRC16:
-					CRC16OutputStream crc16os = getCRC16OutputStream(cs.getInputStreams().getLast());
-					value = String.format("%04x", crc16os.getValue());
+					final CRC16OutputStream crc16os = getCRC16OutputStream(cs.getInputStreams().getLast());
+					value = crc16os.toString();
 					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
 					break;
 				case CRC32:
-					ChecksumOutputStream<PureJavaCrc32> crc32os = getCRC32OutputStream(cs.getInputStreams().getLast());
-					value = String.format("%08x", crc32os.getValue());
+					final ChecksumOutputStream<PureJavaCrc32> crc32os = getCRC32OutputStream(cs.getInputStreams().getLast());
+					value = crc32os.toString();
 					IOUtils.write(fileName + ' ' + value, cs.getOutputStreams().getLast(), engine.getCharset()); // sfv
 					break;
+				case CRC32C:
+					final ChecksumOutputStream<PureJavaCrc32C> crc32cos = getCRC32COutputStream(cs.getInputStreams().getLast());
+					value = crc32cos.toString();
+					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
+					break;
 				case ADLER32:
-					ChecksumOutputStream<Adler32> adler32os = getAdler32OutputStream(cs.getInputStreams().getLast());
-					value = String.format("%08x", adler32os.getValue());
+					final ChecksumOutputStream<Adler32> adler32os = getAdler32OutputStream(cs.getInputStreams().getLast());
+					value = adler32os.toString();
 					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), engine.getCharset());
 					break;
 				default:
@@ -211,6 +217,13 @@ public class ProcessFileTask implements Cancelable {
 
 	private static ChecksumOutputStream<PureJavaCrc32> getCRC32OutputStream(final InputStream is) throws IOException {
 		try (final ChecksumOutputStream<PureJavaCrc32> os = new ChecksumOutputStream<>(new PureJavaCrc32(), 32)) {
+			IOUtils.copyLarge(is, os);
+			return os;
+		}
+	}
+
+	private static ChecksumOutputStream<PureJavaCrc32C> getCRC32COutputStream(final InputStream is) throws IOException {
+		try (final ChecksumOutputStream<PureJavaCrc32C> os = new ChecksumOutputStream<>(new PureJavaCrc32C(), 32)) {
 			IOUtils.copyLarge(is, os);
 			return os;
 		}

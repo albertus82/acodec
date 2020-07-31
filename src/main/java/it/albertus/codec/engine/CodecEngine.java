@@ -6,6 +6,7 @@ import java.util.zip.Adler32;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.PureJavaCrc32;
+import org.apache.commons.codec.digest.PureJavaCrc32C;
 
 import it.albertus.codec.resources.Messages;
 import it.albertus.util.CRC16;
@@ -55,6 +56,10 @@ public class CodecEngine {
 				final PureJavaCrc32 crc32 = new PureJavaCrc32();
 				crc32.update(bytes, 0, bytes.length);
 				return String.format("%08x", crc32.getValue());
+			case CRC32C:
+				final PureJavaCrc32C crc32c = new PureJavaCrc32C();
+				crc32c.update(bytes, 0, bytes.length);
+				return String.format("%08x", crc32c.getValue());
 			case ADLER32:
 				final Adler32 adler32 = new Adler32();
 				adler32.update(bytes);

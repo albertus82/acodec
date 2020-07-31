@@ -31,6 +31,7 @@ public enum CodecAlgorithm {
 	BASE91("basE91", ENCODING),
 	CRC16("CRC-16", CHECKSUM),
 	CRC32("CRC-32", "sfv", CHECKSUM),
+	CRC32C("CRC-32C", CHECKSUM),
 	ADLER32("Adler-32", CHECKSUM),
 	MD2(MessageDigestAlgorithms.MD2, HASH),
 	MD4("MD4", HASH),
