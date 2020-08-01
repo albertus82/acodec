@@ -174,7 +174,7 @@ public class CodecConsole extends Codec {
 
 		final Version version = Version.getInstance();
 		try {
-			System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(version.getDate())) + " [" + Messages.get("url") + ']');
+			System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(version.getDate())) + " [" + Messages.get("project.url") + ']');
 			System.out.println();
 		}
 		catch (final RuntimeException e) {

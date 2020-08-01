@@ -103,7 +103,7 @@ public class AboutDialog extends Dialog {
 			logger.log(Level.WARNING, e.toString(), e);
 			versionDate = new Date();
 		}
-		info.setText(buildAnchor(Messages.get("url"), Messages.get("msg.application.name")) + ' ' + Messages.get("msg.version", version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM, Messages.getLanguage().getLocale()).format(versionDate)));
+		info.setText(buildAnchor(Messages.get("project.url"), Messages.get("msg.application.name")) + ' ' + Messages.get("msg.version", version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM, Messages.getLanguage().getLocale()).format(versionDate)));
 		info.addSelectionListener(linkSelectionListener);
 
 		final Link acknowledgementsLocations = new Link(shell, SWT.WRAP);
