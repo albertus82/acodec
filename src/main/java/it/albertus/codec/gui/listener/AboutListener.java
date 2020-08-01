@@ -16,21 +16,21 @@ public class AboutListener implements SelectionListener, Listener {
 		this.provider = provider;
 	}
 
+	private void openAboutDialog() {
+		new AboutDialog(provider.getShell()).open();
+	}
+
 	@Override
 	public void widgetSelected(final SelectionEvent se) {
-		execute();
+		openAboutDialog();
 	}
 
 	@Override
 	public void handleEvent(final Event event) {
-		execute();
+		openAboutDialog();
 	}
 
 	@Override
 	public void widgetDefaultSelected(final SelectionEvent e) {/* Ignore */}
-
-	private void execute() {
-		new AboutDialog(provider.getShell()).open();
-	}
 
 }
