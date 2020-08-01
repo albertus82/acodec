@@ -110,7 +110,7 @@ public enum CodecAlgorithm {
 
 	public DigestUtils createDigestUtils() throws NoSuchAlgorithmException {
 		if (!HASH.equals(type)) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("Cannot create " + DigestUtils.class.getName() + " for " + this);
 		}
 
 		// Ensure BouncyCastle is fully initialized
