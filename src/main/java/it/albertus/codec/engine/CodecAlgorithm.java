@@ -27,7 +27,7 @@ public enum CodecAlgorithm {
 	BASE16("Base16", ENCODING),
 	BASE32("Base32", ENCODING),
 	BASE64("Base64", "b64", ENCODING),
-	ASCII85("Ascii85", ENCODING),
+	ASCII85("Ascii85", ENCODING, "BASE85"),
 	BASE91("basE91", ENCODING),
 	CRC16("CRC-16", CHECKSUM),
 	CRC32("CRC-32", "sfv", CHECKSUM),
