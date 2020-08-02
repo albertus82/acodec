@@ -288,7 +288,7 @@ public class AboutDialog extends Dialog {
 		column.pack();
 		if (Util.isGtk()) { // colmuns are badly resized on GTK, more space is actually needed
 			try (final CloseableResource<GC> cr = new CloseableResource<>(new GC(table))) {
-				column.setWidth(column.getWidth() + cr.getResource().stringExtent(" ").x);
+				column.setWidth(column.getWidth() + cr.getResource().stringExtent("  ").x);
 			}
 		}
 	}
