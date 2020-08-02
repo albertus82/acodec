@@ -338,7 +338,7 @@ public class AboutDialog extends Dialog {
 
 		@Override
 		public int compareTo(final ThirdPartySoftware o) {
-			return this.author.compareTo(o.author);
+			return author.compareTo(o.author);
 		}
 	}
 }
