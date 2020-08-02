@@ -47,4 +47,12 @@ Example: codec e base64 -c UTF-8 "Lorem ipsum dolor sit amet"
 
 ## Acknowledgements
 
-This application includes software developed by the **Eclipse Foundation** that is distributed under the [Eclipse Public License](https://eclipse.org/org/documents/epl-v10.php).
+This application includes third party software developed by:
+
+|Author                     |License                                               |Home page                                 |
+|---------------------------|------------------------------------------------------|------------------------------------------|
+|Apache Software Foundation |[License](https://www.apache.org/licenses/LICENSE-2.0)|[Home page](https://www.apache.org)       |
+|Eclipse Foundation         |[License](https://www.eclipse.org/legal/epl-2.0/)     |[Home page](https://www.eclipse.org)      |
+|FreeHEP                    |[License](https://java.freehep.org/license.html)      |[Home page](https://java.freehep.org)     |
+|Joachim Henke              |[License](http://base91.sourceforge.net/license.txt)  |[Home page](http://base91.sourceforge.net)|
+|Legion of the Bouncy Castle|[License](https://www.bouncycastle.org/license.html)  |[Home page](https://www.bouncycastle.org) |
