@@ -732,7 +732,7 @@
 			<entry key="sonar.language" value="java" />
 			<entry key="sonar.java.source" value="${build.compiler.source}" />
 			<entry key="sonar.java.target" value="${build.compiler.target}" />
-			<entry key="sonar.java.libraries" value="${dependencies.directory}/compile/common/*.jar,${dependencies.directory}/compile/platform-dependent/**/*.jar" />
+			<entry key="sonar.java.libraries" value="${dependencies.directory}/provided/*.jar,${dependencies.directory}/compile/common/*.jar,${dependencies.directory}/compile/platform-dependent/**/*.jar" />
 			<entry key="sonar.java.binaries" value="${build.outputDirectory}" />
 			<entry key="sonar.sourceEncoding" value="UTF-8" />
 			<entry key="sonar.exclusions" value="${build.sourceDirectory}/org/apache/**,${build.sourceDirectory}/net/sourceforge/**" />
@@ -742,7 +742,7 @@
 	<target name="sonar-test" depends="sonar-main" if="build.test">
 		<propertyfile file="sonar-project.properties">
 			<entry key="sonar.tests" value="${build.testSourceDirectory}" />
-			<entry key="sonar.java.test.libraries" value="${dependencies.directory}/compile/common/*.jar,${dependencies.directory}/compile/platform-dependent/**/*.jar,${dependencies.directory}/test/*.jar" />
+			<entry key="sonar.java.test.libraries" value="${dependencies.directory}/provided/*.jar,${dependencies.directory}/compile/common/*.jar,${dependencies.directory}/compile/platform-dependent/**/*.jar,${dependencies.directory}/test/*.jar" />
 			<entry key="sonar.java.test.binaries" value="${build.outputTestClassesDirectory}" />
 			<entry key="sonar.coverage.jacoco.xmlReportPaths" value="${build.outputTestResultsDirectory}/jacoco/jacoco.xml" />
 		</propertyfile>
