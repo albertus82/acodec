@@ -724,7 +724,7 @@
 	</target>
 
 	<target name="sonar-main">
-		<propertyfile file="sonar-project.properties">
+		<propertyfile file="sonar-project.properties" jdkproperties="true">
 			<entry key="sonar.projectKey" value="${project.groupId}:${project.artifactId}" />
 			<entry key="sonar.projectName" value="${project.name}" />
 			<entry key="sonar.projectVersion" value="${version.number}" />
@@ -740,13 +740,13 @@
 	</target>
 
 	<target name="sonar-test" depends="sonar-main" if="build.test">
-		<propertyfile file="sonar-project.properties">
+		<propertyfile file="sonar-project.properties" jdkproperties="true">
 			<entry key="sonar.tests" value="${build.testSourceDirectory}" />
 			<entry key="sonar.java.test.libraries" value="${dependencies.directory}/provided/*.jar,${dependencies.directory}/compile/common/*.jar,${dependencies.directory}/compile/platform-dependent/**/*.jar,${dependencies.directory}/test/*.jar" />
 			<entry key="sonar.java.test.binaries" value="${build.outputTestClassesDirectory}" />
 			<entry key="sonar.coverage.jacoco.xmlReportPaths" value="${build.outputTestResultsDirectory}/jacoco/jacoco.xml" />
 		</propertyfile>
-		<propertyfile file="lombok.config">
+		<propertyfile file="lombok.config" jdkproperties="true">
 			<entry key="config.stopBubbling" value="true" />
 			<entry key="lombok.addLombokGeneratedAnnotation" value="true" />
 		</propertyfile>
