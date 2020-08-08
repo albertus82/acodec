@@ -10,6 +10,7 @@
 	<property file="build.properties" />
 
 	<filter token="project.artifactId" value="${project.artifactId}" />
+	<filter token="project.name" value="${project.name}" />
 	<filter token="project.url" value="${project.url}" />
 
 	<filter token="windows.jarFileName" value="${windows.jarFileName}" />
