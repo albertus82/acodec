@@ -4,22 +4,21 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import it.albertus.acodec.ACodec;
 import it.albertus.acodec.engine.CodecAlgorithm;
+import it.albertus.acodec.engine.CodecConfig;
+import it.albertus.acodec.engine.StringCodec;
 import it.albertus.acodec.engine.CodecMode;
 import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.acodec.resources.Messages;
 import it.albertus.util.Version;
-import it.albertus.util.logging.LoggerFactory;
+import lombok.extern.java.Log;
 
 @SuppressWarnings("java:S106") // "Standard outputs should not be used directly to log anything"
-public class CodecConsole extends ACodec {
+@Log
+public class CodecConsole {
 
 	private static final String SYSTEM_LINE_SEPARATOR = System.lineSeparator();
-
-	private static final Logger logger = LoggerFactory.getLogger(CodecConsole.class);
 
 	private static final char OPTION_CHARSET = 'c';
 	private static final char OPTION_FILE = 'f';
@@ -113,14 +112,15 @@ public class CodecConsole extends ACodec {
 			}
 		}
 
-		getEngine().setAlgorithm(algorithm);
-		getEngine().setMode(mode);
+		final CodecConfig config = new CodecConfig();
+		config.setAlgorithm(algorithm);
+		config.setMode(mode);
 		if (charsetName != null) {
 			try {
-				getEngine().setCharset(Charset.forName(charsetName));
+				config.setCharset(Charset.forName(charsetName));
 			}
 			catch (final Exception e) {
-				logger.log(Level.FINE, Messages.get("err.invalid.charset", charsetName), e);
+				log.log(Level.FINE, Messages.get("err.invalid.charset", charsetName), e);
 				System.err.println(Messages.get("err.invalid.charset", charsetName) + SYSTEM_LINE_SEPARATOR);
 				printHelp();
 				return;
@@ -136,15 +136,15 @@ public class CodecConsole extends ACodec {
 		/* Execution */
 		try {
 			if (inputFile != null && outputFile != null) {
-				final String result = new ProcessFileTask(getEngine(), inputFile, outputFile).run(() -> false);
+				final String result = new ProcessFileTask(config, inputFile, outputFile).run(() -> false);
 				System.out.println(result != null ? result + " - " : "" + Messages.get("msg.file.process.ok.message"));
 			}
 			else {
-				System.out.println(getEngine().run(args[args.length - 1]));
+				System.out.println(new StringCodec(config).run(args[args.length - 1]));
 			}
 		}
 		catch (final Exception e) {
-			logger.log(Level.FINE, Messages.get("err.generic", e.getMessage()), e);
+			log.log(Level.FINE, Messages.get("err.generic", e.getMessage()), e);
 			System.err.println(Messages.get("err.generic", e.getMessage()));
 		}
 	}
@@ -178,7 +178,7 @@ public class CodecConsole extends ACodec {
 			System.out.println();
 		}
 		catch (final RuntimeException e) {
-			logger.log(Level.WARNING, e.toString(), e);
+			log.log(Level.WARNING, e.toString(), e);
 		}
 		System.out.println(help.toString().trim());
 	}

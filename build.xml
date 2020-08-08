@@ -33,6 +33,7 @@
 	</target>
 
 	<fileset id="classpath" dir="${dependencies.directory}">
+		<include name="provided/*.jar" />
 		<!-- Platform-independent libraries -->
 		<include name="compile/common/*.jar" />
 		<!-- Oldest SWT version in the package -->
@@ -745,10 +746,15 @@
 			<entry key="sonar.java.test.binaries" value="${build.outputTestClassesDirectory}" />
 			<entry key="sonar.coverage.jacoco.xmlReportPaths" value="${build.outputTestResultsDirectory}/jacoco/jacoco.xml" />
 		</propertyfile>
+		<propertyfile file="lombok.config">
+			<entry key="config.stopBubbling" value="true" />
+			<entry key="lombok.addLombokGeneratedAnnotation" value="true" />
+		</propertyfile>
 	</target>
 
 	<target name="sonar" depends="sonar-main, sonar-test">
 		<echoproperties srcfile="sonar-project.properties" />
+		<echoproperties srcfile="lombok.config" failonerror="false" />
 	</target>
 
 	<target name="all" depends="clean, dist, test, sonar" />

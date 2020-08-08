@@ -8,17 +8,17 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.acodec.resources.Messages;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class ProcessFileRunnable implements IRunnableWithProgress {
 
 	private static final short TOTAL_WORK = 1000;
 
 	private final ProcessFileTask task;
+	@Getter
 	private String result;
-
-	public ProcessFileRunnable(final ProcessFileTask task) {
-		this.task = task;
-	}
 
 	@Override
 	public void run(final IProgressMonitor monitor) throws InterruptedException {
@@ -43,10 +43,6 @@ public class ProcessFileRunnable implements IRunnableWithProgress {
 			}
 			monitor.done();
 		}
-	}
-
-	public String getResult() {
-		return result;
 	}
 
 	private Thread newUpdateStatusBarThread(final IProgressMonitor monitor) {

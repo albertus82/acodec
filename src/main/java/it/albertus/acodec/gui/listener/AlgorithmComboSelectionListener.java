@@ -1,5 +1,8 @@
 package it.albertus.acodec.gui.listener;
 
+import static it.albertus.acodec.engine.CodecMode.DECODE;
+import static it.albertus.acodec.engine.CodecMode.ENCODE;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -9,21 +12,18 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 
 import it.albertus.acodec.engine.CodecAlgorithm;
-import it.albertus.acodec.engine.CodecMode;
 import it.albertus.acodec.gui.CodecGui;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class AlgorithmComboSelectionListener extends SelectionAdapter {
 
 	private final CodecGui gui;
 
-	public AlgorithmComboSelectionListener(final CodecGui gui) {
-		this.gui = gui;
-	}
-
 	@Override
 	public void widgetSelected(final SelectionEvent se) {
 		final CodecAlgorithm algorithm = CodecAlgorithm.values()[gui.getAlgorithmCombo().getSelectionIndex()];
-		gui.getEngine().setAlgorithm(algorithm);
+		gui.getConfig().setAlgorithm(algorithm);
 
 		/* Attivazione drag and drop e pulsante elaborazione file */
 		if (!gui.getProcessFileButton().getEnabled()) {
@@ -33,10 +33,10 @@ public class AlgorithmComboSelectionListener extends SelectionAdapter {
 		}
 
 		/* Gestione radio */
-		final Button encodeRadio = gui.getModeRadios().get(CodecMode.ENCODE);
-		final Button decodeRadio = gui.getModeRadios().get(CodecMode.DECODE);
+		final Button encodeRadio = gui.getModeRadios().get(ENCODE);
+		final Button decodeRadio = gui.getModeRadios().get(DECODE);
 
-		if (algorithm.getModes().contains(CodecMode.DECODE)) {
+		if (algorithm.getModes().contains(DECODE)) {
 			if (!decodeRadio.getEnabled()) {
 				decodeRadio.setEnabled(true);
 			}

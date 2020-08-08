@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import it.albertus.acodec.engine.CodecAlgorithm;
-import it.albertus.acodec.gui.listener.ProcessFileAction;
 
 public class ProcessFileActionTest {
 

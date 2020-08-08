@@ -7,14 +7,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import it.albertus.acodec.gui.AboutDialog;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class AboutListener implements SelectionListener, Listener {
 
 	private final IShellProvider provider;
-
-	public AboutListener(final IShellProvider provider) {
-		this.provider = provider;
-	}
 
 	private void openAboutDialog() {
 		new AboutDialog(provider.getShell()).open();

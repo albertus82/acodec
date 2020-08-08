@@ -10,11 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -53,8 +51,13 @@ import it.albertus.acodec.resources.Messages;
 import it.albertus.jface.SwtUtils;
 import it.albertus.jface.closeable.CloseableResource;
 import it.albertus.util.Version;
-import it.albertus.util.logging.LoggerFactory;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 
+@Log
 public class AboutDialog extends Dialog {
 
 	private static final double MONITOR_SIZE_DIVISOR = 1.2;
@@ -64,8 +67,6 @@ public class AboutDialog extends Dialog {
 	private static final int COL_IDX_THIRDPARTY_AUTHOR = 0;
 	private static final int COL_IDX_THIRDPARTY_LICENSE = 1;
 	private static final int COL_IDX_THIRDPARTY_HOMEPAGE = 2;
-
-	private static final Logger logger = LoggerFactory.getLogger(AboutDialog.class);
 
 	public AboutDialog(final Shell parent) {
 		this(parent, SWT.SHEET);
@@ -103,7 +104,7 @@ public class AboutDialog extends Dialog {
 			versionDate = version.getDate();
 		}
 		catch (final Exception e) {
-			logger.log(Level.WARNING, e.toString(), e);
+			log.log(Level.WARNING, e.toString(), e);
 			versionDate = new Date();
 		}
 		info.setText(buildAnchor(Messages.get("project.url"), Messages.get("msg.application.name")) + ' ' + Messages.get("msg.version", version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM, Messages.getLanguage().getLocale()).format(versionDate)));
@@ -170,7 +171,7 @@ public class AboutDialog extends Dialog {
 			}
 		}
 		catch (final Exception e) {
-			logger.log(Level.WARNING, e.toString(), e);
+			log.log(Level.WARNING, e.toString(), e);
 		}
 		return text.length() <= System.lineSeparator().length() ? "" : text.substring(System.lineSeparator().length());
 	}
@@ -293,28 +294,19 @@ public class AboutDialog extends Dialog {
 		}
 	}
 
+	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+	@Getter(AccessLevel.PRIVATE)
+	@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 	private static class ThirdPartySoftware implements Comparable<ThirdPartySoftware> {
 
+		@EqualsAndHashCode.Include
 		private final String author;
 		private final URI licenseUri;
 		private final URI homePageUri;
 
-		private ThirdPartySoftware(final String author, final URI licenseUri, final URI homePageUri) {
-			this.author = author;
-			this.licenseUri = licenseUri;
-			this.homePageUri = homePageUri;
-		}
-
-		private String getAuthor() {
-			return author;
-		}
-
-		private URI getLicenseUri() {
-			return licenseUri;
-		}
-
-		private URI getHomePageUri() {
-			return homePageUri;
+		@Override
+		public int compareTo(final ThirdPartySoftware o) {
+			return author.compareTo(o.author);
 		}
 
 		private static Collection<ThirdPartySoftware> loadFromProperties() {
@@ -334,28 +326,6 @@ public class AboutDialog extends Dialog {
 				set.add(new ThirdPartySoftware(author, URI.create(properties.getProperty(i + ".licenseUri")), URI.create(properties.getProperty(i + ".homePageUri"))));
 			}
 			return set;
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hash(author);
-		}
-
-		@Override
-		public boolean equals(final Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (!(obj instanceof ThirdPartySoftware)) {
-				return false;
-			}
-			ThirdPartySoftware other = (ThirdPartySoftware) obj;
-			return Objects.equals(author, other.author);
-		}
-
-		@Override
-		public int compareTo(final ThirdPartySoftware o) {
-			return author.compareTo(o.author);
 		}
 	}
 }

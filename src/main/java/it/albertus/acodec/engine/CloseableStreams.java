@@ -11,18 +11,19 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.CountingInputStream;
 
-import it.albertus.util.logging.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.java.Log;
 
+@Log
 public class CloseableStreams implements Closeable {
 
-	private static final Logger logger = LoggerFactory.getLogger(CloseableStreams.class);
-
+	@Getter
 	private final LinkedList<InputStream> inputStreams;
+	@Getter
 	private final LinkedList<OutputStream> outputStreams;
 	private final CountingInputStream countingInputStream;
 
@@ -57,17 +58,9 @@ public class CloseableStreams implements Closeable {
 		final Iterator<? extends Closeable> iterator = streams.descendingIterator();
 		while (iterator.hasNext()) {
 			final Closeable closeable = iterator.next();
-			IOUtils.closeQuietly(closeable, e -> logger.log(Level.WARNING, e, () -> "Cannot close " + closeable + ':'));
+			IOUtils.closeQuietly(closeable, e -> log.log(Level.WARNING, e, () -> "Cannot close " + closeable + ':'));
 		}
 		streams.clear();
-	}
-
-	public LinkedList<InputStream> getInputStreams() { // NOSONAR
-		return inputStreams;
-	}
-
-	public LinkedList<OutputStream> getOutputStreams() { // NOSONAR
-		return outputStreams;
 	}
 
 	public long getBytesRead() {

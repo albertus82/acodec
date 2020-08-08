@@ -1,6 +1,5 @@
 package it.albertus.acodec.engine;
 
-import java.nio.charset.Charset;
 import java.util.zip.Adler32;
 
 import org.apache.commons.codec.binary.Base32;
@@ -10,34 +9,34 @@ import org.apache.commons.codec.digest.PureJavaCrc32C;
 
 import it.albertus.acodec.resources.Messages;
 import it.albertus.util.CRC16;
+import lombok.RequiredArgsConstructor;
 
-public class CodecEngine {
+@RequiredArgsConstructor
+public class StringCodec {
 
-	private CodecAlgorithm algorithm;
-	private CodecMode mode = CodecMode.ENCODE;
-	private Charset charset = Charset.defaultCharset();
+	private final CodecConfig config;
 
 	public String run(final String input) {
-		if (algorithm == null) {
+		if (config.getAlgorithm() == null) {
 			throw new IllegalStateException(Messages.get("msg.missing.algorithm"));
 		}
 		if (input == null || input.isEmpty()) {
 			throw new IllegalStateException(Messages.get("msg.missing.input"));
 		}
-		switch (mode) {
+		switch (config.getMode()) {
 		case DECODE:
 			return decode(input);
 		case ENCODE:
 			return encode(input);
 		default:
-			throw new UnsupportedOperationException(Messages.get("err.invalid.mode", mode));
+			throw new UnsupportedOperationException(Messages.get("err.invalid.mode", config.getMode()));
 		}
 	}
 
 	private String encode(final String input) {
 		try {
-			final byte[] bytes = input.getBytes(charset);
-			switch (algorithm) {
+			final byte[] bytes = input.getBytes(config.getCharset());
+			switch (config.getAlgorithm()) {
 			case BASE16:
 				return Base16.encode(bytes);
 			case BASE32:
@@ -65,58 +64,34 @@ public class CodecEngine {
 				adler32.update(bytes);
 				return String.format("%08x", adler32.getValue());
 			default:
-				return algorithm.createDigestUtils().digestAsHex(bytes);
+				return config.getAlgorithm().createDigestUtils().digestAsHex(bytes);
 			}
 		}
 		catch (final Exception e) {
-			throw new IllegalStateException(Messages.get("err.cannot.encode", algorithm.getName()), e);
+			throw new IllegalStateException(Messages.get("err.cannot.encode", config.getAlgorithm().getName()), e);
 		}
 	}
 
 	private String decode(final String input) {
 		try {
-			switch (algorithm) {
+			switch (config.getAlgorithm()) {
 			case BASE16:
-				return new String(Base16.decode(input), charset);
+				return new String(Base16.decode(input), config.getCharset());
 			case BASE32:
-				return new String(new Base32().decode(input), charset);
+				return new String(new Base32().decode(input), config.getCharset());
 			case BASE64:
-				return new String(Base64.decodeBase64(input), charset);
+				return new String(Base64.decodeBase64(input), config.getCharset());
 			case ASCII85:
-				return new String(Ascii85.decode(input), charset);
+				return new String(Ascii85.decode(input), config.getCharset());
 			case BASE91:
-				return new String(Base91.decode(input), charset);
+				return new String(Base91.decode(input), config.getCharset());
 			default:
-				throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", algorithm.getName()));
+				throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", config.getAlgorithm().getName()));
 			}
 		}
 		catch (final Exception e) {
-			throw new IllegalStateException(Messages.get("err.cannot.decode", algorithm.getName()), e);
+			throw new IllegalStateException(Messages.get("err.cannot.decode", config.getAlgorithm().getName()), e);
 		}
-	}
-
-	public CodecAlgorithm getAlgorithm() {
-		return algorithm;
-	}
-
-	public void setAlgorithm(final CodecAlgorithm algorithm) {
-		this.algorithm = algorithm;
-	}
-
-	public CodecMode getMode() {
-		return mode;
-	}
-
-	public void setMode(final CodecMode mode) {
-		this.mode = mode;
-	}
-
-	public Charset getCharset() {
-		return charset;
-	}
-
-	public void setCharset(final Charset charset) {
-		this.charset = charset;
 	}
 
 }

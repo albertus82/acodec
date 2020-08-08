@@ -1,9 +1,11 @@
 package it.albertus.acodec.gui.listener;
 
+import static it.albertus.acodec.engine.CodecMode.DECODE;
+import static it.albertus.acodec.engine.CodecMode.ENCODE;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -16,31 +18,27 @@ import org.eclipse.swt.widgets.Shell;
 
 import it.albertus.acodec.engine.Cancelable;
 import it.albertus.acodec.engine.CodecAlgorithm;
-import it.albertus.acodec.engine.CodecMode;
 import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.acodec.gui.CodecGui;
 import it.albertus.acodec.gui.Images;
 import it.albertus.acodec.gui.ProcessFileRunnable;
 import it.albertus.acodec.resources.Messages;
 import it.albertus.jface.EnhancedErrorDialog;
-import it.albertus.util.logging.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 
+@Log
+@RequiredArgsConstructor
 public class ProcessFileAction {
 
 	private static final String MSG_APPLICATION_NAME = "msg.application.name";
 
-	private static final Logger logger = LoggerFactory.getLogger(ProcessFileAction.class);
-
 	protected final CodecGui gui;
-
-	public ProcessFileAction(final CodecGui gui) {
-		this.gui = gui;
-	}
 
 	protected String getSourceFile() {
 		final FileDialog openDialog = new FileDialog(gui.getShell(), SWT.OPEN);
-		if (CodecMode.DECODE.equals(gui.getEngine().getMode())) {
-			openDialog.setFilterExtensions(buildFilterExtensions(gui.getEngine().getAlgorithm()));
+		if (DECODE.equals(gui.getConfig().getMode())) {
+			openDialog.setFilterExtensions(buildFilterExtensions(gui.getConfig().getAlgorithm()));
 		}
 		return openDialog.open();
 	}
@@ -50,8 +48,8 @@ public class ProcessFileAction {
 		saveDialog.setOverwrite(true);
 		final File sourceFile = new File(sourceFileName);
 		saveDialog.setFilterPath(sourceFile.getParent());
-		if (CodecMode.ENCODE.equals(gui.getEngine().getMode())) {
-			final CodecAlgorithm algorithm = gui.getEngine().getAlgorithm();
+		if (ENCODE.equals(gui.getConfig().getMode())) {
+			final CodecAlgorithm algorithm = gui.getConfig().getAlgorithm();
 			saveDialog.setFilterExtensions(buildFilterExtensions(algorithm));
 			saveDialog.setFileName(sourceFile.getName() + '.' + algorithm.getFileExtension().toLowerCase());
 		}
@@ -75,7 +73,7 @@ public class ProcessFileAction {
 		try {
 			final File inputFile = new File(sourceFileName);
 			final File outputFile = new File(destinationFileName);
-			final ProcessFileTask task = new ProcessFileTask(gui.getEngine(), inputFile, outputFile);
+			final ProcessFileTask task = new ProcessFileTask(gui.getConfig(), inputFile, outputFile);
 			final ProcessFileRunnable runnable = new ProcessFileRunnable(task);
 			new LocalizedProgressMonitorDialog(gui.getShell(), task).run(true, true, runnable); // execute in separate thread
 			if (runnable.getResult() != null) { // result can be null in certain cases
@@ -96,7 +94,7 @@ public class ProcessFileAction {
 			box.open();
 		}
 		catch (final InvocationTargetException e) {
-			logger.log(Level.WARNING, e.toString(), e);
+			log.log(Level.WARNING, e.toString(), e);
 			final String message;
 			final Throwable throwable;
 			if (e.getCause() != null) {
@@ -110,7 +108,7 @@ public class ProcessFileAction {
 			EnhancedErrorDialog.openError(gui.getShell(), Messages.get(MSG_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIconArray());
 		}
 		catch (final Exception e) {
-			logger.log(Level.SEVERE, e.toString(), e);
+			log.log(Level.SEVERE, e.toString(), e);
 			EnhancedErrorDialog.openError(gui.getShell(), Messages.get(MSG_APPLICATION_NAME), e.toString(), IStatus.ERROR, e, Images.getMainIconArray());
 		}
 	}

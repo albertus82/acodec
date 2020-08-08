@@ -4,7 +4,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
@@ -23,7 +22,8 @@ import it.albertus.acodec.resources.Messages.Language;
 import it.albertus.jface.cocoa.CocoaEnhancerException;
 import it.albertus.jface.cocoa.CocoaUIEnhancer;
 import it.albertus.jface.sysinfo.SystemInformationDialog;
-import it.albertus.util.logging.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.java.Log;
 
 /**
  * Solo i <tt>MenuItem</tt> che fanno parte di una barra dei men&ugrave; con
@@ -32,6 +32,7 @@ import it.albertus.util.logging.LoggerFactory;
  * combinazioni di tasti, gli acceleratori non funzioneranno e le relative
  * combinazioni di tasti saranno ignorate.
  */
+@Log
 public class MenuBar {
 
 	private static final String LBL_MENU_HEADER_FILE = "lbl.menu.header.file";
@@ -44,9 +45,8 @@ public class MenuBar {
 	private static final String LBL_MENU_ITEM_SYSTEM_INFO = "lbl.menu.item.system.info";
 	private static final String LBL_MENU_ITEM_ABOUT = "lbl.menu.item.about";
 
-	private static final Logger logger = LoggerFactory.getLogger(MenuBar.class);
-
 	private final MenuItem fileMenuHeader;
+	@Getter
 	private final MenuItem fileProcessMenuItem;
 	private MenuItem fileExitMenuItem;
 
@@ -69,7 +69,7 @@ public class MenuBar {
 				cocoaMenuCreated = true;
 			}
 			catch (final CocoaEnhancerException cee) {
-				logger.log(Level.WARNING, Messages.get("err.cocoa.enhancer"), cee);
+				log.log(Level.WARNING, Messages.get("err.cocoa.enhancer"), cee);
 			}
 		}
 
@@ -165,10 +165,6 @@ public class MenuBar {
 		if (helpAboutItem != null && !helpAboutItem.isDisposed()) {
 			helpAboutItem.setText(Messages.get(LBL_MENU_ITEM_ABOUT));
 		}
-	}
-
-	public MenuItem getFileProcessMenuItem() {
-		return fileProcessMenuItem;
 	}
 
 }

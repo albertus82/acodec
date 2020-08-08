@@ -9,14 +9,13 @@ import org.apache.openjpa.lib.util.Base16Encoder;
 
 import it.albertus.acodec.resources.Messages;
 import it.albertus.util.NewLine;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Base16 {
 
 	private static final CharSequence ALPHABET = "0123456789ABCDEF";
-
-	private Base16() {
-		throw new IllegalAccessError();
-	}
 
 	public static String encode(final byte[] byteArray) {
 		return Base16Encoder.encode(byteArray);

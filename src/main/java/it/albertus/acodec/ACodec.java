@@ -1,12 +1,14 @@
 package it.albertus.acodec;
 
 import it.albertus.acodec.console.CodecConsole;
-import it.albertus.acodec.engine.CodecEngine;
 import it.albertus.acodec.gui.CodecGui;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-public abstract class ACodec {
-
-	private final CodecEngine engine = new CodecEngine();
+@Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ACodec {
 
 	/* Unique entry point */
 	public static void main(final String... args) {
@@ -27,10 +29,6 @@ public abstract class ACodec {
 				CodecGui.main();
 			}
 		}
-	}
-
-	public CodecEngine getEngine() {
-		return engine;
 	}
 
 }

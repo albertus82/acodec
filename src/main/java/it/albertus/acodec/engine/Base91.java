@@ -4,13 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import net.sourceforge.base91.b91cli;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Base91 {
-
-	private Base91() {
-		throw new IllegalAccessError();
-	}
 
 	public static String encode(final byte[] byteArray) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -7,23 +7,19 @@ import org.eclipse.swt.widgets.Button;
 
 import it.albertus.acodec.engine.CodecMode;
 import it.albertus.acodec.gui.CodecGui;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class ModeRadioSelectionListener extends SelectionAdapter {
 
 	private final CodecGui gui;
-	private final CodecMode mode;
 	private final Button radio;
-
-	public ModeRadioSelectionListener(final CodecGui gui, final Button radio, final CodecMode mode) {
-		this.gui = gui;
-		this.radio = radio;
-		this.mode = mode;
-	}
+	private final CodecMode mode;
 
 	@Override
 	public void widgetSelected(final SelectionEvent se) {
 		if (radio.getSelection()) {
-			gui.getEngine().setMode(mode);
+			gui.getConfig().setMode(mode);
 			gui.getInputText().notifyListeners(SWT.Modify, null);
 		}
 	}

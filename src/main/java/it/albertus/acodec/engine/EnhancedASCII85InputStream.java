@@ -3,19 +3,17 @@ package it.albertus.acodec.engine;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.freehep.util.io.ASCII85InputStream;
 
-import it.albertus.util.logging.LoggerFactory;
+import lombok.extern.java.Log;
 
-public class Ascii85InputStream extends ASCII85InputStream {
-
-	private static final Logger logger = LoggerFactory.getLogger(Ascii85InputStream.class);
+@Log
+public class EnhancedASCII85InputStream extends ASCII85InputStream {
 
 	private final InputStream input;
 
-	public Ascii85InputStream(final InputStream input) {
+	public EnhancedASCII85InputStream(final InputStream input) {
 		super(input);
 		this.input = input;
 		discardStartDelimiter();
@@ -29,12 +27,12 @@ public class Ascii85InputStream extends ASCII85InputStream {
 			}
 		}
 		catch (final IOException ioe) {
-			logger.log(Level.FINE, ioe.getMessage(), ioe);
+			log.log(Level.FINE, ioe.getMessage(), ioe);
 			try {
 				input.reset();
 			}
 			catch (final IOException e) {
-				logger.log(Level.FINE, e.getMessage(), e);
+				log.log(Level.FINE, e.getMessage(), e);
 			}
 		}
 	}

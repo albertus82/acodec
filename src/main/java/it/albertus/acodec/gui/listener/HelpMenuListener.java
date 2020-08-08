@@ -7,14 +7,12 @@ import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.widgets.MenuItem;
 
 import it.albertus.jface.sysinfo.SystemInformationDialog;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class HelpMenuListener implements ArmListener, MenuListener {
 
 	private final MenuItem item;
-
-	public HelpMenuListener(final MenuItem item) {
-		this.item = item;
-	}
 
 	@Override
 	public void widgetArmed(final ArmEvent e) {

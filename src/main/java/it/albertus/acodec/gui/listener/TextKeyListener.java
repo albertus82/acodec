@@ -6,14 +6,12 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Text;
 
 import it.albertus.jface.SwtUtils;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class TextKeyListener extends KeyAdapter {
 
 	private final Text text;
-
-	public TextKeyListener(final Text text) {
-		this.text = text;
-	}
 
 	@Override
 	public void keyPressed(final KeyEvent e) {

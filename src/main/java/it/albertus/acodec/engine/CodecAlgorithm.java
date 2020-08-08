@@ -3,6 +3,8 @@ package it.albertus.acodec.engine;
 import static it.albertus.acodec.engine.AlgorithmType.CHECKSUM;
 import static it.albertus.acodec.engine.AlgorithmType.ENCODING;
 import static it.albertus.acodec.engine.AlgorithmType.HASH;
+import static it.albertus.acodec.engine.CodecMode.ENCODE;
+import static java.lang.Thread.MIN_PRIORITY;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
@@ -14,14 +16,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import it.albertus.util.logging.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.java.Log;
 
+@Log
 public enum CodecAlgorithm {
 
 	BASE16("Base16", ENCODING),
@@ -54,17 +57,18 @@ public enum CodecAlgorithm {
 	TIGER("Tiger", HASH),
 	WHIRLPOOL("Whirlpool", HASH);
 
-	private static final Logger logger = LoggerFactory.getLogger(CodecAlgorithm.class);
-
 	private static final Future<Void> bouncyCastleInitialization = CompletableFuture.runAsync(() -> Security.addProvider(new BouncyCastleProvider()), runnable -> {
 		final Thread backgroundThread = new Thread(runnable);
 		backgroundThread.setDaemon(true);
-		backgroundThread.setPriority(Thread.MIN_PRIORITY);
+		backgroundThread.setPriority(MIN_PRIORITY);
 		backgroundThread.start();
 	});
 
+	@Getter
 	private final String name;
+	@Getter
 	private final String fileExtension;
+	@Getter
 	private final AlgorithmType type;
 	private final String[] aliases;
 
@@ -79,33 +83,16 @@ public enum CodecAlgorithm {
 		this(name, name.toLowerCase().replaceAll("[^0-9a-z]", ""), type, aliases);
 	}
 
-	@Override
-	public String toString() {
-		return name;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getFileExtension() {
-		return fileExtension;
-	}
-
 	public Set<String> getAliases() {
 		return new TreeSet<>(Arrays.asList(aliases));
 	}
 
 	public Set<CodecMode> getModes() {
-		return ENCODING.equals(type) ? EnumSet.allOf(CodecMode.class) : EnumSet.of(CodecMode.ENCODE);
-	}
-
-	public AlgorithmType getType() {
-		return type;
+		return ENCODING.equals(type) ? EnumSet.allOf(CodecMode.class) : EnumSet.of(ENCODE);
 	}
 
 	public static String[] getNames() {
-		return Arrays.stream(CodecAlgorithm.values()).map(CodecAlgorithm::getName).toArray(String[]::new);
+		return Arrays.stream(values()).map(CodecAlgorithm::getName).toArray(String[]::new);
 	}
 
 	public DigestUtils createDigestUtils() throws NoSuchAlgorithmException {
@@ -130,13 +117,13 @@ public enum CodecAlgorithm {
 			return new DigestUtils(name);
 		}
 		catch (final RuntimeException e1) {
-			logger.log(Level.FINE, name, e1);
+			log.log(Level.FINE, name, e1);
 			for (final String alias : aliases) {
 				try {
 					return new DigestUtils(alias);
 				}
 				catch (final RuntimeException e2) {
-					logger.log(Level.FINE, alias, e2);
+					log.log(Level.FINE, alias, e2);
 				}
 			}
 		}

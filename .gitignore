@@ -1,5 +1,6 @@
 /bin/
 /build/
 /target/
-/.settings/
-/sonar-project.properties
+.settings/
+sonar-project.properties
+lombok.config

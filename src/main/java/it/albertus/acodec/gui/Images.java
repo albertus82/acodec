@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -16,11 +15,13 @@ import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
-import it.albertus.util.logging.LoggerFactory;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.java.Log;
 
+@Log
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Images {
-
-	private static final Logger logger = LoggerFactory.getLogger(Images.class);
 
 	private static final Comparator<Rectangle> areaComparatorDescending = (r1, r2) -> {
 		final int a1 = r1.width * r1.height;
@@ -47,7 +48,7 @@ public class Images {
 				final Image image = new Image(Display.getCurrent(), data);
 				map.put(image.getBounds(), image);
 			}
-			logger.log(Level.CONFIG, "{0}: {1}", new Object[] { resourceName, map });
+			log.log(Level.CONFIG, "{0}: {1}", new Object[] { resourceName, map });
 			return map;
 		}
 		catch (final IOException e) {
@@ -65,10 +66,6 @@ public class Images {
 	 */
 	public static Map<Rectangle, Image> getMainIconMap() {
 		return Collections.unmodifiableMap(mainIconMap);
-	}
-
-	private Images() {
-		throw new IllegalAccessError();
 	}
 
 }

@@ -8,7 +8,10 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import it.albertus.jface.JFaceMessages;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Messages {
 
 	public enum Language {
@@ -29,11 +32,6 @@ public final class Messages {
 	private static final String BASE_NAME = Messages.class.getName().toLowerCase();
 
 	private static ResourceBundle resources = ResourceBundle.getBundle(BASE_NAME, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
-
-	/** Instantiation not permitted. */
-	private Messages() {
-		throw new IllegalAccessError();
-	}
 
 	/** Aggiorna la lingua in cui vengono mostrati i messaggi. */
 	public static void setLanguage(final String language) {

@@ -21,11 +21,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.albertus.acodec.engine.AlgorithmType;
-import it.albertus.acodec.engine.CodecAlgorithm;
-import it.albertus.acodec.engine.CodecEngine;
-import it.albertus.acodec.engine.CodecMode;
-import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.util.NewLine;
 import it.albertus.util.logging.LoggerFactory;
 
@@ -41,7 +36,8 @@ public class CodecEngineTest {
 	private static final Map<CodecAlgorithm, String> encodedStrings = new EnumMap<>(CodecAlgorithm.class);
 	private static final Map<CodecAlgorithm, File> encodedFiles = new EnumMap<>(CodecAlgorithm.class);
 
-	private static CodecEngine engine;
+	private static CodecConfig config;
+	private static StringCodec engine;
 
 	@BeforeClass
 	public static void init() throws IOException {
@@ -49,8 +45,9 @@ public class CodecEngineTest {
 		createEncodedStrings();
 		createEncodedFiles();
 
-		engine = new CodecEngine();
-		engine.setCharset(CHARSET);
+		config = new CodecConfig();
+		config.setCharset(CHARSET);
+		engine = new StringCodec(config);
 	}
 
 	private static void createOriginalFile() throws IOException {
@@ -106,10 +103,10 @@ public class CodecEngineTest {
 
 	@Test
 	public void testStringEncoder() {
-		engine.setMode(CodecMode.ENCODE);
+		config.setMode(CodecMode.ENCODE);
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(CodecMode.ENCODE)) {
-				engine.setAlgorithm(ca);
+				config.setAlgorithm(ca);
 				log.log(Level.INFO, "Testing string encoding {0}", ca);
 				Assert.assertEquals(ca.toString(), encodedStrings.get(ca), engine.run(originalString));
 			}
@@ -118,10 +115,10 @@ public class CodecEngineTest {
 
 	@Test
 	public void testStringDecoder() {
-		engine.setMode(CodecMode.DECODE);
+		config.setMode(CodecMode.DECODE);
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(CodecMode.DECODE)) {
-				engine.setAlgorithm(ca);
+				config.setAlgorithm(ca);
 				log.log(Level.INFO, "Testing string decoding {0}", ca);
 				Assert.assertEquals(ca.toString(), originalString, engine.run(encodedStrings.get(ca)));
 			}
@@ -130,10 +127,10 @@ public class CodecEngineTest {
 
 	@Test
 	public void testFileEncoder() throws IOException {
-		engine.setMode(CodecMode.ENCODE);
+		config.setMode(CodecMode.ENCODE);
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(CodecMode.ENCODE)) {
-				engine.setAlgorithm(ca);
+				config.setAlgorithm(ca);
 				log.log(Level.INFO, "Testing file encoding {0}", ca);
 				final String expected;
 				if (!AlgorithmType.ENCODING.equals(ca.getType())) {
@@ -154,10 +151,10 @@ public class CodecEngineTest {
 
 	@Test
 	public void testFileDecoder() throws IOException {
-		engine.setMode(CodecMode.DECODE);
+		config.setMode(CodecMode.DECODE);
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(CodecMode.DECODE)) {
-				engine.setAlgorithm(ca);
+				config.setAlgorithm(ca);
 				log.log(Level.INFO, "Testing file decoding {0}", ca);
 				Assert.assertEquals(ca.toString(), originalString, testFileDecoder(encodedFiles.get(ca)));
 			}
@@ -167,7 +164,7 @@ public class CodecEngineTest {
 	private String testFileEncoder(final CodecAlgorithm ca) throws IOException {
 		final File outputFile = File.createTempFile(CodecMode.ENCODE.name().toLowerCase() + '-', '.' + ca.getFileExtension());
 		log.log(Level.INFO, "Created temporary encoded file \"{0}\"", outputFile);
-		final String value = new ProcessFileTask(engine, originalFile, outputFile).run(() -> false);
+		final String value = new ProcessFileTask(config, originalFile, outputFile).run(() -> false);
 		if (!AlgorithmType.ENCODING.equals(ca.getType())) {
 			Assert.assertNotNull(value);
 			Assert.assertFalse(value.isEmpty());
@@ -196,7 +193,7 @@ public class CodecEngineTest {
 	private String testFileDecoder(final File file) throws IOException {
 		final File outputFile = File.createTempFile(CodecMode.DECODE.name().toLowerCase() + '-', ".txt");
 		log.log(Level.INFO, "Created temporary decoded file \"{0}\"", outputFile);
-		new ProcessFileTask(engine, file, outputFile).run(() -> false);
+		new ProcessFileTask(config, file, outputFile).run(() -> false);
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try (final InputStream fis = Files.newInputStream(outputFile.toPath())) {
 			IOUtils.copy(fis, baos);

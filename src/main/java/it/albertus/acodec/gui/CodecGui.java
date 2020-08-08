@@ -25,9 +25,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import it.albertus.acodec.ACodec;
 import it.albertus.acodec.engine.CodecAlgorithm;
+import it.albertus.acodec.engine.CodecConfig;
 import it.albertus.acodec.engine.CodecMode;
+import it.albertus.acodec.engine.StringCodec;
 import it.albertus.acodec.gui.listener.AlgorithmComboSelectionListener;
 import it.albertus.acodec.gui.listener.CharsetComboSelectionListener;
 import it.albertus.acodec.gui.listener.CloseListener;
@@ -41,13 +42,20 @@ import it.albertus.acodec.resources.Messages.Language;
 import it.albertus.jface.EnhancedErrorDialog;
 import it.albertus.util.Version;
 import it.albertus.util.logging.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
 
-public class CodecGui extends ACodec implements IShellProvider {
+@Getter
+@Setter
+public class CodecGui implements IShellProvider {
 
 	private static final Logger logger = LoggerFactory.getLogger(CodecGui.class);
 
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
+
+	private final CodecConfig config = new CodecConfig();
+	private final StringCodec engine = new StringCodec(config);
 
 	private final Shell shell;
 	private final MenuBar menuBar;
@@ -126,7 +134,7 @@ public class CodecGui extends ACodec implements IShellProvider {
 		GridDataFactory.swtDefaults().span(3, 1).applyTo(radioComposite);
 		for (final CodecMode mode : CodecMode.values()) {
 			final Button radio = new Button(radioComposite, SWT.RADIO);
-			radio.setSelection(getEngine().getMode().equals(mode));
+			radio.setSelection(mode.equals(config.getMode()));
 			radio.setText(mode.getName());
 			radio.addSelectionListener(new ModeRadioSelectionListener(this, radio, mode));
 			modeRadios.put(mode, radio);
@@ -241,71 +249,6 @@ public class CodecGui extends ACodec implements IShellProvider {
 			entry.getValue().setText(entry.getKey().getName());
 		}
 		inputText.notifyListeners(SWT.Modify, null);
-	}
-
-	@Override
-	public Shell getShell() {
-		return shell;
-	}
-
-	public Text getInputText() {
-		return inputText;
-	}
-
-	public Text getOutputText() {
-		return outputText;
-	}
-
-	public Combo getAlgorithmCombo() {
-		return algorithmCombo;
-	}
-
-	public Combo getCharsetCombo() {
-		return charsetCombo;
-	}
-
-	public Map<CodecMode, Button> getModeRadios() {
-		return modeRadios;
-	}
-
-	public Button getProcessFileButton() {
-		return processFileButton;
-	}
-
-	public DropTarget getShellDropTarget() {
-		return shellDropTarget;
-	}
-
-	public MenuBar getMenuBar() {
-		return menuBar;
-	}
-
-	public Label getInputLabel() {
-		return inputLabel;
-	}
-
-	public Label getOutputLabel() {
-		return outputLabel;
-	}
-
-	public Label getAlgorithmLabel() {
-		return algorithmLabel;
-	}
-
-	public Label getCharsetLabel() {
-		return charsetLabel;
-	}
-
-	public Label getModeLabel() {
-		return modeLabel;
-	}
-
-	public boolean isDirty() {
-		return dirty;
-	}
-
-	public void setDirty(boolean dirty) {
-		this.dirty = dirty;
 	}
 
 }
