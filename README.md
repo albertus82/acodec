@@ -1,4 +1,4 @@
-Codec
+ACodec
 =====
 
 [![Latest release](https://img.shields.io/github/release/albertus82/codec.svg)](https://github.com/albertus82/codec/releases/latest)
