@@ -12,7 +12,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Ascii85 {
+public class ASCII85 {
 
 	public static String encode(final byte[] byteArray) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();

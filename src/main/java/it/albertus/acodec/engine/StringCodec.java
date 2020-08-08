@@ -44,7 +44,7 @@ public class StringCodec {
 			case BASE64:
 				return Base64.encodeBase64String(bytes);
 			case ASCII85:
-				return Ascii85.encode(bytes);
+				return ASCII85.encode(bytes);
 			case BASE91:
 				return Base91.encode(bytes);
 			case CRC16:
@@ -82,7 +82,7 @@ public class StringCodec {
 			case BASE64:
 				return new String(Base64.decodeBase64(input), config.getCharset());
 			case ASCII85:
-				return new String(Ascii85.decode(input), config.getCharset());
+				return new String(ASCII85.decode(input), config.getCharset());
 			case BASE91:
 				return new String(Base91.decode(input), config.getCharset());
 			default:
