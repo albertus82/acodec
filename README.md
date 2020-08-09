@@ -1,11 +1,11 @@
 ACodec
 =====
 
-[![Latest release](https://img.shields.io/github/release/albertus82/codec.svg)](https://github.com/albertus82/codec/releases/latest)
-[![Build status](https://github.com/albertus82/codec/workflows/build/badge.svg)](https://github.com/albertus82/codec/actions)
-[![Build status](https://ci.appveyor.com/api/projects/status/github/albertus82/codec?branch=master&svg=true)](https://ci.appveyor.com/project/albertus82/codec)
-[![Build status](https://dev.azure.com/albertus82/codec/_apis/build/status/master)](https://dev.azure.com/albertus82/codec/_build/)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=it.albertus%3Acodec&metric=alert_status)](https://sonarcloud.io/dashboard?id=it.albertus%3Acodec)
+[![Latest release](https://img.shields.io/github/release/albertus82/acodec.svg)](https://github.com/albertus82/acodec/releases/latest)
+[![Build status](https://github.com/albertus82/acodec/workflows/build/badge.svg)](https://github.com/albertus82/acodec/actions)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/albertus82/acodec?branch=master&svg=true)](https://ci.appveyor.com/project/albertus82/acodec)
+[![Build status](https://dev.azure.com/albertus82/acodec/_apis/build/status/master)](https://dev.azure.com/albertus82/acodec/_build/)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=it.albertus%3Aacodec&metric=alert_status)](https://sonarcloud.io/dashboard?id=it.albertus%3Aacodec)
 
 **Graphical user interface available for Windows, Linux & macOS.**
 
@@ -13,7 +13,7 @@ ACodec
 
 ## Download
 
-Download the [latest release](https://github.com/albertus82/codec/releases/latest) from the [releases page](https://github.com/albertus82/codec/releases).
+Download the [latest release](https://github.com/albertus82/acodec/releases/latest) from the [releases page](https://github.com/albertus82/acodec/releases).
 
 ## Installation
 
@@ -31,7 +31,7 @@ Download the [latest release](https://github.com/albertus82/codec/releases/lates
 ## Command line reference
 
 ```ruby
-Usage: codec <mode> <algorithm> [-c <charset>] { <text to process> | -f <source file> <destination file> }
+Usage: acodec <mode> <algorithm> [-c <charset>] { <text to process> | -f <source file> <destination file> }
 
 Mode:
     e    Encode
@@ -42,7 +42,7 @@ Algorithms: Base16, Base32, Base64, Ascii85, basE91, CRC-16, CRC-32, CRC-32C,
             SHA-512/224, SHA-512/256, SHA3-224, SHA3-256, SHA3-384, SHA3-512,
             RIPEMD-128, RIPEMD-160, RIPEMD-256, RIPEMD-320, Tiger, Whirlpool
 
-Example: codec e base64 -c UTF-8 "Lorem ipsum dolor sit amet"
+Example: acodec e base64 -c UTF-8 "Lorem ipsum dolor sit amet"
 ```
 
 ## Acknowledgements
