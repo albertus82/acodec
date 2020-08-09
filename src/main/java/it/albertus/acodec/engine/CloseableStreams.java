@@ -15,16 +15,18 @@ import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.CountingInputStream;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.java.Log;
 
 @Log
+@Getter(AccessLevel.PACKAGE)
 class CloseableStreams implements Closeable {
 
-	@Getter
 	private final LinkedList<InputStream> inputStreams;
-	@Getter
 	private final LinkedList<OutputStream> outputStreams;
+
+	@Getter(AccessLevel.NONE)
 	private final CountingInputStream countingInputStream;
 
 	CloseableStreams(final Path input, final Path output) throws IOException {
