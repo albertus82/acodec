@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.extern.java.Log;
 
 @Log
+@Getter
 public enum CodecAlgorithm {
 
 	BASE16("Base16", ENCODING),
@@ -64,11 +65,8 @@ public enum CodecAlgorithm {
 		backgroundThread.start();
 	});
 
-	@Getter
 	private final String name;
-	@Getter
 	private final String fileExtension;
-	@Getter
 	private final AlgorithmType type;
 	private final String[] aliases;
 

@@ -9,24 +9,20 @@ import java.util.ResourceBundle;
 
 import it.albertus.jface.JFaceMessages;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Messages {
 
+	@Getter
+	@RequiredArgsConstructor
 	public enum Language {
 		ENGLISH(Locale.ENGLISH),
 		ITALIAN(Locale.ITALIAN);
 
 		private final Locale locale;
-
-		private Language(final Locale locale) {
-			this.locale = locale;
-		}
-
-		public Locale getLocale() {
-			return locale;
-		}
 	}
 
 	private static final String BASE_NAME = Messages.class.getName().toLowerCase();
