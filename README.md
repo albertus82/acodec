@@ -9,7 +9,7 @@ ACodec
 
 **Graphical user interface available for Windows, Linux & macOS.**
 
-![Screenshot](https://user-images.githubusercontent.com/8672431/27011383-cbf09962-4eba-11e7-9c7e-24215c5e06e4.png)
+![Screenshot](https://user-images.githubusercontent.com/8672431/89737895-fafa7180-da74-11ea-855a-96d637eafcbd.gif)
 
 ## Download
 
