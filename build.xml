@@ -523,7 +523,7 @@
 			[Files]
 			Source: "app\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 			Source: "config\*"; DestDir: "{userappdata}\${project.name}"; Flags: onlyifdoesntexist skipifsourcedoesntexist
-			Source: "setup.log"; DestDir: "{autoappdata}\${project.name}"; DestName: "${dependencies.logFileName}"; Flags: ignoreversion overwritereadonly uninsremovereadonly; Attribs: hidden readonly
+			Source: "${dependencies.logFileName}"; DestDir: "{autoappdata}\${project.name}"; Flags: ignoreversion overwritereadonly uninsremovereadonly; Attribs: hidden readonly
 
 			[Code]
 			procedure CurStepChanged(CurStep: TSetupStep);
@@ -548,7 +548,7 @@
 			</mapper>
 		</pathconvert>
 
-		<echo file="${build.packagesDirectory}/win32-win32-x86/setup.log">${dependencies.log.x86}</echo>
+		<echo file="${build.packagesDirectory}/win32-win32-x86/${dependencies.logFileName}">${dependencies.log.x86}</echo>
 
 		<exec osfamily="windows" executable="${innoSetup.directory}/ISCC.exe" failonerror="true">
 			<arg value="${build.packagesDirectory}/win32-win32-x86/setup.iss" />
@@ -625,7 +625,7 @@
 			[Files]
 			Source: "app\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 			Source: "config\*"; DestDir: "{userappdata}\${project.name}"; Flags: onlyifdoesntexist skipifsourcedoesntexist
-			Source: "setup.log"; DestDir: "{autoappdata}\${project.name}"; DestName: "${dependencies.logFileName}"; Flags: ignoreversion overwritereadonly uninsremovereadonly; Attribs: hidden readonly
+			Source: "${dependencies.logFileName}"; DestDir: "{autoappdata}\${project.name}"; Flags: ignoreversion overwritereadonly uninsremovereadonly; Attribs: hidden readonly
 
 			[Code]
 			procedure CurStepChanged(CurStep: TSetupStep);
@@ -650,7 +650,7 @@
 			</mapper>
 		</pathconvert>
 
-		<echo file="${build.packagesDirectory}/win32-win32-x86_64/setup.log">${dependencies.log.x86_64}</echo>
+		<echo file="${build.packagesDirectory}/win32-win32-x86_64/${dependencies.logFileName}">${dependencies.log.x86_64}</echo>
 
 		<exec osfamily="windows" executable="${innoSetup.directory}/ISCC.exe" failonerror="true">
 			<arg value="${build.packagesDirectory}/win32-win32-x86_64/setup.iss" />
