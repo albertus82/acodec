@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 import net.sourceforge.base91.b91cli;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Base91 {
+class Base91 {
 
-	public static String encode(final byte[] byteArray) throws IOException {
+	static String encode(final byte[] byteArray) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try (final ByteArrayInputStream bais = new ByteArrayInputStream(byteArray)) {
 			b91cli.encode(bais, baos);
@@ -19,7 +19,7 @@ public class Base91 {
 		return baos.toString().trim();
 	}
 
-	public static byte[] decode(final String encoded) throws IOException {
+	static byte[] decode(final String encoded) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try (final ByteArrayInputStream bais = new ByteArrayInputStream(encoded.getBytes())) {
 			b91cli.decode(bais, baos);

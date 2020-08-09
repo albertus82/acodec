@@ -12,9 +12,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ASCII85 {
+class ASCII85 {
 
-	public static String encode(final byte[] byteArray) throws IOException {
+	static String encode(final byte[] byteArray) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try (final ByteArrayInputStream bais = new ByteArrayInputStream(byteArray); final ASCII85OutputStream a85os = new ASCII85OutputStream(baos)) {
 			IOUtils.copy(bais, a85os);
@@ -22,7 +22,7 @@ public class ASCII85 {
 		return baos.toString().replaceAll("[" + NewLine.CRLF.toString() + "]+", "");
 	}
 
-	public static byte[] decode(final String encoded) throws IOException {
+	static byte[] decode(final String encoded) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try (final ByteArrayInputStream bais = new ByteArrayInputStream(encoded.getBytes()); final EnhancedASCII85InputStream a85is = new EnhancedASCII85InputStream(bais)) {
 			IOUtils.copy(a85is, baos);

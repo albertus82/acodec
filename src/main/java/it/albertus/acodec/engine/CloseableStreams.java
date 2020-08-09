@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.extern.java.Log;
 
 @Log
-public class CloseableStreams implements Closeable {
+class CloseableStreams implements Closeable {
 
 	@Getter
 	private final LinkedList<InputStream> inputStreams;
@@ -27,7 +27,7 @@ public class CloseableStreams implements Closeable {
 	private final LinkedList<OutputStream> outputStreams;
 	private final CountingInputStream countingInputStream;
 
-	public CloseableStreams(final Path input, final Path output) throws IOException {
+	CloseableStreams(final Path input, final Path output) throws IOException {
 		inputStreams = createInputStreams(input);
 		outputStreams = createOutputStreams(output);
 		countingInputStream = new CountingInputStream(inputStreams.getLast());
@@ -63,7 +63,7 @@ public class CloseableStreams implements Closeable {
 		streams.clear();
 	}
 
-	public long getBytesRead() {
+	long getBytesRead() {
 		return countingInputStream.getByteCount();
 	}
 

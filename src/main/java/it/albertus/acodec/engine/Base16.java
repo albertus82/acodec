@@ -13,15 +13,15 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Base16 {
+class Base16 {
 
 	private static final CharSequence ALPHABET = "0123456789ABCDEF";
 
-	public static String encode(final byte[] byteArray) {
+	static String encode(final byte[] byteArray) {
 		return Base16Encoder.encode(byteArray);
 	}
 
-	public static byte[] decode(final String encoded) {
+	static byte[] decode(final String encoded) {
 		final String cleaned = encoded.toUpperCase().replace(NewLine.CRLF.toString(), "");
 		if (cleaned.matches("[" + ALPHABET + "]*")) {
 			return Base16Encoder.decode(cleaned);
@@ -31,7 +31,7 @@ public class Base16 {
 		}
 	}
 
-	public static void encode(final InputStream input, final OutputStream output) throws IOException {
+	static void encode(final InputStream input, final OutputStream output) throws IOException {
 		final int bufferSize = 78 / 2;
 		final byte[] buffer = new byte[bufferSize];
 		int count;
@@ -43,7 +43,7 @@ public class Base16 {
 		output.flush();
 	}
 
-	public static void decode(final InputStream input, final OutputStream output) throws IOException {
+	static void decode(final InputStream input, final OutputStream output) throws IOException {
 		final int bufferSize = 2 * 4096;
 		final byte[] buffer = new byte[bufferSize];
 		int count;

@@ -9,11 +9,11 @@ import org.freehep.util.io.ASCII85InputStream;
 import lombok.extern.java.Log;
 
 @Log
-public class EnhancedASCII85InputStream extends ASCII85InputStream {
+class EnhancedASCII85InputStream extends ASCII85InputStream {
 
 	private final InputStream input;
 
-	public EnhancedASCII85InputStream(final InputStream input) {
+	EnhancedASCII85InputStream(final InputStream input) {
 		super(input);
 		this.input = input;
 		discardStartDelimiter();
