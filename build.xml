@@ -26,6 +26,7 @@
 	<target name="clean">
 		<delete dir="${build.directory}" />
 		<delete file="sonar-project.properties" />
+		<delete file="lombok.config" />
 	</target>
 
 	<target name="distclean">
