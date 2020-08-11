@@ -29,7 +29,7 @@ public class InputTextModifyListener implements ModifyListener {
 			gui.getInputText().setText("");
 		}
 		try {
-			result = gui.getEngine().run(gui.getInputText().getText());
+			result = gui.getStringCodec().run(gui.getInputText().getText());
 		}
 		catch (final Exception e) {
 			print(e);
