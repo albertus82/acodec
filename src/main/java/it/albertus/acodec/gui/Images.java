@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.java.Log;
 
@@ -35,11 +36,12 @@ public class Images {
 		return 0;
 	};
 
-	private static final Map<Rectangle, Image> mainIconMap;
-
-	static {
-		mainIconMap = loadFromResource("main.ico");
-	}
+	/**
+	 * Main application icon in various formats, sorted by size (area)
+	 * <b>descending</b>.
+	 */
+	@Getter
+	private static final Map<Rectangle, Image> mainIconMap = Collections.unmodifiableMap(loadFromResource("main.ico"));
 
 	private static Map<Rectangle, Image> loadFromResource(final String resourceName) {
 		final Map<Rectangle, Image> map = new TreeMap<>(areaComparatorDescending);
@@ -57,15 +59,7 @@ public class Images {
 	}
 
 	public static Image[] getMainIconArray() {
-		return getMainIconMap().values().toArray(new Image[0]);
-	}
-
-	/**
-	 * Main application icon in various formats, sorted by size (area)
-	 * <b>descending</b>.
-	 */
-	public static Map<Rectangle, Image> getMainIconMap() {
-		return Collections.unmodifiableMap(mainIconMap);
+		return mainIconMap.values().toArray(new Image[0]);
 	}
 
 }
