@@ -40,6 +40,7 @@ import it.albertus.acodec.gui.listener.TextKeyListener;
 import it.albertus.acodec.resources.Messages;
 import it.albertus.acodec.resources.Messages.Language;
 import it.albertus.jface.EnhancedErrorDialog;
+import it.albertus.jface.closeable.CloseableDevice;
 import it.albertus.util.Version;
 import it.albertus.util.logging.LoggerFactory;
 import lombok.Getter;
@@ -156,26 +157,25 @@ public class CodecGui implements IShellProvider {
 	public static void main(final String... args) {
 		Display.setAppName(Messages.get("msg.application.name"));
 		Display.setAppVersion(Version.getInstance().getNumber());
-		final Display display = Display.getDefault();
-		final CodecGui gui = new CodecGui(display);
-		final Shell shell = gui.getShell();
-		shell.addShellListener(new CloseListener(gui));
-		try {
-			shell.open();
-			gui.getInputText().notifyListeners(SWT.Modify, null);
-			while (!shell.isDisposed()) {
-				if (!display.isDisposed() && !display.readAndDispatch()) {
-					display.sleep();
+		try (final CloseableDevice<Display> cd = new CloseableDevice<>(Display.getDefault())) {
+			final Display display = cd.getDevice();
+			final CodecGui gui = new CodecGui(display);
+			final Shell shell = gui.getShell();
+			shell.addShellListener(new CloseListener(gui));
+			try {
+				shell.open();
+				gui.getInputText().notifyListeners(SWT.Modify, null);
+				while (!shell.isDisposed()) {
+					if (!display.isDisposed() && !display.readAndDispatch()) {
+						display.sleep();
+					}
 				}
 			}
-		}
-		catch (final Exception e) {
-			final String message = e.toString();
-			logger.log(Level.SEVERE, message, e);
-			EnhancedErrorDialog.openError(shell, Messages.get("msg.error"), message, IStatus.ERROR, e, Images.getMainIconArray());
-		}
-		finally {
-			display.dispose();
+			catch (final Exception e) {
+				final String message = e.toString();
+				logger.log(Level.SEVERE, message, e);
+				EnhancedErrorDialog.openError(shell, Messages.get("msg.error"), message, IStatus.ERROR, e, Images.getMainIconArray());
+			}
 		}
 	}
 
