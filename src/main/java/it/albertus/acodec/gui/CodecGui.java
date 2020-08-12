@@ -56,7 +56,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
 
 	private final CodecConfig config = new CodecConfig();
-	private final StringCodec engine = new StringCodec(config);
+	private final StringCodec stringCodec = new StringCodec(config);
 
 	private final Shell shell;
 	private final MenuBar menuBar;
