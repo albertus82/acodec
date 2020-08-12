@@ -40,6 +40,7 @@ import it.albertus.acodec.gui.listener.TextKeyListener;
 import it.albertus.acodec.resources.Messages;
 import it.albertus.acodec.resources.Messages.Language;
 import it.albertus.jface.EnhancedErrorDialog;
+import it.albertus.jface.Multilanguage;
 import it.albertus.jface.closeable.CloseableDevice;
 import it.albertus.util.Version;
 import it.albertus.util.logging.LoggerFactory;
@@ -47,8 +48,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
-public class CodecGui implements IShellProvider {
+public class CodecGui implements IShellProvider, Multilanguage {
 
 	private static final Logger logger = LoggerFactory.getLogger(CodecGui.class);
 
@@ -75,33 +75,38 @@ public class CodecGui implements IShellProvider {
 	private final Button processFileButton;
 	private final DropTarget shellDropTarget;
 
+	@Setter
 	private boolean dirty = false;
 
 	public CodecGui(final Display display) {
 		shell = new Shell(display);
 		shell.setImages(Images.getMainIconArray());
-		shell.setText(Messages.get("msg.application.name"));
+		shell.setData("msg.application.name");
+		shell.setText(Messages.get(shell));
 		shell.setLayout(new GridLayout(5, false));
 
 		menuBar = new MenuBar(this);
 
 		/* Input text */
 		inputLabel = new Label(shell, SWT.NONE);
-		inputLabel.setText(Messages.get("lbl.input"));
+		inputLabel.setData("lbl.input");
+		inputLabel.setText(Messages.get(inputLabel));
 		inputLabel.setLayoutData(new GridData());
 
 		inputText = createInputText();
 
 		/* Output text */
 		outputLabel = new Label(shell, SWT.NONE);
-		outputLabel.setText(Messages.get("lbl.output"));
+		outputLabel.setData("lbl.output");
+		outputLabel.setText(Messages.get(outputLabel));
 		outputLabel.setLayoutData(new GridData());
 
 		outputText = createOutputText();
 
 		/* Codec combo */
 		algorithmLabel = new Label(shell, SWT.NONE);
-		algorithmLabel.setText(Messages.get("lbl.algorithm"));
+		algorithmLabel.setData("lbl.algorithm");
+		algorithmLabel.setText(Messages.get(algorithmLabel));
 		algorithmLabel.setLayoutData(new GridData());
 
 		algorithmCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -110,7 +115,8 @@ public class CodecGui implements IShellProvider {
 
 		/* Charset combo */
 		charsetLabel = new Label(shell, SWT.NONE);
-		charsetLabel.setText(Messages.get("lbl.charset"));
+		charsetLabel.setData("lbl.charset");
+		charsetLabel.setText(Messages.get(charsetLabel));
 		charsetLabel.setLayoutData(new GridData());
 
 		charsetCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -121,13 +127,15 @@ public class CodecGui implements IShellProvider {
 		// Process file button
 		processFileButton = new Button(shell, SWT.NONE);
 		processFileButton.setEnabled(false);
-		processFileButton.setText(Messages.get("lbl.file.process"));
+		processFileButton.setData("lbl.file.process");
+		processFileButton.setText(Messages.get(processFileButton));
 		GridDataFactory.swtDefaults().span(1, 2).align(SWT.BEGINNING, SWT.FILL).applyTo(processFileButton);
 		processFileButton.addSelectionListener(new ProcessFileButtonSelectionListener(this));
 
 		/* Mode radio */
 		modeLabel = new Label(shell, SWT.NONE);
-		modeLabel.setText(Messages.get("lbl.mode"));
+		modeLabel.setData("lbl.mode");
+		modeLabel.setText(Messages.get(modeLabel));
 		modeLabel.setLayoutData(new GridData());
 
 		final Composite radioComposite = new Composite(shell, SWT.NONE);
@@ -231,24 +239,26 @@ public class CodecGui implements IShellProvider {
 	public void setLanguage(final Language language) {
 		Messages.setLanguage(language.getLocale().getLanguage());
 		shell.setRedraw(false);
-		this.updateTexts();
-		menuBar.updateTexts();
+		updateLanguage();
 		shell.layout(true, true);
 		shell.setMinimumSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
 		shell.setRedraw(true);
 	}
 
-	public void updateTexts() {
-		inputLabel.setText(Messages.get("lbl.input"));
-		outputLabel.setText(Messages.get("lbl.output"));
-		algorithmLabel.setText(Messages.get("lbl.algorithm"));
-		charsetLabel.setText(Messages.get("lbl.charset"));
-		processFileButton.setText(Messages.get("lbl.file.process"));
-		modeLabel.setText(Messages.get("lbl.mode"));
+	@Override
+	public void updateLanguage() {
+		shell.setText(Messages.get(shell));
+		inputLabel.setText(Messages.get(inputLabel));
+		outputLabel.setText(Messages.get(outputLabel));
+		algorithmLabel.setText(Messages.get(algorithmLabel));
+		charsetLabel.setText(Messages.get(charsetLabel));
+		processFileButton.setText(Messages.get(processFileButton));
+		modeLabel.setText(Messages.get(modeLabel));
 		for (final Entry<CodecMode, Button> entry : modeRadios.entrySet()) {
 			entry.getValue().setText(entry.getKey().getName());
 		}
 		inputText.notifyListeners(SWT.Modify, null);
+		menuBar.updateLanguage();
 	}
 
 }

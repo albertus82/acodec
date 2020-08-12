@@ -28,7 +28,7 @@ public class AlgorithmComboSelectionListener extends SelectionAdapter {
 		/* Attivazione drag and drop e pulsante elaborazione file */
 		if (!gui.getProcessFileButton().getEnabled()) {
 			gui.getProcessFileButton().setEnabled(true);
-			gui.getMenuBar().getFileProcessMenuItem().setEnabled(true);
+			gui.getMenuBar().enableFileProcessMenuItem();
 			gui.getShellDropTarget().setTransfer(new Transfer[] { FileTransfer.getInstance(), TextTransfer.getInstance() }); // NOSONAR SWT v4.3.2 does not have the vararg.
 		}
 

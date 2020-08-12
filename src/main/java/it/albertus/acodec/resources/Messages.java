@@ -7,6 +7,8 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.swt.widgets.Widget;
+
 import it.albertus.jface.JFaceMessages;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -44,6 +46,10 @@ public final class Messages {
 			}
 		}
 		return Language.ENGLISH; // Default.
+	}
+
+	public static String get(final Widget widget) {
+		return get(widget.getData().toString());
 	}
 
 	public static String get(final String key) {
