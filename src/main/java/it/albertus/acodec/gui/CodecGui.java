@@ -78,7 +78,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	@Setter
 	private boolean dirty = false;
 
-	public CodecGui(final Display display) {
+	private CodecGui(final Display display) {
 		shell = new Shell(display);
 		shell.setImages(Images.getMainIconArray());
 		shell.setData("msg.application.name");

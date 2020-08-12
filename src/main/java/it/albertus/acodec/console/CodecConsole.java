@@ -7,15 +7,18 @@ import java.util.logging.Level;
 
 import it.albertus.acodec.engine.CodecAlgorithm;
 import it.albertus.acodec.engine.CodecConfig;
-import it.albertus.acodec.engine.StringCodec;
 import it.albertus.acodec.engine.CodecMode;
 import it.albertus.acodec.engine.ProcessFileTask;
+import it.albertus.acodec.engine.StringCodec;
 import it.albertus.acodec.resources.Messages;
 import it.albertus.util.Version;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.java.Log;
 
 @SuppressWarnings("java:S106") // "Standard outputs should not be used directly to log anything"
 @Log
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CodecConsole {
 
 	private static final String SYSTEM_LINE_SEPARATOR = System.lineSeparator();
