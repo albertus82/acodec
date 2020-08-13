@@ -11,6 +11,7 @@ import java.util.zip.Adler32;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base32InputStream;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.codec.binary.BaseNCodecOutputStream;
@@ -88,6 +89,10 @@ public class ProcessFileTask implements Cancelable {
 					cs.getOutputStreams().add(new Base64OutputStream(cs.getOutputStreams().getLast()));
 					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 					break;
+				case BASE64URL:
+					cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base64(true), true));
+					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+					break;
 				case ASCII85:
 					cs.getOutputStreams().add(new ASCII85OutputStream(cs.getOutputStreams().getLast()));
 					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
@@ -145,6 +150,7 @@ public class ProcessFileTask implements Cancelable {
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			case BASE64:
+			case BASE64URL:
 				cs.getInputStreams().add(new Base64InputStream(cs.getInputStreams().getLast()));
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
