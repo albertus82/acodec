@@ -5,7 +5,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -43,14 +42,13 @@ import it.albertus.jface.EnhancedErrorDialog;
 import it.albertus.jface.Multilanguage;
 import it.albertus.jface.closeable.CloseableDevice;
 import it.albertus.util.Version;
-import it.albertus.util.logging.LoggerFactory;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.java.Log;
 
+@Log
 @Getter
 public class CodecGui implements IShellProvider, Multilanguage {
-
-	private static final Logger logger = LoggerFactory.getLogger(CodecGui.class);
 
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
@@ -181,7 +179,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			}
 			catch (final Exception e) {
 				final String message = e.toString();
-				logger.log(Level.SEVERE, message, e);
+				log.log(Level.SEVERE, message, e);
 				EnhancedErrorDialog.openError(shell, Messages.get("msg.error"), message, IStatus.ERROR, e, Images.getMainIconArray());
 			}
 		}
