@@ -41,6 +41,8 @@ public class StringCodec {
 				return Base16.encode(bytes);
 			case BASE32:
 				return new Base32().encodeAsString(bytes);
+			case BASE32HEX:
+				return new Base32(true).encodeAsString(bytes);
 			case BASE64:
 				return Base64.encodeBase64String(bytes);
 			case BASE64URL:
@@ -81,6 +83,8 @@ public class StringCodec {
 				return new String(Base16.decode(input), config.getCharset());
 			case BASE32:
 				return new String(new Base32().decode(input), config.getCharset());
+			case BASE32HEX:
+				return new String(new Base32(true).decode(input), config.getCharset());
 			case BASE64:
 			case BASE64URL:
 				return new String(Base64.decodeBase64(input), config.getCharset());

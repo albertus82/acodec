@@ -3,6 +3,7 @@ package it.albertus.acodec.engine;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.concurrent.CancellationException;
 import java.util.function.BooleanSupplier;
@@ -14,6 +15,7 @@ import org.apache.commons.codec.binary.Base32InputStream;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
+import org.apache.commons.codec.binary.BaseNCodecInputStream;
 import org.apache.commons.codec.binary.BaseNCodecOutputStream;
 import org.apache.commons.codec.digest.PureJavaCrc32;
 import org.apache.commons.codec.digest.PureJavaCrc32C;
@@ -23,6 +25,7 @@ import org.freehep.util.io.ASCII85OutputStream;
 import it.albertus.acodec.resources.Messages;
 import it.albertus.util.CRC16OutputStream;
 import it.albertus.util.ChecksumOutputStream;
+import it.albertus.util.NewLine;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -32,7 +35,7 @@ import net.sourceforge.base91.b91cli;
 @RequiredArgsConstructor
 public class ProcessFileTask implements Cancelable {
 
-	private static final int BASE_N_LINE_LENGTH = 79;
+	private static final int BASE_N_LINE_LENGTH = 76;
 
 	private final CodecConfig config;
 	@Getter
@@ -83,6 +86,10 @@ public class ProcessFileTask implements Cancelable {
 					break;
 				case BASE32:
 					cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(BASE_N_LINE_LENGTH), true));
+					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+					break;
+				case BASE32HEX:
+					cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(BASE_N_LINE_LENGTH, NewLine.CRLF.toString().getBytes(StandardCharsets.US_ASCII), true), true));
 					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 					break;
 				case BASE64:
@@ -147,6 +154,10 @@ public class ProcessFileTask implements Cancelable {
 				break;
 			case BASE32:
 				cs.getInputStreams().add(new Base32InputStream(cs.getInputStreams().getLast()));
+				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				break;
+			case BASE32HEX:
+				cs.getInputStreams().add(new BaseNCodecInputStream(cs.getInputStreams().getLast(), new Base32(true), false) {});
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			case BASE64:
