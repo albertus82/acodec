@@ -60,7 +60,7 @@ class CloseableStreams implements Closeable {
 		final Iterator<? extends Closeable> iterator = streams.descendingIterator();
 		while (iterator.hasNext()) {
 			final Closeable closeable = iterator.next();
-			IOUtils.closeQuietly(closeable, e -> log.log(Level.WARNING, e, () -> "Cannot close " + closeable + ':'));
+			IOUtils.closeQuietly(closeable, e -> log.log(Level.FINE, e, () -> "Cannot close " + closeable + ':'));
 		}
 		streams.clear();
 	}
