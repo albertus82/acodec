@@ -62,7 +62,7 @@ public class ProcessFileRunnable implements IRunnableWithProgress {
 						break;
 					}
 					try {
-						TimeUnit.MILLISECONDS.sleep(500);
+						TimeUnit.MILLISECONDS.sleep(250);
 					}
 					catch (final InterruptedException e) {
 						interrupt();
