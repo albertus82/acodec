@@ -15,15 +15,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class Base16 {
 
-	private static final CharSequence ALPHABET = "0123456789ABCDEF";
-
 	static String encode(final byte[] byteArray) {
 		return Base16Encoder.encode(byteArray);
 	}
 
 	static byte[] decode(final String encoded) {
-		final String cleaned = encoded.toUpperCase().replace(NewLine.CRLF.toString(), "");
-		if (cleaned.matches("[" + ALPHABET + "]*")) {
+		final String cleaned = encoded.replace(NewLine.CRLF.toString(), "");
+		if (cleaned.matches("[0123456789ABCDEFabcdef]*")) {
 			return Base16Encoder.decode(cleaned);
 		}
 		else {
