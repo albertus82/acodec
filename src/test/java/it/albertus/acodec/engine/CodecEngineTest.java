@@ -75,7 +75,7 @@ public class CodecEngineTest {
 	private static StringCodec stringCodec;
 
 	@BeforeClass
-	public static void init() throws IOException {
+	public static void beforeAll() throws IOException {
 		createOriginalFile();
 		createEncodedStrings();
 		createEncodedFiles();
@@ -160,10 +160,10 @@ public class CodecEngineTest {
 				Assert.assertEquals(ca.toString(), originalString, stringCodec.run(encodedStrings.get(ca)));
 
 				if (Arrays.asList(BASE16, BASE32, BASE32HEX).contains(ca)) {
-					Assert.assertEquals(stringCodec.run(encodedStrings.get(ca).toLowerCase()), originalString);
+					Assert.assertEquals(ca.toString(), originalString, stringCodec.run(encodedStrings.get(ca).toLowerCase()));
 				}
 				if (ASCII85.equals(ca)) {
-					Assert.assertEquals(stringCodec.run("<~" + encodedStrings.get(ASCII85)), originalString);
+					Assert.assertEquals(ca.toString(), originalString, stringCodec.run("<~" + encodedStrings.get(ASCII85)));
 				}
 			}
 		}
@@ -288,7 +288,7 @@ public class CodecEngineTest {
 	}
 
 	@AfterClass
-	public static void destroy() {
+	public static void afterAll() {
 		try {
 			if (Files.deleteIfExists(originalFile.toPath())) {
 				log.log(Level.INFO, "Deleted original file \"{0}\"", originalFile);
