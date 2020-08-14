@@ -20,7 +20,8 @@ import org.apache.commons.codec.binary.BaseNCodecOutputStream;
 import org.apache.commons.codec.digest.PureJavaCrc32;
 import org.apache.commons.codec.digest.PureJavaCrc32C;
 import org.apache.commons.io.IOUtils;
-import org.freehep.util.io.ASCII85OutputStream;
+import org.freehep.util.io.Ascii85InputStream;
+import org.freehep.util.io.Ascii85OutputStream;
 
 import it.albertus.acodec.resources.Messages;
 import it.albertus.util.CRC16OutputStream;
@@ -29,13 +30,13 @@ import it.albertus.util.NewLine;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
-import net.sourceforge.base91.b91cli;
+import net.sourceforge.base91.B91Cli;
 
 @Log
 @RequiredArgsConstructor
 public class ProcessFileTask implements Cancelable {
 
-	private static final int BASE_N_LINE_LENGTH = 76;
+	private static final int MAX_CHARS_PER_LINE = 76;
 
 	private final CodecConfig config;
 	@Getter
@@ -82,14 +83,14 @@ public class ProcessFileTask implements Cancelable {
 			try (final CloseableStreams cs = createStreams()) {
 				switch (config.getAlgorithm()) {
 				case BASE16:
-					Base16.encode(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+					Base16.encode(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast(), MAX_CHARS_PER_LINE);
 					break;
 				case BASE32:
-					cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(BASE_N_LINE_LENGTH), true));
+					cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(MAX_CHARS_PER_LINE), true));
 					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 					break;
 				case BASE32HEX:
-					cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(BASE_N_LINE_LENGTH, NewLine.CRLF.toString().getBytes(StandardCharsets.US_ASCII), true), true));
+					cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(MAX_CHARS_PER_LINE, NewLine.CRLF.toString().getBytes(StandardCharsets.US_ASCII), true), true));
 					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 					break;
 				case BASE64:
@@ -101,11 +102,11 @@ public class ProcessFileTask implements Cancelable {
 					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 					break;
 				case ASCII85:
-					cs.getOutputStreams().add(new ASCII85OutputStream(cs.getOutputStreams().getLast()));
+					cs.getOutputStreams().add(new Ascii85OutputStream(cs.getOutputStreams().getLast()));
 					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 					break;
 				case BASE91:
-					b91cli.encodeWrap(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+					B91Cli.encodeWrap(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 					break;
 				case CRC16:
 					value = computeCrc16(cs.getInputStreams().getLast());
@@ -166,11 +167,11 @@ public class ProcessFileTask implements Cancelable {
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			case ASCII85:
-				cs.getInputStreams().add(new EnhancedASCII85InputStream(cs.getInputStreams().getLast()));
+				cs.getInputStreams().add(new Ascii85InputStream(cs.getInputStreams().getLast()));
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			case BASE91:
-				b91cli.decode(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				B91Cli.decode(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			default:
 				throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", config.getAlgorithm().getName()));

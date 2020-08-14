@@ -54,6 +54,6 @@ This application includes third party software developed by:
 |---------------------------|------------------------------------------------------|------------------------------------------|
 |Apache Software Foundation |[License](https://www.apache.org/licenses/LICENSE-2.0)|[Home page](https://www.apache.org)       |
 |Eclipse Foundation         |[License](https://www.eclipse.org/legal/epl-2.0/)     |[Home page](https://www.eclipse.org)      |
-|FreeHEP                    |[License](https://java.freehep.org/license.html)      |[Home page](https://java.freehep.org)     |
 |Joachim Henke              |[License](http://base91.sourceforge.net/license.txt)  |[Home page](http://base91.sourceforge.net)|
 |Legion of the Bouncy Castle|[License](https://www.bouncycastle.org/license.html)  |[Home page](https://www.bouncycastle.org) |
+|Mark Donszelmann           |[License](https://java.freehep.org/license.html)      |[Home page](https://java.freehep.org)     |

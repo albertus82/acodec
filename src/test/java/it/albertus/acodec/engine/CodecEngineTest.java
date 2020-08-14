@@ -34,6 +34,7 @@ import static it.albertus.acodec.engine.CodecAlgorithm.WHIRLPOOL;
 import static it.albertus.acodec.engine.CodecMode.DECODE;
 import static it.albertus.acodec.engine.CodecMode.ENCODE;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -145,7 +146,10 @@ public class CodecEngineTest {
 			if (ca.getModes().contains(ENCODE)) {
 				codecConfig.setAlgorithm(ca);
 				log.log(Level.INFO, "Testing string encoding {0}", ca);
-				Assert.assertEquals(ca.toString(), encodedStrings.get(ca), stringCodec.run(originalString));
+				final String encoded = stringCodec.run(originalString);
+				Assert.assertEquals(-1, encoded.indexOf('\r'));
+				Assert.assertEquals(-1, encoded.indexOf('\n'));
+				Assert.assertEquals(ca.toString(), encodedStrings.get(ca), encoded);
 			}
 		}
 	}
@@ -234,12 +238,16 @@ public class CodecEngineTest {
 			outputFile = File.createTempFile(ENCODE.name().toLowerCase() + '-', '.' + ca.getFileExtension());
 			log.log(Level.INFO, "Created temporary encoded file \"{0}\"", outputFile);
 			final String value = new ProcessFileTask(codecConfig, originalFile, outputFile).run(() -> false);
-			if (!AlgorithmType.ENCODING.equals(ca.getType())) {
-				Assert.assertNotNull(value);
-				Assert.assertFalse(value.isEmpty());
+			if (AlgorithmType.ENCODING.equals(ca.getType())) {
+				Assert.assertNull(value);
+				try (final BufferedReader br = Files.newBufferedReader(outputFile.toPath())) {
+					final int length = br.readLine().length();
+					Assert.assertFalse(ca.getName() + " line length > 76 (" + length + ")", length > 76);
+				}
 			}
 			else {
-				Assert.assertNull(value);
+				Assert.assertNotNull(value);
+				Assert.assertFalse(value.isEmpty());
 			}
 			try (final InputStream fis = Files.newInputStream(outputFile.toPath())) {
 				IOUtils.copy(fis, baos);

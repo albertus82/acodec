@@ -29,8 +29,11 @@ class Base16 {
 		}
 	}
 
-	static void encode(final InputStream input, final OutputStream output) throws IOException {
-		final int bufferSize = 78 / 2;
+	static void encode(final InputStream input, final OutputStream output, final int maxCharsPerLine) throws IOException {
+		if (maxCharsPerLine < 1) {
+			throw new IllegalArgumentException(Integer.toString(maxCharsPerLine));
+		}
+		final int bufferSize = maxCharsPerLine / 2;
 		final byte[] buffer = new byte[bufferSize];
 		int count;
 		while ((count = input.read(buffer)) != -1) {

@@ -171,16 +171,28 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			try {
 				shell.open();
 				gui.getInputText().notifyListeners(SWT.Modify, null);
-				while (!shell.isDisposed()) {
-					if (!display.isDisposed() && !display.readAndDispatch()) {
-						display.sleep();
-					}
-				}
+				loop(shell);
 			}
 			catch (final Exception e) {
 				final String message = e.toString();
 				log.log(Level.SEVERE, message, e);
 				EnhancedErrorDialog.openError(shell, Messages.get("msg.error"), message, IStatus.ERROR, e, Images.getMainIconArray());
+			}
+		}
+	}
+
+	private static void loop(final Shell shell) {
+		final Display display = shell.getDisplay();
+		while (!shell.isDisposed()) {
+			if (!display.isDisposed()) {
+				try {
+					if (!display.readAndDispatch()) {
+						display.sleep();
+					}
+				}
+				catch (final NullPointerException e) { // at org.eclipse.swt.widgets.Display.filterMessage(Unknown Source)
+					log.log(Level.FINE, e.toString(), e);
+				}
 			}
 		}
 	}
