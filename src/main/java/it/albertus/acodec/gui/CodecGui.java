@@ -1,6 +1,8 @@
 package it.albertus.acodec.gui;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,6 +44,7 @@ import it.albertus.jface.EnhancedErrorDialog;
 import it.albertus.jface.Multilanguage;
 import it.albertus.jface.closeable.CloseableDevice;
 import it.albertus.util.Version;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.java.Log;
@@ -59,11 +62,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private final Shell shell;
 	private final MenuBar menuBar;
 
-	private final Label inputLabel;
-	private final Label outputLabel;
-	private final Label algorithmLabel;
-	private final Label charsetLabel;
-	private final Label modeLabel;
+	@Getter(AccessLevel.NONE)
+	private final Collection<Label> labels = new ArrayList<>();
 
 	private final Text inputText;
 	private final Text outputText;
@@ -86,7 +86,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		menuBar = new MenuBar(this);
 
 		/* Input text */
-		inputLabel = new Label(shell, SWT.NONE);
+		final Label inputLabel = new Label(shell, SWT.NONE);
+		labels.add(inputLabel);
 		inputLabel.setData("lbl.input");
 		inputLabel.setText(Messages.get(inputLabel));
 		inputLabel.setLayoutData(new GridData());
@@ -94,7 +95,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		inputText = createInputText();
 
 		/* Output text */
-		outputLabel = new Label(shell, SWT.NONE);
+		final Label outputLabel = new Label(shell, SWT.NONE);
+		labels.add(outputLabel);
 		outputLabel.setData("lbl.output");
 		outputLabel.setText(Messages.get(outputLabel));
 		outputLabel.setLayoutData(new GridData());
@@ -102,7 +104,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		outputText = createOutputText();
 
 		/* Codec combo */
-		algorithmLabel = new Label(shell, SWT.NONE);
+		final Label algorithmLabel = new Label(shell, SWT.NONE);
+		labels.add(algorithmLabel);
 		algorithmLabel.setData("lbl.algorithm");
 		algorithmLabel.setText(Messages.get(algorithmLabel));
 		algorithmLabel.setLayoutData(new GridData());
@@ -112,7 +115,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		algorithmCombo.setLayoutData(new GridData());
 
 		/* Charset combo */
-		charsetLabel = new Label(shell, SWT.NONE);
+		final Label charsetLabel = new Label(shell, SWT.NONE);
+		labels.add(charsetLabel);
 		charsetLabel.setData("lbl.charset");
 		charsetLabel.setText(Messages.get(charsetLabel));
 		charsetLabel.setLayoutData(new GridData());
@@ -131,7 +135,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		processFileButton.addSelectionListener(new ProcessFileButtonSelectionListener(this));
 
 		/* Mode radio */
-		modeLabel = new Label(shell, SWT.NONE);
+		final Label modeLabel = new Label(shell, SWT.NONE);
+		labels.add(modeLabel);
 		modeLabel.setData("lbl.mode");
 		modeLabel.setText(Messages.get(modeLabel));
 		modeLabel.setLayoutData(new GridData());
@@ -241,12 +246,10 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	@Override
 	public void updateLanguage() {
 		shell.setText(Messages.get(shell));
-		inputLabel.setText(Messages.get(inputLabel));
-		outputLabel.setText(Messages.get(outputLabel));
-		algorithmLabel.setText(Messages.get(algorithmLabel));
-		charsetLabel.setText(Messages.get(charsetLabel));
+		for (final Label label : labels) {
+			label.setText(Messages.get(label));
+		}
 		processFileButton.setText(Messages.get(processFileButton));
-		modeLabel.setText(Messages.get(modeLabel));
 		for (final Entry<CodecMode, Button> entry : modeRadios.entrySet()) {
 			entry.getValue().setText(entry.getKey().getName());
 		}
