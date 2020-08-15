@@ -10,6 +10,8 @@ import java.util.function.BooleanSupplier;
 import java.util.logging.Level;
 import java.util.zip.Adler32;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base32InputStream;
 import org.apache.commons.codec.binary.Base64;
@@ -46,7 +48,7 @@ public class ProcessFileTask implements Cancelable {
 
 	private CloseableStreams streams;
 
-	public String run(final BooleanSupplier canceled) {
+	public String run(final BooleanSupplier canceled) throws EncoderException, DecoderException {
 		if (config.getAlgorithm() == null) {
 			throw new IllegalStateException(Messages.get("msg.missing.algorithm"));
 		}
@@ -70,7 +72,7 @@ public class ProcessFileTask implements Cancelable {
 		}
 	}
 
-	private String encode(final BooleanSupplier canceled) {
+	private String encode(final BooleanSupplier canceled) throws EncoderException {
 		String value = null;
 		final String fileName;
 		try {
@@ -134,7 +136,7 @@ public class ProcessFileTask implements Cancelable {
 		catch (final Exception e) {
 			deleteOutputFile();
 			if (!canceled.getAsBoolean()) {
-				throw new IllegalStateException(Messages.get("err.cannot.encode", config.getAlgorithm().getName()), e);
+				throw new EncoderException(Messages.get("err.cannot.encode", config.getAlgorithm().getName()), e);
 			}
 		}
 		if (canceled.getAsBoolean()) {
@@ -146,7 +148,7 @@ public class ProcessFileTask implements Cancelable {
 		}
 	}
 
-	private String decode(final BooleanSupplier canceled) {
+	private String decode(final BooleanSupplier canceled) throws DecoderException {
 		String value = null;
 		try (final CloseableStreams cs = createStreams()) {
 			switch (config.getAlgorithm()) {
@@ -180,7 +182,7 @@ public class ProcessFileTask implements Cancelable {
 		catch (final Exception e) {
 			deleteOutputFile();
 			if (!canceled.getAsBoolean()) {
-				throw new IllegalStateException(Messages.get("err.cannot.decode", config.getAlgorithm().getName()), e);
+				throw new DecoderException(Messages.get("err.cannot.decode", config.getAlgorithm().getName()), e);
 			}
 		}
 		if (canceled.getAsBoolean()) {

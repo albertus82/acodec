@@ -2,6 +2,8 @@ package it.albertus.acodec.engine;
 
 import java.util.zip.Adler32;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.PureJavaCrc32;
@@ -16,7 +18,7 @@ public class StringCodec {
 
 	private final CodecConfig config;
 
-	public String run(final String input) {
+	public String run(final String input) throws EncoderException, DecoderException {
 		if (config.getAlgorithm() == null) {
 			throw new IllegalStateException(Messages.get("msg.missing.algorithm"));
 		}
@@ -33,7 +35,7 @@ public class StringCodec {
 		}
 	}
 
-	private String encode(final String input) {
+	private String encode(final String input) throws EncoderException {
 		try {
 			final byte[] bytes = input.getBytes(config.getCharset());
 			switch (config.getAlgorithm()) {
@@ -72,11 +74,11 @@ public class StringCodec {
 			}
 		}
 		catch (final Exception e) {
-			throw new IllegalStateException(Messages.get("err.cannot.encode", config.getAlgorithm().getName()), e);
+			throw new EncoderException(Messages.get("err.cannot.encode", config.getAlgorithm().getName()), e);
 		}
 	}
 
-	private String decode(final String input) {
+	private String decode(final String input) throws DecoderException {
 		try {
 			switch (config.getAlgorithm()) {
 			case BASE16:
@@ -97,7 +99,7 @@ public class StringCodec {
 			}
 		}
 		catch (final Exception e) {
-			throw new IllegalStateException(Messages.get("err.cannot.decode", config.getAlgorithm().getName()), e);
+			throw new DecoderException(Messages.get("err.cannot.decode", config.getAlgorithm().getName()), e);
 		}
 	}
 
