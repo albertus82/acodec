@@ -2,8 +2,16 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
-	<classpathentry kind="src" path="src/test/java"/>
-	<classpathentry kind="src" path="src/test/resources"/>
+	<classpathentry kind="src" output="bin/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="bin/test-classes" path="src/test/resources">
+		<attributes>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/compile/common/bcprov-jdk15on-166.jar" sourcepath="lib/compile/common/src/bcprov-jdk15on-1.66-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/commons-codec-1.14.jar" sourcepath="lib/compile/common/src/commons-codec-1.14-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/commons-io-2.7.jar" sourcepath="lib/compile/common/src/commons-io-2.7-sources.jar"/>
@@ -15,8 +23,16 @@
 	<classpathentry kind="lib" path="lib/compile/common/org.eclipse.osgi_3.12.100.v20180210-1608.jar" sourcepath="lib/compile/common/src/org.eclipse.osgi.source_3.12.100.v20180210-1608.jar"/>
 	<classpathentry kind="lib" path="lib/compile/platform-dependent/win32-win32-x86_64/org.eclipse.swt-4.7.3a-win32-win32-x86_64.jar" sourcepath="lib/compile/platform-dependent/win32-win32-x86_64/src/org.eclipse.swt-4.7.3a-win32-win32-x86_64-src.zip"/>
 	<classpathentry kind="lib" path="lib/provided/lombok-1.18.12.jar" sourcepath="lib/provided/src/lombok-1.18.12-sources.jar"/>
-	<classpathentry kind="lib" path="lib/test/hamcrest-core-1.3.jar" sourcepath="lib/test/src/hamcrest-core-1.3-sources.jar"/>
-	<classpathentry kind="lib" path="lib/test/junit-4.13.jar" sourcepath="lib/test/src/junit-4.13-sources.jar"/>
+	<classpathentry kind="lib" path="lib/test/hamcrest-core-1.3.jar" sourcepath="lib/test/src/hamcrest-core-1.3-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/test/junit-4.13.jar" sourcepath="lib/test/src/junit-4.13-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

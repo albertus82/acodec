@@ -84,9 +84,6 @@
 			<fileset dir="${dependencies.directory}/compile/common">
 				<include name="*.jar" />
 			</fileset>
-			<fileset dir="${dependencies.directory}">
-				<include name="license/*.txt" />
-			</fileset>
 		</union>
 
 		<!-- Copy dependencies -->
@@ -257,6 +254,29 @@
 		</copy>
 	</target>
 
+	<target name="licenses">
+		<fileset id="licenses" dir="${3rdparty.license.directory}" />
+
+		<copy todir="${build.packagesDirectory}/win32-win32-x86/app/${3rdparty.license.directory}">
+			<fileset refid="licenses" />
+		</copy>
+		<copy todir="${build.packagesDirectory}/win32-win32-x86_64/app/${3rdparty.license.directory}">
+			<fileset refid="licenses" />
+		</copy>
+		<copy todir="${build.packagesDirectory}/gtk-linux-x86/app/${3rdparty.license.directory}">
+			<fileset refid="licenses" />
+		</copy>
+		<copy todir="${build.packagesDirectory}/gtk-linux-x86_64/app/${3rdparty.license.directory}">
+			<fileset refid="licenses" />
+		</copy>
+		<copy todir="${build.packagesDirectory}/gtk-linux-armhf/app/${3rdparty.license.directory}">
+			<fileset refid="licenses" />
+		</copy>
+		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/docs/${3rdparty.license.directory}">
+			<fileset refid="licenses" />
+		</copy>
+	</target>
+
 	<target name="icons">
 		<copy file="${icons.directory}/main.ico" tofile="${build.packagesDirectory}/gtk-linux-x86/app/${linux.iconFileName}" failonerror="false" />
 		<copy file="${icons.directory}/main.ico" tofile="${build.packagesDirectory}/gtk-linux-x86_64/app/${linux.iconFileName}" failonerror="false" />
@@ -347,9 +367,6 @@
 
 		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/bundle/${project.name}.app/Contents/SharedSupport">
 			<fileset dir="${build.packagesDirectory}/cocoa-macosx-x86_64/docs" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/bundle/${project.name}.app/Contents/SharedSupport/Dependencies" failonerror="false">
-			<fileset dir="${build.packagesDirectory}/cocoa-macosx-x86_64/app/${dependencies.directory}/license" />
 		</copy>
 
 		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/bundle/${project.name}.app/Contents/Resources/Java" failonerror="false" filtering="true">
@@ -666,7 +683,7 @@
 		</exec>
 	</target>
 
-	<target name="dist" depends="jar, config, scripts, docs, icons, dist-linux, dist-macos, dist-windows" />
+	<target name="dist" depends="jar, config, scripts, docs, licenses, icons, dist-linux, dist-macos, dist-windows" />
 
 	<available file="${build.testSourceDirectory}" type="dir" property="build.test" />
 

@@ -128,7 +128,7 @@ public class AboutDialog extends Dialog {
 
 		final Label thirdPartySoftwareLabel = new Label(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(thirdPartySoftwareLabel);
-		thirdPartySoftwareLabel.setText(Messages.get("lbl.about.thirdparty"));
+		thirdPartySoftwareLabel.setText(Messages.get("lbl.about.3rdparty"));
 		createThirdPartySoftwareTable(shell);
 
 		final Button okButton = new Button(shell, SWT.PUSH);
@@ -199,7 +199,7 @@ public class AboutDialog extends Dialog {
 		licenseColumn.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
 			@Override
 			public void update(final ViewerCell cell) {
-				setLinkStyle(cell, Messages.get("lbl.about.thirdparty.license"));
+				setLinkStyle(cell, Messages.get("lbl.about.3rdparty.license"));
 				super.update(cell);
 			}
 
@@ -219,7 +219,7 @@ public class AboutDialog extends Dialog {
 		homePageColumn.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
 			@Override
 			public void update(final ViewerCell cell) {
-				setLinkStyle(cell, Messages.get("lbl.about.thirdparty.homepage"));
+				setLinkStyle(cell, Messages.get("lbl.about.3rdparty.homepage"));
 				super.update(cell);
 			}
 
@@ -311,7 +311,7 @@ public class AboutDialog extends Dialog {
 
 		private static Collection<ThirdPartySoftware> loadFromProperties() {
 			final Properties properties = new Properties();
-			try (final InputStream is = ThirdPartySoftware.class.getResourceAsStream("thirdparty.properties")) {
+			try (final InputStream is = ThirdPartySoftware.class.getResourceAsStream("3rdparty.properties")) {
 				properties.load(is);
 			}
 			catch (final IOException e) {

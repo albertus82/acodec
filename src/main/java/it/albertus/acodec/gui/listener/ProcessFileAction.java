@@ -24,6 +24,7 @@ import it.albertus.acodec.gui.Images;
 import it.albertus.acodec.gui.ProcessFileRunnable;
 import it.albertus.acodec.resources.Messages;
 import it.albertus.jface.EnhancedErrorDialog;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 
@@ -66,10 +67,7 @@ public class ProcessFileAction {
 		return new String[] { "*." + extension.toLowerCase() + ";*." + extension.toUpperCase(), "*.*" };
 	}
 
-	protected void execute(final String sourceFileName, final String destinationFileName) {
-		if (sourceFileName == null || destinationFileName == null) {
-			throw new NullPointerException("File names cannot be null.");
-		}
+	protected void execute(@NonNull final String sourceFileName, @NonNull final String destinationFileName) {
 		try {
 			final File inputFile = new File(sourceFileName);
 			final File outputFile = new File(destinationFileName);
