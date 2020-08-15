@@ -50,7 +50,7 @@ public class AlgorithmComboSelectionListener extends SelectionAdapter {
 			}
 		}
 
-		gui.getInputText().notifyListeners(SWT.Modify, null);
+		gui.refreshOutput();
 	}
 
 }

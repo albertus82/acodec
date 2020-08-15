@@ -170,7 +170,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			shell.addShellListener(new CloseListener(gui));
 			try {
 				shell.open();
-				gui.getInputText().notifyListeners(SWT.Modify, null);
+				gui.refreshOutput();
 				loop(shell);
 			}
 			catch (final Exception e) {
@@ -223,27 +223,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return text;
 	}
 
-	public void enableControls() {
-		inputText.setEnabled(true);
-		outputText.setEnabled(true);
-		algorithmCombo.setEnabled(true);
-		charsetCombo.setEnabled(true);
-		processFileButton.setEnabled(true);
-		for (final Button radio : modeRadios.values()) {
-			radio.setEnabled(true);
-		}
-		algorithmCombo.notifyListeners(SWT.Selection, null);
-	}
-
-	public void disableControls() {
-		inputText.setEnabled(false);
-		outputText.setEnabled(false);
-		algorithmCombo.setEnabled(false);
-		charsetCombo.setEnabled(false);
-		processFileButton.setEnabled(false);
-		for (final Button radio : modeRadios.values()) {
-			radio.setEnabled(false);
-		}
+	public void refreshOutput() {
+		inputText.notifyListeners(SWT.Modify, null);
 	}
 
 	public void setLanguage(final Language language) {
@@ -267,7 +248,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		for (final Entry<CodecMode, Button> entry : modeRadios.entrySet()) {
 			entry.getValue().setText(entry.getKey().getName());
 		}
-		inputText.notifyListeners(SWT.Modify, null);
+		refreshOutput();
 		menuBar.updateLanguage();
 	}
 

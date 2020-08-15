@@ -2,7 +2,6 @@ package it.albertus.acodec.gui.listener;
 
 import java.nio.charset.Charset;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
@@ -18,7 +17,7 @@ public class CharsetComboSelectionListener extends SelectionAdapter {
 	public void widgetSelected(final SelectionEvent se) {
 		final String charsetName = gui.getCharsetCombo().getText();
 		gui.getConfig().setCharset(Charset.forName(charsetName));
-		gui.getInputText().notifyListeners(SWT.Modify, null);
+		gui.refreshOutput();
 	}
 
 }
