@@ -224,7 +224,9 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	public void refreshOutput() {
-		inputText.notifyListeners(SWT.Modify, null);
+		if (inputText != null && !inputText.isDisposed()) {
+			inputText.notifyListeners(SWT.Modify, null);
+		}
 	}
 
 	public void setLanguage(final Language language) {
