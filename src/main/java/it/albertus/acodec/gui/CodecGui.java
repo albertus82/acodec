@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Text;
 import it.albertus.acodec.engine.CodecAlgorithm;
 import it.albertus.acodec.engine.CodecConfig;
 import it.albertus.acodec.engine.CodecMode;
-import it.albertus.acodec.engine.StringCodec;
 import it.albertus.acodec.gui.listener.AlgorithmComboSelectionListener;
 import it.albertus.acodec.gui.listener.CharsetComboSelectionListener;
 import it.albertus.acodec.gui.listener.CloseListener;
@@ -57,7 +56,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
 
 	private final CodecConfig config = new CodecConfig();
-	private final StringCodec stringCodec = new StringCodec(config);
 
 	private final Shell shell;
 	private final MenuBar menuBar;

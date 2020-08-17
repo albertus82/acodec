@@ -5,6 +5,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
 
+import it.albertus.acodec.engine.StringCodec;
 import it.albertus.acodec.gui.CodecGui;
 
 public class InputTextModifyListener implements ModifyListener {
@@ -29,7 +30,7 @@ public class InputTextModifyListener implements ModifyListener {
 			gui.getInputText().setText("");
 		}
 		try {
-			result = gui.getStringCodec().run(gui.getInputText().getText());
+			result = new StringCodec(gui.getConfig()).run(gui.getInputText().getText());
 		}
 		catch (final Exception e) {
 			print(e);
