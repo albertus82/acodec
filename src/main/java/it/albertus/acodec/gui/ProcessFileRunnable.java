@@ -3,8 +3,6 @@ package it.albertus.acodec.gui;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.EncoderException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
@@ -12,7 +10,6 @@ import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.acodec.resources.Messages;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 
 @RequiredArgsConstructor
 public class ProcessFileRunnable implements IRunnableWithProgress {
@@ -24,7 +21,6 @@ public class ProcessFileRunnable implements IRunnableWithProgress {
 	private String result;
 
 	@Override
-	@SneakyThrows({ EncoderException.class, DecoderException.class })
 	public void run(final IProgressMonitor monitor) throws InterruptedException {
 		Thread updateStatusBarThread = null;
 		try {
@@ -66,7 +62,7 @@ public class ProcessFileRunnable implements IRunnableWithProgress {
 						break;
 					}
 					try {
-						TimeUnit.MILLISECONDS.sleep(250);
+						TimeUnit.MILLISECONDS.sleep(500);
 					}
 					catch (final InterruptedException e) {
 						interrupt();

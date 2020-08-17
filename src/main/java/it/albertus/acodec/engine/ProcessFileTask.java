@@ -31,6 +31,7 @@ import it.albertus.util.ChecksumOutputStream;
 import it.albertus.util.NewLine;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import net.sourceforge.base91.B91Cli;
 
@@ -48,7 +49,8 @@ public class ProcessFileTask implements Cancelable {
 
 	private CloseableStreams streams;
 
-	public String run(final BooleanSupplier canceled) throws EncoderException, DecoderException {
+	@SneakyThrows({ EncoderException.class, DecoderException.class })
+	public String run(final BooleanSupplier canceled) {
 		if (config.getAlgorithm() == null) {
 			throw new IllegalStateException(Messages.get("msg.missing.algorithm"));
 		}

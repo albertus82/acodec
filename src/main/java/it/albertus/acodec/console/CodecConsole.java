@@ -3,6 +3,9 @@ package it.albertus.acodec.console;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import it.albertus.acodec.engine.CodecAlgorithm;
@@ -29,10 +32,6 @@ public class CodecConsole {
 
 	/* java -jar codec.jar e|d base64|md2|md5|...|sha-512 "text to encode" */
 	public static void main(final String... args) {
-		new CodecConsole().execute(args);
-	}
-
-	private void execute(final String[] args) {
 		CodecMode mode = null;
 		CodecAlgorithm algorithm = null;
 		String charsetName = null;
@@ -139,8 +138,11 @@ public class CodecConsole {
 		/* Execution */
 		try {
 			if (inputFile != null && outputFile != null) {
-				final String result = new ProcessFileTask(config, inputFile, outputFile).run(() -> false);
-				System.out.println(result != null ? result + " - " : "" + Messages.get("msg.file.process.ok.message"));
+				final ProcessFileTask task = new ProcessFileTask(config, inputFile, outputFile);
+				final Future<String> future = CompletableFuture.supplyAsync(() -> task.run(() -> false));
+				printProgress(task);
+				final String result = future.get();
+				System.out.println(Messages.get("msg.file.process.ok.message") + (result != null ? " -- " + result : ""));
 			}
 			else {
 				System.out.println(new StringCodec(config).run(args[args.length - 1]));
@@ -152,7 +154,29 @@ public class CodecConsole {
 		}
 	}
 
-	private void printHelp() {
+	private static void printProgress(final ProcessFileTask task) throws InterruptedException {
+		final long inputFileLength = task.getInputFile().length();
+		final String part1 = Messages.get("msg.file.process.progress") + " (";
+		System.out.print(part1);
+		int charsToDelete = 0;
+		while (task.getByteCount() < inputFileLength) {
+			final StringBuilder del = new StringBuilder();
+			for (byte i = 0; i < charsToDelete; i++) {
+				del.append('\b');
+			}
+			final String part2 = (int) (task.getByteCount() / (double) inputFileLength * 100) + "%)";
+			System.out.print(del + part2);
+			charsToDelete = part2.length();
+			TimeUnit.MILLISECONDS.sleep(500);
+		}
+		final StringBuilder del = new StringBuilder();
+		for (byte i = 0; i < charsToDelete + part1.length(); i++) {
+			del.append("\b \b");
+		}
+		System.out.print(del);
+	}
+
+	private static void printHelp() {
 		/* Usage */
 		final StringBuilder help = new StringBuilder(Messages.get("msg.help.usage", OPTION_CHARSET, OPTION_FILE));
 		help.append(SYSTEM_LINE_SEPARATOR).append(SYSTEM_LINE_SEPARATOR);
@@ -186,7 +210,7 @@ public class CodecConsole {
 		System.out.println(help.toString().trim());
 	}
 
-	private String getCharsetsHelpBlock() {
+	private static String getCharsetsHelpBlock() {
 		final StringBuilder charsets = new StringBuilder(Messages.get("msg.help.charsets"));
 		charsets.append(' ');
 		int cursorPosition = charsets.length();
@@ -208,7 +232,7 @@ public class CodecConsole {
 		return charsets.toString();
 	}
 
-	private String getAlgorithmsHelpBlock() {
+	private static String getAlgorithmsHelpBlock() {
 		final StringBuilder algorithms = new StringBuilder(Messages.get("msg.help.algorithms"));
 		algorithms.append(' ');
 		int cursorPosition = algorithms.length();
