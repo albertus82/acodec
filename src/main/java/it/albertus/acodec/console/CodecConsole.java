@@ -4,7 +4,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -23,6 +23,8 @@ import lombok.extern.java.Log;
 @Log
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CodecConsole {
+
+	private static final String MSG_KEY_ERR_GENERIC = "err.generic";
 
 	private static final String SYSTEM_LINE_SEPARATOR = System.lineSeparator();
 
@@ -139,41 +141,70 @@ public class CodecConsole {
 		try {
 			if (inputFile != null && outputFile != null) {
 				final ProcessFileTask task = new ProcessFileTask(config, inputFile, outputFile);
-				final Future<String> future = CompletableFuture.supplyAsync(() -> task.run(() -> false));
-				printProgress(task);
-				final String result = future.get();
+				final Thread printProgressThread = newPrintProgressThread(task);
+				printProgressThread.start();
+				final String result = CompletableFuture.supplyAsync(() -> {
+					try {
+						return task.run(() -> false);
+					}
+					finally {
+						printProgressThread.interrupt();
+						try {
+							printProgressThread.join();
+						}
+						catch (final InterruptedException e) {
+							Thread.currentThread().interrupt();
+						}
+					}
+				}).get();
 				System.out.println(Messages.get("msg.file.process.ok.message") + (result != null ? " -- " + result : ""));
 			}
 			else {
 				System.out.println(new StringCodec(config).run(args[args.length - 1]));
 			}
 		}
+		catch (final ExecutionException e) {
+			log.log(Level.FINE, Messages.get(MSG_KEY_ERR_GENERIC, e.getCause() != null ? e.getCause().getMessage() : e.getMessage()), e);
+			System.err.println(Messages.get(MSG_KEY_ERR_GENERIC, e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
+		}
 		catch (final Exception e) {
-			log.log(Level.FINE, Messages.get("err.generic", e.getMessage()), e);
-			System.err.println(Messages.get("err.generic", e.getMessage()));
+			log.log(Level.FINE, Messages.get(MSG_KEY_ERR_GENERIC, e.getMessage()), e);
+			System.err.println(Messages.get(MSG_KEY_ERR_GENERIC, e.getMessage()));
 		}
 	}
 
-	private static void printProgress(final ProcessFileTask task) throws InterruptedException {
-		final long inputFileLength = task.getInputFile().length();
-		final String part1 = Messages.get("msg.file.process.progress") + " (";
-		System.out.print(part1);
-		int charsToDelete = 0;
-		while (task.getByteCount() < inputFileLength) {
-			final StringBuilder del = new StringBuilder();
-			for (byte i = 0; i < charsToDelete; i++) {
-				del.append('\b');
+	private static Thread newPrintProgressThread(final ProcessFileTask task) {
+		final Thread printProgressThread = new Thread() {
+			@Override
+			public void run() {
+				final long inputFileLength = task.getInputFile().length();
+				final String part1 = Messages.get("msg.file.process.progress") + " (";
+				System.out.print(part1);
+				int charsToDelete = 0;
+				while (task.getByteCount() < inputFileLength && !isInterrupted()) {
+					final StringBuilder del = new StringBuilder();
+					for (short i = 0; i < charsToDelete; i++) {
+						del.append('\b');
+					}
+					final String part2 = (int) (task.getByteCount() / (double) inputFileLength * 100) + "%)";
+					System.out.print(del + part2);
+					charsToDelete = part2.length();
+					try {
+						TimeUnit.MILLISECONDS.sleep(500);
+					}
+					catch (final InterruptedException e) {
+						interrupt();
+					}
+				}
+				final StringBuilder del = new StringBuilder();
+				for (short i = 0; i < charsToDelete + part1.length(); i++) {
+					del.append("\b \b");
+				}
+				System.out.print(del);
 			}
-			final String part2 = (int) (task.getByteCount() / (double) inputFileLength * 100) + "%)";
-			System.out.print(del + part2);
-			charsToDelete = part2.length();
-			TimeUnit.MILLISECONDS.sleep(500);
-		}
-		final StringBuilder del = new StringBuilder();
-		for (byte i = 0; i < charsToDelete + part1.length(); i++) {
-			del.append("\b \b");
-		}
-		System.out.print(del);
+		};
+		printProgressThread.setDaemon(true); // This thread must not prevent the JVM from exiting.
+		return printProgressThread;
 	}
 
 	private static void printHelp() {
