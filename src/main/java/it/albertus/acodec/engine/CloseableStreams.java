@@ -17,6 +17,7 @@ import org.apache.commons.io.input.CountingInputStream;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.java.Log;
 
 @Log
@@ -29,7 +30,7 @@ class CloseableStreams implements Closeable {
 	@Getter(AccessLevel.NONE)
 	private final CountingInputStream countingInputStream;
 
-	CloseableStreams(final Path input, final Path output) throws IOException {
+	CloseableStreams(@NonNull final Path input, final Path output) throws IOException {
 		inputStreams = createInputStreams(input);
 		outputStreams = createOutputStreams(output);
 		countingInputStream = new CountingInputStream(inputStreams.getLast());
@@ -45,7 +46,7 @@ class CloseableStreams implements Closeable {
 
 	private static LinkedList<OutputStream> createOutputStreams(final Path output) throws IOException {
 		final LinkedList<OutputStream> list = new LinkedList<>();
-		list.add(Files.newOutputStream(output));
+		list.add(output == null ? System.out : Files.newOutputStream(output)); // NOSONAR
 		list.add(new BufferedOutputStream(list.getLast()));
 		return list;
 	}
