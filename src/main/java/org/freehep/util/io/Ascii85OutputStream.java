@@ -66,6 +66,9 @@ public class Ascii85OutputStream extends FilterOutputStream implements Finishabl
 				writeTuple();
 			}
 			writeEOD();
+			for (final byte bt : NewLine.CRLF.toString().getBytes()) {
+				super.write(bt);
+			}
 			flush();
 			if (out instanceof Finishable) {
 				((Finishable) out).finish();

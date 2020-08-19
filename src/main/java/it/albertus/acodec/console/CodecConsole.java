@@ -17,43 +17,65 @@ import it.albertus.util.Version;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.java.Log;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.ExitCode;
+import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 
 @SuppressWarnings("java:S106") // "Standard outputs should not be used directly to log anything"
 @Log
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CodecConsole {
+@Command
+public class CodecConsole implements Runnable {
 
 	private static final String MSG_KEY_ERR_GENERIC = "err.generic";
 
 	private static final String SYSTEM_LINE_SEPARATOR = System.lineSeparator();
 
-	private static final char OPTION_CHARSET = 'c';
-	private static final char OPTION_FILE = 'f';
-	private static final String ARG_HELP = "--help";
+	private static final char OPTION_CHARSET = 'C';
+	private static final char OPTION_FILE = 'F';
+
+	@Parameters(index = "0")
+	private String modeArg;
+
+	@Parameters(index = "1")
+	private String algorithmArg;
+
+	@Parameters(index = "2", arity = "0..1")
+	private String inputTextArg;
+
+	@Option(names = { "-" + OPTION_CHARSET, "--charset" })
+	private String charsetArg;
+
+	@Option(names = { "-" + OPTION_FILE, "--file" }, arity = "1..2", required = false)
+	private String[] filesArgs;
+
+	@Option(names = { "-H", "--help" })
+	private boolean helpArg;
+
+	public static void main(final String... args) {
+		System.exit(new CommandLine(new CodecConsole()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
+			printHelp();
+			return ExitCode.USAGE;
+		}).execute(args));
+	}
 
 	/* java -jar codec.jar e|d base64|md2|md5|...|sha-512 "text to encode" */
-	public static void main(final String... args) {
+	@Override
+	public void run() {
 		CodecMode mode = null;
 		CodecAlgorithm algorithm = null;
-		String charsetName = null;
 
 		File inputFile = null;
 		File outputFile = null;
 
-		if (args.length < 3) {
+		if (helpArg) {
 			printHelp();
 			return;
 		}
 
-		for (final String arg : args) {
-			if (arg.equalsIgnoreCase(ARG_HELP)) {
-				printHelp();
-				return;
-			}
-		}
-
 		/* Mode */
-		final String modeArg = args[0].trim();
 		for (final CodecMode cm : CodecMode.values()) {
 			if (modeArg.equalsIgnoreCase(Character.toString(cm.getAbbreviation()))) {
 				mode = cm;
@@ -61,13 +83,12 @@ public class CodecConsole {
 			}
 		}
 		if (mode == null) {
-			System.err.println(Messages.get("err.invalid.mode", args[0].trim()) + SYSTEM_LINE_SEPARATOR);
+			System.err.println(Messages.get("err.invalid.mode", modeArg) + SYSTEM_LINE_SEPARATOR);
 			printHelp();
 			return;
 		}
 
 		/* Algorithm */
-		final String algorithmArg = args[1].trim();
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getName().equalsIgnoreCase(algorithmArg) || ca.name().equalsIgnoreCase(algorithmArg) || ca.getAliases().stream().anyMatch(algorithmArg::equalsIgnoreCase)) {
 				algorithm = ca;
@@ -80,71 +101,39 @@ public class CodecConsole {
 			return;
 		}
 
-		int expectedArgc = 3;
-
-		/* Options */
-		for (int i = 2; i < args.length; i++) {
-			if (args[i].length() == 2 && args[i].charAt(0) == '-') {
-				switch (Character.toLowerCase(args[i].charAt(1))) {
-				case OPTION_CHARSET:
-					if (args.length > i + 1 && i < args.length - 2) {
-						charsetName = args[i + 1];
-						expectedArgc += 2;
-					}
-					else {
-						printHelp();
-						return;
-					}
-					break;
-				case OPTION_FILE:
-					if (args.length > i + 2 && i < args.length - 2) {
-						inputFile = new File(args[i + 1]).getAbsoluteFile();
-						outputFile = new File(args[i + 2]).getAbsoluteFile();
-						expectedArgc += 2;
-					}
-					else {
-						printHelp();
-						return;
-					}
-					break;
-				default:
-					System.err.println(Messages.get("err.invalid.option", args[i].charAt(1)) + SYSTEM_LINE_SEPARATOR);
-					printHelp();
-					return;
-				}
+		if (filesArgs != null && filesArgs.length != 0) {
+			inputFile = new File(filesArgs[0]).getAbsoluteFile();
+			if (filesArgs.length > 1) {
+				outputFile = new File(filesArgs[1]).getAbsoluteFile();
 			}
 		}
 
 		final CodecConfig config = new CodecConfig();
 		config.setAlgorithm(algorithm);
 		config.setMode(mode);
-		if (charsetName != null) {
+		if (charsetArg != null) {
 			try {
-				config.setCharset(Charset.forName(charsetName));
+				config.setCharset(Charset.forName(charsetArg));
 			}
 			catch (final Exception e) {
-				log.log(Level.FINE, Messages.get("err.invalid.charset", charsetName), e);
-				System.err.println(Messages.get("err.invalid.charset", charsetName) + SYSTEM_LINE_SEPARATOR);
+				log.log(Level.FINE, Messages.get("err.invalid.charset", charsetArg), e);
+				System.err.println(Messages.get("err.invalid.charset", charsetArg) + SYSTEM_LINE_SEPARATOR);
 				printHelp();
 				return;
 			}
 		}
 
-		/* Check arguments count */
-		if (expectedArgc != args.length) {
-			printHelp();
-			return;
-		}
-
 		/* Execution */
 		try {
-			if (inputFile != null && outputFile != null) {
+			if (inputFile != null) {
 				final ProcessFileTask task = new ProcessFileTask(config, inputFile, outputFile);
-				final String result = CompletableFuture.supplyAsync(new ProcessFileSupplier(task)).get();
-				System.out.println(result != null ? result : Messages.get("msg.file.process.ok.message"));
+				CompletableFuture.runAsync(new ProcessFileRunnable(task)).get();
+				if (outputFile != null) {
+					System.out.println(Messages.get("msg.file.process.ok.message"));
+				}
 			}
 			else {
-				System.out.println(new StringCodec(config).run(args[args.length - 1]));
+				System.out.println(new StringCodec(config).run(inputTextArg));
 			}
 		}
 		catch (final ExecutionException e) {
@@ -159,7 +148,7 @@ public class CodecConsole {
 
 	private static void printHelp() {
 		/* Usage */
-		final StringBuilder help = new StringBuilder(Messages.get("msg.help.usage", OPTION_CHARSET, OPTION_FILE));
+		final StringBuilder help = new StringBuilder(Messages.get("msg.help.usage", Character.toLowerCase(OPTION_CHARSET), Character.toLowerCase(OPTION_FILE)));
 		help.append(SYSTEM_LINE_SEPARATOR).append(SYSTEM_LINE_SEPARATOR);
 
 		/* Modes */

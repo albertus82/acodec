@@ -1,7 +1,6 @@
 package it.albertus.acodec.console;
 
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.acodec.resources.Messages;
@@ -10,26 +9,31 @@ import lombok.RequiredArgsConstructor;
 
 @SuppressWarnings("java:S106") // "Standard outputs should not be used directly to log anything"
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-class ProcessFileSupplier implements Supplier<String> {
+class ProcessFileRunnable implements Runnable {
 
 	private final ProcessFileTask task;
 
 	@Override
-	public String get() {
-		Thread printProgressThread = null;
-		try {
-			printProgressThread = newPrintProgressThread();
-			printProgressThread.start();
-			return task.run(() -> false);
+	public void run() {
+		if (task.getOutputFile() == null) {
+			task.run(() -> false);
 		}
-		finally {
-			if (printProgressThread != null) {
-				printProgressThread.interrupt();
-				try {
-					printProgressThread.join();
-				}
-				catch (final InterruptedException e) {
-					Thread.currentThread().interrupt();
+		else {
+			Thread printProgressThread = null;
+			try {
+				printProgressThread = newPrintProgressThread();
+				printProgressThread.start();
+				task.run(() -> false);
+			}
+			finally {
+				if (printProgressThread != null) {
+					printProgressThread.interrupt();
+					try {
+						printProgressThread.join();
+					}
+					catch (final InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
 				}
 			}
 		}

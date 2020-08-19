@@ -30,6 +30,7 @@ import it.albertus.util.CRC16OutputStream;
 import it.albertus.util.ChecksumOutputStream;
 import it.albertus.util.NewLine;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
@@ -41,8 +42,10 @@ public class ProcessFileTask implements Cancelable {
 
 	private static final int MAX_CHARS_PER_LINE = 76;
 
+	@NonNull
 	private final CodecConfig config;
 	@Getter
+	@NonNull
 	private final File inputFile;
 	@Getter
 	private final File outputFile;
@@ -78,7 +81,7 @@ public class ProcessFileTask implements Cancelable {
 		String value = null;
 		final String fileName;
 		try {
-			if (inputFile.getParentFile().getCanonicalPath().equals(outputFile.getParentFile().getCanonicalPath())) {
+			if (outputFile != null && inputFile.getParentFile().getCanonicalPath().equals(outputFile.getParentFile().getCanonicalPath())) {
 				fileName = inputFile.getName();
 			}
 			else {
@@ -114,23 +117,23 @@ public class ProcessFileTask implements Cancelable {
 					break;
 				case CRC16:
 					value = computeCrc16(cs.getInputStreams().getLast());
-					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), config.getCharset());
+					IOUtils.write(value + (outputFile != null ? " *" + fileName : "") + System.lineSeparator(), cs.getOutputStreams().getLast(), config.getCharset());
 					break;
 				case CRC32:
 					value = computeCrc32(cs.getInputStreams().getLast());
-					IOUtils.write(fileName + ' ' + value, cs.getOutputStreams().getLast(), config.getCharset()); // sfv
+					IOUtils.write((outputFile != null ? (fileName + ' ') : "") + value + System.lineSeparator(), cs.getOutputStreams().getLast(), config.getCharset()); // sfv
 					break;
 				case CRC32C:
 					value = computeCrc32C(cs.getInputStreams().getLast());
-					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), config.getCharset());
+					IOUtils.write(value + (outputFile != null ? " *" + fileName : "") + System.lineSeparator(), cs.getOutputStreams().getLast(), config.getCharset());
 					break;
 				case ADLER32:
 					value = computeAdler32(cs.getInputStreams().getLast());
-					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), config.getCharset());
+					IOUtils.write(value + (outputFile != null ? " *" + fileName : "") + System.lineSeparator(), cs.getOutputStreams().getLast(), config.getCharset());
 					break;
 				default:
 					value = config.getAlgorithm().createDigestUtils().digestAsHex(cs.getInputStreams().getLast());
-					IOUtils.write(value + " *" + fileName, cs.getOutputStreams().getLast(), config.getCharset());
+					IOUtils.write(value + (outputFile != null ? " *" + fileName : "") + System.lineSeparator(), cs.getOutputStreams().getLast(), config.getCharset());
 					break;
 				}
 			}
@@ -197,17 +200,19 @@ public class ProcessFileTask implements Cancelable {
 	}
 
 	private void deleteOutputFile() {
-		try {
-			Files.deleteIfExists(outputFile.toPath());
-		}
-		catch (final Exception e) {
-			log.log(Level.WARNING, Messages.get("err.cannot.delete.file", outputFile), e);
-			outputFile.deleteOnExit();
+		if (outputFile != null) {
+			try {
+				Files.deleteIfExists(outputFile.toPath());
+			}
+			catch (final Exception e) {
+				log.log(Level.WARNING, Messages.get("err.cannot.delete.file", outputFile), e);
+				outputFile.deleteOnExit();
+			}
 		}
 	}
 
 	private CloseableStreams createStreams() throws IOException {
-		streams = new CloseableStreams(inputFile.toPath(), outputFile.toPath());
+		streams = new CloseableStreams(inputFile.toPath(), outputFile != null ? outputFile.toPath() : null);
 		return streams;
 	}
 
