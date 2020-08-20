@@ -90,10 +90,7 @@ public class CodecConsole implements Runnable {
 			return;
 		}
 
-		final CodecConfig config = new CodecConfig();
-		config.setAlgorithm(algorithm);
-		config.setMode(mode);
-		config.setCharset(charset);
+		final CodecConfig config = new CodecConfig(mode, algorithm, charset);
 
 		/* Execution */
 		try {
