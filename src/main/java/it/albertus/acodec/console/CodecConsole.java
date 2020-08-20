@@ -7,6 +7,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
+import it.albertus.acodec.console.converter.CharsetConverter;
+import it.albertus.acodec.console.converter.CodecAlgorithmConverter;
+import it.albertus.acodec.console.converter.CodecModeConverter;
 import it.albertus.acodec.engine.CodecAlgorithm;
 import it.albertus.acodec.engine.CodecConfig;
 import it.albertus.acodec.engine.CodecMode;
@@ -37,28 +40,32 @@ public class CodecConsole implements Runnable {
 	private static final char OPTION_FILE = 'f';
 
 	@Parameters(index = "0")
-	private String modeArg;
+	private CodecMode mode;
 
 	@Parameters(index = "1")
-	private String algorithmArg;
+	private CodecAlgorithm algorithm;
 
 	@Parameters(index = "2", arity = "0..1")
 	private String inputTextArg;
 
 	@Option(names = { "-" + OPTION_CHARSET, "--charset" })
-	private String charsetArg;
+	private Charset charset = Charset.defaultCharset();
 
 	@Option(names = { "-" + OPTION_FILE, "--file" }, arity = "1..2", required = false)
-	private String[] filesArgs;
+	private String[] fileArgs;
 
 	@Option(names = { "-H", "--help" })
 	private boolean helpArg;
 
 	public static void main(final String... args) {
 		System.exit(new CommandLine(new CodecConsole()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
+			if (e.getCause() instanceof IllegalArgumentException && e.getCause().getMessage() != null) {
+				log.log(Level.FINE, e.getCause().getMessage(), e);
+				System.err.println(e.getCause().getMessage());
+			}
 			printHelp();
 			return ExitCode.USAGE;
-		}).execute(args));
+		}).registerConverter(CodecMode.class, new CodecModeConverter()).registerConverter(CodecAlgorithm.class, new CodecAlgorithmConverter()).registerConverter(Charset.class, new CharsetConverter()).execute(args));
 	}
 
 	/* java -jar codec.jar e|d base64|md2|md5|...|sha-512 "text to encode" */
@@ -72,26 +79,10 @@ public class CodecConsole implements Runnable {
 			return;
 		}
 
-		/* Mode */
-		final CodecMode mode = parseModeArg(modeArg);
-		if (mode == null) {
-			System.err.println(Messages.get("err.invalid.mode", modeArg) + SYSTEM_LINE_SEPARATOR);
-			printHelp();
-			return;
-		}
-
-		/* Algorithm */
-		final CodecAlgorithm algorithm = parseAlgorithmArg(algorithmArg);
-		if (algorithm == null) {
-			System.err.println(Messages.get("err.invalid.algorithm", algorithmArg) + SYSTEM_LINE_SEPARATOR);
-			printHelp();
-			return;
-		}
-
-		if (filesArgs != null && filesArgs.length != 0) {
-			inputFile = new File(filesArgs[0]).getAbsoluteFile();
-			if (filesArgs.length > 1) {
-				outputFile = new File(filesArgs[1]).getAbsoluteFile();
+		if (fileArgs != null && fileArgs.length != 0) {
+			inputFile = new File(fileArgs[0]).getAbsoluteFile();
+			if (fileArgs.length > 1) {
+				outputFile = new File(fileArgs[1]).getAbsoluteFile();
 			}
 		}
 		else if (inputTextArg == null) {
@@ -102,17 +93,7 @@ public class CodecConsole implements Runnable {
 		final CodecConfig config = new CodecConfig();
 		config.setAlgorithm(algorithm);
 		config.setMode(mode);
-		if (charsetArg != null) {
-			try {
-				config.setCharset(Charset.forName(charsetArg));
-			}
-			catch (final Exception e) {
-				log.log(Level.FINE, Messages.get("err.invalid.charset", charsetArg), e);
-				System.err.println(Messages.get("err.invalid.charset", charsetArg) + SYSTEM_LINE_SEPARATOR);
-				printHelp();
-				return;
-			}
-		}
+		config.setCharset(charset);
 
 		/* Execution */
 		try {
@@ -135,24 +116,6 @@ public class CodecConsole implements Runnable {
 			log.log(Level.FINE, Messages.get(MSG_KEY_ERR_GENERIC, e.getMessage()), e);
 			System.err.println(Messages.get(MSG_KEY_ERR_GENERIC, e.getMessage()));
 		}
-	}
-
-	private static CodecAlgorithm parseAlgorithmArg(final String algorithmArg) {
-		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
-			if (ca.getName().equalsIgnoreCase(algorithmArg) || ca.name().equalsIgnoreCase(algorithmArg) || ca.getAliases().stream().anyMatch(algorithmArg::equalsIgnoreCase)) {
-				return ca;
-			}
-		}
-		return null;
-	}
-
-	private static CodecMode parseModeArg(final String modeArg) {
-		for (final CodecMode cm : CodecMode.values()) {
-			if (Character.toString(cm.getAbbreviation()).equalsIgnoreCase(modeArg)) {
-				return cm;
-			}
-		}
-		return null;
 	}
 
 	private static void printHelp() {
@@ -184,7 +147,7 @@ public class CodecConsole implements Runnable {
 			System.out.println();
 		}
 		catch (final RuntimeException e) {
-			log.log(Level.WARNING, e.toString(), e);
+			log.log(Level.FINE, e.toString(), e);
 		}
 		System.out.println(help.toString().trim());
 	}
