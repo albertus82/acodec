@@ -32,8 +32,6 @@ import picocli.CommandLine.Parameters;
 @Command
 public class CodecConsole implements Runnable {
 
-	private static final String MSG_KEY_ERR_GENERIC = "err.generic";
-
 	private static final String SYSTEM_LINE_SEPARATOR = System.lineSeparator();
 
 	private static final char OPTION_CHARSET = 'c';
@@ -52,15 +50,15 @@ public class CodecConsole implements Runnable {
 	private Charset charset = Charset.defaultCharset();
 
 	@Option(names = { "-" + OPTION_FILE, "--file" }, arity = "1..2", required = false)
-	private String[] fileArgs;
+	private File[] files;
 
 	@Option(names = { "-H", "--help" })
 	private boolean helpArg;
 
 	public static void main(final String... args) {
 		System.exit(new CommandLine(new CodecConsole()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
+			log.log(Level.FINE, e.toString(), e);
 			if (e.getCause() instanceof IllegalArgumentException && e.getCause().getMessage() != null) {
-				log.log(Level.FINE, e.getCause().getMessage(), e);
 				System.err.println(e.getCause().getMessage());
 			}
 			printHelp();
@@ -71,33 +69,20 @@ public class CodecConsole implements Runnable {
 	/* java -jar codec.jar e|d base64|md2|md5|...|sha-512 "text to encode" */
 	@Override
 	public void run() {
-		File inputFile = null;
-		File outputFile = null;
-
-		if (helpArg) {
-			printHelp();
-			return;
-		}
-
-		if (fileArgs != null && fileArgs.length != 0) {
-			inputFile = new File(fileArgs[0]).getAbsoluteFile();
-			if (fileArgs.length > 1) {
-				outputFile = new File(fileArgs[1]).getAbsoluteFile();
-			}
-		}
-		else if (inputTextArg == null) {
+		if (helpArg || files == null && inputTextArg == null || files != null && inputTextArg != null) {
 			printHelp();
 			return;
 		}
 
 		final CodecConfig config = new CodecConfig(mode, algorithm, charset);
+		log.log(Level.FINE, "{0}", config);
 
 		/* Execution */
 		try {
-			if (inputFile != null) {
-				final ProcessFileTask task = new ProcessFileTask(config, inputFile, outputFile);
+			if (files != null) {
+				final ProcessFileTask task = new ProcessFileTask(config, files[0], files.length > 1 ? files[1] : null);
 				CompletableFuture.runAsync(new ProcessFileRunnable(task)).get();
-				if (outputFile != null) {
+				if (files.length > 1) {
 					System.out.println(Messages.get("msg.file.process.ok.message"));
 				}
 			}
@@ -106,12 +91,12 @@ public class CodecConsole implements Runnable {
 			}
 		}
 		catch (final ExecutionException e) {
-			log.log(Level.FINE, Messages.get(MSG_KEY_ERR_GENERIC, e.getCause() != null ? e.getCause().getMessage() : e.getMessage()), e);
-			System.err.println(Messages.get(MSG_KEY_ERR_GENERIC, e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
+			log.log(Level.FINE, e.toString(), e);
+			System.err.println(Messages.get("err.generic", e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
 		}
 		catch (final Exception e) {
-			log.log(Level.FINE, Messages.get(MSG_KEY_ERR_GENERIC, e.getMessage()), e);
-			System.err.println(Messages.get(MSG_KEY_ERR_GENERIC, e.getMessage()));
+			log.log(Level.FINE, e.toString(), e);
+			System.err.println(Messages.get("err.generic", e.getMessage()));
 		}
 	}
 

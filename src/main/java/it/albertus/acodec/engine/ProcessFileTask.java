@@ -57,8 +57,8 @@ public class ProcessFileTask implements Cancelable {
 		if (config.getAlgorithm() == null) {
 			throw new IllegalStateException(Messages.get("msg.missing.algorithm"));
 		}
-		if (inputFile == null || !inputFile.isFile()) {
-			throw new IllegalStateException(Messages.get("msg.missing.input"));
+		if (!inputFile.isFile()) {
+			throw new IllegalStateException(Messages.get("msg.missing.file", inputFile));
 		}
 		switch (config.getMode()) {
 		case DECODE:
