@@ -33,8 +33,8 @@ public class CodecConsole implements Runnable {
 
 	private static final String SYSTEM_LINE_SEPARATOR = System.lineSeparator();
 
-	private static final char OPTION_CHARSET = 'C';
-	private static final char OPTION_FILE = 'F';
+	private static final char OPTION_CHARSET = 'c';
+	private static final char OPTION_FILE = 'f';
 
 	@Parameters(index = "0")
 	private String modeArg;
@@ -64,9 +64,6 @@ public class CodecConsole implements Runnable {
 	/* java -jar codec.jar e|d base64|md2|md5|...|sha-512 "text to encode" */
 	@Override
 	public void run() {
-		CodecMode mode = null;
-		CodecAlgorithm algorithm = null;
-
 		File inputFile = null;
 		File outputFile = null;
 
@@ -76,12 +73,7 @@ public class CodecConsole implements Runnable {
 		}
 
 		/* Mode */
-		for (final CodecMode cm : CodecMode.values()) {
-			if (modeArg.equalsIgnoreCase(Character.toString(cm.getAbbreviation()))) {
-				mode = cm;
-				break;
-			}
-		}
+		final CodecMode mode = parseModeArg(modeArg);
 		if (mode == null) {
 			System.err.println(Messages.get("err.invalid.mode", modeArg) + SYSTEM_LINE_SEPARATOR);
 			printHelp();
@@ -89,12 +81,7 @@ public class CodecConsole implements Runnable {
 		}
 
 		/* Algorithm */
-		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
-			if (ca.getName().equalsIgnoreCase(algorithmArg) || ca.name().equalsIgnoreCase(algorithmArg) || ca.getAliases().stream().anyMatch(algorithmArg::equalsIgnoreCase)) {
-				algorithm = ca;
-				break;
-			}
-		}
+		final CodecAlgorithm algorithm = parseAlgorithmArg(algorithmArg);
 		if (algorithm == null) {
 			System.err.println(Messages.get("err.invalid.algorithm", algorithmArg) + SYSTEM_LINE_SEPARATOR);
 			printHelp();
@@ -106,6 +93,10 @@ public class CodecConsole implements Runnable {
 			if (filesArgs.length > 1) {
 				outputFile = new File(filesArgs[1]).getAbsoluteFile();
 			}
+		}
+		else if (inputTextArg == null) {
+			printHelp();
+			return;
 		}
 
 		final CodecConfig config = new CodecConfig();
@@ -146,9 +137,27 @@ public class CodecConsole implements Runnable {
 		}
 	}
 
+	private static CodecAlgorithm parseAlgorithmArg(final String algorithmArg) {
+		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
+			if (ca.getName().equalsIgnoreCase(algorithmArg) || ca.name().equalsIgnoreCase(algorithmArg) || ca.getAliases().stream().anyMatch(algorithmArg::equalsIgnoreCase)) {
+				return ca;
+			}
+		}
+		return null;
+	}
+
+	private static CodecMode parseModeArg(final String modeArg) {
+		for (final CodecMode cm : CodecMode.values()) {
+			if (Character.toString(cm.getAbbreviation()).equalsIgnoreCase(modeArg)) {
+				return cm;
+			}
+		}
+		return null;
+	}
+
 	private static void printHelp() {
 		/* Usage */
-		final StringBuilder help = new StringBuilder(Messages.get("msg.help.usage", Character.toLowerCase(OPTION_CHARSET), Character.toLowerCase(OPTION_FILE)));
+		final StringBuilder help = new StringBuilder(Messages.get("msg.help.usage", OPTION_CHARSET, OPTION_FILE));
 		help.append(SYSTEM_LINE_SEPARATOR).append(SYSTEM_LINE_SEPARATOR);
 
 		/* Modes */
