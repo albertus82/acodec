@@ -1,6 +1,7 @@
 package it.albertus.acodec.engine;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -52,13 +53,13 @@ public class ProcessFileTask implements Cancelable {
 
 	private CloseableStreams streams;
 
-	@SneakyThrows({ EncoderException.class, DecoderException.class })
+	@SneakyThrows({ EncoderException.class, DecoderException.class, FileNotFoundException.class })
 	public String run(final BooleanSupplier canceled) {
 		if (config.getAlgorithm() == null) {
 			throw new IllegalStateException(Messages.get("msg.missing.algorithm"));
 		}
 		if (!inputFile.isFile()) {
-			throw new IllegalStateException(Messages.get("msg.missing.file", inputFile));
+			throw new FileNotFoundException(Messages.get("msg.missing.file", inputFile));
 		}
 		switch (config.getMode()) {
 		case DECODE:
@@ -79,63 +80,54 @@ public class ProcessFileTask implements Cancelable {
 
 	private String encode(final BooleanSupplier canceled) throws EncoderException {
 		String value = null;
-		final String fileName;
-		try {
-			if (outputFile != null && inputFile.getParentFile().getCanonicalPath().equals(outputFile.getParentFile().getCanonicalPath())) {
-				fileName = inputFile.getName();
-			}
-			else {
-				fileName = inputFile.getCanonicalPath();
-			}
-			try (final CloseableStreams cs = createStreams()) {
-				switch (config.getAlgorithm()) {
-				case BASE16:
-					Base16.encode(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast(), MAX_CHARS_PER_LINE);
-					break;
-				case BASE32:
-					cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(MAX_CHARS_PER_LINE), true));
-					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
-					break;
-				case BASE32HEX:
-					cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(MAX_CHARS_PER_LINE, NewLine.CRLF.toString().getBytes(StandardCharsets.US_ASCII), true), true));
-					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
-					break;
-				case BASE64:
-					cs.getOutputStreams().add(new Base64OutputStream(cs.getOutputStreams().getLast()));
-					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
-					break;
-				case BASE64URL:
-					cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base64(true), true));
-					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
-					break;
-				case ASCII85:
-					cs.getOutputStreams().add(new Ascii85OutputStream(cs.getOutputStreams().getLast()));
-					IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
-					break;
-				case BASE91:
-					B91Cli.encodeWrap(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
-					break;
-				case CRC16:
-					value = computeCrc16(cs.getInputStreams().getLast());
-					IOUtils.write(value + (outputFile != null ? " *" + fileName : "") + System.lineSeparator(), cs.getOutputStreams().getLast(), config.getCharset());
-					break;
-				case CRC32:
-					value = computeCrc32(cs.getInputStreams().getLast());
-					IOUtils.write((outputFile != null ? (fileName + ' ') : "") + value + System.lineSeparator(), cs.getOutputStreams().getLast(), config.getCharset()); // sfv
-					break;
-				case CRC32C:
-					value = computeCrc32C(cs.getInputStreams().getLast());
-					IOUtils.write(value + (outputFile != null ? " *" + fileName : "") + System.lineSeparator(), cs.getOutputStreams().getLast(), config.getCharset());
-					break;
-				case ADLER32:
-					value = computeAdler32(cs.getInputStreams().getLast());
-					IOUtils.write(value + (outputFile != null ? " *" + fileName : "") + System.lineSeparator(), cs.getOutputStreams().getLast(), config.getCharset());
-					break;
-				default:
-					value = config.getAlgorithm().createDigestUtils().digestAsHex(cs.getInputStreams().getLast());
-					IOUtils.write(value + (outputFile != null ? " *" + fileName : "") + System.lineSeparator(), cs.getOutputStreams().getLast(), config.getCharset());
-					break;
-				}
+		try (final CloseableStreams cs = createStreams()) {
+			switch (config.getAlgorithm()) {
+			case BASE16:
+				Base16.encode(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast(), MAX_CHARS_PER_LINE);
+				break;
+			case BASE32:
+				cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(MAX_CHARS_PER_LINE), true));
+				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				break;
+			case BASE32HEX:
+				cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(MAX_CHARS_PER_LINE, NewLine.CRLF.toString().getBytes(StandardCharsets.US_ASCII), true), true));
+				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				break;
+			case BASE64:
+				cs.getOutputStreams().add(new Base64OutputStream(cs.getOutputStreams().getLast()));
+				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				break;
+			case BASE64URL:
+				cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base64(true), true));
+				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				break;
+			case ASCII85:
+				cs.getOutputStreams().add(new Ascii85OutputStream(cs.getOutputStreams().getLast()));
+				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				break;
+			case BASE91:
+				B91Cli.encodeWrap(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				break;
+			case CRC16:
+				value = computeCrc16(cs.getInputStreams().getLast());
+				IOUtils.write(buildHashFileContent(value), cs.getOutputStreams().getLast(), config.getCharset());
+				break;
+			case CRC32:
+				value = computeCrc32(cs.getInputStreams().getLast());
+				IOUtils.write(buildHashFileContent(value), cs.getOutputStreams().getLast(), config.getCharset());
+				break;
+			case CRC32C:
+				value = computeCrc32C(cs.getInputStreams().getLast());
+				IOUtils.write(buildHashFileContent(value), cs.getOutputStreams().getLast(), config.getCharset());
+				break;
+			case ADLER32:
+				value = computeAdler32(cs.getInputStreams().getLast());
+				IOUtils.write(buildHashFileContent(value), cs.getOutputStreams().getLast(), config.getCharset());
+				break;
+			default:
+				value = config.getAlgorithm().createDigestUtils().digestAsHex(cs.getInputStreams().getLast());
+				IOUtils.write(buildHashFileContent(value), cs.getOutputStreams().getLast(), config.getCharset());
+				break;
 			}
 		}
 		catch (final Exception e) {
@@ -218,6 +210,33 @@ public class ProcessFileTask implements Cancelable {
 
 	public long getByteCount() {
 		return streams != null ? streams.getBytesRead() : 0;
+	}
+
+	private String buildHashFileContent(@NonNull final String hash) throws IOException {
+		final StringBuilder content = new StringBuilder();
+		if ("sfv".equalsIgnoreCase(config.getAlgorithm().getFileExtension())) {
+			if (outputFile != null) {
+				content.append(buildFileName(inputFile, outputFile)).append(' ');
+			}
+			content.append(hash);
+		}
+		else {
+			content.append(hash);
+			if (outputFile != null) {
+				content.append(" *").append(buildFileName(inputFile, outputFile));
+			}
+		}
+		content.append(System.lineSeparator());
+		return content.toString();
+	}
+
+	private static String buildFileName(@NonNull final File inputFile, @NonNull final File outputFile) throws IOException {
+		if (inputFile.getParentFile().getCanonicalPath().equals(outputFile.getParentFile().getCanonicalPath())) {
+			return inputFile.getName();
+		}
+		else {
+			return inputFile.getCanonicalPath();
+		}
 	}
 
 	private static String computeCrc16(final InputStream is) throws IOException {

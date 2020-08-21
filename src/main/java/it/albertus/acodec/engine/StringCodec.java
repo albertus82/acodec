@@ -11,11 +11,13 @@ import org.apache.commons.codec.digest.PureJavaCrc32C;
 
 import it.albertus.acodec.resources.Messages;
 import it.albertus.util.CRC16;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class StringCodec {
 
+	@NonNull
 	private final CodecConfig config;
 
 	public String run(final String input) throws EncoderException, DecoderException {

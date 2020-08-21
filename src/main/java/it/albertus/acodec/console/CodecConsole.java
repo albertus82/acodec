@@ -1,6 +1,7 @@
 package it.albertus.acodec.console;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.util.concurrent.CompletableFuture;
@@ -19,6 +20,7 @@ import it.albertus.acodec.resources.Messages;
 import it.albertus.util.Version;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.java.Log;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -58,8 +60,8 @@ public class CodecConsole implements Runnable {
 	public static void main(final String... args) {
 		System.exit(new CommandLine(new CodecConsole()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
 			log.log(Level.FINE, e.toString(), e);
-			if (e.getCause() instanceof IllegalArgumentException && e.getCause().getMessage() != null) {
-				System.err.println(e.getCause().getMessage());
+			if (e.getCause() instanceof IllegalArgumentException && e.getCause().getLocalizedMessage() != null) {
+				System.err.println(e.getCause().getLocalizedMessage());
 			}
 			printHelp();
 			return ExitCode.USAGE;
@@ -79,24 +81,35 @@ public class CodecConsole implements Runnable {
 
 		/* Execution */
 		try {
-			if (files != null) {
-				final ProcessFileTask task = new ProcessFileTask(config, files[0], files.length > 1 ? files[1] : null);
-				CompletableFuture.runAsync(new ProcessFileRunnable(task)).get();
-				if (files.length > 1) {
-					System.out.println(Messages.get("msg.file.process.ok.message"));
-				}
+			if (files != null && files.length > 0) {
+				processFile(config, files);
 			}
 			else {
 				System.out.println(new StringCodec(config).run(inputTextArg));
 			}
 		}
-		catch (final ExecutionException e) {
-			log.log(Level.FINE, e.toString(), e);
-			System.err.println(Messages.get("err.generic", e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
-		}
 		catch (final Exception e) {
 			log.log(Level.FINE, e.toString(), e);
-			System.err.println(Messages.get("err.generic", e.getMessage()));
+			final String message = e.getLocalizedMessage();
+			System.err.println(message + (message.endsWith(".") ? "" : "."));
+		}
+	}
+
+	private static void processFile(@NonNull final CodecConfig config, @NonNull final File[] files) throws FileNotFoundException, InterruptedException {
+		if (!files[0].isFile()) {
+			throw new FileNotFoundException(Messages.get("msg.missing.file", files[0]));
+		}
+		final ProcessFileTask task = new ProcessFileTask(config, files[0], files.length > 1 ? files[1] : null);
+		try {
+			CompletableFuture.runAsync(new ProcessFileRunnable(task)).get();
+			if (files.length > 1) {
+				System.out.println(Messages.get("msg.file.process.ok.message"));
+			}
+		}
+		catch (final ExecutionException e) {
+			log.log(Level.FINE, e.toString(), e);
+			final String message = e.getCause() != null ? e.getCause().getLocalizedMessage() : e.getLocalizedMessage();
+			System.err.println(message + (message.endsWith(".") ? "" : "."));
 		}
 	}
 
