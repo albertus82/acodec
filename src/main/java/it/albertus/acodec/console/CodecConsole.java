@@ -91,7 +91,7 @@ public class CodecConsole implements Runnable {
 		catch (final Exception e) {
 			log.log(Level.FINE, e.toString(), e);
 			final String message = e.getLocalizedMessage();
-			System.err.println(message + (message.endsWith(".") ? "" : "."));
+			System.err.println(message + (message.endsWith(".") ? "" : '.'));
 		}
 	}
 
@@ -109,7 +109,7 @@ public class CodecConsole implements Runnable {
 		catch (final ExecutionException e) {
 			log.log(Level.FINE, e.toString(), e);
 			final String message = e.getCause() != null ? e.getCause().getLocalizedMessage() : e.getLocalizedMessage();
-			System.err.println(message + (message.endsWith(".") ? "" : "."));
+			System.err.println(message + (message.endsWith(".") ? "" : '.'));
 		}
 	}
 
