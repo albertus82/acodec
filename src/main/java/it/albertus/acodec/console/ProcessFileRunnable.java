@@ -1,17 +1,21 @@
 package it.albertus.acodec.console;
 
+import java.io.PrintStream;
 import java.util.concurrent.TimeUnit;
 
 import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.acodec.resources.Messages;
 import lombok.AccessLevel;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-@SuppressWarnings("java:S106") // "Standard outputs should not be used directly to log anything"
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class ProcessFileRunnable implements Runnable {
 
+	@NonNull
 	private final ProcessFileTask task;
+	@NonNull
+	private final PrintStream out;
 
 	@Override
 	public void run() {
@@ -45,7 +49,7 @@ class ProcessFileRunnable implements Runnable {
 			public void run() {
 				final long inputFileLength = task.getInputFile().length();
 				final String part1 = Messages.get("msg.file.process.progress") + " (";
-				System.out.print(part1);
+				out.print(part1);
 				int charsToDelete = 0;
 				while (task.getByteCount() < inputFileLength && !isInterrupted()) {
 					final StringBuilder del = new StringBuilder();
@@ -53,7 +57,7 @@ class ProcessFileRunnable implements Runnable {
 						del.append('\b');
 					}
 					final String part2 = (int) (task.getByteCount() / (double) inputFileLength * 100) + "%)";
-					System.out.print(del + part2);
+					out.print(del + part2);
 					charsToDelete = part2.length();
 					try {
 						TimeUnit.MILLISECONDS.sleep(500);
@@ -66,7 +70,7 @@ class ProcessFileRunnable implements Runnable {
 				for (short i = 0; i < charsToDelete + part1.length(); i++) {
 					del.append("\b \b");
 				}
-				System.out.print(del);
+				out.print(del);
 			}
 		};
 		printProgressThread.setDaemon(true); // This thread must not prevent the JVM from exiting.

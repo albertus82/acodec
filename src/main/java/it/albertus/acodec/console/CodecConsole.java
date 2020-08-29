@@ -101,7 +101,7 @@ public class CodecConsole implements Runnable {
 		}
 		final ProcessFileTask task = new ProcessFileTask(config, files[0], files.length > 1 ? files[1] : null);
 		try {
-			CompletableFuture.runAsync(new ProcessFileRunnable(task)).get();
+			CompletableFuture.runAsync(new ProcessFileRunnable(task, System.out)).get();
 			if (files.length > 1) {
 				System.out.println(Messages.get("msg.file.process.ok.message"));
 			}
