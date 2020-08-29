@@ -63,7 +63,7 @@ public class CodecConsole implements Runnable {
 		System.exit(new CommandLine(new CodecConsole()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
 			log.log(Level.FINE, e.toString(), e);
 			if (e.getCause() instanceof ConverterException) {
-				System.err.println(e.getCause().getLocalizedMessage());
+				System.err.println(e.getCause().getMessage());
 				System.out.println();
 			}
 			printHelp();
