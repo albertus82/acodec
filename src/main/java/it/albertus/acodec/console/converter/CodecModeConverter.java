@@ -7,13 +7,13 @@ import picocli.CommandLine.ITypeConverter;
 public class CodecModeConverter implements ITypeConverter<CodecMode> {
 
 	@Override
-	public CodecMode convert(final String arg) {
+	public CodecMode convert(final String arg) throws ConverterException {
 		for (final CodecMode cm : CodecMode.values()) {
 			if (Character.toString(cm.getAbbreviation()).equalsIgnoreCase(arg)) {
 				return cm;
 			}
 		}
-		throw new IllegalArgumentException(Messages.get("err.invalid.mode", arg) + System.lineSeparator());
+		throw new ConverterException(Messages.get("err.invalid.mode", arg));
 	}
 
 }

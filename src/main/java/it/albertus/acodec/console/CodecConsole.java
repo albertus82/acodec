@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import it.albertus.acodec.console.converter.CharsetConverter;
 import it.albertus.acodec.console.converter.CodecAlgorithmConverter;
 import it.albertus.acodec.console.converter.CodecModeConverter;
+import it.albertus.acodec.console.converter.ConverterException;
 import it.albertus.acodec.engine.CodecAlgorithm;
 import it.albertus.acodec.engine.CodecConfig;
 import it.albertus.acodec.engine.CodecMode;
@@ -38,6 +39,7 @@ public class CodecConsole implements Runnable {
 
 	private static final char OPTION_CHARSET = 'c';
 	private static final char OPTION_FILE = 'f';
+	private static final char OPTION_HELP = 'h';
 
 	@Parameters(index = "0")
 	private CodecMode mode;
@@ -46,7 +48,7 @@ public class CodecConsole implements Runnable {
 	private CodecAlgorithm algorithm;
 
 	@Parameters(index = "2", arity = "0..1")
-	private String inputTextArg;
+	private String inputText;
 
 	@Option(names = { "-" + OPTION_CHARSET, "--charset" })
 	private Charset charset = Charset.defaultCharset();
@@ -54,14 +56,15 @@ public class CodecConsole implements Runnable {
 	@Option(names = { "-" + OPTION_FILE, "--file" }, arity = "1..2", required = false)
 	private File[] files;
 
-	@Option(names = { "-H", "--help" })
-	private boolean helpArg;
+	@Option(names = { "-" + OPTION_HELP, "--help" })
+	private boolean help;
 
 	public static void main(final String... args) {
 		System.exit(new CommandLine(new CodecConsole()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
 			log.log(Level.FINE, e.toString(), e);
-			if (e.getCause() instanceof IllegalArgumentException && e.getCause().getLocalizedMessage() != null) {
+			if (e.getCause() instanceof ConverterException) {
 				System.err.println(e.getCause().getLocalizedMessage());
+				System.out.println();
 			}
 			printHelp();
 			return ExitCode.USAGE;
@@ -71,7 +74,7 @@ public class CodecConsole implements Runnable {
 	/* java -jar codec.jar e|d base64|md2|md5|...|sha-512 "text to encode" */
 	@Override
 	public void run() {
-		if (helpArg || files == null && inputTextArg == null || files != null && inputTextArg != null) {
+		if (help || files == null && inputText == null || files != null && inputText != null) {
 			printHelp();
 			return;
 		}
@@ -85,7 +88,7 @@ public class CodecConsole implements Runnable {
 				processFile(config, files);
 			}
 			else {
-				System.out.println(new StringCodec(config).run(inputTextArg));
+				System.out.println(new StringCodec(config).run(inputText));
 			}
 		}
 		catch (final Exception e) {

@@ -8,12 +8,12 @@ import picocli.CommandLine.ITypeConverter;
 public class CharsetConverter implements ITypeConverter<Charset> {
 
 	@Override
-	public Charset convert(final String arg) {
+	public Charset convert(final String arg) throws ConverterException {
 		try {
 			return Charset.forName(arg);
 		}
 		catch (final Exception e) {
-			throw new IllegalArgumentException(Messages.get("err.invalid.charset", arg) + System.lineSeparator(), e);
+			throw new ConverterException(Messages.get("err.invalid.charset", arg), e);
 		}
 	}
 
