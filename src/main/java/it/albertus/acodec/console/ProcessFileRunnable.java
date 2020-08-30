@@ -14,12 +14,11 @@ class ProcessFileRunnable implements Runnable {
 
 	@NonNull
 	private final ProcessFileTask task;
-	@NonNull
 	private final PrintStream out;
 
 	@Override
 	public void run() {
-		if (task.getOutputFile() == null) {
+		if (task.getOutputFile() == null || out == null) {
 			task.run(() -> false);
 		}
 		else {

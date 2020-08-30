@@ -57,7 +57,7 @@ public class CodecConsole implements Runnable {
 	private File[] files;
 
 	@Option(names = { "-" + OPTION_HELP, "--help" })
-	private boolean help;
+	private boolean helpRequested;
 
 	public static void main(final String... args) {
 		System.exit(new CommandLine(new CodecConsole()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
@@ -71,10 +71,9 @@ public class CodecConsole implements Runnable {
 		}).registerConverter(CodecMode.class, new CodecModeConverter()).registerConverter(CodecAlgorithm.class, new CodecAlgorithmConverter()).registerConverter(Charset.class, new CharsetConverter()).execute(args));
 	}
 
-	/* java -jar codec.jar e|d base64|md2|md5|...|sha-512 "text to encode" */
 	@Override
 	public void run() {
-		if (help || files == null && inputText == null || files != null && inputText != null) {
+		if (helpRequested || files == null && inputText == null || files != null && inputText != null) {
 			printHelp();
 			return;
 		}
