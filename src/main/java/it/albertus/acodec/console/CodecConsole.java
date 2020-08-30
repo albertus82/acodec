@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import it.albertus.acodec.console.converter.CharsetConverter;
 import it.albertus.acodec.console.converter.CodecAlgorithmConverter;
@@ -36,6 +39,7 @@ import picocli.CommandLine.Parameters;
 public class CodecConsole implements Runnable {
 
 	private static final String SYSTEM_LINE_SEPARATOR = System.lineSeparator();
+	private static final short WIDTH = 80;
 
 	private static final char OPTION_CHARSET = 'c';
 	private static final char OPTION_FILE = 'f';
@@ -128,12 +132,13 @@ public class CodecConsole implements Runnable {
 		help.append(SYSTEM_LINE_SEPARATOR);
 
 		/* Algorithms */
-		help.append(getAlgorithmsHelpBlock());
+		help.append(buildHelpBlock(Messages.get("msg.help.algorithms"), Arrays.stream(CodecAlgorithm.values()).map(CodecAlgorithm::getName).collect(Collectors.toCollection(LinkedHashSet::new))));
 		help.append(SYSTEM_LINE_SEPARATOR);
 
 		/* Charsets */
-		help.append(getCharsetsHelpBlock());
-		help.append(SYSTEM_LINE_SEPARATOR).append(SYSTEM_LINE_SEPARATOR);
+		help.append(buildHelpBlock(Messages.get("msg.help.charsets"), Charset.availableCharsets().keySet()));
+		help.append(' ').append(Messages.get("msg.help.default.charset", Charset.defaultCharset().name())).append(SYSTEM_LINE_SEPARATOR);
+		help.append(SYSTEM_LINE_SEPARATOR);
 
 		/* Example */
 		help.append(Messages.get("msg.help.example"));
@@ -149,47 +154,25 @@ public class CodecConsole implements Runnable {
 		System.out.println(help.toString().trim());
 	}
 
-	private static String getCharsetsHelpBlock() {
-		final StringBuilder charsets = new StringBuilder(Messages.get("msg.help.charsets"));
-		charsets.append(' ');
-		int cursorPosition = charsets.length();
+	private static CharSequence buildHelpBlock(@NonNull final String name, final @NonNull Iterable<String> values) {
+		final StringBuilder block = new StringBuilder(name);
+		block.append(' ');
+		int cursorPosition = block.length();
 		final int offset = cursorPosition;
-		for (final String charsetName : Charset.availableCharsets().keySet()) {
-			final String toPrint = charsetName + ", ";
-			if (cursorPosition + toPrint.length() >= 80) {
-				charsets.append(SYSTEM_LINE_SEPARATOR);
+		for (final String value : values) {
+			final String toPrint = value + ", ";
+			if (cursorPosition + toPrint.length() >= WIDTH) {
+				block.append(SYSTEM_LINE_SEPARATOR);
 				for (int i = 0; i < offset; i++) {
-					charsets.append(' ');
+					block.append(' ');
 				}
 				cursorPosition = offset;
 			}
-			charsets.append(toPrint);
+			block.append(toPrint);
 			cursorPosition += toPrint.length();
 		}
-		charsets.replace(charsets.length() - 2, charsets.length(), SYSTEM_LINE_SEPARATOR);
-		charsets.append(' ').append(Messages.get("msg.help.default.charset", Charset.defaultCharset().name()));
-		return charsets.toString();
-	}
-
-	private static String getAlgorithmsHelpBlock() {
-		final StringBuilder algorithms = new StringBuilder(Messages.get("msg.help.algorithms"));
-		algorithms.append(' ');
-		int cursorPosition = algorithms.length();
-		final int offset = cursorPosition;
-		for (final CodecAlgorithm algorithm : CodecAlgorithm.values()) {
-			final String toPrint = algorithm.getName() + ", ";
-			if (cursorPosition + toPrint.length() >= 80) {
-				algorithms.append(SYSTEM_LINE_SEPARATOR);
-				for (int i = 0; i < offset; i++) {
-					algorithms.append(' ');
-				}
-				cursorPosition = offset;
-			}
-			algorithms.append(toPrint);
-			cursorPosition += toPrint.length();
-		}
-		algorithms.replace(algorithms.length() - 2, algorithms.length(), SYSTEM_LINE_SEPARATOR);
-		return algorithms.toString();
+		block.replace(block.length() - 2, block.length(), SYSTEM_LINE_SEPARATOR);
+		return block;
 	}
 
 }
