@@ -231,7 +231,7 @@ public class ProcessFileTask implements Cancelable {
 	}
 
 	private static String buildFileName(@NonNull final File inputFile, @NonNull final File outputFile) throws IOException {
-		if (inputFile.getParentFile().getCanonicalPath().equals(outputFile.getParentFile().getCanonicalPath())) {
+		if (inputFile.getParentFile() == null && outputFile.getParentFile() == null || inputFile.getParentFile().getCanonicalPath().equals(outputFile.getParentFile().getCanonicalPath())) {
 			return inputFile.getName();
 		}
 		else {
