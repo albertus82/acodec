@@ -83,7 +83,7 @@ public class CodecConsole implements Runnable {
 		}
 
 		final CodecConfig config = new CodecConfig(mode, algorithm, charset);
-		log.log(Level.FINE, "{0}", config);
+		log.log(Level.CONFIG, "{0}", config);
 
 		/* Execution */
 		try {
@@ -94,8 +94,11 @@ public class CodecConsole implements Runnable {
 				System.out.println(new StringCodec(config).run(inputText));
 			}
 		}
+		catch (final RuntimeException e) {
+			final String message = e.getLocalizedMessage();
+			log.log(Level.SEVERE, message + (message.endsWith(".") || message.endsWith(":") ? "" : ':'), e);
+		}
 		catch (final Exception e) {
-			log.log(Level.FINE, e.toString(), e);
 			final String message = e.getLocalizedMessage();
 			System.err.println(message + (message.endsWith(".") ? "" : '.'));
 		}
@@ -113,9 +116,13 @@ public class CodecConsole implements Runnable {
 			}
 		}
 		catch (final ExecutionException e) {
-			log.log(Level.FINE, e.toString(), e);
 			final String message = e.getCause() != null ? e.getCause().getLocalizedMessage() : e.getLocalizedMessage();
-			System.err.println(message + (message.endsWith(".") ? "" : '.'));
+			if (e.getCause() instanceof RuntimeException) {
+				log.log(Level.SEVERE, message + (message.endsWith(".") || message.endsWith(":") ? "" : ':'), e.getCause());
+			}
+			else {
+				System.err.println(message + (message.endsWith(".") ? "" : '.'));
+			}
 		}
 	}
 
