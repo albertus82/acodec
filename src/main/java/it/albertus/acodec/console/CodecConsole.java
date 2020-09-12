@@ -6,8 +6,6 @@ import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -95,34 +93,21 @@ public class CodecConsole implements Runnable {
 			}
 		}
 		catch (final RuntimeException e) {
-			final String message = e.getLocalizedMessage();
-			log.log(Level.SEVERE, message + (message.endsWith(".") || message.endsWith(":") ? "" : ':'), e);
+			log.log(Level.SEVERE, e.getLocalizedMessage(), e);
 		}
 		catch (final Exception e) {
-			final String message = e.getLocalizedMessage();
-			System.err.println(message + (message.endsWith(".") ? "" : '.'));
+			log.log(Level.WARNING, e.getLocalizedMessage(), e);
 		}
 	}
 
-	private static void processFile(@NonNull final CodecConfig config, @NonNull final File[] files) throws FileNotFoundException, InterruptedException {
+	private static void processFile(@NonNull final CodecConfig config, @NonNull final File[] files) throws FileNotFoundException {
 		if (!files[0].isFile()) {
 			throw new FileNotFoundException(Messages.get("msg.missing.file", files[0]));
 		}
 		final ProcessFileTask task = new ProcessFileTask(config, files[0], files.length > 1 ? files[1] : null);
-		try {
-			CompletableFuture.runAsync(new ProcessFileRunnable(task, System.out)).get();
-			if (files.length > 1) {
-				System.out.println(Messages.get("msg.file.process.ok.message"));
-			}
-		}
-		catch (final ExecutionException e) {
-			final String message = e.getCause() != null ? e.getCause().getLocalizedMessage() : e.getLocalizedMessage();
-			if (e.getCause() instanceof RuntimeException) {
-				log.log(Level.SEVERE, message + (message.endsWith(".") || message.endsWith(":") ? "" : ':'), e.getCause());
-			}
-			else {
-				System.err.println(message + (message.endsWith(".") ? "" : '.'));
-			}
+		new ProcessFileRunnable(task, System.out).run();
+		if (files.length > 1) {
+			System.out.println(Messages.get("msg.file.process.ok.message"));
 		}
 	}
 

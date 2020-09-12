@@ -35,7 +35,7 @@ public class ProcessFileRunnable implements IRunnableWithProgress {
 			result = task.run(monitor::isCanceled);
 		}
 		catch (final CancellationException e) {
-			throw new InterruptedException(e.getMessage());
+			throw new InterruptedException(e.getLocalizedMessage());
 		}
 		finally {
 			if (updateStatusBarThread != null) {

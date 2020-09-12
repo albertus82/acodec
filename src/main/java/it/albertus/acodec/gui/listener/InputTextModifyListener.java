@@ -40,7 +40,7 @@ public class InputTextModifyListener implements ModifyListener {
 	}
 
 	private void print(final Exception e) {
-		print(e.getMessage(), true);
+		print(e.getLocalizedMessage(), true);
 	}
 
 	private void print(final String text, final boolean error) {

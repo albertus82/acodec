@@ -96,11 +96,11 @@ public class ProcessFileAction {
 			final String message;
 			final Throwable throwable;
 			if (e.getCause() != null) {
-				message = e.getCause().getMessage() != null ? e.getCause().getMessage() : e.getCause().toString();
+				message = e.getCause().getLocalizedMessage() != null ? e.getCause().getLocalizedMessage() : e.getCause().toString();
 				throwable = e.getCause();
 			}
 			else {
-				message = e.getMessage() != null ? e.getMessage() : e.toString();
+				message = e.getLocalizedMessage() != null ? e.getLocalizedMessage() : e.toString();
 				throwable = e;
 			}
 			EnhancedErrorDialog.openError(gui.getShell(), Messages.get(MSG_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIconArray());

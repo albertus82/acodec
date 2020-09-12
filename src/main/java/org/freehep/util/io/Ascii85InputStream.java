@@ -63,12 +63,12 @@ public class Ascii85InputStream extends DecodingInputStream {
 			}
 		}
 		catch (final IOException ioe) {
-			log.log(Level.FINE, ioe.getMessage(), ioe);
+			log.log(Level.FINE, ioe.getLocalizedMessage(), ioe);
 			try {
 				in.reset();
 			}
 			catch (final IOException e) {
-				log.log(Level.FINE, e.getMessage(), e);
+				log.log(Level.FINE, e.getLocalizedMessage(), e);
 			}
 		}
 	}
