@@ -30,7 +30,6 @@ import picocli.CommandLine.ExitCode;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-@SuppressWarnings("java:S106") // "Standard outputs should not be used directly to log anything"
 @Log
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Command
