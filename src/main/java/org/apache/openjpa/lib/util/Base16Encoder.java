@@ -18,6 +18,9 @@
  */
 package org.apache.openjpa.lib.util;
 
+import org.bouncycastle.util.Arrays;
+
+import it.albertus.acodec.resources.Messages;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -54,6 +57,14 @@ public class Base16Encoder {
 			if (digit1 >= 'a') {
 				digit1 -= 32; // toLowerCase
 			}
+			int digit2 = s.charAt(i * 2 + 1);
+			if (digit2 >= 'a') {
+				digit2 -= 32; // toLowerCase
+			}
+			if (!Arrays.contains(HEX, (char) digit1) || !Arrays.contains(HEX, (char) digit2)) {
+				throw new IllegalArgumentException(Messages.get("err.invalid.input"));
+			}
+
 			if (digit1 >= '0' && digit1 <= '9') {
 				digit1 -= '0';
 			}
@@ -61,10 +72,6 @@ public class Base16Encoder {
 				digit1 -= 'A' - 10;
 			}
 
-			int digit2 = s.charAt(i * 2 + 1);
-			if (digit2 >= 'a') {
-				digit2 -= 32; // toLowerCase
-			}
 			if (digit2 >= '0' && digit2 <= '9') {
 				digit2 -= '0';
 			}
