@@ -65,7 +65,7 @@ public class CodecConsole implements Runnable {
 			log.log(Level.FINE, e.toString(), e);
 			if (e.getCause() instanceof ConverterException) {
 				System.err.println(e.getCause().getMessage());
-				System.out.println();
+				System.err.println();
 			}
 			printHelp();
 			return ExitCode.USAGE;
