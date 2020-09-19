@@ -91,11 +91,8 @@ public class CodecConsole implements Runnable {
 				System.out.println(new StringCodec(config).run(inputText));
 			}
 		}
-		catch (final RuntimeException e) {
-			log.log(Level.SEVERE, e.getLocalizedMessage(), e);
-		}
 		catch (final Exception e) {
-			log.log(Level.WARNING, e.getLocalizedMessage(), e);
+			e.printStackTrace();
 		}
 	}
 

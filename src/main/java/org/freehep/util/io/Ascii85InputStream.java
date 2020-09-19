@@ -106,10 +106,10 @@ public class Ascii85InputStream extends DecodingInputStream {
 			ch = in.read();
 			switch (ch) {
 			case -1:
-				throw new IOException("ASCII85InputStream: missing '~>' at end of stream");
+				throw new IOException(getClass().getSimpleName() + ": missing '~>' at end of stream");
 			case 'z':
 				if (cIndex != 0) {
-					throw new IOException("ASCII85InputStream: 'z' encoding can only appear at the start of a group, cIndex: " + cIndex);
+					throw new IOException(getClass().getSimpleName() + ": 'z' encoding can only appear at the start of a group, cIndex: " + cIndex);
 				}
 				b[0] = b[1] = b[2] = b[3] = 0;
 				return 4;
@@ -119,7 +119,7 @@ public class Ascii85InputStream extends DecodingInputStream {
 					ch = in.read();
 				}
 				if (ch != '>') {
-					throw new IOException("ASCII85InputStream: Invalid EOD, expected '>', found " + ch);
+					throw new IOException(getClass().getSimpleName() + ": Invalid EOD, expected '>', found " + ch);
 				}
 				endReached = true;
 				break;
