@@ -62,13 +62,13 @@ public class Ascii85InputStream extends DecodingInputStream {
 				in.reset();
 			}
 		}
-		catch (final IOException ioe) {
-			log.log(Level.FINE, ioe.getLocalizedMessage(), ioe);
+		catch (final IOException e1) {
+			log.log(Level.FINE, "Error discarding start delimiter:", e1);
 			try {
 				in.reset();
 			}
-			catch (final IOException e) {
-				log.log(Level.FINE, e.getLocalizedMessage(), e);
+			catch (final IOException e2) {
+				log.log(Level.FINE, "Error discarding start delimiter:", e2);
 			}
 		}
 	}

@@ -8,6 +8,7 @@ import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Properties;
@@ -97,17 +98,16 @@ public class AboutDialog extends Dialog {
 			fontRegistry.put(SYM_NAME_FONT_DEFAULT, info.getFont().getFontData());
 		}
 		info.setFont(fontRegistry.getBold(SYM_NAME_FONT_DEFAULT));
-		final Version version = Version.getInstance();
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(info);
 		Date versionDate;
 		try {
-			versionDate = version.getDate();
+			versionDate = Version.getDate();
 		}
-		catch (final Exception e) {
-			log.log(Level.WARNING, e.toString(), e);
+		catch (final ParseException e) {
+			log.log(Level.WARNING, "Invalid version date:", e);
 			versionDate = new Date();
 		}
-		info.setText(buildAnchor(Messages.get("project.url"), Messages.get("msg.application.name")) + ' ' + Messages.get("msg.version", version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM, Messages.getLanguage().getLocale()).format(versionDate)));
+		info.setText(buildAnchor(Messages.get("project.url"), Messages.get("msg.application.name")) + ' ' + Messages.get("msg.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM, Messages.getLanguage().getLocale()).format(versionDate)));
 		info.addSelectionListener(linkSelectionListener);
 
 		final Link acknowledgementsLocations = new Link(shell, SWT.WRAP);

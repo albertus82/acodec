@@ -15,7 +15,7 @@
 	<classpathentry kind="lib" path="lib/compile/common/bcprov-jdk15on-166.jar" sourcepath="lib/compile/common/src/bcprov-jdk15on-1.66-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/commons-codec-1.15.jar" sourcepath="lib/compile/common/src/commons-codec-1.15-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/commons-io-2.8.0.jar" sourcepath="lib/compile/common/src/commons-io-2.8.0-sources.jar"/>
-	<classpathentry kind="lib" path="lib/compile/common/jface-utils-16.0.3.jar" sourcepath="lib/compile/common/src/jface-utils-16.0.3-sources.jar"/>
+	<classpathentry kind="lib" path="lib/compile/common/jface-utils-17.0.0.jar" sourcepath="lib/compile/common/src/jface-utils-17.0.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/org.eclipse.core.commands_3.9.0.v20170530-1048.jar" sourcepath="lib/compile/common/src/org.eclipse.core.commands.source_3.9.0.v20170530-1048.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/org.eclipse.core.jobs_3.9.3.v20180115-1757.jar" sourcepath="lib/compile/common/src/org.eclipse.core.jobs.source_3.9.3.v20180115-1757.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/org.eclipse.equinox.common_3.9.0.v20170207-1454.jar" sourcepath="lib/compile/common/src/org.eclipse.equinox.common.source_3.9.0.v20170207-1454.jar"/>

@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -62,7 +64,7 @@ public class CodecConsole implements Runnable {
 
 	public static void main(final String... args) {
 		System.exit(new CommandLine(new CodecConsole()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
-			log.log(Level.FINE, e.toString(), e);
+			log.log(Level.FINE, "Invalid command line parameter:", e);
 			if (e.getCause() instanceof ConverterException) {
 				System.err.println(e.getCause().getMessage());
 				System.err.println();
@@ -131,14 +133,17 @@ public class CodecConsole implements Runnable {
 		/* Example */
 		help.append(Messages.get("msg.help.example"));
 
-		final Version version = Version.getInstance();
+		/* Header */
+		Date versionDate;
 		try {
-			System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(version.getDate())) + " [" + Messages.get("project.url") + ']');
-			System.out.println();
+			versionDate = Version.getDate();
 		}
-		catch (final RuntimeException e) {
-			log.log(Level.FINE, e.toString(), e);
+		catch (final ParseException e) {
+			log.log(Level.WARNING, "Invalid version date:", e);
+			versionDate = new Date();
 		}
+		System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(versionDate)) + " [" + Messages.get("project.url") + ']');
+		System.out.println();
 		System.out.println(help.toString().trim());
 	}
 

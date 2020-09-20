@@ -165,7 +165,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	public static void main(final String... args) {
 		Display.setAppName(Messages.get("msg.application.name"));
-		Display.setAppVersion(Version.getInstance().getNumber());
+		Display.setAppVersion(Version.getNumber());
 		try (final CloseableDevice<Display> cd = new CloseableDevice<>(Display.getDefault())) {
 			final Display display = cd.getDevice();
 			final CodecGui gui = new CodecGui(display);
