@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ import picocli.CommandLine.Parameters;
 @Log
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Command
-public class CodecConsole implements Runnable {
+public class CodecConsole implements Callable<Integer> {
 
 	private static final String SYSTEM_LINE_SEPARATOR = System.lineSeparator();
 	private static final short WIDTH = 80;
@@ -75,10 +76,15 @@ public class CodecConsole implements Runnable {
 	}
 
 	@Override
-	public void run() {
-		if (helpRequested || files == null && inputText == null || files != null && inputText != null) {
+	public Integer call() {
+		if (files == null && inputText == null || files != null && inputText != null) {
 			printHelp();
-			return;
+			return ExitCode.USAGE;
+		}
+
+		if (helpRequested) {
+			printHelp();
+			return ExitCode.OK;
 		}
 
 		final CodecConfig config = new CodecConfig(mode, algorithm, charset);
@@ -92,9 +98,11 @@ public class CodecConsole implements Runnable {
 			else {
 				System.out.println(new StringCodec(config).run(inputText));
 			}
+			return ExitCode.OK;
 		}
 		catch (final Exception e) {
 			e.printStackTrace();
+			return ExitCode.SOFTWARE;
 		}
 	}
 
