@@ -36,6 +36,7 @@ import picocli.CommandLine.Parameters;
 @Log
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Command
+@SuppressWarnings("java:S106") // "Standard outputs should not be used directly to log anything"
 public class CodecConsole implements Callable<Integer> {
 
 	private static final String SYSTEM_LINE_SEPARATOR = System.lineSeparator();
