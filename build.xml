@@ -61,7 +61,6 @@
 			<entry key="config.stopBubbling" value="true" />
 			<entry key="lombok.addLombokGeneratedAnnotation" value="true" />
 		</propertyfile>
-		<echoproperties srcfile="lombok.config" />
 
 		<mkdir dir="${build.outputDirectory}" />
 
