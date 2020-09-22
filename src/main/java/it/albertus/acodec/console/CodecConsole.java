@@ -1,7 +1,10 @@
 package it.albertus.acodec.console;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -12,6 +15,7 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import it.albertus.acodec.ACodec;
 import it.albertus.acodec.console.converter.CharsetConverter;
 import it.albertus.acodec.console.converter.CodecAlgorithmConverter;
 import it.albertus.acodec.console.converter.CodecModeConverter;
@@ -22,6 +26,7 @@ import it.albertus.acodec.engine.CodecMode;
 import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.acodec.engine.StringCodec;
 import it.albertus.acodec.resources.Messages;
+import it.albertus.util.StringUtils;
 import it.albertus.util.Version;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -65,7 +70,7 @@ public class CodecConsole implements Callable<Integer> {
 	private boolean helpRequested;
 
 	public static void main(final String... args) {
-		System.exit(new CommandLine(new CodecConsole()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
+		System.exit(new CommandLine(new CodecConsole()).setCommandName(ACodec.class.getSimpleName().toLowerCase()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
 			log.log(Level.FINE, "Invalid command line parameter:", e);
 			if (e.getCause() instanceof ConverterException) {
 				System.err.println(e.getCause().getMessage());
@@ -107,9 +112,17 @@ public class CodecConsole implements Callable<Integer> {
 		}
 	}
 
-	private static void processFile(@NonNull final CodecConfig config, @NonNull final File[] files) throws FileNotFoundException {
+	private static void processFile(@NonNull final CodecConfig config, @NonNull final File[] files) throws IOException {
 		if (!files[0].isFile()) {
 			throw new FileNotFoundException(Messages.get("msg.missing.file", files[0]));
+		}
+		if (files.length > 1 && files[1].isFile()) {
+			System.out.print(Messages.get("msg.overwrite.file.question") + ' ');
+			final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			final String answer = StringUtils.trimToEmpty(br.readLine()).toLowerCase();
+			if (!Arrays.asList(Messages.get("msg.overwrite.file.answers.yes").split(",")).contains(answer)) {
+				return;
+			}
 		}
 		final ProcessFileTask task = new ProcessFileTask(config, files[0], files.length > 1 ? files[1] : null);
 		new ProcessFileRunnable(task, System.out).run();
