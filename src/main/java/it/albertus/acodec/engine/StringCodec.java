@@ -20,12 +20,12 @@ public class StringCodec {
 	@NonNull
 	private final CodecConfig config;
 
-	public String run(final String input) throws EncoderException, DecoderException {
+	public String run(final String input) throws MissingAlgorithmException, MissingInputException, EncoderException, DecoderException {
 		if (config.getAlgorithm() == null) {
-			throw new IllegalStateException(Messages.get("msg.missing.algorithm"));
+			throw new MissingAlgorithmException();
 		}
 		if (input == null || input.isEmpty()) {
-			throw new IllegalStateException(Messages.get("msg.missing.input"));
+			throw new MissingInputException();
 		}
 		switch (config.getMode()) {
 		case DECODE:
@@ -76,7 +76,7 @@ public class StringCodec {
 			}
 		}
 		catch (final Exception e) {
-			throw new EncoderException(Messages.get("err.cannot.encode", config.getAlgorithm().getName()), e);
+			throw new EncoderException(Messages.get("err.cannot.encode", config.getAlgorithm()), e);
 		}
 	}
 
@@ -97,11 +97,11 @@ public class StringCodec {
 			case BASE91:
 				return new String(Base91.decode(input), config.getCharset());
 			default:
-				throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", config.getAlgorithm().getName()));
+				throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", config.getAlgorithm()));
 			}
 		}
 		catch (final Exception e) {
-			throw new DecoderException(Messages.get("err.cannot.decode", config.getAlgorithm().getName()), e);
+			throw new DecoderException(Messages.get("err.cannot.decode", config.getAlgorithm()), e);
 		}
 	}
 

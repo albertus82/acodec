@@ -33,7 +33,6 @@ import it.albertus.util.NewLine;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import net.sourceforge.base91.B91Cli;
 
@@ -53,13 +52,12 @@ public class ProcessFileTask implements Cancelable {
 
 	private CloseableStreams streams;
 
-	@SneakyThrows({ EncoderException.class, DecoderException.class, FileNotFoundException.class })
-	public String run(final BooleanSupplier canceled) {
+	public String run(final BooleanSupplier canceled) throws MissingAlgorithmException, FileNotFoundException, EncoderException, DecoderException {
 		if (config.getAlgorithm() == null) {
-			throw new IllegalStateException(Messages.get("msg.missing.algorithm"));
+			throw new MissingAlgorithmException();
 		}
 		if (!inputFile.isFile()) {
-			throw new FileNotFoundException(Messages.get("msg.missing.file", inputFile));
+			throw new FileNotFoundException(inputFile.toString());
 		}
 		switch (config.getMode()) {
 		case DECODE:
@@ -133,7 +131,7 @@ public class ProcessFileTask implements Cancelable {
 		catch (final Exception e) {
 			deleteOutputFile();
 			if (!canceled.getAsBoolean()) {
-				throw new EncoderException(Messages.get("err.cannot.encode", config.getAlgorithm().getName()), e);
+				throw new EncoderException(Messages.get("err.cannot.encode", config.getAlgorithm()), e);
 			}
 		}
 		if (canceled.getAsBoolean()) {
@@ -173,13 +171,13 @@ public class ProcessFileTask implements Cancelable {
 				B91Cli.decode(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			default:
-				throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", config.getAlgorithm().getName()));
+				throw new UnsupportedOperationException(Messages.get("err.invalid.algorithm", config.getAlgorithm()));
 			}
 		}
 		catch (final Exception e) {
 			deleteOutputFile();
 			if (!canceled.getAsBoolean()) {
-				throw new DecoderException(Messages.get("err.cannot.decode", config.getAlgorithm().getName()), e);
+				throw new DecoderException(Messages.get("err.cannot.decode", config.getAlgorithm()), e);
 			}
 		}
 		if (canceled.getAsBoolean()) {

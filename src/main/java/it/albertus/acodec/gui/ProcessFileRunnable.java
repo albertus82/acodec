@@ -37,6 +37,9 @@ public class ProcessFileRunnable implements IRunnableWithProgress {
 		catch (final CancellationException e) {
 			throw new InterruptedException(e.getLocalizedMessage());
 		}
+		catch (final Exception e) {
+			throw new ProcessFileException(e);
+		}
 		finally {
 			if (updateStatusBarThread != null) {
 				updateStatusBarThread.interrupt();

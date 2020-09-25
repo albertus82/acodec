@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -15,6 +16,9 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.EncoderException;
+
 import it.albertus.acodec.ACodec;
 import it.albertus.acodec.console.converter.CharsetConverter;
 import it.albertus.acodec.console.converter.CodecAlgorithmConverter;
@@ -23,6 +27,7 @@ import it.albertus.acodec.console.converter.ConverterException;
 import it.albertus.acodec.engine.CodecAlgorithm;
 import it.albertus.acodec.engine.CodecConfig;
 import it.albertus.acodec.engine.CodecMode;
+import it.albertus.acodec.engine.MissingAlgorithmException;
 import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.acodec.engine.StringCodec;
 import it.albertus.acodec.resources.Messages;
@@ -71,11 +76,13 @@ public class CodecConsole implements Callable<Integer> {
 
 	public static void main(final String... args) {
 		System.exit(new CommandLine(new CodecConsole()).setCommandName(ACodec.class.getSimpleName().toLowerCase()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
-			log.log(Level.FINE, "Invalid command line parameter:", e);
 			if (e.getCause() instanceof ConverterException) {
-				System.err.println(e.getCause().getMessage());
-				System.err.println();
+				System.out.println(e.getCause().getMessage());
 			}
+			else {
+				System.out.println(Messages.get("err.incorrect.command.syntax"));
+			}
+			System.out.println();
 			printHelp();
 			return ExitCode.USAGE;
 		}).registerConverter(CodecMode.class, new CodecModeConverter()).registerConverter(CodecAlgorithm.class, new CodecAlgorithmConverter()).registerConverter(Charset.class, new CharsetConverter()).execute(args));
@@ -99,36 +106,60 @@ public class CodecConsole implements Callable<Integer> {
 		/* Execution */
 		try {
 			if (files != null && files.length > 0) {
-				processFile(config, files);
+				return processFile(config, files);
 			}
 			else {
 				System.out.println(new StringCodec(config).run(inputText));
+				return ExitCode.OK;
 			}
-			return ExitCode.OK;
+		}
+		catch (final EncoderException e) {
+			System.out.println(Messages.get("err.cannot.encode", config.getAlgorithm().getName()));
+			e.printStackTrace();
+			return ExitCode.SOFTWARE;
+		}
+		catch (final DecoderException e) {
+			System.out.println(Messages.get("err.cannot.decode", config.getAlgorithm().getName()));
+			e.printStackTrace();
+			return ExitCode.SOFTWARE;
 		}
 		catch (final Exception e) {
+			System.out.println(Messages.get("err.unexpected.error"));
 			e.printStackTrace();
 			return ExitCode.SOFTWARE;
 		}
 	}
 
-	private static void processFile(@NonNull final CodecConfig config, @NonNull final File[] files) throws IOException {
+	private static int processFile(@NonNull final CodecConfig config, @NonNull final File[] files) throws MissingAlgorithmException, EncoderException, DecoderException {
 		if (!files[0].isFile()) {
-			throw new FileNotFoundException(Messages.get("msg.missing.file", files[0]));
+			System.out.println(Messages.get("msg.missing.file", files[0]));
+			return ExitCode.SOFTWARE;
 		}
 		if (files.length > 1 && files[1].isFile()) {
 			System.out.print(Messages.get("msg.overwrite.file.question") + ' ');
 			final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			final String answer = StringUtils.trimToEmpty(br.readLine()).toLowerCase();
-			if (!Arrays.asList(Messages.get("msg.overwrite.file.answers.yes").split(",")).contains(answer)) {
-				return;
+			try {
+				final String answer = StringUtils.trimToEmpty(br.readLine()).toLowerCase();
+				if (!Arrays.asList(Messages.get("msg.overwrite.file.answers.yes").split(",")).contains(answer)) {
+					return ExitCode.OK;
+				}
+			}
+			catch (final IOException e) {
+				throw new UncheckedIOException(e);
 			}
 		}
 		final ProcessFileTask task = new ProcessFileTask(config, files[0], files.length > 1 ? files[1] : null);
-		new ProcessFileRunnable(task, System.out).run();
+		try {
+			new ProcessFileRunnable(task, System.out).run();
+		}
+		catch (final FileNotFoundException e) {
+			System.out.println(Messages.get("msg.missing.file", e.getMessage()));
+			return ExitCode.SOFTWARE;
+		}
 		if (files.length > 1) {
 			System.out.println(Messages.get("msg.file.process.ok.message"));
 		}
+		return ExitCode.OK;
 	}
 
 	private static void printHelp() {
@@ -161,7 +192,7 @@ public class CodecConsole implements Callable<Integer> {
 			versionDate = Version.getDate();
 		}
 		catch (final ParseException e) {
-			log.log(Level.WARNING, "Invalid version date:", e);
+			log.log(Level.FINE, "Invalid version date:", e);
 			versionDate = new Date();
 		}
 		System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(versionDate)) + " [" + Messages.get("project.url") + ']');

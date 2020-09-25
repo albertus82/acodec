@@ -4,9 +4,12 @@ import static it.albertus.acodec.engine.CodecMode.DECODE;
 import static it.albertus.acodec.engine.CodecMode.ENCODE;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.EncoderException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -21,6 +24,7 @@ import it.albertus.acodec.engine.CodecAlgorithm;
 import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.acodec.gui.CodecGui;
 import it.albertus.acodec.gui.Images;
+import it.albertus.acodec.gui.ProcessFileException;
 import it.albertus.acodec.gui.ProcessFileRunnable;
 import it.albertus.acodec.resources.Messages;
 import it.albertus.jface.EnhancedErrorDialog;
@@ -86,7 +90,7 @@ public class ProcessFileAction {
 			box.open();
 		}
 		catch (final InterruptedException e) { // NOSONAR
-			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_WARNING);
+			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
 			box.setMessage(Messages.get("msg.file.process.cancel.message"));
 			box.setText(Messages.get(MSG_APPLICATION_NAME));
 			box.open();
@@ -94,14 +98,18 @@ public class ProcessFileAction {
 		catch (final InvocationTargetException e) {
 			log.log(Level.WARNING, e.toString(), e);
 			final String message;
-			final Throwable throwable;
-			if (e.getCause() != null) {
-				message = e.getCause().getLocalizedMessage() != null ? e.getCause().getLocalizedMessage() : e.getCause().toString();
-				throwable = e.getCause();
+			final Throwable throwable = e.getCause() instanceof ProcessFileException ? e.getCause().getCause() : e;
+			if (throwable instanceof EncoderException) {
+				message = Messages.get("err.cannot.encode", gui.getConfig().getAlgorithm().getName());
+			}
+			else if (throwable instanceof DecoderException) {
+				message = Messages.get("err.cannot.decode", gui.getConfig().getAlgorithm().getName());
+			}
+			else if (throwable instanceof FileNotFoundException) {
+				message = Messages.get("msg.missing.file", throwable.getMessage());
 			}
 			else {
-				message = e.getLocalizedMessage() != null ? e.getLocalizedMessage() : e.toString();
-				throwable = e;
+				message = Messages.get("err.unexpected.error");
 			}
 			EnhancedErrorDialog.openError(gui.getShell(), Messages.get(MSG_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIconArray());
 		}

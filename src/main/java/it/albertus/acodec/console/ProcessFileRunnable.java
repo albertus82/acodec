@@ -1,8 +1,13 @@
 package it.albertus.acodec.console;
 
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.EncoderException;
+
+import it.albertus.acodec.engine.MissingAlgorithmException;
 import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.acodec.resources.Messages;
 import lombok.AccessLevel;
@@ -10,14 +15,13 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-class ProcessFileRunnable implements Runnable {
+class ProcessFileRunnable {
 
 	@NonNull
 	private final ProcessFileTask task;
 	private final PrintStream out;
 
-	@Override
-	public void run() {
+	public void run() throws MissingAlgorithmException, FileNotFoundException, EncoderException, DecoderException {
 		if (task.getOutputFile() == null || out == null) {
 			task.run(() -> false);
 		}

@@ -142,7 +142,7 @@ public class CodecEngineTest {
 	}
 
 	@Test
-	public void testStringEncoder() throws EncoderException, DecoderException {
+	public void testStringEncoder() throws EncoderException, DecoderException, MissingAlgorithmException, MissingInputException {
 		codecConfig.setMode(ENCODE);
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(ENCODE)) {
@@ -157,7 +157,7 @@ public class CodecEngineTest {
 	}
 
 	@Test
-	public void testStringDecoder() throws EncoderException, DecoderException {
+	public void testStringDecoder() throws EncoderException, DecoderException, MissingAlgorithmException, MissingInputException {
 		codecConfig.setMode(DECODE);
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(DECODE)) {
@@ -176,7 +176,7 @@ public class CodecEngineTest {
 	}
 
 	@Test
-	public void testFileEncoder() throws IOException, EncoderException, DecoderException {
+	public void testFileEncoder() throws IOException, EncoderException, DecoderException, MissingAlgorithmException {
 		codecConfig.setMode(ENCODE);
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(ENCODE)) {
@@ -200,7 +200,7 @@ public class CodecEngineTest {
 	}
 
 	@Test
-	public void testFileDecoder() throws IOException, EncoderException, DecoderException {
+	public void testFileDecoder() throws IOException, EncoderException, DecoderException, MissingAlgorithmException {
 		codecConfig.setMode(DECODE);
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(DECODE)) {
@@ -234,7 +234,7 @@ public class CodecEngineTest {
 		}
 	}
 
-	private String testFileEncoder(final CodecAlgorithm ca) throws IOException, EncoderException, DecoderException {
+	private String testFileEncoder(final CodecAlgorithm ca) throws IOException, EncoderException, DecoderException, MissingAlgorithmException {
 		File outputFile = null;
 		try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			outputFile = File.createTempFile(ENCODE.name().toLowerCase() + '-', '.' + ca.getFileExtension());
@@ -271,7 +271,7 @@ public class CodecEngineTest {
 		}
 	}
 
-	private String testFileDecoder(final File file) throws IOException, EncoderException, DecoderException {
+	private String testFileDecoder(final File file) throws IOException, EncoderException, DecoderException, MissingAlgorithmException {
 		File outputFile = null;
 		try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			outputFile = File.createTempFile(DECODE.name().toLowerCase() + '-', ".txt");
