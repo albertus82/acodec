@@ -73,7 +73,7 @@ public class CodecConsole implements Callable<Integer> {
 	@Option(names = { "-" + OPTION_FILE, "--file" }, arity = "1..2", required = false)
 	private File[] files;
 
-	@Option(names = { "-" + OPTION_HELP, "--help" })
+	@Option(names = { "-" + OPTION_HELP, "--help", "-?", "/?" })
 	private boolean helpRequested;
 
 	public static void main(final String... args) {
@@ -100,7 +100,7 @@ public class CodecConsole implements Callable<Integer> {
 	@Override
 	public Integer call() {
 		if (files == null && inputText == null || files != null && inputText != null) {
-			printHelp();
+			System.out.println(Messages.get("err.incorrect.command.syntax"));
 			return ExitCode.USAGE;
 		}
 
