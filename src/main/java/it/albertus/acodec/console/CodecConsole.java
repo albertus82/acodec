@@ -21,9 +21,11 @@ import org.apache.commons.codec.EncoderException;
 
 import it.albertus.acodec.ACodec;
 import it.albertus.acodec.console.converter.CharsetConverter;
+import it.albertus.acodec.console.converter.CharsetConverter.InvalidCharsetException;
 import it.albertus.acodec.console.converter.CodecAlgorithmConverter;
+import it.albertus.acodec.console.converter.CodecAlgorithmConverter.InvalidAlgorithmException;
 import it.albertus.acodec.console.converter.CodecModeConverter;
-import it.albertus.acodec.console.converter.ConverterException;
+import it.albertus.acodec.console.converter.CodecModeConverter.InvalidModeException;
 import it.albertus.acodec.engine.CodecAlgorithm;
 import it.albertus.acodec.engine.CodecConfig;
 import it.albertus.acodec.engine.CodecMode;
@@ -76,14 +78,21 @@ public class CodecConsole implements Callable<Integer> {
 
 	public static void main(final String... args) {
 		System.exit(new CommandLine(new CodecConsole()).setCommandName(ACodec.class.getSimpleName().toLowerCase()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
-			if (e.getCause() instanceof ConverterException) {
-				System.out.println(e.getCause().getMessage());
+			if (e.getCause() instanceof InvalidCharsetException) {
+				System.out.println(Messages.get("err.invalid.charset", e.getCause().getMessage()));
 			}
-			else {
+			else if (e.getCause() instanceof InvalidAlgorithmException) {
+				System.out.println(Messages.get("err.invalid.algorithm", e.getCause().getMessage()));
+			}
+			else if (e.getCause() instanceof InvalidModeException) {
+				System.out.println(Messages.get("err.invalid.mode", e.getCause().getMessage()));
+			}
+			else if (a.length != 0) {
 				System.out.println(Messages.get("err.incorrect.command.syntax"));
 			}
-			System.out.println();
-			printHelp();
+			else {
+				printHelp();
+			}
 			return ExitCode.USAGE;
 		}).registerConverter(CodecMode.class, new CodecModeConverter()).registerConverter(CodecAlgorithm.class, new CodecAlgorithmConverter()).registerConverter(Charset.class, new CharsetConverter()).execute(args));
 	}

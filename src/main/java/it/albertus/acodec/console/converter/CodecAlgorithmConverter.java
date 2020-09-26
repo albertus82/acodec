@@ -1,19 +1,27 @@
 package it.albertus.acodec.console.converter;
 
 import it.albertus.acodec.engine.CodecAlgorithm;
-import it.albertus.acodec.resources.Messages;
 import picocli.CommandLine.ITypeConverter;
 
 public class CodecAlgorithmConverter implements ITypeConverter<CodecAlgorithm> {
 
 	@Override
-	public CodecAlgorithm convert(final String arg) throws ConverterException {
+	public CodecAlgorithm convert(final String arg) throws InvalidAlgorithmException {
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getName().equalsIgnoreCase(arg) || ca.name().equalsIgnoreCase(arg) || ca.getAliases().stream().anyMatch(arg::equalsIgnoreCase)) {
 				return ca;
 			}
 		}
-		throw new ConverterException(Messages.get("err.invalid.algorithm", arg));
+		throw new InvalidAlgorithmException(arg);
+	}
+
+	public class InvalidAlgorithmException extends Exception {
+
+		private static final long serialVersionUID = -996443425083357570L;
+
+		private InvalidAlgorithmException(final String value) {
+			super(value);
+		}
 	}
 
 }
