@@ -17,7 +17,7 @@ public class CodecModeConverter implements ITypeConverter<CodecMode> {
 
 	public class InvalidModeException extends Exception {
 
-		private static final long serialVersionUID = -996443425083357570L;
+		private static final long serialVersionUID = 7251461183775942243L;
 
 		private InvalidModeException(final String value) {
 			super(value);
