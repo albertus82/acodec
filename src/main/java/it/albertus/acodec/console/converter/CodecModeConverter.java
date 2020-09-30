@@ -1,6 +1,7 @@
 package it.albertus.acodec.console.converter;
 
 import it.albertus.acodec.engine.CodecMode;
+import lombok.NonNull;
 import picocli.CommandLine.ITypeConverter;
 
 public class CodecModeConverter implements ITypeConverter<CodecMode> {
@@ -19,7 +20,7 @@ public class CodecModeConverter implements ITypeConverter<CodecMode> {
 
 		private static final long serialVersionUID = 7251461183775942243L;
 
-		private InvalidModeException(final String value) {
+		private InvalidModeException(@NonNull final String value) {
 			super(value);
 		}
 	}

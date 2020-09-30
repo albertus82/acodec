@@ -2,6 +2,7 @@ package it.albertus.acodec.console.converter;
 
 import java.nio.charset.Charset;
 
+import lombok.NonNull;
 import picocli.CommandLine.ITypeConverter;
 
 public class CharsetConverter implements ITypeConverter<Charset> {
@@ -20,7 +21,7 @@ public class CharsetConverter implements ITypeConverter<Charset> {
 
 		private static final long serialVersionUID = -8053027081248048909L;
 
-		private InvalidCharsetException(final String value, final Throwable cause) {
+		private InvalidCharsetException(@NonNull final String value, @NonNull final Throwable cause) {
 			super(value, cause);
 		}
 	}

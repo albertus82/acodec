@@ -1,6 +1,7 @@
 package it.albertus.acodec.console.converter;
 
 import it.albertus.acodec.engine.CodecAlgorithm;
+import lombok.NonNull;
 import picocli.CommandLine.ITypeConverter;
 
 public class CodecAlgorithmConverter implements ITypeConverter<CodecAlgorithm> {
@@ -19,7 +20,7 @@ public class CodecAlgorithmConverter implements ITypeConverter<CodecAlgorithm> {
 
 		private static final long serialVersionUID = -996443425083357570L;
 
-		private InvalidAlgorithmException(final String value) {
+		private InvalidAlgorithmException(@NonNull final String value) {
 			super(value);
 		}
 	}
