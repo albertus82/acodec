@@ -20,13 +20,7 @@ public class StringCodec {
 	@NonNull
 	private final CodecConfig config;
 
-	public String run(final String input) throws MissingAlgorithmException, MissingInputException, EncoderException, DecoderException {
-		if (config.getAlgorithm() == null) {
-			throw new MissingAlgorithmException();
-		}
-		if (input == null || input.isEmpty()) {
-			throw new MissingInputException();
-		}
+	public String run(final String input) throws EncoderException, DecoderException {
 		switch (config.getMode()) {
 		case DECODE:
 			return decode(input);

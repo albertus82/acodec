@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import it.albertus.acodec.engine.CodecAlgorithm;
-import it.albertus.acodec.engine.CodecConfig;
 import it.albertus.acodec.engine.CodecMode;
 import it.albertus.acodec.gui.listener.AlgorithmComboSelectionListener;
 import it.albertus.acodec.gui.listener.CharsetComboSelectionListener;
@@ -55,7 +54,12 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
 
-	private final CodecConfig config = new CodecConfig();
+	@Setter
+	private CodecMode mode = CodecMode.ENCODE;
+	@Setter
+	private CodecAlgorithm algorithm;
+	@Setter
+	private Charset charset = Charset.defaultCharset();
 
 	private final Shell shell;
 	private final MenuBar menuBar;
@@ -142,12 +146,12 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		final Composite radioComposite = new Composite(shell, SWT.NONE);
 		RowLayoutFactory.swtDefaults().applyTo(radioComposite);
 		GridDataFactory.swtDefaults().span(3, 1).applyTo(radioComposite);
-		for (final CodecMode mode : CodecMode.values()) {
+		for (final CodecMode m : CodecMode.values()) {
 			final Button radio = new Button(radioComposite, SWT.RADIO);
-			radio.setSelection(mode.equals(config.getMode()));
-			radio.setText(mode.getName());
-			radio.addSelectionListener(new ModeRadioSelectionListener(this, radio, mode));
-			modeRadios.put(mode, radio);
+			radio.setSelection(m.equals(this.mode));
+			radio.setText(m.getName());
+			radio.addSelectionListener(new ModeRadioSelectionListener(this, radio, m));
+			modeRadios.put(m, radio);
 		}
 
 		/* Listener */

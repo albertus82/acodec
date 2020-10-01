@@ -18,7 +18,7 @@ public class ModeRadioSelectionListener extends SelectionAdapter {
 	@Override
 	public void widgetSelected(final SelectionEvent se) {
 		if (radio.getSelection()) {
-			gui.getConfig().setMode(mode);
+			gui.setMode(mode);
 			gui.refreshOutput();
 		}
 	}

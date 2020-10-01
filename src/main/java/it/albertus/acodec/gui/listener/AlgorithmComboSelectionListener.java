@@ -23,16 +23,16 @@ public class AlgorithmComboSelectionListener extends SelectionAdapter {
 	@Override
 	public void widgetSelected(final SelectionEvent se) {
 		final CodecAlgorithm algorithm = CodecAlgorithm.values()[gui.getAlgorithmCombo().getSelectionIndex()];
-		gui.getConfig().setAlgorithm(algorithm);
+		gui.setAlgorithm(algorithm);
 
-		/* Attivazione drag and drop e pulsante elaborazione file */
+		/* Enable drag and drop & Process file button */
 		if (!gui.getProcessFileButton().getEnabled()) {
 			gui.getProcessFileButton().setEnabled(true);
 			gui.getMenuBar().enableFileProcessMenuItem();
 			gui.getShellDropTarget().setTransfer(new Transfer[] { FileTransfer.getInstance(), TextTransfer.getInstance() }); // NOSONAR SWT v4.3.2 does not have the vararg.
 		}
 
-		/* Gestione radio */
+		/* Radios management */
 		final Button encodeRadio = gui.getModeRadios().get(ENCODE);
 		final Button decodeRadio = gui.getModeRadios().get(DECODE);
 

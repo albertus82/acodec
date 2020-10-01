@@ -74,18 +74,11 @@ public class CodecEngineTest {
 	private static final Map<CodecAlgorithm, String> encodedStrings = new EnumMap<>(CodecAlgorithm.class);
 	private static final Map<CodecAlgorithm, File> encodedFiles = new EnumMap<>(CodecAlgorithm.class);
 
-	private static CodecConfig codecConfig;
-	private static StringCodec stringCodec;
-
 	@BeforeClass
 	public static void beforeAll() throws IOException {
 		createOriginalFile();
 		createEncodedStrings();
 		createEncodedFiles();
-
-		codecConfig = new CodecConfig();
-		codecConfig.setCharset(CHARSET);
-		stringCodec = new StringCodec(codecConfig);
 	}
 
 	private static void createOriginalFile() throws IOException {
@@ -142,13 +135,12 @@ public class CodecEngineTest {
 	}
 
 	@Test
-	public void testStringEncoder() throws EncoderException, DecoderException, MissingAlgorithmException, MissingInputException {
-		codecConfig.setMode(ENCODE);
+	public void testStringEncoder() throws EncoderException, DecoderException {
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(ENCODE)) {
-				codecConfig.setAlgorithm(ca);
 				log.log(Level.INFO, "Testing string encoding {0}", ca);
-				final String encoded = stringCodec.run(originalString);
+				final CodecConfig codecConfig = new CodecConfig(ENCODE, ca, CHARSET);
+				final String encoded = new StringCodec(codecConfig).run(originalString);
 				Assert.assertEquals(-1, encoded.indexOf('\r'));
 				Assert.assertEquals(-1, encoded.indexOf('\n'));
 				Assert.assertEquals(ca.toString(), encodedStrings.get(ca), encoded);
@@ -157,12 +149,12 @@ public class CodecEngineTest {
 	}
 
 	@Test
-	public void testStringDecoder() throws EncoderException, DecoderException, MissingAlgorithmException, MissingInputException {
-		codecConfig.setMode(DECODE);
+	public void testStringDecoder() throws EncoderException, DecoderException {
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(DECODE)) {
-				codecConfig.setAlgorithm(ca);
 				log.log(Level.INFO, "Testing string decoding {0}", ca);
+				final CodecConfig codecConfig = new CodecConfig(DECODE, ca, CHARSET);
+				final StringCodec stringCodec = new StringCodec(codecConfig);
 				Assert.assertEquals(ca.toString(), originalString, stringCodec.run(encodedStrings.get(ca)));
 
 				if (Arrays.asList(BASE16, BASE32, BASE32HEX).contains(ca)) {
@@ -176,12 +168,11 @@ public class CodecEngineTest {
 	}
 
 	@Test
-	public void testFileEncoder() throws IOException, EncoderException, DecoderException, MissingAlgorithmException {
-		codecConfig.setMode(ENCODE);
+	public void testFileEncoder() throws IOException, EncoderException, DecoderException {
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(ENCODE)) {
-				codecConfig.setAlgorithm(ca);
 				log.log(Level.INFO, "Testing file encoding {0}", ca);
+				final CodecConfig codecConfig = new CodecConfig(ENCODE, ca, CHARSET);
 				final String expected;
 				if (!AlgorithmType.ENCODING.equals(ca.getType())) {
 					if (CRC32.equals(ca)) {
@@ -194,20 +185,19 @@ public class CodecEngineTest {
 				else {
 					expected = encodedStrings.get(ca);
 				}
-				Assert.assertEquals(ca.toString(), expected, testFileEncoder(ca));
+				Assert.assertEquals(ca.toString(), expected, testFileEncoder(codecConfig));
 			}
 		}
 	}
 
 	@Test
-	public void testFileDecoder() throws IOException, EncoderException, DecoderException, MissingAlgorithmException {
-		codecConfig.setMode(DECODE);
+	public void testFileDecoder() throws IOException, EncoderException, DecoderException {
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(DECODE)) {
-				codecConfig.setAlgorithm(ca);
 				log.log(Level.INFO, "Testing file decoding {0}", ca);
+				final CodecConfig codecConfig = new CodecConfig(DECODE, ca, CHARSET);
 				final File file = encodedFiles.get(ca);
-				Assert.assertEquals(ca.toString(), originalString, testFileDecoder(file));
+				Assert.assertEquals(ca.toString(), originalString, testFileDecoder(codecConfig, file));
 
 				if (Arrays.asList(BASE16, BASE32, BASE32HEX).contains(ca)) {
 					final Collection<String> lines = Files.readAllLines(file.toPath());
@@ -217,7 +207,7 @@ public class CodecEngineTest {
 							bw.append(line.toLowerCase()).append(NewLine.CRLF.toString());
 						}
 					}
-					Assert.assertEquals(ca.toString(), originalString, testFileDecoder(file));
+					Assert.assertEquals(ca.toString(), originalString, testFileDecoder(codecConfig, file));
 				}
 				if (ASCII85.equals(ca)) {
 					final Collection<String> lines = Files.readAllLines(file.toPath());
@@ -228,23 +218,23 @@ public class CodecEngineTest {
 							bw.append(line);
 						}
 					}
-					Assert.assertEquals(ca.toString(), originalString, testFileDecoder(file));
+					Assert.assertEquals(ca.toString(), originalString, testFileDecoder(codecConfig, file));
 				}
 			}
 		}
 	}
 
-	private String testFileEncoder(final CodecAlgorithm ca) throws IOException, EncoderException, DecoderException, MissingAlgorithmException {
+	private String testFileEncoder(final CodecConfig codecConfig) throws IOException, EncoderException, DecoderException {
 		File outputFile = null;
 		try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-			outputFile = File.createTempFile(ENCODE.name().toLowerCase() + '-', '.' + ca.getFileExtension());
+			outputFile = File.createTempFile(ENCODE.name().toLowerCase() + '-', '.' + codecConfig.getAlgorithm().getFileExtension());
 			log.log(Level.INFO, "Created temporary encoded file \"{0}\"", outputFile);
 			final String value = new ProcessFileTask(codecConfig, originalFile, outputFile).run(() -> false);
-			if (AlgorithmType.ENCODING.equals(ca.getType())) {
+			if (AlgorithmType.ENCODING.equals(codecConfig.getAlgorithm().getType())) {
 				Assert.assertNull(value);
 				try (final BufferedReader br = Files.newBufferedReader(outputFile.toPath())) {
 					final int length = br.readLine().length();
-					Assert.assertFalse(ca.getName() + " line length > 76 (" + length + ")", length > 76);
+					Assert.assertFalse(codecConfig.getAlgorithm().getName() + " line length > 76 (" + length + ")", length > 76);
 				}
 			}
 			else {
@@ -271,7 +261,7 @@ public class CodecEngineTest {
 		}
 	}
 
-	private String testFileDecoder(final File file) throws IOException, EncoderException, DecoderException, MissingAlgorithmException {
+	private String testFileDecoder(final CodecConfig codecConfig, final File file) throws IOException, EncoderException, DecoderException {
 		File outputFile = null;
 		try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			outputFile = File.createTempFile(DECODE.name().toLowerCase() + '-', ".txt");

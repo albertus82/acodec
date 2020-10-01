@@ -15,7 +15,7 @@ public class ShellDropListener extends ProcessFileAction implements DropTargetLi
 
 	@Override
 	public void drop(final DropTargetEvent event) {
-		if (gui.getConfig().getAlgorithm() != null) {
+		if (gui.getAlgorithm() != null) {
 			if (event.data instanceof String[]) { // file
 				final String[] data = (String[]) event.data;
 				if (data.length == 1) {

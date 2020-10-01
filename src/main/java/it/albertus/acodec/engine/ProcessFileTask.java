@@ -52,10 +52,7 @@ public class ProcessFileTask implements Cancelable {
 
 	private CloseableStreams streams;
 
-	public String run(final BooleanSupplier canceled) throws MissingAlgorithmException, FileNotFoundException, EncoderException, DecoderException {
-		if (config.getAlgorithm() == null) {
-			throw new MissingAlgorithmException();
-		}
+	public String run(final BooleanSupplier canceled) throws FileNotFoundException, EncoderException, DecoderException {
 		if (!inputFile.isFile()) {
 			throw new FileNotFoundException(inputFile.toString());
 		}

@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import it.albertus.acodec.engine.Cancelable;
 import it.albertus.acodec.engine.CodecAlgorithm;
+import it.albertus.acodec.engine.CodecConfig;
 import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.acodec.gui.CodecGui;
 import it.albertus.acodec.gui.Images;
@@ -42,8 +43,8 @@ public class ProcessFileAction {
 
 	protected String getSourceFile() {
 		final FileDialog openDialog = new FileDialog(gui.getShell(), SWT.OPEN);
-		if (DECODE.equals(gui.getConfig().getMode())) {
-			openDialog.setFilterExtensions(buildFilterExtensions(gui.getConfig().getAlgorithm()));
+		if (DECODE.equals(gui.getMode())) {
+			openDialog.setFilterExtensions(buildFilterExtensions(gui.getAlgorithm()));
 		}
 		return openDialog.open();
 	}
@@ -53,8 +54,8 @@ public class ProcessFileAction {
 		saveDialog.setOverwrite(true);
 		final File sourceFile = new File(sourceFileName);
 		saveDialog.setFilterPath(sourceFile.getParent());
-		if (ENCODE.equals(gui.getConfig().getMode())) {
-			final CodecAlgorithm algorithm = gui.getConfig().getAlgorithm();
+		if (ENCODE.equals(gui.getMode())) {
+			final CodecAlgorithm algorithm = gui.getAlgorithm();
 			saveDialog.setFilterExtensions(buildFilterExtensions(algorithm));
 			saveDialog.setFileName(sourceFile.getName() + '.' + algorithm.getFileExtension().toLowerCase());
 		}
@@ -75,7 +76,7 @@ public class ProcessFileAction {
 		try {
 			final File inputFile = new File(sourceFileName);
 			final File outputFile = new File(destinationFileName);
-			final ProcessFileTask task = new ProcessFileTask(gui.getConfig(), inputFile, outputFile);
+			final ProcessFileTask task = new ProcessFileTask(new CodecConfig(gui.getMode(), gui.getAlgorithm(), gui.getCharset()), inputFile, outputFile);
 			final ProcessFileRunnable runnable = new ProcessFileRunnable(task);
 			new LocalizedProgressMonitorDialog(gui.getShell(), task).run(true, true, runnable); // execute in separate thread
 			if (runnable.getResult() != null) { // result can be null in certain cases
@@ -100,10 +101,10 @@ public class ProcessFileAction {
 			final String message;
 			final Throwable throwable = e.getCause() instanceof ProcessFileException ? e.getCause().getCause() : e;
 			if (throwable instanceof EncoderException) {
-				message = Messages.get("err.cannot.encode", gui.getConfig().getAlgorithm().getName());
+				message = Messages.get("err.cannot.encode", gui.getAlgorithm().getName());
 			}
 			else if (throwable instanceof DecoderException) {
-				message = Messages.get("err.cannot.decode", gui.getConfig().getAlgorithm().getName());
+				message = Messages.get("err.cannot.decode", gui.getAlgorithm().getName());
 			}
 			else if (throwable instanceof FileNotFoundException) {
 				message = Messages.get("msg.missing.file", throwable.getMessage());

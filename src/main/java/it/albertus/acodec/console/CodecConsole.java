@@ -29,7 +29,6 @@ import it.albertus.acodec.console.converter.CodecModeConverter.InvalidModeExcept
 import it.albertus.acodec.engine.CodecAlgorithm;
 import it.albertus.acodec.engine.CodecConfig;
 import it.albertus.acodec.engine.CodecMode;
-import it.albertus.acodec.engine.MissingAlgorithmException;
 import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.acodec.engine.StringCodec;
 import it.albertus.acodec.resources.Messages;
@@ -139,7 +138,7 @@ public class CodecConsole implements Callable<Integer> {
 		}
 	}
 
-	private static int processFile(@NonNull final CodecConfig config, @NonNull final File[] files) throws MissingAlgorithmException, EncoderException, DecoderException {
+	private static int processFile(@NonNull final CodecConfig config, @NonNull final File[] files) throws EncoderException, DecoderException {
 		if (!files[0].isFile()) {
 			System.out.println(Messages.get("msg.missing.file", files[0]));
 			return ExitCode.SOFTWARE;

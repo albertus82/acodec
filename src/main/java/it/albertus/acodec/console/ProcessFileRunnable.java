@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 
-import it.albertus.acodec.engine.MissingAlgorithmException;
 import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.acodec.resources.Messages;
 import lombok.AccessLevel;
@@ -21,7 +20,7 @@ class ProcessFileRunnable {
 	private final ProcessFileTask task;
 	private final PrintStream out;
 
-	public void run() throws MissingAlgorithmException, FileNotFoundException, EncoderException, DecoderException {
+	public void run() throws FileNotFoundException, EncoderException, DecoderException {
 		if (task.getOutputFile() == null || out == null) {
 			task.run(() -> false);
 		}
