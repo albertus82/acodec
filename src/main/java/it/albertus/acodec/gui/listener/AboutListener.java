@@ -19,7 +19,7 @@ public class AboutListener implements SelectionListener, Listener {
 	}
 
 	@Override
-	public void widgetSelected(final SelectionEvent se) {
+	public void widgetSelected(final SelectionEvent event) {
 		openAboutDialog();
 	}
 
@@ -29,6 +29,6 @@ public class AboutListener implements SelectionListener, Listener {
 	}
 
 	@Override
-	public void widgetDefaultSelected(final SelectionEvent e) {/* Ignore */}
+	public void widgetDefaultSelected(final SelectionEvent event) {/* Ignore */}
 
 }

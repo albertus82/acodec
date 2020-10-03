@@ -15,10 +15,12 @@ public class LanguageSelectionListener extends SelectionAdapter {
 	private final CodecGui gui;
 
 	@Override
-	public void widgetSelected(final SelectionEvent e) {
-		final MenuItem languageMenuItem = (MenuItem) e.widget;
-		if (languageMenuItem.getSelection() && !Messages.getLanguage().equals(languageMenuItem.getData())) {
-			gui.setLanguage((Language) languageMenuItem.getData());
+	public void widgetSelected(final SelectionEvent event) {
+		if (event.widget instanceof MenuItem) {
+			final MenuItem languageMenuItem = (MenuItem) event.widget;
+			if (languageMenuItem.getSelection() && !Messages.getLanguage().equals(languageMenuItem.getData())) {
+				gui.setLanguage((Language) languageMenuItem.getData());
+			}
 		}
 	}
 

@@ -15,17 +15,17 @@ public class HelpMenuListener implements ArmListener, MenuListener {
 	private final MenuItem item;
 
 	@Override
-	public void widgetArmed(final ArmEvent e) {
+	public void widgetArmed(final ArmEvent event) {
 		execute();
 	}
 
 	@Override
-	public void menuShown(final MenuEvent e) {
+	public void menuShown(final MenuEvent event) {
 		execute();
 	}
 
 	@Override
-	public void menuHidden(final MenuEvent e) {/* Ignore */}
+	public void menuHidden(final MenuEvent event) {/* Ignore */}
 
 	private void execute() {
 		item.setEnabled(SystemInformationDialog.isAvailable());

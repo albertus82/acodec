@@ -14,9 +14,9 @@ public class TextKeyListener extends KeyAdapter {
 	private final Text text;
 
 	@Override
-	public void keyPressed(final KeyEvent e) {
+	public void keyPressed(final KeyEvent event) {
 		// Supporto CTRL+A per "Seleziona tutto"...
-		if (e.stateMask == SWT.MOD1 && e.keyCode == SwtUtils.KEY_SELECT_ALL) {
+		if (event.stateMask == SWT.MOD1 && event.keyCode == SwtUtils.KEY_SELECT_ALL) {
 			text.selectAll();
 		}
 	}

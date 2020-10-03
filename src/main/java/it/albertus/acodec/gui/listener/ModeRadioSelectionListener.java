@@ -16,7 +16,7 @@ public class ModeRadioSelectionListener extends SelectionAdapter {
 	private final CodecMode mode;
 
 	@Override
-	public void widgetSelected(final SelectionEvent se) {
+	public void widgetSelected(final SelectionEvent event) {
 		if (radio.getSelection()) {
 			gui.setMode(mode);
 			gui.refreshOutput();

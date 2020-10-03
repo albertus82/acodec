@@ -14,7 +14,7 @@ public class CharsetComboSelectionListener extends SelectionAdapter {
 	private final CodecGui gui;
 
 	@Override
-	public void widgetSelected(final SelectionEvent se) {
+	public void widgetSelected(final SelectionEvent event) {
 		final String charsetName = gui.getCharsetCombo().getText();
 		gui.setCharset(Charset.forName(charsetName));
 		gui.refreshOutput();

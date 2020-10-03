@@ -23,6 +23,6 @@ public class ProcessFileButtonSelectionListener extends ProcessFileAction implem
 	}
 
 	@Override
-	public void widgetDefaultSelected(final SelectionEvent se) {/* Ignore */}
+	public void widgetDefaultSelected(final SelectionEvent event) {/* Ignore */}
 
 }

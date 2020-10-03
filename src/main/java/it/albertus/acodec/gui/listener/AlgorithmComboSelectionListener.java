@@ -21,7 +21,7 @@ public class AlgorithmComboSelectionListener extends SelectionAdapter {
 	private final CodecGui gui;
 
 	@Override
-	public void widgetSelected(final SelectionEvent se) {
+	public void widgetSelected(final SelectionEvent event) {
 		final CodecAlgorithm algorithm = CodecAlgorithm.values()[gui.getAlgorithmCombo().getSelectionIndex()];
 		gui.setAlgorithm(algorithm);
 
