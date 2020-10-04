@@ -10,8 +10,10 @@ public class CodecConfig {
 
 	@NonNull
 	CodecMode mode;
+
 	@NonNull
 	CodecAlgorithm algorithm;
+
 	@NonNull
 	Charset charset;
 
