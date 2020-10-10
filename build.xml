@@ -2,7 +2,7 @@
 <!DOCTYPE project>
 <project name="acodec" default="all" xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" xmlns:jacoco="antlib:org.jacoco.ant">
 
-	<property name="version.number" value="2.1.0" />
+	<property name="version.number" value="2.1.1" />
 
 	<property environment="env" />
 	<property name="env.JRE8_HOME" value="${env.JAVA_HOME}/../jdk1.8.0_261/jre" />
@@ -777,7 +777,7 @@
 	<target name="all" depends="clean, dist, test, sonar" />
 
 	<target name="virustotal">
-		<checksum algorithm="SHA-256" todir="${build.directory}/checksums" fileext=".sha256" pattern="* {1} [`{0}`](https://www.virustotal.com/it/file/{0}/analysis/)">
+		<checksum algorithm="SHA-256" todir="${build.directory}/checksums" forceoverwrite="yes" fileext=".sha256" pattern="* {1}&#13;&#10;[`{0}`](https://www.virustotal.com/it/file/{0}/analysis/)">
 			<fileset dir="${build.directory}">
 				<include name="*" />
 			</fileset>
