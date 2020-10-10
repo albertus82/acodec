@@ -776,4 +776,15 @@
 
 	<target name="all" depends="clean, dist, test, sonar" />
 
+	<target name="virustotal">
+		<checksum algorithm="SHA-256" todir="${build.directory}/checksums" fileext=".sha256" pattern="* {1} [`{0}`](https://www.virustotal.com/it/file/{0}/analysis/)">
+			<fileset dir="${build.directory}">
+				<include name="*" />
+			</fileset>
+		</checksum>
+		<concat>
+			<fileset dir="${build.directory}/checksums" />
+		</concat>
+	</target>
+
 </project>
