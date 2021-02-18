@@ -3,10 +3,8 @@ package it.albertus.acodec;
 import it.albertus.acodec.console.CodecConsole;
 import it.albertus.acodec.gui.CodecGui;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ACodec {
 
