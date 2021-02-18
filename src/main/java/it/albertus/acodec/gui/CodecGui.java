@@ -16,6 +16,9 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -67,7 +70,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	@Getter(AccessLevel.NONE)
 	private final Collection<Label> labels = new ArrayList<>();
 
-	private final Text inputText;
+	private Text inputText;
+	private final Button hideInputTextCheck;
 	private final Text outputText;
 	private final Combo algorithmCombo;
 	private final Combo charsetCombo;
@@ -92,9 +96,29 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		labels.add(inputLabel);
 		inputLabel.setData("lbl.input");
 		inputLabel.setText(Messages.get(inputLabel));
-		inputLabel.setLayoutData(new GridData());
+		inputLabel.setLayoutData(GridDataFactory.swtDefaults().create());
 
 		inputText = createInputText();
+
+		new Label(shell, SWT.NONE).setLayoutData(GridDataFactory.swtDefaults().create()); // Spacer
+
+		hideInputTextCheck = new Button(shell, SWT.CHECK);
+		hideInputTextCheck.setData("lbl.input.hide");
+		hideInputTextCheck.setText(Messages.get(hideInputTextCheck));
+		hideInputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(4, 1).create());
+		hideInputTextCheck.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				final Text oldText = inputText;
+				final Composite parent = oldText.getParent();
+				final Text newText = new Text(parent, hideInputTextCheck.getSelection() ? SWT.BORDER | SWT.PASSWORD : SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+				configureInputText(newText);
+				newText.setText(oldText.getText());
+				inputText = newText;
+				oldText.dispose();
+				parent.requestLayout();
+			}
+		});
 
 		/* Output text */
 		final Label outputLabel = new Label(shell, SWT.NONE);
@@ -157,7 +181,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		/* Listener */
 		algorithmCombo.addSelectionListener(new AlgorithmComboSelectionListener(this));
 		charsetCombo.addSelectionListener(new CharsetComboSelectionListener(this));
-		inputText.addModifyListener(new InputTextModifyListener(this));
 
 		/* Drag and drop */
 		shellDropTarget = new DropTarget(shell, DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK);
@@ -205,15 +228,22 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	private Text createInputText() {
-		final Text text = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
-		final GridData inputTextGridData = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
+		final Composite composite = new Composite(shell, SWT.NONE);
+		composite.setLayout(new FillLayout());
+		final GridData compositeGridData = GridDataFactory.fillDefaults().grab(true, true).span(4, 1).create();
+		composite.setLayoutData(compositeGridData);
+		final Text text = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+		configureInputText(text);
 		if (TEXT_HEIGHT_MULTIPLIER > 1) {
-			inputTextGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+			compositeGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
 		}
-		text.setLayoutData(inputTextGridData);
+		return text;
+	}
+
+	private void configureInputText(final Text text) {
 		text.setTextLimit(TEXT_LIMIT_CHARS);
 		text.addKeyListener(new TextKeyListener(text));
-		return text;
+		text.addModifyListener(new InputTextModifyListener(this));
 	}
 
 	private Text createOutputText() {
@@ -251,6 +281,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		for (final Label label : labels) {
 			label.setText(Messages.get(label));
 		}
+		hideInputTextCheck.setText(Messages.get(hideInputTextCheck));
 		processFileButton.setText(Messages.get(processFileButton));
 		for (final Entry<CodecMode, Button> entry : modeRadios.entrySet()) {
 			entry.getValue().setText(entry.getKey().getName());
