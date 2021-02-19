@@ -84,11 +84,8 @@ public class ProcessFileAction {
 				gui.getInputText().setText(inputFile.getName());
 				gui.getOutputText().setText(runnable.getResult());
 				gui.setDirty(true);
+				gui.refreshOutputText();
 			}
-			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
-			box.setMessage(Messages.get("msg.file.process.ok.message"));
-			box.setText(Messages.get(MSG_APPLICATION_NAME));
-			box.open();
 		}
 		catch (final InterruptedException e) { // NOSONAR
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);

@@ -80,6 +80,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private final DropTarget shellDropTarget;
 
 	private boolean dirty = false;
+	private boolean error = false;
 
 	private CodecGui(final Display display) {
 		shell = new Shell(display);
@@ -108,7 +109,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		hideInputTextCheck.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				replaceInputText(hideInputTextCheck.getSelection());
+				refreshInputText();
 			}
 		});
 
@@ -130,7 +131,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		hideOutputTextCheck.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				replaceOutputText(hideOutputTextCheck.getSelection());
+				refreshOutputText();
 			}
 		});
 
@@ -245,15 +246,18 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return text;
 	}
 
-	private void replaceInputText(final boolean masked) {
-		final Text oldText = inputText;
-		final Composite parent = oldText.getParent();
-		final Text newText = new Text(parent, masked ? SWT.BORDER | SWT.PASSWORD : SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
-		configureInputText(newText);
-		newText.setText(oldText.getText());
-		inputText = newText;
-		oldText.dispose();
-		parent.requestLayout();
+	private void refreshInputText() {
+		final boolean mask = hideInputTextCheck.getSelection();
+		if ((inputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
+			final Text oldText = inputText;
+			final Composite parent = oldText.getParent();
+			final Text newText = new Text(parent, mask ? SWT.BORDER | SWT.PASSWORD : SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+			configureInputText(newText);
+			newText.setText(oldText.getText());
+			inputText = newText;
+			oldText.dispose();
+			parent.requestLayout();
+		}
 	}
 
 	private void configureInputText(final Text text) {
@@ -275,23 +279,26 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return text;
 	}
 
-	private void replaceOutputText(final boolean masked) {
-		final Text oldText = getOutputText();
-		final Composite parent = oldText.getParent();
-		final Text newText = new Text(parent, masked ? SWT.READ_ONLY | SWT.BORDER | SWT.PASSWORD : SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
-		configureOutputText(newText);
-		if (masked) {
-			newText.addKeyListener(new TextCopyKeyListener(newText));
+	public void refreshOutputText() {
+		final boolean mask = !error && !dirty && hideOutputTextCheck.getSelection();
+		if ((outputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
+			final Text oldText = outputText;
+			final Composite parent = oldText.getParent();
+			final Text newText = new Text(parent, mask ? SWT.READ_ONLY | SWT.BORDER | SWT.PASSWORD : SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+			configureOutputText(newText);
+			if (mask) {
+				newText.addKeyListener(new TextCopyKeyListener(newText));
+			}
+			newText.setText(oldText.getText());
+			outputText = newText;
+			oldText.dispose();
+			parent.requestLayout();
 		}
-		newText.setText(oldText.getText());
-		outputText = newText;
-		oldText.dispose();
-		parent.requestLayout();
 	}
 
 	private void configureOutputText(final Text text) {
 		if (Util.isWindows()) {
-			text.setBackground(getInputText().getBackground());
+			text.setBackground(inputText.getBackground());
 		}
 		text.addKeyListener(new TextSelectAllKeyListener(text));
 	}

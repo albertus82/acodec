@@ -69,6 +69,7 @@ public class InputTextModifyListener implements ModifyListener {
 	}
 
 	private void print(final String text, final boolean error) {
+		gui.setError(error);
 		String outputText = text != null ? text : "";
 		if (error) {
 			outputText = new StringBuilder(outputText).insert(0, ERROR_PREFIX).append(ERROR_SUFFIX).toString();
@@ -84,6 +85,7 @@ public class InputTextModifyListener implements ModifyListener {
 			}
 		}
 		gui.getOutputText().setText(outputText);
+		gui.refreshOutputText();
 	}
 
 }
