@@ -6,6 +6,7 @@ import static it.albertus.acodec.engine.CodecMode.ENCODE;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import org.apache.commons.codec.DecoderException;
@@ -28,7 +29,10 @@ import it.albertus.acodec.gui.Images;
 import it.albertus.acodec.gui.ProcessFileException;
 import it.albertus.acodec.gui.ProcessFileRunnable;
 import it.albertus.acodec.resources.Messages;
+import it.albertus.jface.DisplayThreadExecutor;
+import it.albertus.jface.DisplayThreadExecutor.Mode;
 import it.albertus.jface.EnhancedErrorDialog;
+import it.albertus.jface.SwtUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -78,7 +82,9 @@ public class ProcessFileAction {
 			final File outputFile = new File(destinationFileName);
 			final ProcessFileTask task = new ProcessFileTask(new CodecConfig(gui.getMode(), gui.getAlgorithm(), gui.getCharset()), inputFile, outputFile);
 			final ProcessFileRunnable runnable = new ProcessFileRunnable(task);
-			new LocalizedProgressMonitorDialog(gui.getShell(), task).run(true, true, runnable); // execute in separate thread
+			final LocalizedProgressMonitorDialog dialog = new LocalizedProgressMonitorDialog(gui.getShell(), task);
+			dialog.setOpenOnRun(false);
+			dialog.run(true, true, runnable); // execute in separate thread
 			if (runnable.getResult() != null) { // result can be null in certain cases
 				gui.setDirty(false);
 				gui.getInputText().setText(inputFile.getName());
@@ -86,6 +92,10 @@ public class ProcessFileAction {
 				gui.setDirty(true);
 				gui.refreshOutputText();
 			}
+			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
+			box.setMessage(Messages.get("msg.file.process.ok.message"));
+			box.setText(Messages.get(MSG_APPLICATION_NAME));
+			box.open();
 		}
 		catch (final InterruptedException e) { // NOSONAR
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
@@ -119,6 +129,8 @@ public class ProcessFileAction {
 
 	private static class LocalizedProgressMonitorDialog extends ProgressMonitorDialog {
 
+		private static final int OPEN_DELAY_MILLIS = 1000;
+
 		private final Cancelable cancelable;
 
 		private LocalizedProgressMonitorDialog(final Shell shell, final Cancelable cancelable) {
@@ -141,6 +153,30 @@ public class ProcessFileAction {
 			super.cancelPressed();
 			progressIndicator.showError();
 			cancelable.cancel();
+		}
+
+		@Override
+		protected void aboutToRun() {
+			super.aboutToRun();
+			SwtUtils.blockShell(getParentShell());
+			final Thread opener = new Thread(() -> {
+				try {
+					TimeUnit.MILLISECONDS.sleep(OPEN_DELAY_MILLIS); // do not show the progress dialog if processing takes a short time
+					new DisplayThreadExecutor(getParentShell(), Mode.ASYNC).execute(() -> {
+						if (getShell() != null && !getShell().isDisposed()) {
+							open();
+						}
+					});
+				}
+				catch (final InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+				finally {
+					new DisplayThreadExecutor(getParentShell(), Mode.ASYNC).execute(() -> SwtUtils.unblockShell(getParentShell()));
+				}
+			});
+			opener.setDaemon(false);
+			opener.start();
 		}
 	}
 
