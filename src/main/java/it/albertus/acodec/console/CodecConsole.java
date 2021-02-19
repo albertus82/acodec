@@ -178,7 +178,7 @@ public class CodecConsole implements Callable<Integer> {
 		/* Modes */
 		help.append(Messages.get("msg.help.modes")).append(SYSTEM_LINE_SEPARATOR);
 		for (final CodecMode mode : CodecMode.values()) {
-			help.append("    ").append(mode.getAbbreviation()).append("    ").append(mode.getName()).append(SYSTEM_LINE_SEPARATOR);
+			help.append("    ").append(mode.getAbbreviation()).append("    ").append(mode.getLabelForConsole()).append(SYSTEM_LINE_SEPARATOR);
 		}
 		help.append(SYSTEM_LINE_SEPARATOR);
 

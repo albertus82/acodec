@@ -7,15 +7,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum CodecMode {
 
-	ENCODE("lbl.mode.encode", 'e'),
-	DECODE("lbl.mode.decode", 'd');
+	ENCODE('e', "msg.help.encode", "lbl.mode.encode"),
+	DECODE('d', "msg.help.decode", "lbl.mode.decode");
 
-	private final String labelKey;
 	@Getter
 	private final char abbreviation;
 
-	public String getName() {
-		return Messages.get(labelKey);
+	private final String consoleLabelKey;
+	private final String guiLabelKey;
+
+	public String getLabelForConsole() {
+		return Messages.get(consoleLabelKey);
+	}
+
+	public String getLabelForGui() {
+		return Messages.get(guiLabelKey);
 	}
 
 }

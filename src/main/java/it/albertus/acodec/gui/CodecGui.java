@@ -179,7 +179,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		for (final CodecMode m : CodecMode.values()) {
 			final Button radio = new Button(radioComposite, SWT.RADIO);
 			radio.setSelection(m.equals(this.mode));
-			radio.setText(m.getName());
+			radio.setText(m.getLabelForGui());
 			radio.addSelectionListener(new ModeRadioSelectionListener(this, radio, m));
 			modeRadios.put(m, radio);
 		}
@@ -327,7 +327,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		hideInputTextCheck.setText(Messages.get(hideInputTextCheck));
 		processFileButton.setText(Messages.get(processFileButton));
 		for (final Entry<CodecMode, Button> entry : modeRadios.entrySet()) {
-			entry.getValue().setText(entry.getKey().getName());
+			entry.getValue().setText(entry.getKey().getLabelForGui());
 		}
 		refreshOutput();
 		menuBar.updateLanguage();
