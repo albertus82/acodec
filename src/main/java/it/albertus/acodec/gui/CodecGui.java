@@ -38,7 +38,8 @@ import it.albertus.acodec.gui.listener.InputTextModifyListener;
 import it.albertus.acodec.gui.listener.ModeRadioSelectionListener;
 import it.albertus.acodec.gui.listener.ProcessFileButtonSelectionListener;
 import it.albertus.acodec.gui.listener.ShellDropListener;
-import it.albertus.acodec.gui.listener.TextKeyListener;
+import it.albertus.acodec.gui.listener.TextCopyKeyListener;
+import it.albertus.acodec.gui.listener.TextSelectAllKeyListener;
 import it.albertus.acodec.resources.Messages;
 import it.albertus.acodec.resources.Messages.Language;
 import it.albertus.jface.EnhancedErrorDialog;
@@ -52,16 +53,14 @@ import lombok.extern.java.Log;
 
 @Log
 @Getter
+@Setter
 public class CodecGui implements IShellProvider, Multilanguage {
 
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
 
-	@Setter
 	private CodecMode mode = CodecMode.ENCODE;
-	@Setter
 	private CodecAlgorithm algorithm;
-	@Setter
 	private Charset charset = Charset.defaultCharset();
 
 	private final Shell shell;
@@ -72,14 +71,14 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	private Text inputText;
 	private final Button hideInputTextCheck;
-	private final Text outputText;
+	private Text outputText;
+	private final Button hideOutputTextCheck;
 	private final Combo algorithmCombo;
 	private final Combo charsetCombo;
 	private final Map<CodecMode, Button> modeRadios = new EnumMap<>(CodecMode.class);
 	private final Button processFileButton;
 	private final DropTarget shellDropTarget;
 
-	@Setter
 	private boolean dirty = false;
 
 	private CodecGui(final Display display) {
@@ -109,14 +108,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		hideInputTextCheck.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				final Text oldText = inputText;
-				final Composite parent = oldText.getParent();
-				final Text newText = new Text(parent, hideInputTextCheck.getSelection() ? SWT.BORDER | SWT.PASSWORD : SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
-				configureInputText(newText);
-				newText.setText(oldText.getText());
-				inputText = newText;
-				oldText.dispose();
-				parent.requestLayout();
+				replaceInputText(hideInputTextCheck.getSelection());
 			}
 		});
 
@@ -128,6 +120,19 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		outputLabel.setLayoutData(new GridData());
 
 		outputText = createOutputText();
+
+		new Label(shell, SWT.NONE).setLayoutData(GridDataFactory.swtDefaults().create()); // Spacer
+
+		hideOutputTextCheck = new Button(shell, SWT.CHECK);
+		hideOutputTextCheck.setData("lbl.output.hide");
+		hideOutputTextCheck.setText(Messages.get(hideOutputTextCheck));
+		hideOutputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(4, 1).create());
+		hideOutputTextCheck.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				replaceOutputText(hideOutputTextCheck.getSelection());
+			}
+		});
 
 		/* Codec combo */
 		final Label algorithmLabel = new Label(shell, SWT.NONE);
@@ -240,24 +245,55 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return text;
 	}
 
+	private void replaceInputText(final boolean masked) {
+		final Text oldText = inputText;
+		final Composite parent = oldText.getParent();
+		final Text newText = new Text(parent, masked ? SWT.BORDER | SWT.PASSWORD : SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+		configureInputText(newText);
+		newText.setText(oldText.getText());
+		inputText = newText;
+		oldText.dispose();
+		parent.requestLayout();
+	}
+
 	private void configureInputText(final Text text) {
 		text.setTextLimit(TEXT_LIMIT_CHARS);
-		text.addKeyListener(new TextKeyListener(text));
+		text.addKeyListener(new TextSelectAllKeyListener(text));
 		text.addModifyListener(new InputTextModifyListener(this));
 	}
 
 	private Text createOutputText() {
-		final Text text = new Text(shell, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
-		final GridData outputTextGridData = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
+		final Composite composite = new Composite(shell, SWT.NONE);
+		composite.setLayout(new FillLayout());
+		final GridData compositeGridData = GridDataFactory.fillDefaults().grab(true, true).span(4, 1).create();
+		composite.setLayoutData(compositeGridData);
+		final Text text = new Text(composite, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 		if (TEXT_HEIGHT_MULTIPLIER > 1) {
-			outputTextGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+			compositeGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
 		}
-		text.setLayoutData(outputTextGridData);
-		if (Util.isWindows()) {
-			text.setBackground(inputText.getBackground());
-		}
-		text.addKeyListener(new TextKeyListener(text));
+		configureOutputText(text);
 		return text;
+	}
+
+	private void replaceOutputText(final boolean masked) {
+		final Text oldText = getOutputText();
+		final Composite parent = oldText.getParent();
+		final Text newText = new Text(parent, masked ? SWT.READ_ONLY | SWT.BORDER | SWT.PASSWORD : SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+		configureOutputText(newText);
+		if (masked) {
+			newText.addKeyListener(new TextCopyKeyListener(newText));
+		}
+		newText.setText(oldText.getText());
+		outputText = newText;
+		oldText.dispose();
+		parent.requestLayout();
+	}
+
+	private void configureOutputText(final Text text) {
+		if (Util.isWindows()) {
+			text.setBackground(getInputText().getBackground());
+		}
+		text.addKeyListener(new TextSelectAllKeyListener(text));
 	}
 
 	public void refreshOutput() {

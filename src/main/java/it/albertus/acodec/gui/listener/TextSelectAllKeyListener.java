@@ -9,7 +9,7 @@ import it.albertus.jface.SwtUtils;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class TextKeyListener extends KeyAdapter {
+public class TextSelectAllKeyListener extends KeyAdapter {
 
 	private final Text text;
 

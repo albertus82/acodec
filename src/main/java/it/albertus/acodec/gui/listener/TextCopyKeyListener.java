@@ -13,7 +13,7 @@ import it.albertus.jface.closeable.CloseableClipboard;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class TextKeyListener2 extends KeyAdapter {
+public class TextCopyKeyListener extends KeyAdapter {
 
 	private final Text text;
 
