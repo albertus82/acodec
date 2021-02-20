@@ -26,7 +26,7 @@ import org.apache.commons.io.IOUtils;
 import org.freehep.util.io.Ascii85InputStream;
 import org.freehep.util.io.Ascii85OutputStream;
 
-import it.albertus.acodec.common.resources.Messages;
+import it.albertus.acodec.common.resources.CommonMessages;
 import it.albertus.util.CRC16OutputStream;
 import it.albertus.util.ChecksumOutputStream;
 import it.albertus.util.NewLine;
@@ -62,7 +62,7 @@ public class ProcessFileTask implements Cancelable {
 		case ENCODE:
 			return encode(canceled);
 		default:
-			throw new UnsupportedOperationException(Messages.get("common.err.invalid.mode", config.getMode()));
+			throw new UnsupportedOperationException(CommonMessages.get("common.err.invalid.mode", config.getMode()));
 		}
 	}
 
@@ -128,12 +128,12 @@ public class ProcessFileTask implements Cancelable {
 		catch (final Exception e) {
 			deleteOutputFile();
 			if (!canceled.getAsBoolean()) {
-				throw new EncoderException(Messages.get("common.err.cannot.encode", config.getAlgorithm()), e);
+				throw new EncoderException(CommonMessages.get("common.err.cannot.encode", config.getAlgorithm()), e);
 			}
 		}
 		if (canceled.getAsBoolean()) {
 			deleteOutputFile();
-			throw new CancellationException(Messages.get("common.msg.file.process.cancel.message"));
+			throw new CancellationException(CommonMessages.get("common.msg.file.process.cancel.message"));
 		}
 		else {
 			return value;
@@ -168,18 +168,18 @@ public class ProcessFileTask implements Cancelable {
 				B91Cli.decode(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			default:
-				throw new UnsupportedOperationException(Messages.get("common.err.invalid.algorithm", config.getAlgorithm()));
+				throw new UnsupportedOperationException(CommonMessages.get("common.err.invalid.algorithm", config.getAlgorithm()));
 			}
 		}
 		catch (final Exception e) {
 			deleteOutputFile();
 			if (!canceled.getAsBoolean()) {
-				throw new DecoderException(Messages.get("common.err.cannot.decode", config.getAlgorithm()), e);
+				throw new DecoderException(CommonMessages.get("common.err.cannot.decode", config.getAlgorithm()), e);
 			}
 		}
 		if (canceled.getAsBoolean()) {
 			deleteOutputFile();
-			throw new CancellationException(Messages.get("common.msg.file.process.cancel.message"));
+			throw new CancellationException(CommonMessages.get("common.msg.file.process.cancel.message"));
 		}
 		else {
 			return value;
@@ -192,7 +192,7 @@ public class ProcessFileTask implements Cancelable {
 				Files.deleteIfExists(outputFile.toPath());
 			}
 			catch (final Exception e) {
-				log.log(Level.WARNING, Messages.get("common.err.cannot.delete.file", outputFile), e);
+				log.log(Level.WARNING, CommonMessages.get("common.err.cannot.delete.file", outputFile), e);
 				outputFile.deleteOnExit();
 			}
 		}

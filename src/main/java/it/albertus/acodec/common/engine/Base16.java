@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import org.apache.openjpa.lib.util.Base16Encoder;
 
-import it.albertus.acodec.common.resources.Messages;
+import it.albertus.acodec.common.resources.CommonMessages;
 import it.albertus.util.NewLine;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -25,7 +25,7 @@ class Base16 {
 			return Base16Encoder.decode(cleaned);
 		}
 		else {
-			throw new IllegalArgumentException(Messages.get("common.err.invalid.input"));
+			throw new IllegalArgumentException(CommonMessages.get("common.err.invalid.input"));
 		}
 	}
 
