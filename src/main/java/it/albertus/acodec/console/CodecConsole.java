@@ -26,12 +26,12 @@ import it.albertus.acodec.console.converter.CodecAlgorithmConverter;
 import it.albertus.acodec.console.converter.CodecAlgorithmConverter.InvalidAlgorithmException;
 import it.albertus.acodec.console.converter.CodecModeConverter;
 import it.albertus.acodec.console.converter.CodecModeConverter.InvalidModeException;
+import it.albertus.acodec.console.resources.ConsoleMessages;
 import it.albertus.acodec.engine.CodecAlgorithm;
 import it.albertus.acodec.engine.CodecConfig;
 import it.albertus.acodec.engine.CodecMode;
 import it.albertus.acodec.engine.ProcessFileTask;
 import it.albertus.acodec.engine.StringCodec;
-import it.albertus.acodec.resources.Messages;
 import it.albertus.util.StringUtils;
 import it.albertus.util.Version;
 import lombok.AccessLevel;
@@ -78,16 +78,16 @@ public class CodecConsole implements Callable<Integer> {
 	public static void main(final String... args) {
 		System.exit(new CommandLine(new CodecConsole()).setCommandName(ACodec.class.getSimpleName().toLowerCase()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
 			if (e.getCause() instanceof InvalidCharsetException) {
-				System.out.println(Messages.get("err.invalid.charset", e.getCause().getMessage()));
+				System.out.println(ConsoleMessages.get("console.err.invalid.charset", e.getCause().getMessage()));
 			}
 			else if (e.getCause() instanceof InvalidAlgorithmException) {
-				System.out.println(Messages.get("err.invalid.algorithm", e.getCause().getMessage()));
+				System.out.println(ConsoleMessages.get("console.err.invalid.algorithm", e.getCause().getMessage()));
 			}
 			else if (e.getCause() instanceof InvalidModeException) {
-				System.out.println(Messages.get("err.invalid.mode", e.getCause().getMessage()));
+				System.out.println(ConsoleMessages.get("console.err.invalid.mode", e.getCause().getMessage()));
 			}
 			else if (a.length != 0) {
-				System.out.println(Messages.get("err.incorrect.command.syntax"));
+				System.out.println(ConsoleMessages.get("console.err.incorrect.command.syntax"));
 			}
 			else {
 				printHelp();
@@ -104,7 +104,7 @@ public class CodecConsole implements Callable<Integer> {
 		}
 
 		if (files == null && inputText == null || files != null && inputText != null) {
-			System.out.println(Messages.get("err.incorrect.command.syntax"));
+			System.out.println(ConsoleMessages.get("console.err.incorrect.command.syntax"));
 			return ExitCode.USAGE;
 		}
 
@@ -122,17 +122,17 @@ public class CodecConsole implements Callable<Integer> {
 			}
 		}
 		catch (final EncoderException e) {
-			System.out.println(Messages.get("err.cannot.encode", config.getAlgorithm().getName()));
+			System.out.println(ConsoleMessages.get("console.err.cannot.encode", config.getAlgorithm().getName()));
 			e.printStackTrace();
 			return ExitCode.SOFTWARE;
 		}
 		catch (final DecoderException e) {
-			System.out.println(Messages.get("err.cannot.decode", config.getAlgorithm().getName()));
+			System.out.println(ConsoleMessages.get("console.err.cannot.decode", config.getAlgorithm().getName()));
 			e.printStackTrace();
 			return ExitCode.SOFTWARE;
 		}
 		catch (final Exception e) {
-			System.out.println(Messages.get("err.unexpected.error"));
+			System.out.println(ConsoleMessages.get("console.err.unexpected.error"));
 			e.printStackTrace();
 			return ExitCode.SOFTWARE;
 		}
@@ -140,15 +140,15 @@ public class CodecConsole implements Callable<Integer> {
 
 	private static int processFile(@NonNull final CodecConfig config, @NonNull final File[] files) throws EncoderException, DecoderException {
 		if (!files[0].isFile()) {
-			System.out.println(Messages.get("msg.missing.file", files[0]));
+			System.out.println(ConsoleMessages.get("console.msg.missing.file", files[0]));
 			return ExitCode.SOFTWARE;
 		}
 		if (files.length > 1 && files[1].isFile()) {
-			System.out.print(Messages.get("msg.overwrite.file.question") + ' ');
+			System.out.print(ConsoleMessages.get("console.msg.overwrite.file.question") + ' ');
 			final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			try {
 				final String answer = StringUtils.trimToEmpty(br.readLine()).toLowerCase();
-				if (!Arrays.asList(Messages.get("msg.overwrite.file.answers.yes").split(",")).contains(answer)) {
+				if (!Arrays.asList(ConsoleMessages.get("console.msg.overwrite.file.answers.yes").split(",")).contains(answer)) {
 					return ExitCode.OK;
 				}
 			}
@@ -161,38 +161,38 @@ public class CodecConsole implements Callable<Integer> {
 			new ProcessFileRunnable(task, System.out).run();
 		}
 		catch (final FileNotFoundException e) {
-			System.out.println(Messages.get("msg.missing.file", e.getMessage()));
+			System.out.println(ConsoleMessages.get("console.msg.missing.file", e.getMessage()));
 			return ExitCode.SOFTWARE;
 		}
 		if (files.length > 1) {
-			System.out.println(Messages.get("msg.file.process.ok.message"));
+			System.out.println(ConsoleMessages.get("console.msg.file.process.ok.message"));
 		}
 		return ExitCode.OK;
 	}
 
 	private static void printHelp() {
 		/* Usage */
-		final StringBuilder help = new StringBuilder(Messages.get("msg.help.usage", OPTION_CHARSET, OPTION_FILE));
+		final StringBuilder help = new StringBuilder(ConsoleMessages.get("console.msg.help.usage", OPTION_CHARSET, OPTION_FILE));
 		help.append(SYSTEM_LINE_SEPARATOR).append(SYSTEM_LINE_SEPARATOR);
 
 		/* Modes */
-		help.append(Messages.get("msg.help.modes")).append(SYSTEM_LINE_SEPARATOR);
+		help.append(ConsoleMessages.get("console.msg.help.modes")).append(SYSTEM_LINE_SEPARATOR);
 		for (final CodecMode mode : CodecMode.values()) {
-			help.append("    ").append(mode.getAbbreviation()).append("    ").append(mode.getLabelForConsole()).append(SYSTEM_LINE_SEPARATOR);
+			help.append("    ").append(mode.getAbbreviation()).append("    ").append(ConsoleMessages.get("console.msg.help.modes." + mode.getAbbreviation())).append(SYSTEM_LINE_SEPARATOR);
 		}
 		help.append(SYSTEM_LINE_SEPARATOR);
 
 		/* Algorithms */
-		help.append(buildHelpBlock(Messages.get("msg.help.algorithms"), Arrays.stream(CodecAlgorithm.values()).map(CodecAlgorithm::getName).collect(Collectors.toCollection(LinkedHashSet::new))));
+		help.append(buildHelpBlock(ConsoleMessages.get("console.msg.help.algorithms"), Arrays.stream(CodecAlgorithm.values()).map(CodecAlgorithm::getName).collect(Collectors.toCollection(LinkedHashSet::new))));
 		help.append(SYSTEM_LINE_SEPARATOR);
 
 		/* Charsets */
-		help.append(buildHelpBlock(Messages.get("msg.help.charsets"), Charset.availableCharsets().keySet()));
-		help.append(' ').append(Messages.get("msg.help.default.charset", Charset.defaultCharset().name())).append(SYSTEM_LINE_SEPARATOR);
+		help.append(buildHelpBlock(ConsoleMessages.get("console.msg.help.charsets"), Charset.availableCharsets().keySet()));
+		help.append(' ').append(ConsoleMessages.get("console.msg.help.default.charset", Charset.defaultCharset().name())).append(SYSTEM_LINE_SEPARATOR);
 		help.append(SYSTEM_LINE_SEPARATOR);
 
 		/* Example */
-		help.append(Messages.get("msg.help.example"));
+		help.append(ConsoleMessages.get("console.msg.help.example"));
 
 		/* Header */
 		Date versionDate;
@@ -203,7 +203,7 @@ public class CodecConsole implements Callable<Integer> {
 			log.log(Level.FINE, "Invalid version date:", e);
 			versionDate = new Date();
 		}
-		System.out.println(Messages.get("msg.application.name") + ' ' + Messages.get("msg.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(versionDate)) + " [" + Messages.get("project.url") + ']');
+		System.out.println(ConsoleMessages.get("console.msg.application.name") + ' ' + ConsoleMessages.get("console.msg.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(versionDate)) + " [" + ConsoleMessages.get("console.project.url") + ']');
 		System.out.println();
 		System.out.println(help.toString().trim());
 	}

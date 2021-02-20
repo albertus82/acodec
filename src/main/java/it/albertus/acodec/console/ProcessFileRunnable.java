@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 
+import it.albertus.acodec.console.resources.ConsoleMessages;
 import it.albertus.acodec.engine.ProcessFileTask;
-import it.albertus.acodec.resources.Messages;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +50,7 @@ class ProcessFileRunnable {
 			@Override
 			public void run() {
 				final long inputFileLength = task.getInputFile().length();
-				final String part1 = Messages.get("msg.file.process.progress") + " (";
+				final String part1 = ConsoleMessages.get("console.msg.file.process.progress") + " (";
 				out.print(part1);
 				int charsToDelete = 0;
 				while (task.getByteCount() < inputFileLength && !isInterrupted()) {

@@ -28,7 +28,7 @@ import it.albertus.acodec.gui.CodecGui;
 import it.albertus.acodec.gui.Images;
 import it.albertus.acodec.gui.ProcessFileException;
 import it.albertus.acodec.gui.ProcessFileRunnable;
-import it.albertus.acodec.resources.Messages;
+import it.albertus.acodec.gui.resources.GuiMessages;
 import it.albertus.jface.DisplayThreadExecutor;
 import it.albertus.jface.DisplayThreadExecutor.Mode;
 import it.albertus.jface.EnhancedErrorDialog;
@@ -93,14 +93,14 @@ public class ProcessFileAction {
 				gui.refreshOutputText();
 			}
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
-			box.setMessage(Messages.get("msg.file.process.ok.message"));
-			box.setText(Messages.get(MSG_APPLICATION_NAME));
+			box.setMessage(GuiMessages.get("gui.msg.file.process.ok.message"));
+			box.setText(GuiMessages.get(MSG_APPLICATION_NAME));
 			box.open();
 		}
 		catch (final InterruptedException e) { // NOSONAR
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
-			box.setMessage(Messages.get("msg.file.process.cancel.message"));
-			box.setText(Messages.get(MSG_APPLICATION_NAME));
+			box.setMessage(GuiMessages.get("gui.msg.file.process.cancel.message"));
+			box.setText(GuiMessages.get(MSG_APPLICATION_NAME));
 			box.open();
 		}
 		catch (final InvocationTargetException e) {
@@ -108,22 +108,22 @@ public class ProcessFileAction {
 			final String message;
 			final Throwable throwable = e.getCause() instanceof ProcessFileException ? e.getCause().getCause() : e;
 			if (throwable instanceof EncoderException) {
-				message = Messages.get("err.cannot.encode", gui.getAlgorithm().getName());
+				message = GuiMessages.get("gui.err.cannot.encode", gui.getAlgorithm().getName());
 			}
 			else if (throwable instanceof DecoderException) {
-				message = Messages.get("err.cannot.decode", gui.getAlgorithm().getName());
+				message = GuiMessages.get("gui.err.cannot.decode", gui.getAlgorithm().getName());
 			}
 			else if (throwable instanceof FileNotFoundException) {
-				message = Messages.get("msg.missing.file", throwable.getMessage());
+				message = GuiMessages.get("gui.msg.missing.file", throwable.getMessage());
 			}
 			else {
-				message = Messages.get("err.unexpected.error");
+				message = GuiMessages.get("gui.err.unexpected.error");
 			}
-			EnhancedErrorDialog.openError(gui.getShell(), Messages.get(MSG_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIconArray());
+			EnhancedErrorDialog.openError(gui.getShell(), GuiMessages.get(MSG_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIconArray());
 		}
 		catch (final Exception e) {
 			log.log(Level.SEVERE, e.toString(), e);
-			EnhancedErrorDialog.openError(gui.getShell(), Messages.get(MSG_APPLICATION_NAME), e.toString(), IStatus.ERROR, e, Images.getMainIconArray());
+			EnhancedErrorDialog.openError(gui.getShell(), GuiMessages.get(MSG_APPLICATION_NAME), e.toString(), IStatus.ERROR, e, Images.getMainIconArray());
 		}
 	}
 
@@ -141,10 +141,10 @@ public class ProcessFileAction {
 		@Override // improved localization
 		public void create() {
 			super.create();
-			getShell().setText(Messages.get("lbl.process.file.dialog.title"));
+			getShell().setText(GuiMessages.get("gui.lbl.process.file.dialog.title"));
 			final Button cancelButton = getButton(IDialogConstants.CANCEL_ID);
 			if (cancelButton != null && !cancelButton.isDisposed()) {
-				cancelButton.setText(Messages.get("lbl.process.file.dialog.button.cancel"));
+				cancelButton.setText(GuiMessages.get("gui.lbl.process.file.dialog.button.cancel"));
 			}
 		}
 

@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
 import it.albertus.acodec.gui.listener.LinkSelectionListener;
-import it.albertus.acodec.resources.Messages;
+import it.albertus.acodec.gui.resources.GuiMessages;
 import it.albertus.jface.SwtUtils;
 import it.albertus.jface.closeable.CloseableResource;
 import it.albertus.util.Version;
@@ -75,7 +75,7 @@ public class AboutDialog extends Dialog {
 
 	public AboutDialog(final Shell parent, final int style) {
 		super(parent, style);
-		this.setText(Messages.get("lbl.about.title"));
+		this.setText(GuiMessages.get("gui.lbl.about.title"));
 	}
 
 	public void open() {
@@ -107,17 +107,17 @@ public class AboutDialog extends Dialog {
 			log.log(Level.WARNING, "Invalid version date:", e);
 			versionDate = new Date();
 		}
-		info.setText(buildAnchor(Messages.get("project.url"), Messages.get("msg.application.name")) + ' ' + Messages.get("msg.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM, Messages.getLanguage().getLocale()).format(versionDate)));
+		info.setText(buildAnchor(GuiMessages.get("gui.project.url"), GuiMessages.get("gui.msg.application.name")) + ' ' + GuiMessages.get("gui.msg.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM, GuiMessages.getLanguage().getLocale()).format(versionDate)));
 		info.addSelectionListener(linkSelectionListener);
 
 		final Link acknowledgementsLocations = new Link(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(acknowledgementsLocations);
-		acknowledgementsLocations.setText(Messages.get("lbl.about.acknowledgements.icon", buildAnchor(Messages.get("url.icon"), Messages.get("lbl.icon"))));
+		acknowledgementsLocations.setText(GuiMessages.get("gui.lbl.about.acknowledgements.icon", buildAnchor(GuiMessages.get("gui.url.icon"), GuiMessages.get("gui.lbl.icon"))));
 		acknowledgementsLocations.addSelectionListener(linkSelectionListener);
 
 		final Link linkLicense = new Link(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(linkLicense);
-		linkLicense.setText(Messages.get("lbl.about.license", buildAnchor(Messages.get("url.gpl"), Messages.get("lbl.gpl"))));
+		linkLicense.setText(GuiMessages.get("gui.lbl.about.license", buildAnchor(GuiMessages.get("gui.url.gpl"), GuiMessages.get("gui.lbl.gpl"))));
 		linkLicense.addSelectionListener(linkSelectionListener);
 
 		final Text appLicense = new Text(shell, SWT.BORDER | SWT.V_SCROLL);
@@ -128,11 +128,11 @@ public class AboutDialog extends Dialog {
 
 		final Label thirdPartySoftwareLabel = new Label(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(thirdPartySoftwareLabel);
-		thirdPartySoftwareLabel.setText(Messages.get("lbl.about.3rdparty"));
+		thirdPartySoftwareLabel.setText(GuiMessages.get("gui.lbl.about.3rdparty"));
 		createThirdPartySoftwareTable(shell);
 
 		final Button okButton = new Button(shell, SWT.PUSH);
-		okButton.setText(Messages.get("lbl.button.ok"));
+		okButton.setText(GuiMessages.get("gui.lbl.button.ok"));
 		final int buttonWidth = SwtUtils.convertHorizontalDLUsToPixels(okButton, IDialogConstants.BUTTON_WIDTH);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).minSize(buttonWidth, SWT.DEFAULT).applyTo(okButton);
 		okButton.setFocus();
@@ -199,7 +199,7 @@ public class AboutDialog extends Dialog {
 		licenseColumn.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
 			@Override
 			public void update(final ViewerCell cell) {
-				setLinkStyle(cell, Messages.get("lbl.about.3rdparty.license"));
+				setLinkStyle(cell, GuiMessages.get("gui.lbl.about.3rdparty.license"));
 				super.update(cell);
 			}
 
@@ -219,7 +219,7 @@ public class AboutDialog extends Dialog {
 		homePageColumn.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
 			@Override
 			public void update(final ViewerCell cell) {
-				setLinkStyle(cell, Messages.get("lbl.about.3rdparty.homepage"));
+				setLinkStyle(cell, GuiMessages.get("gui.lbl.about.3rdparty.homepage"));
 				super.update(cell);
 			}
 
