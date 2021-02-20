@@ -9,8 +9,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
 
-import it.albertus.acodec.engine.CodecConfig;
-import it.albertus.acodec.engine.StringCodec;
+import it.albertus.acodec.common.engine.CodecConfig;
+import it.albertus.acodec.common.engine.StringCodec;
 import it.albertus.acodec.gui.CodecGui;
 import it.albertus.acodec.gui.resources.GuiMessages;
 import lombok.extern.java.Log;

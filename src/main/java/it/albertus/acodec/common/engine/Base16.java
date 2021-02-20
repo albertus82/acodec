@@ -1,4 +1,4 @@
-package it.albertus.acodec.engine;
+package it.albertus.acodec.common.engine;
 
 import java.io.IOException;
 import java.io.InputStream;

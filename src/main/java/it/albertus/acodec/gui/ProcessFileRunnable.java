@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-import it.albertus.acodec.engine.ProcessFileTask;
+import it.albertus.acodec.common.engine.ProcessFileTask;
 import it.albertus.acodec.gui.resources.GuiMessages;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

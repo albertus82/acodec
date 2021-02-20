@@ -1,9 +1,9 @@
-package it.albertus.acodec.engine;
+package it.albertus.acodec.common.engine;
 
-import static it.albertus.acodec.engine.AlgorithmType.CHECKSUM;
-import static it.albertus.acodec.engine.AlgorithmType.ENCODING;
-import static it.albertus.acodec.engine.AlgorithmType.HASH;
-import static it.albertus.acodec.engine.CodecMode.ENCODE;
+import static it.albertus.acodec.common.engine.AlgorithmType.CHECKSUM;
+import static it.albertus.acodec.common.engine.AlgorithmType.ENCODING;
+import static it.albertus.acodec.common.engine.AlgorithmType.HASH;
+import static it.albertus.acodec.common.engine.CodecMode.ENCODE;
 import static java.lang.Thread.MIN_PRIORITY;
 
 import java.security.NoSuchAlgorithmException;

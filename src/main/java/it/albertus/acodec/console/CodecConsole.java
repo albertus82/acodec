@@ -20,6 +20,11 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 
 import it.albertus.acodec.ACodec;
+import it.albertus.acodec.common.engine.CodecAlgorithm;
+import it.albertus.acodec.common.engine.CodecConfig;
+import it.albertus.acodec.common.engine.CodecMode;
+import it.albertus.acodec.common.engine.ProcessFileTask;
+import it.albertus.acodec.common.engine.StringCodec;
 import it.albertus.acodec.console.converter.CharsetConverter;
 import it.albertus.acodec.console.converter.CharsetConverter.InvalidCharsetException;
 import it.albertus.acodec.console.converter.CodecAlgorithmConverter;
@@ -27,11 +32,6 @@ import it.albertus.acodec.console.converter.CodecAlgorithmConverter.InvalidAlgor
 import it.albertus.acodec.console.converter.CodecModeConverter;
 import it.albertus.acodec.console.converter.CodecModeConverter.InvalidModeException;
 import it.albertus.acodec.console.resources.ConsoleMessages;
-import it.albertus.acodec.engine.CodecAlgorithm;
-import it.albertus.acodec.engine.CodecConfig;
-import it.albertus.acodec.engine.CodecMode;
-import it.albertus.acodec.engine.ProcessFileTask;
-import it.albertus.acodec.engine.StringCodec;
 import it.albertus.util.StringUtils;
 import it.albertus.util.Version;
 import lombok.AccessLevel;

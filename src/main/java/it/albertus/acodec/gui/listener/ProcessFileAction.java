@@ -1,7 +1,7 @@
 package it.albertus.acodec.gui.listener;
 
-import static it.albertus.acodec.engine.CodecMode.DECODE;
-import static it.albertus.acodec.engine.CodecMode.ENCODE;
+import static it.albertus.acodec.common.engine.CodecMode.DECODE;
+import static it.albertus.acodec.common.engine.CodecMode.ENCODE;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,10 +20,10 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-import it.albertus.acodec.engine.Cancelable;
-import it.albertus.acodec.engine.CodecAlgorithm;
-import it.albertus.acodec.engine.CodecConfig;
-import it.albertus.acodec.engine.ProcessFileTask;
+import it.albertus.acodec.common.engine.Cancelable;
+import it.albertus.acodec.common.engine.CodecAlgorithm;
+import it.albertus.acodec.common.engine.CodecConfig;
+import it.albertus.acodec.common.engine.ProcessFileTask;
 import it.albertus.acodec.gui.CodecGui;
 import it.albertus.acodec.gui.Images;
 import it.albertus.acodec.gui.ProcessFileException;

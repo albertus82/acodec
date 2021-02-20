@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 
+import it.albertus.acodec.common.engine.ProcessFileTask;
 import it.albertus.acodec.console.resources.ConsoleMessages;
-import it.albertus.acodec.engine.ProcessFileTask;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
