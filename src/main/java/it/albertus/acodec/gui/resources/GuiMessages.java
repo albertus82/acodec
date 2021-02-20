@@ -24,17 +24,22 @@ public enum GuiMessages implements ConfigurableMessages {
 
 	@Override
 	public Language getLanguage() {
-		return ConfigurableMessagesDefaults.getLanguage(resourceBundle);
+		for (final Language language : Language.values()) {
+			if (language.getLocale().equals(resourceBundle.getLocale())) {
+				return language;
+			}
+		}
+		return Language.ENGLISH; // Default.
 	}
 
 	@Override
 	public String get(final String key) {
-		return MessagesDefaults.get(key, resourceBundle, () -> commonMessages.get(key));
+		return Defaults.get(key, resourceBundle, () -> commonMessages.get(key));
 	}
 
 	@Override
 	public String get(final String key, final Object... params) {
-		return MessagesDefaults.get(key, params, resourceBundle, () -> commonMessages.get(key, params));
+		return Defaults.get(key, params, resourceBundle, () -> commonMessages.get(key, params));
 	}
 
 }

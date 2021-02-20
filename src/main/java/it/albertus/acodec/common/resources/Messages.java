@@ -17,27 +17,16 @@ import lombok.RequiredArgsConstructor;
 
 public interface Messages {
 
-	@Getter
-	@RequiredArgsConstructor
-	public enum Language {
+	String get(String key);
 
-		ENGLISH(Locale.ENGLISH),
-		ITALIAN(Locale.ITALIAN);
-
-		private final Locale locale;
-
-	}
+	String get(String key, Object... params);
 
 	default String get(final Widget widget) {
 		return get(widget.getData().toString());
 	}
 
-	String get(String key);
-
-	String get(String key, Object... params);
-
-	@NoArgsConstructor(access = AccessLevel.PROTECTED)
-	class MessagesDefaults {
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	class Defaults {
 		public static String get(final String key, final ResourceBundle resourceBundle, final Supplier<String> fallbackSupplier) {
 			String message;
 			try {
@@ -65,6 +54,15 @@ public interface Messages {
 			}
 			return message;
 		}
+	}
+
+	@Getter
+	@RequiredArgsConstructor
+	enum Language {
+		ENGLISH(Locale.ENGLISH),
+		ITALIAN(Locale.ITALIAN);
+
+		private final Locale locale;
 	}
 
 }
