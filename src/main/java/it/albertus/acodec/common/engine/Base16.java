@@ -28,7 +28,7 @@ class Base16 {
 			return Base16Encoder.decode(cleaned);
 		}
 		else {
-			throw new IllegalArgumentException(messages.get("common.err.invalid.input"));
+			throw new IllegalArgumentException(messages.get("common.error.invalid.input"));
 		}
 	}
 

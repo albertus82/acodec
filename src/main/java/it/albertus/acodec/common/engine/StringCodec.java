@@ -30,7 +30,7 @@ public class StringCodec {
 		case ENCODE:
 			return encode(input);
 		default:
-			throw new UnsupportedOperationException(messages.get("common.err.invalid.mode", config.getMode()));
+			throw new UnsupportedOperationException(messages.get("common.error.invalid.mode", config.getMode()));
 		}
 	}
 
@@ -73,7 +73,7 @@ public class StringCodec {
 			}
 		}
 		catch (final Exception e) {
-			throw new EncoderException(messages.get("common.err.cannot.encode", config.getAlgorithm()), e);
+			throw new EncoderException(messages.get("common.error.cannot.encode", config.getAlgorithm()), e);
 		}
 	}
 
@@ -94,11 +94,11 @@ public class StringCodec {
 			case BASE91:
 				return new String(Base91.decode(input), config.getCharset());
 			default:
-				throw new UnsupportedOperationException(messages.get("common.err.invalid.algorithm", config.getAlgorithm()));
+				throw new UnsupportedOperationException(messages.get("common.error.invalid.algorithm", config.getAlgorithm()));
 			}
 		}
 		catch (final Exception e) {
-			throw new DecoderException(messages.get("common.err.cannot.decode", config.getAlgorithm()), e);
+			throw new DecoderException(messages.get("common.error.cannot.decode", config.getAlgorithm()), e);
 		}
 	}
 

@@ -65,7 +65,7 @@ public class Base16Encoder {
 				digit2 -= 32; // toLowerCase
 			}
 			if (!Arrays.contains(HEX, (char) digit1) || !Arrays.contains(HEX, (char) digit2)) {
-				throw new IllegalArgumentException(messages.get("common.err.invalid.input"));
+				throw new IllegalArgumentException(messages.get("common.error.invalid.input"));
 			}
 
 			if (digit1 >= '0' && digit1 <= '9') {

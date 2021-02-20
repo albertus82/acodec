@@ -65,7 +65,7 @@ public class ProcessFileTask implements Cancelable {
 		case ENCODE:
 			return encode(canceled);
 		default:
-			throw new UnsupportedOperationException(messages.get("common.err.invalid.mode", config.getMode()));
+			throw new UnsupportedOperationException(messages.get("common.error.invalid.mode", config.getMode()));
 		}
 	}
 
@@ -131,12 +131,12 @@ public class ProcessFileTask implements Cancelable {
 		catch (final Exception e) {
 			deleteOutputFile();
 			if (!canceled.getAsBoolean()) {
-				throw new EncoderException(messages.get("common.err.cannot.encode", config.getAlgorithm()), e);
+				throw new EncoderException(messages.get("common.error.cannot.encode", config.getAlgorithm()), e);
 			}
 		}
 		if (canceled.getAsBoolean()) {
 			deleteOutputFile();
-			throw new CancellationException(messages.get("common.msg.file.process.cancel.message"));
+			throw new CancellationException(messages.get("common.message.file.process.cancel.message"));
 		}
 		else {
 			return value;
@@ -171,18 +171,18 @@ public class ProcessFileTask implements Cancelable {
 				B91Cli.decode(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			default:
-				throw new UnsupportedOperationException(messages.get("common.err.invalid.algorithm", config.getAlgorithm()));
+				throw new UnsupportedOperationException(messages.get("common.error.invalid.algorithm", config.getAlgorithm()));
 			}
 		}
 		catch (final Exception e) {
 			deleteOutputFile();
 			if (!canceled.getAsBoolean()) {
-				throw new DecoderException(messages.get("common.err.cannot.decode", config.getAlgorithm()), e);
+				throw new DecoderException(messages.get("common.error.cannot.decode", config.getAlgorithm()), e);
 			}
 		}
 		if (canceled.getAsBoolean()) {
 			deleteOutputFile();
-			throw new CancellationException(messages.get("common.msg.file.process.cancel.message"));
+			throw new CancellationException(messages.get("common.message.file.process.cancel.message"));
 		}
 		else {
 			return value;
@@ -195,7 +195,7 @@ public class ProcessFileTask implements Cancelable {
 				Files.deleteIfExists(outputFile.toPath());
 			}
 			catch (final Exception e) {
-				log.log(Level.WARNING, messages.get("common.err.cannot.delete.file", outputFile), e);
+				log.log(Level.WARNING, messages.get("common.error.cannot.delete.file", outputFile), e);
 				outputFile.deleteOnExit();
 			}
 		}
