@@ -86,7 +86,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private CodecGui(final Display display) {
 		shell = new Shell(display);
 		shell.setImages(Images.getMainIconArray());
-		shell.setData("gui.msg.application.name");
+		shell.setData("gui.message.application.name");
 		shell.setText(GuiMessages.get(shell));
 		shell.setLayout(new GridLayout(5, false));
 
@@ -95,7 +95,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		/* Input text */
 		final Label inputLabel = new Label(shell, SWT.NONE);
 		labels.add(inputLabel);
-		inputLabel.setData("gui.lbl.input");
+		inputLabel.setData("gui.label.input");
 		inputLabel.setText(GuiMessages.get(inputLabel));
 		GridDataFactory.swtDefaults().applyTo(inputLabel);
 
@@ -104,7 +104,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		new Label(shell, SWT.NONE).setLayoutData(GridDataFactory.swtDefaults().create()); // Spacer
 
 		hideInputTextCheck = new Button(shell, SWT.CHECK);
-		hideInputTextCheck.setData("gui.lbl.input.hide");
+		hideInputTextCheck.setData("gui.label.input.hide");
 		hideInputTextCheck.setText(GuiMessages.get(hideInputTextCheck));
 		hideInputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(4, 1).create());
 		hideInputTextCheck.addSelectionListener(new SelectionAdapter() {
@@ -117,7 +117,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		/* Output text */
 		final Label outputLabel = new Label(shell, SWT.NONE);
 		labels.add(outputLabel);
-		outputLabel.setData("gui.lbl.output");
+		outputLabel.setData("gui.label.output");
 		outputLabel.setText(GuiMessages.get(outputLabel));
 		outputLabel.setLayoutData(new GridData());
 
@@ -126,7 +126,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		new Label(shell, SWT.NONE).setLayoutData(GridDataFactory.swtDefaults().create()); // Spacer
 
 		hideOutputTextCheck = new Button(shell, SWT.CHECK);
-		hideOutputTextCheck.setData("gui.lbl.output.hide");
+		hideOutputTextCheck.setData("gui.label.output.hide");
 		hideOutputTextCheck.setText(GuiMessages.get(hideOutputTextCheck));
 		hideOutputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(4, 1).create());
 		hideOutputTextCheck.addSelectionListener(new SelectionAdapter() {
@@ -139,7 +139,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		/* Codec combo */
 		final Label algorithmLabel = new Label(shell, SWT.NONE);
 		labels.add(algorithmLabel);
-		algorithmLabel.setData("gui.lbl.algorithm");
+		algorithmLabel.setData("gui.label.algorithm");
 		algorithmLabel.setText(GuiMessages.get(algorithmLabel));
 		algorithmLabel.setLayoutData(new GridData());
 
@@ -150,7 +150,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		/* Charset combo */
 		final Label charsetLabel = new Label(shell, SWT.NONE);
 		labels.add(charsetLabel);
-		charsetLabel.setData("gui.lbl.charset");
+		charsetLabel.setData("gui.label.charset");
 		charsetLabel.setText(GuiMessages.get(charsetLabel));
 		charsetLabel.setLayoutData(new GridData());
 
@@ -162,7 +162,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		// Process file button
 		processFileButton = new Button(shell, SWT.NONE);
 		processFileButton.setEnabled(false);
-		processFileButton.setData("gui.lbl.file.process");
+		processFileButton.setData("gui.label.file.process");
 		processFileButton.setText(GuiMessages.get(processFileButton));
 		GridDataFactory.swtDefaults().span(1, 2).align(SWT.BEGINNING, SWT.FILL).applyTo(processFileButton);
 		processFileButton.addSelectionListener(new ProcessFileButtonSelectionListener(this));
@@ -170,7 +170,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		/* Mode radio */
 		final Label modeLabel = new Label(shell, SWT.NONE);
 		labels.add(modeLabel);
-		modeLabel.setData("gui.lbl.mode");
+		modeLabel.setData("gui.label.mode");
 		modeLabel.setText(GuiMessages.get(modeLabel));
 		modeLabel.setLayoutData(new GridData());
 
@@ -180,7 +180,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		for (final CodecMode m : CodecMode.values()) {
 			final Button radio = new Button(radioComposite, SWT.RADIO);
 			radio.setSelection(m.equals(this.mode));
-			radio.setText(GuiMessages.get("gui.lbl.mode." + m.getAbbreviation()));
+			radio.setText(GuiMessages.get("gui.label.mode." + m.getAbbreviation()));
 			radio.addSelectionListener(new ModeRadioSelectionListener(this, radio, m));
 			modeRadios.put(m, radio);
 		}
@@ -198,7 +198,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	public static void main(final String... args) {
-		Display.setAppName(GuiMessages.get("gui.msg.application.name"));
+		Display.setAppName(GuiMessages.get("gui.message.application.name"));
 		Display.setAppVersion(Version.getNumber());
 		try (final CloseableDevice<Display> cd = new CloseableDevice<>(Display.getDefault())) {
 			final Display display = cd.getDevice();
@@ -213,7 +213,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			catch (final Exception e) {
 				final String message = e.toString();
 				log.log(Level.SEVERE, message, e);
-				EnhancedErrorDialog.openError(shell, GuiMessages.get("gui.msg.error"), message, IStatus.ERROR, e, Images.getMainIconArray());
+				EnhancedErrorDialog.openError(shell, GuiMessages.get("gui.message.error"), message, IStatus.ERROR, e, Images.getMainIconArray());
 			}
 		}
 	}
@@ -329,7 +329,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		hideInputTextCheck.setText(GuiMessages.get(hideInputTextCheck));
 		processFileButton.setText(GuiMessages.get(processFileButton));
 		for (final Entry<CodecMode, Button> entry : modeRadios.entrySet()) {
-			entry.getValue().setText(GuiMessages.get("gui.lbl.mode." + entry.getKey().getAbbreviation()));
+			entry.getValue().setText(GuiMessages.get("gui.label.mode." + entry.getKey().getAbbreviation()));
 		}
 		refreshOutput();
 		menuBar.updateLanguage();

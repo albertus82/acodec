@@ -50,7 +50,7 @@ class ProcessFileRunnable {
 			@Override
 			public void run() {
 				final long inputFileLength = task.getInputFile().length();
-				final String part1 = ConsoleMessages.get("console.msg.file.process.progress") + " (";
+				final String part1 = ConsoleMessages.get("console.message.file.process.progress") + " (";
 				out.print(part1);
 				int charsToDelete = 0;
 				while (task.getByteCount() < inputFileLength && !isInterrupted()) {

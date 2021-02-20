@@ -37,11 +37,11 @@ public class InputTextModifyListener implements ModifyListener {
 
 		// Preliminary checks
 		if (gui.getAlgorithm() == null) {
-			print(GuiMessages.get("gui.msg.missing.algorithm.banner"), true);
+			print(GuiMessages.get("gui.message.missing.algorithm.banner"), true);
 			return;
 		}
 		if (gui.getInputText().getText().isEmpty()) {
-			print(GuiMessages.get("gui.msg.missing.input.banner"), true);
+			print(GuiMessages.get("gui.message.missing.input.banner"), true);
 			return;
 		}
 
@@ -51,18 +51,18 @@ public class InputTextModifyListener implements ModifyListener {
 			result = new StringCodec(codecConfig).run(gui.getInputText().getText());
 		}
 		catch (final EncoderException e) {
-			print(GuiMessages.get("gui.err.cannot.encode.banner", codecConfig.getAlgorithm().getName()), true);
-			log.log(Level.INFO, GuiMessages.get("gui.err.cannot.encode", codecConfig.getAlgorithm().getName()), e);
+			print(GuiMessages.get("gui.error.cannot.encode.banner", codecConfig.getAlgorithm().getName()), true);
+			log.log(Level.INFO, GuiMessages.get("gui.error.cannot.encode", codecConfig.getAlgorithm().getName()), e);
 			return;
 		}
 		catch (final DecoderException e) {
-			print(GuiMessages.get("gui.err.cannot.decode.banner", codecConfig.getAlgorithm().getName()), true);
-			log.log(Level.INFO, GuiMessages.get("gui.err.cannot.decode", codecConfig.getAlgorithm().getName()), e);
+			print(GuiMessages.get("gui.error.cannot.decode.banner", codecConfig.getAlgorithm().getName()), true);
+			log.log(Level.INFO, GuiMessages.get("gui.error.cannot.decode", codecConfig.getAlgorithm().getName()), e);
 			return;
 		}
 		catch (final Exception e) {
-			print(GuiMessages.get("gui.err.unexpected.error.banner"), true);
-			log.log(Level.SEVERE, GuiMessages.get("gui.err.unexpected.error"), e);
+			print(GuiMessages.get("gui.error.unexpected.error.banner"), true);
+			log.log(Level.SEVERE, GuiMessages.get("gui.error.unexpected.error"), e);
 			return;
 		}
 		print(result, false);

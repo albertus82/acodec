@@ -93,13 +93,13 @@ public class ProcessFileAction {
 				gui.refreshOutputText();
 			}
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
-			box.setMessage(GuiMessages.get("gui.msg.file.process.ok.message"));
+			box.setMessage(GuiMessages.get("gui.message.file.process.ok.message"));
 			box.setText(GuiMessages.get(MSG_APPLICATION_NAME));
 			box.open();
 		}
 		catch (final InterruptedException e) { // NOSONAR
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
-			box.setMessage(GuiMessages.get("gui.msg.file.process.cancel.message"));
+			box.setMessage(GuiMessages.get("gui.message.file.process.cancel.message"));
 			box.setText(GuiMessages.get(MSG_APPLICATION_NAME));
 			box.open();
 		}
@@ -108,16 +108,16 @@ public class ProcessFileAction {
 			final String message;
 			final Throwable throwable = e.getCause() instanceof ProcessFileException ? e.getCause().getCause() : e;
 			if (throwable instanceof EncoderException) {
-				message = GuiMessages.get("gui.err.cannot.encode", gui.getAlgorithm().getName());
+				message = GuiMessages.get("gui.error.cannot.encode", gui.getAlgorithm().getName());
 			}
 			else if (throwable instanceof DecoderException) {
-				message = GuiMessages.get("gui.err.cannot.decode", gui.getAlgorithm().getName());
+				message = GuiMessages.get("gui.error.cannot.decode", gui.getAlgorithm().getName());
 			}
 			else if (throwable instanceof FileNotFoundException) {
-				message = GuiMessages.get("gui.msg.missing.file", throwable.getMessage());
+				message = GuiMessages.get("gui.message.missing.file", throwable.getMessage());
 			}
 			else {
-				message = GuiMessages.get("gui.err.unexpected.error");
+				message = GuiMessages.get("gui.error.unexpected.error");
 			}
 			EnhancedErrorDialog.openError(gui.getShell(), GuiMessages.get(MSG_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIconArray());
 		}
@@ -141,10 +141,10 @@ public class ProcessFileAction {
 		@Override // improved localization
 		public void create() {
 			super.create();
-			getShell().setText(GuiMessages.get("gui.lbl.process.file.dialog.title"));
+			getShell().setText(GuiMessages.get("gui.label.process.file.dialog.title"));
 			final Button cancelButton = getButton(IDialogConstants.CANCEL_ID);
 			if (cancelButton != null && !cancelButton.isDisposed()) {
-				cancelButton.setText(GuiMessages.get("gui.lbl.process.file.dialog.button.cancel"));
+				cancelButton.setText(GuiMessages.get("gui.label.process.file.dialog.button.cancel"));
 			}
 		}
 
