@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
+import it.albertus.acodec.common.resources.ConfigurableMessages;
 import it.albertus.acodec.gui.listener.LinkSelectionListener;
 import it.albertus.acodec.gui.resources.GuiMessages;
 import it.albertus.jface.SwtUtils;
@@ -69,7 +70,7 @@ public class AboutDialog extends Dialog {
 	private static final int COL_IDX_THIRDPARTY_LICENSE = 1;
 	private static final int COL_IDX_THIRDPARTY_HOMEPAGE = 2;
 
-	private static final GuiMessages messages = GuiMessages.INSTANCE;
+	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
 	public AboutDialog(final Shell parent) {
 		this(parent, SWT.SHEET);

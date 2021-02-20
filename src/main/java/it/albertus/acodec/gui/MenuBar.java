@@ -12,6 +12,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import it.albertus.acodec.common.resources.ConfigurableMessages;
 import it.albertus.acodec.common.resources.Messages.Language;
 import it.albertus.acodec.gui.listener.AboutListener;
 import it.albertus.acodec.gui.listener.CloseListener;
@@ -35,7 +36,7 @@ import lombok.extern.java.Log;
 @Log
 public class MenuBar implements Multilanguage {
 
-	private static final GuiMessages messages = GuiMessages.INSTANCE;
+	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
 	private final MenuItem fileMenuHeader;
 	private final MenuItem fileProcessMenuItem;

@@ -36,8 +36,8 @@ public interface Messages {
 
 	String get(String key, Object... params);
 
-	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	class Defaults {
+	@NoArgsConstructor(access = AccessLevel.PROTECTED)
+	class MessagesDefaults {
 		public static String get(final String key, final ResourceBundle resourceBundle, final Supplier<String> fallbackSupplier) {
 			String message;
 			try {
