@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class GuiMessages {
+public final class Messages {
 
 	@Getter
 	@RequiredArgsConstructor
@@ -27,7 +27,7 @@ public final class GuiMessages {
 		private final Locale locale;
 	}
 
-	private static final String BASE_NAME = GuiMessages.class.getPackage().getName() + '.' + "guimessages";
+	private static final String BASE_NAME = Messages.class.getPackage().getName() + '.' + "guimessages";
 
 	private static ResourceBundle resourceBundle = ResourceBundle.getBundle(BASE_NAME, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
 

@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
 import it.albertus.acodec.gui.listener.LinkSelectionListener;
-import it.albertus.acodec.gui.resources.GuiMessages;
+import it.albertus.acodec.gui.resources.Messages;
 import it.albertus.jface.SwtUtils;
 import it.albertus.jface.closeable.CloseableResource;
 import it.albertus.util.Version;
@@ -75,7 +75,7 @@ public class AboutDialog extends Dialog {
 
 	public AboutDialog(final Shell parent, final int style) {
 		super(parent, style);
-		this.setText(GuiMessages.get("gui.label.about.title"));
+		this.setText(Messages.get("gui.label.about.title"));
 	}
 
 	public void open() {
@@ -107,17 +107,17 @@ public class AboutDialog extends Dialog {
 			log.log(Level.WARNING, "Invalid version date:", e);
 			versionDate = new Date();
 		}
-		info.setText(buildAnchor(GuiMessages.get("gui.message.project.url"), GuiMessages.get("gui.message.application.name")) + ' ' + GuiMessages.get("gui.message.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM, GuiMessages.getLanguage().getLocale()).format(versionDate)));
+		info.setText(buildAnchor(Messages.get("gui.message.project.url"), Messages.get("gui.message.application.name")) + ' ' + Messages.get("gui.message.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM, Messages.getLanguage().getLocale()).format(versionDate)));
 		info.addSelectionListener(linkSelectionListener);
 
 		final Link acknowledgementsLocations = new Link(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(acknowledgementsLocations);
-		acknowledgementsLocations.setText(GuiMessages.get("gui.label.about.acknowledgements.icon", buildAnchor(GuiMessages.get("gui.message.icon.url"), GuiMessages.get("gui.label.icon"))));
+		acknowledgementsLocations.setText(Messages.get("gui.label.about.acknowledgements.icon", buildAnchor(Messages.get("gui.message.icon.url"), Messages.get("gui.label.icon"))));
 		acknowledgementsLocations.addSelectionListener(linkSelectionListener);
 
 		final Link linkLicense = new Link(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(linkLicense);
-		linkLicense.setText(GuiMessages.get("gui.label.about.license", buildAnchor(GuiMessages.get("gui.message.gpl.url"), GuiMessages.get("gui.label.gpl"))));
+		linkLicense.setText(Messages.get("gui.label.about.license", buildAnchor(Messages.get("gui.message.gpl.url"), Messages.get("gui.label.gpl"))));
 		linkLicense.addSelectionListener(linkSelectionListener);
 
 		final Text appLicense = new Text(shell, SWT.BORDER | SWT.V_SCROLL);
@@ -128,11 +128,11 @@ public class AboutDialog extends Dialog {
 
 		final Label thirdPartySoftwareLabel = new Label(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(thirdPartySoftwareLabel);
-		thirdPartySoftwareLabel.setText(GuiMessages.get("gui.label.about.3rdparty"));
+		thirdPartySoftwareLabel.setText(Messages.get("gui.label.about.3rdparty"));
 		createThirdPartySoftwareTable(shell);
 
 		final Button okButton = new Button(shell, SWT.PUSH);
-		okButton.setText(GuiMessages.get("gui.label.button.ok"));
+		okButton.setText(Messages.get("gui.label.button.ok"));
 		final int buttonWidth = SwtUtils.convertHorizontalDLUsToPixels(okButton, IDialogConstants.BUTTON_WIDTH);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).minSize(buttonWidth, SWT.DEFAULT).applyTo(okButton);
 		okButton.setFocus();
@@ -199,7 +199,7 @@ public class AboutDialog extends Dialog {
 		licenseColumn.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
 			@Override
 			public void update(final ViewerCell cell) {
-				setLinkStyle(cell, GuiMessages.get("gui.label.about.3rdparty.license"));
+				setLinkStyle(cell, Messages.get("gui.label.about.3rdparty.license"));
 				super.update(cell);
 			}
 
@@ -219,7 +219,7 @@ public class AboutDialog extends Dialog {
 		homePageColumn.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
 			@Override
 			public void update(final ViewerCell cell) {
-				setLinkStyle(cell, GuiMessages.get("gui.label.about.3rdparty.homepage"));
+				setLinkStyle(cell, Messages.get("gui.label.about.3rdparty.homepage"));
 				super.update(cell);
 			}
 

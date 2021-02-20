@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ConsoleMessages {
+public final class Messages {
 
 	@Getter
 	@RequiredArgsConstructor
@@ -27,7 +27,7 @@ public final class ConsoleMessages {
 		private final Locale locale;
 	}
 
-	private static final String BASE_NAME = ConsoleMessages.class.getPackage().getName() + '.' + "consolemessages";
+	private static final String BASE_NAME = Messages.class.getPackage().getName() + '.' + "consolemessages";
 
 	private static ResourceBundle resourceBundle = ResourceBundle.getBundle(BASE_NAME, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
 

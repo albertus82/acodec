@@ -12,7 +12,7 @@ import org.eclipse.swt.graphics.Color;
 import it.albertus.acodec.common.engine.CodecConfig;
 import it.albertus.acodec.common.engine.StringCodec;
 import it.albertus.acodec.gui.CodecGui;
-import it.albertus.acodec.gui.resources.GuiMessages;
+import it.albertus.acodec.gui.resources.Messages;
 import lombok.extern.java.Log;
 
 @Log
@@ -37,11 +37,11 @@ public class InputTextModifyListener implements ModifyListener {
 
 		// Preliminary checks
 		if (gui.getAlgorithm() == null) {
-			print(GuiMessages.get("gui.message.missing.algorithm.banner"), true);
+			print(Messages.get("gui.message.missing.algorithm.banner"), true);
 			return;
 		}
 		if (gui.getInputText().getText().isEmpty()) {
-			print(GuiMessages.get("gui.message.missing.input.banner"), true);
+			print(Messages.get("gui.message.missing.input.banner"), true);
 			return;
 		}
 
@@ -51,18 +51,18 @@ public class InputTextModifyListener implements ModifyListener {
 			result = new StringCodec(codecConfig).run(gui.getInputText().getText());
 		}
 		catch (final EncoderException e) {
-			print(GuiMessages.get("gui.error.cannot.encode.banner", codecConfig.getAlgorithm().getName()), true);
-			log.log(Level.INFO, GuiMessages.get("gui.error.cannot.encode", codecConfig.getAlgorithm().getName()), e);
+			print(Messages.get("gui.error.cannot.encode.banner", codecConfig.getAlgorithm().getName()), true);
+			log.log(Level.INFO, Messages.get("gui.error.cannot.encode", codecConfig.getAlgorithm().getName()), e);
 			return;
 		}
 		catch (final DecoderException e) {
-			print(GuiMessages.get("gui.error.cannot.decode.banner", codecConfig.getAlgorithm().getName()), true);
-			log.log(Level.INFO, GuiMessages.get("gui.error.cannot.decode", codecConfig.getAlgorithm().getName()), e);
+			print(Messages.get("gui.error.cannot.decode.banner", codecConfig.getAlgorithm().getName()), true);
+			log.log(Level.INFO, Messages.get("gui.error.cannot.decode", codecConfig.getAlgorithm().getName()), e);
 			return;
 		}
 		catch (final Exception e) {
-			print(GuiMessages.get("gui.error.unexpected.error.banner"), true);
-			log.log(Level.SEVERE, GuiMessages.get("gui.error.unexpected.error"), e);
+			print(Messages.get("gui.error.unexpected.error.banner"), true);
+			log.log(Level.SEVERE, Messages.get("gui.error.unexpected.error"), e);
 			return;
 		}
 		print(result, false);
