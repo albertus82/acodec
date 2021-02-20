@@ -1,10 +1,6 @@
 package it.albertus.acodec.console.resources;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import it.albertus.acodec.common.resources.CommonMessages;
@@ -37,32 +33,14 @@ public enum ConsoleMessages implements Messages {
 		return Language.ENGLISH; // Default.
 	}
 
+	@Override
 	public String get(final String key) {
-		String message;
-		try {
-			message = resourceBundle.getString(key);
-			message = message != null ? message.replace("''", "'").trim() : "";
-		}
-		catch (final MissingResourceException e) {
-			message = commonMessages.get(key);
-		}
-		return message;
+		return Defaults.get(key, resourceBundle, () -> commonMessages.get(key));
 	}
 
+	@Override
 	public String get(final String key, final Object... params) {
-		final List<String> stringParams = new ArrayList<>(params.length);
-		for (final Object param : params) {
-			stringParams.add(String.valueOf(param));
-		}
-		String message;
-		try {
-			message = MessageFormat.format(resourceBundle.getString(key), stringParams.toArray());
-			message = message != null ? message.trim() : "";
-		}
-		catch (final MissingResourceException e) {
-			message = commonMessages.get(key, params);
-		}
-		return message;
+		return Defaults.get(key, params, resourceBundle, () -> commonMessages.get(key, params));
 	}
 
 }
