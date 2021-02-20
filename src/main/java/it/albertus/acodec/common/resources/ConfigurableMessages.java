@@ -12,7 +12,7 @@ public interface ConfigurableMessages extends Messages {
 	void setLanguage(String language);
 
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
-	class ConfigurableMessagesDefaults extends Messages.MessagesDefaults {
+	class ConfigurableMessagesDefaults extends MessagesDefaults {
 		public static Language getLanguage(final ResourceBundle resourceBundle) {
 			for (final Language language : Language.values()) {
 				if (language.getLocale().equals(resourceBundle.getLocale())) {

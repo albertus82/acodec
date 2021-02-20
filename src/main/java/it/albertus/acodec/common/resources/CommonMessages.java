@@ -11,7 +11,6 @@ public enum CommonMessages implements ConfigurableMessages {
 
 	private ResourceBundle resourceBundle = ResourceBundle.getBundle(getClass().getName().toLowerCase(), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
 
-	/** Aggiorna la lingua in cui vengono mostrati i messaggi. */
 	@Override
 	public void setLanguage(final String language) { // NOSONAR Enum singleton
 		if (language != null) {
