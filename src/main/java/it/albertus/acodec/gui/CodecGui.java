@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Text;
 
 import it.albertus.acodec.common.engine.CodecAlgorithm;
 import it.albertus.acodec.common.engine.CodecMode;
-import it.albertus.acodec.common.resources.CommonMessages;
 import it.albertus.acodec.gui.listener.AlgorithmComboSelectionListener;
 import it.albertus.acodec.gui.listener.CharsetComboSelectionListener;
 import it.albertus.acodec.gui.listener.CloseListener;
@@ -311,7 +310,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	public void setLanguage(final Language language) {
-		CommonMessages.setLanguage(language.getLocale().getLanguage());
 		GuiMessages.setLanguage(language.getLocale().getLanguage());
 		shell.setRedraw(false);
 		updateLanguage();
