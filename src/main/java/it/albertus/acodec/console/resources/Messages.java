@@ -9,7 +9,6 @@ import java.util.ResourceBundle;
 
 import org.eclipse.swt.widgets.Widget;
 
-import it.albertus.acodec.common.resources.CommonMessages;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +34,7 @@ public final class Messages {
 	public static void setLanguage(final String language) {
 		if (language != null) {
 			resourceBundle = ResourceBundle.getBundle(BASE_NAME, new Locale(language), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
-			CommonMessages.setLanguage(language);
+			it.albertus.acodec.common.resources.Messages.setLanguage(language);
 		}
 	}
 
@@ -59,7 +58,7 @@ public final class Messages {
 			message = message != null ? message.replace("''", "'").trim() : "";
 		}
 		catch (final MissingResourceException e) {
-			message = CommonMessages.get(key);
+			message = it.albertus.acodec.common.resources.Messages.get(key);
 		}
 		return message;
 	}
@@ -75,7 +74,7 @@ public final class Messages {
 			message = message != null ? message.trim() : "";
 		}
 		catch (final MissingResourceException e) {
-			message = CommonMessages.get(key, params);
+			message = it.albertus.acodec.common.resources.Messages.get(key, params);
 		}
 		return message;
 	}
