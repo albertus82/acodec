@@ -96,7 +96,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		labels.add(inputLabel);
 		inputLabel.setData("lbl.input");
 		inputLabel.setText(Messages.get(inputLabel));
-		inputLabel.setLayoutData(GridDataFactory.swtDefaults().create());
+		GridDataFactory.swtDefaults().applyTo(inputLabel);
 
 		inputText = createInputText();
 
