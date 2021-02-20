@@ -74,7 +74,7 @@
 		</javac>
 
 		<typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
-			<classpath path="${animalSniffer.directory}/animal-sniffer-ant-tasks-1.18.jar" />
+			<classpath path="${animalSniffer.directory}/animal-sniffer-ant-tasks-1.20.jar" />
 		</typedef>
 		<as:check-signature signature="${animalSniffer.directory}/java18-1.0.signature">
 			<path path="${build.outputDirectory}" />
