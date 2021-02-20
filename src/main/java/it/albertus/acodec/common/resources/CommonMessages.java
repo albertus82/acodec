@@ -27,21 +27,21 @@ public final class CommonMessages {
 		private final Locale locale;
 	}
 
-	private static final String BASE_NAME = CommonMessages.class.getName().toLowerCase();
+	private static final String BASE_NAME = CommonMessages.class.getPackage().getName() + '.' + "commonmessages";
 
-	private static ResourceBundle resources = ResourceBundle.getBundle(BASE_NAME, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
+	private static ResourceBundle resourceBundle = ResourceBundle.getBundle(BASE_NAME, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
 
 	/** Aggiorna la lingua in cui vengono mostrati i messaggi. */
 	public static void setLanguage(final String language) {
 		if (language != null) {
-			resources = ResourceBundle.getBundle(BASE_NAME, new Locale(language), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
+			resourceBundle = ResourceBundle.getBundle(BASE_NAME, new Locale(language), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
 			JFaceMessages.setLanguage(language);
 		}
 	}
 
 	public static Language getLanguage() {
 		for (final Language language : Language.values()) {
-			if (language.locale.equals(resources.getLocale())) {
+			if (language.locale.equals(resourceBundle.getLocale())) {
 				return language;
 			}
 		}
@@ -55,7 +55,7 @@ public final class CommonMessages {
 	public static String get(final String key) {
 		String message;
 		try {
-			message = resources.getString(key);
+			message = resourceBundle.getString(key);
 			message = message != null ? message.replace("''", "'").trim() : "";
 		}
 		catch (final MissingResourceException e) {
@@ -71,7 +71,7 @@ public final class CommonMessages {
 		}
 		String message;
 		try {
-			message = MessageFormat.format(resources.getString(key), stringParams.toArray());
+			message = MessageFormat.format(resourceBundle.getString(key), stringParams.toArray());
 			message = message != null ? message.trim() : "";
 		}
 		catch (final MissingResourceException e) {

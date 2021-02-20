@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.swt.widgets.Widget;
 
-import it.albertus.jface.JFaceMessages;
+import it.albertus.acodec.common.resources.CommonMessages;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,21 +27,21 @@ public final class GuiMessages {
 		private final Locale locale;
 	}
 
-	private static final String BASE_NAME = GuiMessages.class.getName().toLowerCase();
+	private static final String BASE_NAME = GuiMessages.class.getPackage().getName() + '.' + "guimessages";
 
-	private static ResourceBundle resources = ResourceBundle.getBundle(BASE_NAME, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
+	private static ResourceBundle resourceBundle = ResourceBundle.getBundle(BASE_NAME, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
 
 	/** Aggiorna la lingua in cui vengono mostrati i messaggi. */
 	public static void setLanguage(final String language) {
 		if (language != null) {
-			resources = ResourceBundle.getBundle(BASE_NAME, new Locale(language), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
-			JFaceMessages.setLanguage(language);
+			resourceBundle = ResourceBundle.getBundle(BASE_NAME, new Locale(language), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
+			CommonMessages.setLanguage(language);
 		}
 	}
 
 	public static Language getLanguage() {
 		for (final Language language : Language.values()) {
-			if (language.locale.equals(resources.getLocale())) {
+			if (language.locale.equals(resourceBundle.getLocale())) {
 				return language;
 			}
 		}
@@ -55,11 +55,11 @@ public final class GuiMessages {
 	public static String get(final String key) {
 		String message;
 		try {
-			message = resources.getString(key);
+			message = resourceBundle.getString(key);
 			message = message != null ? message.replace("''", "'").trim() : "";
 		}
 		catch (final MissingResourceException e) {
-			message = JFaceMessages.get(key);
+			message = CommonMessages.get(key);
 		}
 		return message;
 	}
@@ -71,11 +71,11 @@ public final class GuiMessages {
 		}
 		String message;
 		try {
-			message = MessageFormat.format(resources.getString(key), stringParams.toArray());
+			message = MessageFormat.format(resourceBundle.getString(key), stringParams.toArray());
 			message = message != null ? message.trim() : "";
 		}
 		catch (final MissingResourceException e) {
-			message = JFaceMessages.get(key, params);
+			message = CommonMessages.get(key, params);
 		}
 		return message;
 	}
