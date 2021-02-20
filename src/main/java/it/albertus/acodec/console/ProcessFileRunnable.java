@@ -8,6 +8,7 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 
 import it.albertus.acodec.common.engine.ProcessFileTask;
+import it.albertus.acodec.common.resources.Messages;
 import it.albertus.acodec.console.resources.ConsoleMessages;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -15,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class ProcessFileRunnable {
+
+	private static final Messages messages = ConsoleMessages.INSTANCE;
 
 	@NonNull
 	private final ProcessFileTask task;
@@ -50,7 +53,7 @@ class ProcessFileRunnable {
 			@Override
 			public void run() {
 				final long inputFileLength = task.getInputFile().length();
-				final String part1 = ConsoleMessages.get("console.message.file.process.progress") + " (";
+				final String part1 = messages.get("console.message.file.process.progress") + " (";
 				out.print(part1);
 				int charsToDelete = 0;
 				while (task.getByteCount() < inputFileLength && !isInterrupted()) {

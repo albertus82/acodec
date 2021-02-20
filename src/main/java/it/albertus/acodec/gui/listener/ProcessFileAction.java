@@ -24,6 +24,7 @@ import it.albertus.acodec.common.engine.Cancelable;
 import it.albertus.acodec.common.engine.CodecAlgorithm;
 import it.albertus.acodec.common.engine.CodecConfig;
 import it.albertus.acodec.common.engine.ProcessFileTask;
+import it.albertus.acodec.common.resources.Messages;
 import it.albertus.acodec.gui.CodecGui;
 import it.albertus.acodec.gui.Images;
 import it.albertus.acodec.gui.ProcessFileException;
@@ -42,6 +43,8 @@ import lombok.extern.java.Log;
 public class ProcessFileAction {
 
 	private static final String MSG_APPLICATION_NAME = "msg.application.name";
+
+	private static final Messages messages = GuiMessages.INSTANCE;
 
 	protected final CodecGui gui;
 
@@ -93,14 +96,14 @@ public class ProcessFileAction {
 				gui.refreshOutputText();
 			}
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
-			box.setMessage(GuiMessages.get("gui.message.file.process.ok.message"));
-			box.setText(GuiMessages.get(MSG_APPLICATION_NAME));
+			box.setMessage(messages.get("gui.message.file.process.ok.message"));
+			box.setText(messages.get(MSG_APPLICATION_NAME));
 			box.open();
 		}
 		catch (final InterruptedException e) { // NOSONAR
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
-			box.setMessage(GuiMessages.get("gui.message.file.process.cancel.message"));
-			box.setText(GuiMessages.get(MSG_APPLICATION_NAME));
+			box.setMessage(messages.get("gui.message.file.process.cancel.message"));
+			box.setText(messages.get(MSG_APPLICATION_NAME));
 			box.open();
 		}
 		catch (final InvocationTargetException e) {
@@ -108,22 +111,22 @@ public class ProcessFileAction {
 			final String message;
 			final Throwable throwable = e.getCause() instanceof ProcessFileException ? e.getCause().getCause() : e;
 			if (throwable instanceof EncoderException) {
-				message = GuiMessages.get("gui.error.cannot.encode", gui.getAlgorithm().getName());
+				message = messages.get("gui.error.cannot.encode", gui.getAlgorithm().getName());
 			}
 			else if (throwable instanceof DecoderException) {
-				message = GuiMessages.get("gui.error.cannot.decode", gui.getAlgorithm().getName());
+				message = messages.get("gui.error.cannot.decode", gui.getAlgorithm().getName());
 			}
 			else if (throwable instanceof FileNotFoundException) {
-				message = GuiMessages.get("gui.message.missing.file", throwable.getMessage());
+				message = messages.get("gui.message.missing.file", throwable.getMessage());
 			}
 			else {
-				message = GuiMessages.get("gui.error.unexpected.error");
+				message = messages.get("gui.error.unexpected.error");
 			}
-			EnhancedErrorDialog.openError(gui.getShell(), GuiMessages.get(MSG_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIconArray());
+			EnhancedErrorDialog.openError(gui.getShell(), messages.get(MSG_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIconArray());
 		}
 		catch (final Exception e) {
 			log.log(Level.SEVERE, e.toString(), e);
-			EnhancedErrorDialog.openError(gui.getShell(), GuiMessages.get(MSG_APPLICATION_NAME), e.toString(), IStatus.ERROR, e, Images.getMainIconArray());
+			EnhancedErrorDialog.openError(gui.getShell(), messages.get(MSG_APPLICATION_NAME), e.toString(), IStatus.ERROR, e, Images.getMainIconArray());
 		}
 	}
 
@@ -141,10 +144,10 @@ public class ProcessFileAction {
 		@Override // improved localization
 		public void create() {
 			super.create();
-			getShell().setText(GuiMessages.get("gui.label.process.file.dialog.title"));
+			getShell().setText(messages.get("gui.label.process.file.dialog.title"));
 			final Button cancelButton = getButton(IDialogConstants.CANCEL_ID);
 			if (cancelButton != null && !cancelButton.isDisposed()) {
-				cancelButton.setText(GuiMessages.get("gui.label.process.file.dialog.button.cancel"));
+				cancelButton.setText(messages.get("gui.label.process.file.dialog.button.cancel"));
 			}
 		}
 

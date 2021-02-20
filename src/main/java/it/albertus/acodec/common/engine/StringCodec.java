@@ -10,12 +10,15 @@ import org.apache.commons.codec.digest.PureJavaCrc32;
 import org.apache.commons.codec.digest.PureJavaCrc32C;
 
 import it.albertus.acodec.common.resources.CommonMessages;
+import it.albertus.acodec.common.resources.Messages;
 import it.albertus.util.CRC16;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class StringCodec {
+
+	private static final Messages messages = CommonMessages.INSTANCE;
 
 	@NonNull
 	private final CodecConfig config;
@@ -27,7 +30,7 @@ public class StringCodec {
 		case ENCODE:
 			return encode(input);
 		default:
-			throw new UnsupportedOperationException(CommonMessages.get("common.err.invalid.mode", config.getMode()));
+			throw new UnsupportedOperationException(messages.get("common.err.invalid.mode", config.getMode()));
 		}
 	}
 
@@ -70,7 +73,7 @@ public class StringCodec {
 			}
 		}
 		catch (final Exception e) {
-			throw new EncoderException(CommonMessages.get("common.err.cannot.encode", config.getAlgorithm()), e);
+			throw new EncoderException(messages.get("common.err.cannot.encode", config.getAlgorithm()), e);
 		}
 	}
 
@@ -91,11 +94,11 @@ public class StringCodec {
 			case BASE91:
 				return new String(Base91.decode(input), config.getCharset());
 			default:
-				throw new UnsupportedOperationException(CommonMessages.get("common.err.invalid.algorithm", config.getAlgorithm()));
+				throw new UnsupportedOperationException(messages.get("common.err.invalid.algorithm", config.getAlgorithm()));
 			}
 		}
 		catch (final Exception e) {
-			throw new DecoderException(CommonMessages.get("common.err.cannot.decode", config.getAlgorithm()), e);
+			throw new DecoderException(messages.get("common.err.cannot.decode", config.getAlgorithm()), e);
 		}
 	}
 

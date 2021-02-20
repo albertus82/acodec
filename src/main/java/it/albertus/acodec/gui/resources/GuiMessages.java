@@ -7,64 +7,49 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.swt.widgets.Widget;
-
 import it.albertus.acodec.common.resources.CommonMessages;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import it.albertus.acodec.common.resources.Messages;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class GuiMessages {
+public enum GuiMessages implements Messages {
 
-	@Getter
-	@RequiredArgsConstructor
-	public enum Language {
-		ENGLISH(Locale.ENGLISH),
-		ITALIAN(Locale.ITALIAN);
+	INSTANCE;
 
-		private final Locale locale;
-	}
+	private static final CommonMessages commonMessages = CommonMessages.INSTANCE;
 
-	private static final String BASE_NAME = GuiMessages.class.getPackage().getName() + '.' + "guimessages";
+	private final String baseName = GuiMessages.class.getName().toLowerCase();
 
-	private static ResourceBundle resourceBundle = ResourceBundle.getBundle(BASE_NAME, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
+	private ResourceBundle resourceBundle = ResourceBundle.getBundle(baseName, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
 
 	/** Aggiorna la lingua in cui vengono mostrati i messaggi. */
-	public static void setLanguage(final String language) {
+	public void setLanguage(final String language) { // NOSONAR Enum singleton
 		if (language != null) {
-			resourceBundle = ResourceBundle.getBundle(BASE_NAME, new Locale(language), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
-			CommonMessages.setLanguage(language);
+			resourceBundle = ResourceBundle.getBundle(baseName, new Locale(language), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
+			commonMessages.setLanguage(language);
 		}
 	}
 
-	public static Language getLanguage() {
+	public Language getLanguage() {
 		for (final Language language : Language.values()) {
-			if (language.locale.equals(resourceBundle.getLocale())) {
+			if (language.getLocale().equals(resourceBundle.getLocale())) {
 				return language;
 			}
 		}
 		return Language.ENGLISH; // Default.
 	}
 
-	public static String get(final Widget widget) {
-		return get(widget.getData().toString());
-	}
-
-	public static String get(final String key) {
+	public String get(final String key) {
 		String message;
 		try {
 			message = resourceBundle.getString(key);
 			message = message != null ? message.replace("''", "'").trim() : "";
 		}
 		catch (final MissingResourceException e) {
-			message = CommonMessages.get(key);
+			message = commonMessages.get(key);
 		}
 		return message;
 	}
 
-	public static String get(final String key, final Object... params) {
+	public String get(final String key, final Object... params) {
 		final List<String> stringParams = new ArrayList<>(params.length);
 		for (final Object param : params) {
 			stringParams.add(String.valueOf(param));
@@ -75,7 +60,7 @@ public final class GuiMessages {
 			message = message != null ? message.trim() : "";
 		}
 		catch (final MissingResourceException e) {
-			message = CommonMessages.get(key, params);
+			message = commonMessages.get(key, params);
 		}
 		return message;
 	}

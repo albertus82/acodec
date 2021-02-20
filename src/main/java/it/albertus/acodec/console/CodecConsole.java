@@ -25,6 +25,7 @@ import it.albertus.acodec.common.engine.CodecConfig;
 import it.albertus.acodec.common.engine.CodecMode;
 import it.albertus.acodec.common.engine.ProcessFileTask;
 import it.albertus.acodec.common.engine.StringCodec;
+import it.albertus.acodec.common.resources.Messages;
 import it.albertus.acodec.console.converter.CharsetConverter;
 import it.albertus.acodec.console.converter.CharsetConverter.InvalidCharsetException;
 import it.albertus.acodec.console.converter.CodecAlgorithmConverter;
@@ -57,6 +58,8 @@ public class CodecConsole implements Callable<Integer> {
 	private static final char OPTION_FILE = 'f';
 	private static final char OPTION_HELP = 'h';
 
+	private static final Messages messages = ConsoleMessages.INSTANCE;
+
 	@Parameters(index = "0")
 	private CodecMode mode;
 
@@ -78,16 +81,16 @@ public class CodecConsole implements Callable<Integer> {
 	public static void main(final String... args) {
 		System.exit(new CommandLine(new CodecConsole()).setCommandName(ACodec.class.getSimpleName().toLowerCase()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
 			if (e.getCause() instanceof InvalidCharsetException) {
-				System.out.println(ConsoleMessages.get("console.error.invalid.charset", e.getCause().getMessage()));
+				System.out.println(messages.get("console.error.invalid.charset", e.getCause().getMessage()));
 			}
 			else if (e.getCause() instanceof InvalidAlgorithmException) {
-				System.out.println(ConsoleMessages.get("console.error.invalid.algorithm", e.getCause().getMessage()));
+				System.out.println(messages.get("console.error.invalid.algorithm", e.getCause().getMessage()));
 			}
 			else if (e.getCause() instanceof InvalidModeException) {
-				System.out.println(ConsoleMessages.get("console.error.invalid.mode", e.getCause().getMessage()));
+				System.out.println(messages.get("console.error.invalid.mode", e.getCause().getMessage()));
 			}
 			else if (a.length != 0) {
-				System.out.println(ConsoleMessages.get("console.error.incorrect.command.syntax"));
+				System.out.println(messages.get("console.error.incorrect.command.syntax"));
 			}
 			else {
 				printHelp();
@@ -104,7 +107,7 @@ public class CodecConsole implements Callable<Integer> {
 		}
 
 		if (files == null && inputText == null || files != null && inputText != null) {
-			System.out.println(ConsoleMessages.get("console.error.incorrect.command.syntax"));
+			System.out.println(messages.get("console.error.incorrect.command.syntax"));
 			return ExitCode.USAGE;
 		}
 
@@ -122,17 +125,17 @@ public class CodecConsole implements Callable<Integer> {
 			}
 		}
 		catch (final EncoderException e) {
-			System.out.println(ConsoleMessages.get("console.error.cannot.encode", config.getAlgorithm().getName()));
+			System.out.println(messages.get("console.error.cannot.encode", config.getAlgorithm().getName()));
 			e.printStackTrace();
 			return ExitCode.SOFTWARE;
 		}
 		catch (final DecoderException e) {
-			System.out.println(ConsoleMessages.get("console.error.cannot.decode", config.getAlgorithm().getName()));
+			System.out.println(messages.get("console.error.cannot.decode", config.getAlgorithm().getName()));
 			e.printStackTrace();
 			return ExitCode.SOFTWARE;
 		}
 		catch (final Exception e) {
-			System.out.println(ConsoleMessages.get("console.error.unexpected.error"));
+			System.out.println(messages.get("console.error.unexpected.error"));
 			e.printStackTrace();
 			return ExitCode.SOFTWARE;
 		}
@@ -140,15 +143,15 @@ public class CodecConsole implements Callable<Integer> {
 
 	private static int processFile(@NonNull final CodecConfig config, @NonNull final File[] files) throws EncoderException, DecoderException {
 		if (!files[0].isFile()) {
-			System.out.println(ConsoleMessages.get("console.message.missing.file", files[0]));
+			System.out.println(messages.get("console.message.missing.file", files[0]));
 			return ExitCode.SOFTWARE;
 		}
 		if (files.length > 1 && files[1].isFile()) {
-			System.out.print(ConsoleMessages.get("console.message.overwrite.file.question") + ' ');
+			System.out.print(messages.get("console.message.overwrite.file.question") + ' ');
 			final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			try {
 				final String answer = StringUtils.trimToEmpty(br.readLine()).toLowerCase();
-				if (!Arrays.asList(ConsoleMessages.get("console.message.overwrite.file.answers.yes").split(",")).contains(answer)) {
+				if (!Arrays.asList(messages.get("console.message.overwrite.file.answers.yes").split(",")).contains(answer)) {
 					return ExitCode.OK;
 				}
 			}
@@ -161,38 +164,38 @@ public class CodecConsole implements Callable<Integer> {
 			new ProcessFileRunnable(task, System.out).run();
 		}
 		catch (final FileNotFoundException e) {
-			System.out.println(ConsoleMessages.get("console.message.missing.file", e.getMessage()));
+			System.out.println(messages.get("console.message.missing.file", e.getMessage()));
 			return ExitCode.SOFTWARE;
 		}
 		if (files.length > 1) {
-			System.out.println(ConsoleMessages.get("console.message.file.process.ok.message"));
+			System.out.println(messages.get("console.message.file.process.ok.message"));
 		}
 		return ExitCode.OK;
 	}
 
 	private static void printHelp() {
 		/* Usage */
-		final StringBuilder help = new StringBuilder(ConsoleMessages.get("console.help.usage", OPTION_CHARSET, OPTION_FILE));
+		final StringBuilder help = new StringBuilder(messages.get("console.help.usage", OPTION_CHARSET, OPTION_FILE));
 		help.append(SYSTEM_LINE_SEPARATOR).append(SYSTEM_LINE_SEPARATOR);
 
 		/* Modes */
-		help.append(ConsoleMessages.get("console.help.modes")).append(SYSTEM_LINE_SEPARATOR);
+		help.append(messages.get("console.help.modes")).append(SYSTEM_LINE_SEPARATOR);
 		for (final CodecMode mode : CodecMode.values()) {
-			help.append("    ").append(mode.getAbbreviation()).append("    ").append(ConsoleMessages.get("console.help.modes." + mode.getAbbreviation())).append(SYSTEM_LINE_SEPARATOR);
+			help.append("    ").append(mode.getAbbreviation()).append("    ").append(messages.get("console.help.modes." + mode.getAbbreviation())).append(SYSTEM_LINE_SEPARATOR);
 		}
 		help.append(SYSTEM_LINE_SEPARATOR);
 
 		/* Algorithms */
-		help.append(buildHelpBlock(ConsoleMessages.get("console.help.algorithms"), Arrays.stream(CodecAlgorithm.values()).map(CodecAlgorithm::getName).collect(Collectors.toCollection(LinkedHashSet::new))));
+		help.append(buildHelpBlock(messages.get("console.help.algorithms"), Arrays.stream(CodecAlgorithm.values()).map(CodecAlgorithm::getName).collect(Collectors.toCollection(LinkedHashSet::new))));
 		help.append(SYSTEM_LINE_SEPARATOR);
 
 		/* Charsets */
-		help.append(buildHelpBlock(ConsoleMessages.get("console.help.charsets"), Charset.availableCharsets().keySet()));
-		help.append(' ').append(ConsoleMessages.get("console.help.default.charset", Charset.defaultCharset().name())).append(SYSTEM_LINE_SEPARATOR);
+		help.append(buildHelpBlock(messages.get("console.help.charsets"), Charset.availableCharsets().keySet()));
+		help.append(' ').append(messages.get("console.help.default.charset", Charset.defaultCharset().name())).append(SYSTEM_LINE_SEPARATOR);
 		help.append(SYSTEM_LINE_SEPARATOR);
 
 		/* Example */
-		help.append(ConsoleMessages.get("console.help.example"));
+		help.append(messages.get("console.help.example"));
 
 		/* Header */
 		Date versionDate;
@@ -203,7 +206,7 @@ public class CodecConsole implements Callable<Integer> {
 			log.log(Level.FINE, "Invalid version date:", e);
 			versionDate = new Date();
 		}
-		System.out.println(ConsoleMessages.get("console.message.application.name") + ' ' + ConsoleMessages.get("console.message.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(versionDate)) + " [" + ConsoleMessages.get("console.message.project.url") + ']');
+		System.out.println(messages.get("console.message.application.name") + ' ' + messages.get("console.message.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(versionDate)) + " [" + messages.get("console.message.project.url") + ']');
 		System.out.println();
 		System.out.println(help.toString().trim());
 	}
