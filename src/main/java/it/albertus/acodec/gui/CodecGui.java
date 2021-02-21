@@ -307,10 +307,14 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	public void updateLanguage() {
 		shell.setText(messages.get(shell));
 		for (final Label label : localizedLabels) {
-			label.setText(messages.get(label));
+			if (label != null && !label.isDisposed()) {
+				label.setText(messages.get(label));
+			}
 		}
 		for (final Button button : localizedButtons) {
-			button.setText(messages.get(button));
+			if (button != null && !button.isDisposed()) {
+				button.setText(messages.get(button));
+			}
 		}
 		refreshOutput();
 		menuBar.updateLanguage();
