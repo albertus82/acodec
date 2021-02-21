@@ -48,6 +48,7 @@ import it.albertus.jface.closeable.CloseableDevice;
 import it.albertus.util.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.java.Log;
 
@@ -320,7 +321,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		menuBar.updateLanguage();
 	}
 
-	private Label newLocalizedLabel(final Composite parent, final int style, final String messageKey) {
+	private Label newLocalizedLabel(final Composite parent, final int style, @NonNull final String messageKey) {
 		final Label label = new Label(parent, style);
 		label.setData(messageKey);
 		label.setText(messages.get(label));
@@ -328,7 +329,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return label;
 	}
 
-	private Button newLocalizedButton(final Composite parent, final int style, final String messageKey) {
+	private Button newLocalizedButton(final Composite parent, final int style, @NonNull final String messageKey) {
 		final Button button = new Button(parent, style);
 		button.setData(messageKey);
 		button.setText(messages.get(button));
