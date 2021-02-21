@@ -19,11 +19,11 @@ public class TextCopySelectionKeyListener extends KeyAdapter {
 
 	@Override
 	public void keyPressed(final KeyEvent event) {
-		// Supporto CTRL+C per "Copia"...
 		if (event.stateMask == SWT.MOD1 && event.keyCode == SwtUtils.KEY_COPY) {
 			try (final CloseableClipboard cc = new CloseableClipboard(new Clipboard(text.getDisplay()))) {
 				cc.getClipboard().setContents(new String[] { text.getSelectionText() }, new Transfer[] { TextTransfer.getInstance() });
 			}
+			event.doit = false; // Avoid the error message when copying from a password field.
 		}
 	}
 
