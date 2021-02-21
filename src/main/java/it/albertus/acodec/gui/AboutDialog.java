@@ -39,6 +39,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
@@ -64,11 +65,6 @@ public class AboutDialog extends Dialog {
 	private static final double MONITOR_SIZE_DIVISOR = 1.2;
 
 	private static final String SYM_NAME_FONT_DEFAULT = AboutDialog.class.getName() + ".default";
-
-	private static final int COL_IDX_THIRDPARTY_NAME = 0;
-	private static final int COL_IDX_THIRDPARTY_AUTHOR = 1;
-	private static final int COL_IDX_THIRDPARTY_LICENSE = 2;
-	private static final int COL_IDX_THIRDPARTY_HOMEPAGE = 3;
 
 	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
@@ -132,7 +128,7 @@ public class AboutDialog extends Dialog {
 		final Label thirdPartySoftwareLabel = new Label(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(thirdPartySoftwareLabel);
 		thirdPartySoftwareLabel.setText(messages.get("gui.label.about.3rdparty"));
-		createThirdPartySoftwareTable(shell);
+		new ThirdPartySoftwareTable(shell);
 
 		final Button okButton = new Button(shell, SWT.PUSH);
 		okButton.setText(messages.get("gui.label.button.ok"));
@@ -179,183 +175,218 @@ public class AboutDialog extends Dialog {
 		return text.length() <= System.lineSeparator().length() ? "" : text.substring(System.lineSeparator().length());
 	}
 
-	private static void createThirdPartySoftwareTable(final Composite parent) {
-		final TableViewer tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
-		ColumnViewerToolTipSupport.enableFor(tableViewer);
-		final Table table = tableViewer.getTable();
-		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).applyTo(table);
-		table.setLinesVisible(true);
-		table.setHeaderVisible(false);
+	private static class ThirdPartySoftwareTable {
 
-		final TableViewerColumn nameColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		nameColumn.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(final ViewerCell cell) {
-				if (cell.getElement() instanceof ThirdPartySoftware) {
-					final ThirdPartySoftware element = (ThirdPartySoftware) cell.getElement();
-					cell.setText(element.getName());
-				}
-			}
-		});
+		private static final byte COL_IDX_THIRDPARTY_NAME = 0;
+		private static final byte COL_IDX_THIRDPARTY_AUTHOR = 1;
+		private static final byte COL_IDX_THIRDPARTY_LICENSE = 2;
+		private static final byte COL_IDX_THIRDPARTY_HOMEPAGE = 3;
 
-		final TableViewerColumn authorColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		authorColumn.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(final ViewerCell cell) {
-				if (cell.getElement() instanceof ThirdPartySoftware) {
-					final ThirdPartySoftware element = (ThirdPartySoftware) cell.getElement();
-					cell.setText(element.getAuthor());
-				}
-			}
-		});
+		private final TableViewer tableViewer;
 
-		final TableViewerColumn licenseColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		licenseColumn.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
-			@Override
-			public void update(final ViewerCell cell) {
-				setLinkStyle(cell, messages.get("gui.label.about.3rdparty.license"));
-				super.update(cell);
-			}
+		private ThirdPartySoftwareTable(final Composite parent) {
+			tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
+			ColumnViewerToolTipSupport.enableFor(tableViewer);
+			final Table table = tableViewer.getTable();
+			GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).applyTo(table);
+			table.setLinesVisible(true);
+			table.setHeaderVisible(true);
 
-			@Override
-			public String getToolTipText(final Object o) {
-				if (o instanceof ThirdPartySoftware) {
-					final ThirdPartySoftware element = (ThirdPartySoftware) o;
-					return element.getLicenseUri().toString();
-				}
-				else {
-					return super.getToolTipText(o);
-				}
-			}
-		});
+			createNameColumn();
+			createAuthorColumn();
+			createLicenseColumn();
+			createHomePageColumn();
 
-		final TableViewerColumn homePageColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		homePageColumn.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
-			@Override
-			public void update(final ViewerCell cell) {
-				setLinkStyle(cell, messages.get("gui.label.about.3rdparty.homepage"));
-				super.update(cell);
-			}
+			tableViewer.add(ThirdPartySoftware.loadFromProperties().toArray());
 
-			@Override
-			public String getToolTipText(final Object o) {
-				if (o instanceof ThirdPartySoftware) {
-					final ThirdPartySoftware element = (ThirdPartySoftware) o;
-					return element.getHomePageUri().toString();
-				}
-				else {
-					return super.getToolTipText(o);
-				}
-			}
-		});
+			packColumns();
 
-		tableViewer.add(ThirdPartySoftware.loadFromProperties().toArray());
+			configureMouseListener();
+			configureMouseMoveListener();
+		}
 
-		packColumns(table);
-
-		table.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(final MouseEvent e) {
-				if (e.button == 1) {
-					final ViewerCell cell = tableViewer.getCell(new Point(e.x, e.y));
-					if (cell != null && cell.getElement() instanceof ThirdPartySoftware) {
+		private void createNameColumn() {
+			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
+			column.getColumn().setText(messages.get("gui.label.about.3rdparty.name"));
+			column.setLabelProvider(new CellLabelProvider() {
+				@Override
+				public void update(final ViewerCell cell) {
+					if (cell.getElement() instanceof ThirdPartySoftware) {
 						final ThirdPartySoftware element = (ThirdPartySoftware) cell.getElement();
-						if (cell.getColumnIndex() == COL_IDX_THIRDPARTY_LICENSE) {
-							Program.launch(element.getLicenseUri().toString());
-						}
-						else if (cell.getColumnIndex() == COL_IDX_THIRDPARTY_HOMEPAGE) {
-							Program.launch(element.getHomePageUri().toString());
+						cell.setText(element.getName());
+					}
+				}
+			});
+		}
+
+		private void createAuthorColumn() {
+			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
+			column.getColumn().setText(messages.get("gui.label.about.3rdparty.author"));
+			column.setLabelProvider(new CellLabelProvider() {
+				@Override
+				public void update(final ViewerCell cell) {
+					if (cell.getElement() instanceof ThirdPartySoftware) {
+						final ThirdPartySoftware element = (ThirdPartySoftware) cell.getElement();
+						cell.setText(element.getAuthor());
+					}
+				}
+			});
+		}
+
+		private void createLicenseColumn() {
+			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
+			column.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
+				@Override
+				public void update(final ViewerCell cell) {
+					setLinkStyle(cell, messages.get("gui.label.about.3rdparty.license"));
+					super.update(cell);
+				}
+
+				@Override
+				public String getToolTipText(final Object o) {
+					if (o instanceof ThirdPartySoftware) {
+						final ThirdPartySoftware element = (ThirdPartySoftware) o;
+						return element.getLicenseUri().toString();
+					}
+					else {
+						return super.getToolTipText(o);
+					}
+				}
+			});
+		}
+
+		private void createHomePageColumn() {
+			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
+			column.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
+				@Override
+				public void update(final ViewerCell cell) {
+					setLinkStyle(cell, messages.get("gui.label.about.3rdparty.homepage"));
+					super.update(cell);
+				}
+
+				@Override
+				public String getToolTipText(final Object o) {
+					if (o instanceof ThirdPartySoftware) {
+						final ThirdPartySoftware element = (ThirdPartySoftware) o;
+						return element.getHomePageUri().toString();
+					}
+					else {
+						return super.getToolTipText(o);
+					}
+				}
+			});
+		}
+
+		private void configureMouseListener() {
+			tableViewer.getTable().addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseDown(final MouseEvent e) {
+					if (e.button == 1) {
+						final ViewerCell cell = tableViewer.getCell(new Point(e.x, e.y));
+						if (cell != null && cell.getElement() instanceof ThirdPartySoftware) {
+							final ThirdPartySoftware element = (ThirdPartySoftware) cell.getElement();
+							if (cell.getColumnIndex() == COL_IDX_THIRDPARTY_LICENSE) {
+								Program.launch(element.getLicenseUri().toString());
+							}
+							else if (cell.getColumnIndex() == COL_IDX_THIRDPARTY_HOMEPAGE) {
+								Program.launch(element.getHomePageUri().toString());
+							}
 						}
 					}
 				}
-			}
-		});
+			});
+		}
 
-		table.addMouseMoveListener(e -> {
-			final ViewerCell cell = tableViewer.getCell(new Point(e.x, e.y));
-			if (cell != null && cell.getColumnIndex() != COL_IDX_THIRDPARTY_NAME && cell.getColumnIndex() != COL_IDX_THIRDPARTY_AUTHOR) {
-				if (parent.getCursor() == null) {
-					parent.setCursor(parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+		private void configureMouseMoveListener() {
+			final Table table = tableViewer.getTable();
+			final Control parent = table.getParent();
+			table.addMouseMoveListener(e -> {
+				final ViewerCell cell = tableViewer.getCell(new Point(e.x, e.y));
+				if (cell != null && cell.getColumnIndex() != COL_IDX_THIRDPARTY_NAME && cell.getColumnIndex() != COL_IDX_THIRDPARTY_AUTHOR) {
+					if (parent.getCursor() == null) {
+						parent.setCursor(parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+					}
+				}
+				else if (parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND).equals(parent.getCursor())) {
+					parent.setCursor(null);
+				}
+			});
+		}
+
+		private void packColumns() {
+			for (final TableColumn column : tableViewer.getTable().getColumns()) {
+				packColumn(column);
+			}
+		}
+
+		private static void packColumn(final TableColumn column) {
+			column.pack();
+			if (Util.isGtk()) { // colmuns are badly resized on GTK, more space is actually needed
+				try (final CloseableResource<GC> cr = new CloseableResource<>(new GC(column.getParent()))) {
+					column.setWidth(column.getWidth() + cr.getResource().stringExtent("  ").x);
 				}
 			}
-			else if (parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND).equals(parent.getCursor())) {
-				parent.setCursor(null);
-			}
-		});
-	}
-
-	private static void setLinkStyle(final ViewerCell cell, final String label) {
-		cell.setForeground(cell.getControl().getDisplay().getSystemColor(SWT.COLOR_LINK_FOREGROUND));
-		cell.setText(label);
-		final StyleRange styleRange = new StyleRange();
-		styleRange.underline = true;
-		styleRange.length = label.length();
-		cell.setStyleRanges(new StyleRange[] { styleRange });
-	}
-
-	private static void packColumns(final Table table) {
-		for (final TableColumn column : table.getColumns()) {
-			packColumn(column);
 		}
-	}
 
-	private static void packColumn(final TableColumn column) {
-		column.pack();
-		if (Util.isGtk()) { // colmuns are badly resized on GTK, more space is actually needed
-			try (final CloseableResource<GC> cr = new CloseableResource<>(new GC(column.getParent()))) {
-				column.setWidth(column.getWidth() + cr.getResource().stringExtent("  ").x);
-			}
+		private static void setLinkStyle(final ViewerCell cell, final String label) {
+			cell.setForeground(cell.getControl().getDisplay().getSystemColor(SWT.COLOR_LINK_FOREGROUND));
+			cell.setText(label);
+			final StyleRange styleRange = new StyleRange();
+			styleRange.underline = true;
+			styleRange.length = label.length();
+			cell.setStyleRanges(new StyleRange[] { styleRange });
 		}
-	}
 
-	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-	@Getter(AccessLevel.PRIVATE)
-	private static class ThirdPartySoftware implements Comparable<ThirdPartySoftware> {
+		@Getter(AccessLevel.PRIVATE)
+		@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+		private static class ThirdPartySoftware implements Comparable<ThirdPartySoftware> {
 
-		private final String name;
-		private final String author;
-		private final URI licenseUri;
-		private final URI homePageUri;
+			private final String name;
+			private final String author;
+			private final URI licenseUri;
+			private final URI homePageUri;
 
-		private static Collection<ThirdPartySoftware> loadFromProperties() {
-			final Properties properties = new Properties();
-			try (final InputStream is = ThirdPartySoftware.class.getResourceAsStream("3rdparty.properties")) {
-				properties.load(is);
-			}
-			catch (final IOException e) {
-				throw new UncheckedIOException(e);
-			}
-			final Collection<ThirdPartySoftware> set = new TreeSet<>();
-			for (byte i = 1; i < Byte.MAX_VALUE; i++) {
-				final String name = properties.getProperty(i + ".name");
-				if (name == null) {
-					break;
+			private static Collection<ThirdPartySoftware> loadFromProperties() {
+				final Properties properties = new Properties();
+				try (final InputStream is = ThirdPartySoftware.class.getResourceAsStream("3rdparty.properties")) {
+					properties.load(is);
 				}
-				set.add(new ThirdPartySoftware(name, properties.getProperty(i + ".author"), URI.create(properties.getProperty(i + ".licenseUri")), URI.create(properties.getProperty(i + ".homePageUri"))));
+				catch (final IOException e) {
+					throw new UncheckedIOException(e);
+				}
+				final Collection<ThirdPartySoftware> set = new TreeSet<>();
+				for (byte i = 1; i < Byte.MAX_VALUE; i++) {
+					final String name = properties.getProperty(i + ".name");
+					if (name == null) {
+						break;
+					}
+					set.add(new ThirdPartySoftware(name, properties.getProperty(i + ".author"), URI.create(properties.getProperty(i + ".licenseUri")), URI.create(properties.getProperty(i + ".homePageUri"))));
+				}
+				return set;
 			}
-			return set;
-		}
 
-		@Override
-		public boolean equals(final Object obj) {
-			if (this == obj) {
-				return true;
+			@Override
+			public boolean equals(final Object obj) {
+				if (this == obj) {
+					return true;
+				}
+				if (!(obj instanceof ThirdPartySoftware)) {
+					return false;
+				}
+				final ThirdPartySoftware other = (ThirdPartySoftware) obj;
+				return name.equalsIgnoreCase(other.name);
 			}
-			if (!(obj instanceof ThirdPartySoftware)) {
-				return false;
+
+			@Override
+			public int hashCode() {
+				return name.toLowerCase().hashCode();
 			}
-			ThirdPartySoftware other = (ThirdPartySoftware) obj;
-			return name.equalsIgnoreCase(other.name);
-		}
 
-		@Override
-		public int hashCode() {
-			return name.toLowerCase().hashCode();
-		}
-
-		@Override
-		public int compareTo(final ThirdPartySoftware o) {
-			return name.compareToIgnoreCase(o.name);
+			@Override
+			public int compareTo(final ThirdPartySoftware o) {
+				return name.compareToIgnoreCase(o.name);
+			}
 		}
 	}
+
 }
