@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import it.albertus.acodec.common.resources.CommonMessages;
 import it.albertus.acodec.common.resources.ConfigurableMessages;
+import lombok.NonNull;
 
 public enum GuiMessages implements ConfigurableMessages {
 
@@ -15,11 +16,9 @@ public enum GuiMessages implements ConfigurableMessages {
 	private ResourceBundle resourceBundle = ResourceBundle.getBundle(getClass().getName().toLowerCase(), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
 
 	@Override
-	public void setLanguage(final String language) { // NOSONAR Enum singleton
-		if (language != null) {
-			resourceBundle = ResourceBundle.getBundle(resourceBundle.getBaseBundleName(), new Locale(language), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
-			commonMessages.setLanguage(language);
-		}
+	public void setLanguage(@NonNull final String language) { // NOSONAR Enum singleton
+		resourceBundle = ResourceBundle.getBundle(resourceBundle.getBaseBundleName(), new Locale(language), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
+		commonMessages.setLanguage(language);
 	}
 
 	@Override
@@ -33,12 +32,12 @@ public enum GuiMessages implements ConfigurableMessages {
 	}
 
 	@Override
-	public String get(final String key) {
+	public String get(@NonNull final String key) {
 		return Defaults.get(key, resourceBundle, () -> commonMessages.get(key));
 	}
 
 	@Override
-	public String get(final String key, final Object... params) {
+	public String get(@NonNull final String key, final Object... params) {
 		return Defaults.get(key, params, resourceBundle, () -> commonMessages.get(key, params));
 	}
 

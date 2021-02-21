@@ -316,7 +316,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	public void setLanguage(final Language language) {
-		messages.setLanguage(language.getLocale().getLanguage());
+		messages.setLanguage(language);
 		shell.setRedraw(false);
 		updateLanguage();
 		shell.layout(true, true);

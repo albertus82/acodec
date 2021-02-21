@@ -4,6 +4,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import it.albertus.jface.JFaceMessages;
+import lombok.NonNull;
 
 public enum CommonMessages implements ConfigurableMessages {
 
@@ -12,11 +13,9 @@ public enum CommonMessages implements ConfigurableMessages {
 	private ResourceBundle resourceBundle = ResourceBundle.getBundle(getClass().getName().toLowerCase(), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
 
 	@Override
-	public void setLanguage(final String language) { // NOSONAR Enum singleton
-		if (language != null) {
-			resourceBundle = ResourceBundle.getBundle(resourceBundle.getBaseBundleName(), new Locale(language), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
-			JFaceMessages.setLanguage(language);
-		}
+	public void setLanguage(@NonNull final String language) { // NOSONAR Enum singleton
+		resourceBundle = ResourceBundle.getBundle(resourceBundle.getBaseBundleName(), new Locale(language), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
+		JFaceMessages.setLanguage(language);
 	}
 
 	@Override
@@ -30,12 +29,12 @@ public enum CommonMessages implements ConfigurableMessages {
 	}
 
 	@Override
-	public String get(final String key) {
+	public String get(@NonNull final String key) {
 		return Defaults.get(key, resourceBundle, () -> JFaceMessages.get(key));
 	}
 
 	@Override
-	public String get(final String key, final Object... params) {
+	public String get(@NonNull final String key, final Object... params) {
 		return Defaults.get(key, params, resourceBundle, () -> JFaceMessages.get(key, params));
 	}
 

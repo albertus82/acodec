@@ -7,39 +7,57 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 
 import org.eclipse.swt.widgets.Widget;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 
 public interface Messages {
 
-	String get(String key);
+	String get(@NonNull String key);
 
-	String get(String key, Object... params);
+	String get(@NonNull String key, Object... params);
 
-	default String get(final Widget widget) {
+	default String get(@NonNull final Widget widget) {
 		return get(widget.getData().toString());
 	}
 
+	@Log
 	@NoArgsConstructor(access = AccessLevel.PRIVATE)
 	class Defaults {
-		public static String get(final String key, final ResourceBundle resourceBundle, final Supplier<String> fallbackSupplier) {
+		public static String get(@NonNull final String key, @NonNull final ResourceBundle resourceBundle) {
+			return get(key, resourceBundle, null);
+		}
+
+		public static String get(@NonNull final String key, @NonNull final ResourceBundle resourceBundle, final Supplier<String> fallbackSupplier) {
 			String message;
 			try {
 				message = resourceBundle.getString(key);
 				message = message != null ? message.replace("''", "'").trim() : "";
 			}
 			catch (final MissingResourceException e) {
-				message = fallbackSupplier.get();
+				if (fallbackSupplier != null) {
+					message = fallbackSupplier.get();
+				}
+				else {
+					log.log(Level.WARNING, e, () -> "No message found with key \"" + key + "\"!");
+					message = key;
+				}
 			}
 			return message;
 		}
 
-		public static String get(final String key, final Object[] params, final ResourceBundle resourceBundle, final Supplier<String> fallbackSupplier) {
+		public static String get(@NonNull final String key, @NonNull final Object[] params, @NonNull final ResourceBundle resourceBundle) {
+			return get(key, params, resourceBundle, null);
+		}
+
+		public static String get(@NonNull final String key, @NonNull final Object[] params, @NonNull final ResourceBundle resourceBundle, final Supplier<String> fallbackSupplier) {
 			final List<String> stringParams = new ArrayList<>(params.length);
 			for (final Object param : params) {
 				stringParams.add(String.valueOf(param));
@@ -50,7 +68,13 @@ public interface Messages {
 				message = message != null ? message.trim() : "";
 			}
 			catch (final MissingResourceException e) {
-				message = fallbackSupplier.get();
+				if (fallbackSupplier != null) {
+					message = fallbackSupplier.get();
+				}
+				else {
+					log.log(Level.WARNING, e, () -> "No message found with key \"" + key + "\"!");
+					message = key;
+				}
 			}
 			return message;
 		}
