@@ -25,7 +25,7 @@ public interface Messages {
 	String get(@NonNull String key, Object... params);
 
 	default String get(@NonNull final Widget widget) {
-		return get(widget.getData().toString());
+		return get(String.valueOf(widget.getData()));
 	}
 
 	@Log
