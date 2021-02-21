@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IStatus;
@@ -40,7 +39,7 @@ import it.albertus.acodec.gui.listener.InputTextModifyListener;
 import it.albertus.acodec.gui.listener.ModeRadioSelectionListener;
 import it.albertus.acodec.gui.listener.ProcessFileButtonSelectionListener;
 import it.albertus.acodec.gui.listener.ShellDropListener;
-import it.albertus.acodec.gui.listener.TextCopyKeyListener;
+import it.albertus.acodec.gui.listener.TextCopySelectionKeyListener;
 import it.albertus.acodec.gui.listener.TextSelectAllKeyListener;
 import it.albertus.acodec.gui.resources.GuiMessages;
 import it.albertus.jface.EnhancedErrorDialog;
@@ -70,7 +69,9 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private final MenuBar menuBar;
 
 	@Getter(AccessLevel.NONE)
-	private final Collection<Label> labels = new ArrayList<>();
+	private final Collection<Label> localizedLabels = new ArrayList<>();
+	@Getter(AccessLevel.NONE)
+	private final Collection<Button> localizedButtons = new ArrayList<>();
 
 	private Text inputText;
 	private final Button hideInputTextCheck;
@@ -96,7 +97,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 		/* Input text */
 		final Label inputLabel = new Label(shell, SWT.NONE);
-		labels.add(inputLabel);
+		localizedLabels.add(inputLabel);
 		inputLabel.setData("gui.label.input");
 		inputLabel.setText(messages.get(inputLabel));
 		GridDataFactory.swtDefaults().applyTo(inputLabel);
@@ -106,19 +107,20 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		new Label(shell, SWT.NONE).setLayoutData(GridDataFactory.swtDefaults().create()); // Spacer
 
 		hideInputTextCheck = new Button(shell, SWT.CHECK);
+		localizedButtons.add(hideInputTextCheck);
 		hideInputTextCheck.setData("gui.label.input.hide");
 		hideInputTextCheck.setText(messages.get(hideInputTextCheck));
 		hideInputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(4, 1).create());
 		hideInputTextCheck.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				refreshInputText();
+				refreshInputTextStyle();
 			}
 		});
 
 		/* Output text */
 		final Label outputLabel = new Label(shell, SWT.NONE);
-		labels.add(outputLabel);
+		localizedLabels.add(outputLabel);
 		outputLabel.setData("gui.label.output");
 		outputLabel.setText(messages.get(outputLabel));
 		outputLabel.setLayoutData(new GridData());
@@ -128,19 +130,20 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		new Label(shell, SWT.NONE).setLayoutData(GridDataFactory.swtDefaults().create()); // Spacer
 
 		hideOutputTextCheck = new Button(shell, SWT.CHECK);
+		localizedButtons.add(hideOutputTextCheck);
 		hideOutputTextCheck.setData("gui.label.output.hide");
 		hideOutputTextCheck.setText(messages.get(hideOutputTextCheck));
 		hideOutputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(4, 1).create());
 		hideOutputTextCheck.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				refreshOutputText();
+				refreshOutputTextStyle();
 			}
 		});
 
 		/* Codec combo */
 		final Label algorithmLabel = new Label(shell, SWT.NONE);
-		labels.add(algorithmLabel);
+		localizedLabels.add(algorithmLabel);
 		algorithmLabel.setData("gui.label.algorithm");
 		algorithmLabel.setText(messages.get(algorithmLabel));
 		algorithmLabel.setLayoutData(new GridData());
@@ -151,7 +154,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 		/* Charset combo */
 		final Label charsetLabel = new Label(shell, SWT.NONE);
-		labels.add(charsetLabel);
+		localizedLabels.add(charsetLabel);
 		charsetLabel.setData("gui.label.charset");
 		charsetLabel.setText(messages.get(charsetLabel));
 		charsetLabel.setLayoutData(new GridData());
@@ -163,6 +166,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 		// Process file button
 		processFileButton = new Button(shell, SWT.NONE);
+		localizedButtons.add(processFileButton);
 		processFileButton.setEnabled(false);
 		processFileButton.setData("gui.label.file.process");
 		processFileButton.setText(messages.get(processFileButton));
@@ -171,7 +175,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 		/* Mode radio */
 		final Label modeLabel = new Label(shell, SWT.NONE);
-		labels.add(modeLabel);
+		localizedLabels.add(modeLabel);
 		modeLabel.setData("gui.label.mode");
 		modeLabel.setText(messages.get(modeLabel));
 		modeLabel.setLayoutData(new GridData());
@@ -182,7 +186,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		for (final CodecMode m : CodecMode.values()) {
 			final Button radio = new Button(radioComposite, SWT.RADIO);
 			radio.setSelection(m.equals(this.mode));
-			radio.setText(messages.get("gui.label.mode." + m.getAbbreviation()));
+			radio.setData("gui.label.mode." + m.getAbbreviation());
+			radio.setText(messages.get(radio));
 			radio.addSelectionListener(new ModeRadioSelectionListener(this, radio, m));
 			modeRadios.put(m, radio);
 		}
@@ -230,7 +235,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 					}
 				}
 				catch (final NullPointerException e) { // at org.eclipse.swt.widgets.Display.filterMessage(Unknown Source)
-					log.log(Level.FINE, e.toString(), e);
+					log.log(Level.WARNING, e.toString(), e);
 				}
 			}
 		}
@@ -249,7 +254,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return text;
 	}
 
-	private void refreshInputText() {
+	private void refreshInputTextStyle() {
 		final boolean mask = hideInputTextCheck.getSelection();
 		if ((inputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
 			final Text oldText = inputText;
@@ -257,7 +262,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			final Text newText = new Text(parent, mask ? SWT.BORDER | SWT.PASSWORD : SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 			configureInputText(newText);
 			if (mask) {
-				newText.addKeyListener(new TextCopyKeyListener(newText));
+				newText.addKeyListener(new TextCopySelectionKeyListener(newText));
 			}
 			newText.setText(oldText.getText());
 			inputText = newText;
@@ -285,7 +290,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return text;
 	}
 
-	public void refreshOutputText() {
+	public void refreshOutputTextStyle() {
 		final boolean mask = !error && !dirty && hideOutputTextCheck.getSelection();
 		if ((outputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
 			final Text oldText = outputText;
@@ -293,7 +298,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			final Text newText = new Text(parent, mask ? SWT.READ_ONLY | SWT.BORDER | SWT.PASSWORD : SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 			configureOutputText(newText);
 			if (mask) {
-				newText.addKeyListener(new TextCopyKeyListener(newText));
+				newText.addKeyListener(new TextCopySelectionKeyListener(newText));
 			}
 			newText.setText(oldText.getText());
 			outputText = newText;
@@ -327,13 +332,14 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	@Override
 	public void updateLanguage() {
 		shell.setText(messages.get(shell));
-		for (final Label label : labels) {
+		for (final Label label : localizedLabels) {
 			label.setText(messages.get(label));
 		}
-		hideInputTextCheck.setText(messages.get(hideInputTextCheck));
-		processFileButton.setText(messages.get(processFileButton));
-		for (final Entry<CodecMode, Button> entry : modeRadios.entrySet()) {
-			entry.getValue().setText(messages.get("gui.label.mode." + entry.getKey().getAbbreviation()));
+		for (final Button button : localizedButtons) {
+			button.setText(messages.get(button));
+		}
+		for (final Button button : modeRadios.values()) {
+			button.setText(messages.get(button));
 		}
 		refreshOutput();
 		menuBar.updateLanguage();

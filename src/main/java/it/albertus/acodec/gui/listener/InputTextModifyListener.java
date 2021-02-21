@@ -88,7 +88,7 @@ public class InputTextModifyListener implements ModifyListener {
 			}
 		}
 		gui.getOutputText().setText(outputText);
-		gui.refreshOutputText();
+		gui.refreshOutputTextStyle();
 	}
 
 }

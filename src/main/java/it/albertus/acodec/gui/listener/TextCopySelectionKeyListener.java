@@ -13,7 +13,7 @@ import it.albertus.jface.closeable.CloseableClipboard;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class TextCopyKeyListener extends KeyAdapter {
+public class TextCopySelectionKeyListener extends KeyAdapter {
 
 	private final Text text;
 
@@ -22,7 +22,7 @@ public class TextCopyKeyListener extends KeyAdapter {
 		// Supporto CTRL+C per "Copia"...
 		if (event.stateMask == SWT.MOD1 && event.keyCode == SwtUtils.KEY_COPY) {
 			try (final CloseableClipboard cc = new CloseableClipboard(new Clipboard(text.getDisplay()))) {
-				cc.getClipboard().setContents(new String[] { text.getText() }, new Transfer[] { TextTransfer.getInstance() });
+				cc.getClipboard().setContents(new String[] { text.getSelectionText() }, new Transfer[] { TextTransfer.getInstance() });
 			}
 		}
 	}

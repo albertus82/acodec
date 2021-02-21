@@ -93,7 +93,7 @@ public class ProcessFileAction {
 				gui.getInputText().setText(inputFile.getName());
 				gui.getOutputText().setText(runnable.getResult());
 				gui.setDirty(true);
-				gui.refreshOutputText();
+				gui.refreshOutputTextStyle();
 			}
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
 			box.setMessage(messages.get("gui.message.file.process.ok.message"));
