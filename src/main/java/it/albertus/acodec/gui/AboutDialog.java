@@ -54,7 +54,6 @@ import it.albertus.jface.SwtUtils;
 import it.albertus.jface.closeable.CloseableResource;
 import it.albertus.util.Version;
 import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -66,9 +65,10 @@ public class AboutDialog extends Dialog {
 
 	private static final String SYM_NAME_FONT_DEFAULT = AboutDialog.class.getName() + ".default";
 
-	private static final int COL_IDX_THIRDPARTY_AUTHOR = 0;
-	private static final int COL_IDX_THIRDPARTY_LICENSE = 1;
-	private static final int COL_IDX_THIRDPARTY_HOMEPAGE = 2;
+	private static final int COL_IDX_THIRDPARTY_NAME = 0;
+	private static final int COL_IDX_THIRDPARTY_AUTHOR = 1;
+	private static final int COL_IDX_THIRDPARTY_LICENSE = 2;
+	private static final int COL_IDX_THIRDPARTY_HOMEPAGE = 3;
 
 	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
@@ -187,6 +187,17 @@ public class AboutDialog extends Dialog {
 		table.setLinesVisible(true);
 		table.setHeaderVisible(false);
 
+		final TableViewerColumn nameColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		nameColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(final ViewerCell cell) {
+				if (cell.getElement() instanceof ThirdPartySoftware) {
+					final ThirdPartySoftware element = (ThirdPartySoftware) cell.getElement();
+					cell.setText(element.getName());
+				}
+			}
+		});
+
 		final TableViewerColumn authorColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		authorColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -262,7 +273,7 @@ public class AboutDialog extends Dialog {
 
 		table.addMouseMoveListener(e -> {
 			final ViewerCell cell = tableViewer.getCell(new Point(e.x, e.y));
-			if (cell != null && cell.getColumnIndex() != COL_IDX_THIRDPARTY_AUTHOR) {
+			if (cell != null && cell.getColumnIndex() != COL_IDX_THIRDPARTY_NAME && cell.getColumnIndex() != COL_IDX_THIRDPARTY_AUTHOR) {
 				if (parent.getCursor() == null) {
 					parent.setCursor(parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 				}
@@ -299,18 +310,12 @@ public class AboutDialog extends Dialog {
 
 	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 	@Getter(AccessLevel.PRIVATE)
-	@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 	private static class ThirdPartySoftware implements Comparable<ThirdPartySoftware> {
 
-		@EqualsAndHashCode.Include
+		private final String name;
 		private final String author;
 		private final URI licenseUri;
 		private final URI homePageUri;
-
-		@Override
-		public int compareTo(final ThirdPartySoftware o) {
-			return author.compareTo(o.author);
-		}
 
 		private static Collection<ThirdPartySoftware> loadFromProperties() {
 			final Properties properties = new Properties();
@@ -322,13 +327,35 @@ public class AboutDialog extends Dialog {
 			}
 			final Collection<ThirdPartySoftware> set = new TreeSet<>();
 			for (byte i = 1; i < Byte.MAX_VALUE; i++) {
-				final String author = properties.getProperty(i + ".author");
-				if (author == null) {
+				final String name = properties.getProperty(i + ".name");
+				if (name == null) {
 					break;
 				}
-				set.add(new ThirdPartySoftware(author, URI.create(properties.getProperty(i + ".licenseUri")), URI.create(properties.getProperty(i + ".homePageUri"))));
+				set.add(new ThirdPartySoftware(name, properties.getProperty(i + ".author"), URI.create(properties.getProperty(i + ".licenseUri")), URI.create(properties.getProperty(i + ".homePageUri"))));
 			}
 			return set;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof ThirdPartySoftware)) {
+				return false;
+			}
+			ThirdPartySoftware other = (ThirdPartySoftware) obj;
+			return name.equalsIgnoreCase(other.name);
+		}
+
+		@Override
+		public int hashCode() {
+			return name.toLowerCase().hashCode();
+		}
+
+		@Override
+		public int compareTo(final ThirdPartySoftware o) {
+			return name.compareToIgnoreCase(o.name);
 		}
 	}
 }
