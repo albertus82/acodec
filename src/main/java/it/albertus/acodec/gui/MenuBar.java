@@ -29,6 +29,7 @@ import it.albertus.jface.Multilanguage;
 import it.albertus.jface.cocoa.CocoaEnhancerException;
 import it.albertus.jface.cocoa.CocoaUIEnhancer;
 import it.albertus.jface.sysinfo.SystemInformationDialog;
+import lombok.NonNull;
 import lombok.extern.java.Log;
 
 /**
@@ -66,47 +67,29 @@ public class MenuBar implements Multilanguage {
 
 		// File
 		final Menu fileMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
-		final MenuItem fileMenuHeader = new MenuItem(bar, SWT.CASCADE);
-		localizedMenuItems.add(fileMenuHeader);
-		fileMenuHeader.setData("gui.label.menu.header.file");
-		fileMenuHeader.setText(messages.get(fileMenuHeader));
+		final MenuItem fileMenuHeader = newLocalizedMenuItem(bar, SWT.CASCADE, "gui.label.menu.header.file");
 		fileMenuHeader.setMenu(fileMenu);
 
-		fileProcessMenuItem = new MenuItem(fileMenu, SWT.PUSH);
-		localizedMenuItems.add(fileProcessMenuItem);
-		fileProcessMenuItem.setData("gui.label.menu.item.file.process");
-		fileProcessMenuItem.setText(messages.get(fileProcessMenuItem));
+		fileProcessMenuItem = newLocalizedMenuItem(fileMenu, SWT.PUSH, "gui.label.menu.item.file.process");
 		fileProcessMenuItem.setEnabled(false);
 		fileProcessMenuItem.addSelectionListener(new ProcessFileButtonSelectionListener(gui));
 
 		if (!cocoaMenuCreated) {
 			new MenuItem(fileMenu, SWT.SEPARATOR);
 
-			final MenuItem fileExitMenuItem = new MenuItem(fileMenu, SWT.PUSH);
-			localizedMenuItems.add(fileExitMenuItem);
-			fileExitMenuItem.setData("gui.label.menu.item.exit");
-			fileExitMenuItem.setText(messages.get(fileExitMenuItem));
+			final MenuItem fileExitMenuItem = newLocalizedMenuItem(fileMenu, SWT.PUSH, "gui.label.menu.item.exit");
 			fileExitMenuItem.addSelectionListener(closeListener);
 		}
 
 		// Edit
 		final Menu editMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
-		final MenuItem editMenuHeader = new MenuItem(bar, SWT.CASCADE);
-		localizedMenuItems.add(editMenuHeader);
-		editMenuHeader.setData("gui.label.menu.header.edit");
-		editMenuHeader.setText(messages.get(editMenuHeader));
+		final MenuItem editMenuHeader = newLocalizedMenuItem(bar, SWT.CASCADE, "gui.label.menu.header.edit");
 		editMenuHeader.setMenu(editMenu);
 
-		final MenuItem editCopyInputTextMenuItem = new MenuItem(editMenu, SWT.PUSH);
-		localizedMenuItems.add(editCopyInputTextMenuItem);
-		editCopyInputTextMenuItem.setData("gui.label.menu.item.edit.copy.input");
-		editCopyInputTextMenuItem.setText(messages.get(editCopyInputTextMenuItem));
+		final MenuItem editCopyInputTextMenuItem = newLocalizedMenuItem(editMenu, SWT.PUSH, "gui.label.menu.item.edit.copy.input");
 		editCopyInputTextMenuItem.addSelectionListener(new TextCopyAllSelectionListener(gui::getInputText));
 
-		final MenuItem editCopyOutputTextMenuItem = new MenuItem(editMenu, SWT.PUSH);
-		localizedMenuItems.add(editCopyOutputTextMenuItem);
-		editCopyOutputTextMenuItem.setData("gui.label.menu.item.edit.copy.output");
-		editCopyOutputTextMenuItem.setText(messages.get(editCopyOutputTextMenuItem));
+		final MenuItem editCopyOutputTextMenuItem = newLocalizedMenuItem(editMenu, SWT.PUSH, "gui.label.menu.item.edit.copy.output");
 		editCopyOutputTextMenuItem.addSelectionListener(new TextCopyAllSelectionListener(gui::getOutputText));
 
 		final ArmMenuListener editMenuListener = e -> {
@@ -120,16 +103,10 @@ public class MenuBar implements Multilanguage {
 
 		// View
 		final Menu viewMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
-		final MenuItem viewMenuHeader = new MenuItem(bar, SWT.CASCADE);
-		localizedMenuItems.add(viewMenuHeader);
-		viewMenuHeader.setData("gui.label.menu.header.view");
-		viewMenuHeader.setText(messages.get(viewMenuHeader));
+		final MenuItem viewMenuHeader = newLocalizedMenuItem(bar, SWT.CASCADE, "gui.label.menu.header.view");
 		viewMenuHeader.setMenu(viewMenu);
 
-		final MenuItem viewLanguageSubMenuItem = new MenuItem(viewMenu, SWT.CASCADE);
-		localizedMenuItems.add(viewLanguageSubMenuItem);
-		viewLanguageSubMenuItem.setData("gui.label.menu.item.view.language");
-		viewLanguageSubMenuItem.setText(messages.get(viewLanguageSubMenuItem));
+		final MenuItem viewLanguageSubMenuItem = newLocalizedMenuItem(viewMenu, SWT.CASCADE, "gui.label.menu.item.view.language");
 
 		final Menu viewLanguageSubMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
 		viewLanguageSubMenuItem.setMenu(viewLanguageSubMenu);
@@ -148,16 +125,10 @@ public class MenuBar implements Multilanguage {
 
 		// Help
 		final Menu helpMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
-		final MenuItem helpMenuHeader = new MenuItem(bar, SWT.CASCADE);
-		localizedMenuItems.add(helpMenuHeader);
-		helpMenuHeader.setData(Util.isWindows() ? "gui.label.menu.header.help.windows" : "gui.label.menu.header.help");
-		helpMenuHeader.setText(messages.get(helpMenuHeader));
+		final MenuItem helpMenuHeader = newLocalizedMenuItem(bar, SWT.CASCADE, Util.isWindows() ? "gui.label.menu.header.help.windows" : "gui.label.menu.header.help");
 		helpMenuHeader.setMenu(helpMenu);
 
-		final MenuItem helpSystemInfoItem = new MenuItem(helpMenu, SWT.PUSH);
-		localizedMenuItems.add(helpSystemInfoItem);
-		helpSystemInfoItem.setData("gui.label.menu.item.help.system.info");
-		helpSystemInfoItem.setText(messages.get(helpSystemInfoItem));
+		final MenuItem helpSystemInfoItem = newLocalizedMenuItem(helpMenu, SWT.PUSH, "gui.label.menu.item.help.system.info");
 		helpSystemInfoItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -168,10 +139,7 @@ public class MenuBar implements Multilanguage {
 		if (!cocoaMenuCreated) {
 			new MenuItem(helpMenu, SWT.SEPARATOR);
 
-			final MenuItem helpAboutItem = new MenuItem(helpMenu, SWT.PUSH);
-			localizedMenuItems.add(helpAboutItem);
-			helpAboutItem.setData("gui.label.menu.item.about");
-			helpAboutItem.setText(messages.get(helpAboutItem));
+			final MenuItem helpAboutItem = newLocalizedMenuItem(helpMenu, SWT.PUSH, "gui.label.menu.item.about");
 			helpAboutItem.addSelectionListener(new AboutListener(gui));
 		}
 
@@ -200,6 +168,14 @@ public class MenuBar implements Multilanguage {
 
 	public void enableFileProcessMenuItem() {
 		fileProcessMenuItem.setEnabled(true);
+	}
+
+	private MenuItem newLocalizedMenuItem(final Menu parent, final int style, @NonNull final String messageKey) {
+		final MenuItem menuItem = new MenuItem(parent, style);
+		menuItem.setData(messageKey);
+		menuItem.setText(messages.get(menuItem));
+		localizedMenuItems.add(menuItem);
+		return menuItem;
 	}
 
 }
