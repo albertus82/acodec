@@ -237,7 +237,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			final Text newText = new Text(parent, mask ? SWT.BORDER | SWT.PASSWORD : SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 			configureInputText(newText);
 			if (mask) {
-				newText.addKeyListener(new TextCopySelectionKeyListener(newText));
+				newText.addKeyListener(TextCopySelectionKeyListener.INSTANCE);
 			}
 			newText.setText(oldText.getText());
 			inputText = newText;
@@ -248,7 +248,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	private void configureInputText(final Text text) {
 		text.setTextLimit(TEXT_LIMIT_CHARS);
-		text.addKeyListener(new TextSelectAllKeyListener(text));
+		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
 		text.addModifyListener(new InputTextModifyListener(this));
 	}
 
@@ -273,7 +273,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			final Text newText = new Text(parent, mask ? SWT.READ_ONLY | SWT.BORDER | SWT.PASSWORD : SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 			configureOutputText(newText);
 			if (mask) {
-				newText.addKeyListener(new TextCopySelectionKeyListener(newText));
+				newText.addKeyListener(TextCopySelectionKeyListener.INSTANCE);
 			}
 			newText.setText(oldText.getText());
 			outputText = newText;
@@ -286,7 +286,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		if (Util.isWindows()) {
 			text.setBackground(inputText.getBackground());
 		}
-		text.addKeyListener(new TextSelectAllKeyListener(text));
+		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
 	}
 
 	public void refreshOutput() {
