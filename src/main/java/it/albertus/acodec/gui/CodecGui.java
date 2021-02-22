@@ -243,7 +243,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			inputText = newText;
 			oldText.dispose();
 			parent.requestLayout();
-			parent.setRedraw(true);
 		}
 	}
 
@@ -280,7 +279,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			outputText = newText;
 			oldText.dispose();
 			parent.requestLayout();
-			parent.setRedraw(true);
 		}
 	}
 
