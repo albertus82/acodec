@@ -1,11 +1,12 @@
 package it.albertus.acodec.gui.listener;
 
-import static it.albertus.acodec.engine.CodecMode.DECODE;
-import static it.albertus.acodec.engine.CodecMode.ENCODE;
+import static it.albertus.acodec.common.engine.CodecMode.DECODE;
+import static it.albertus.acodec.common.engine.CodecMode.ENCODE;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import org.apache.commons.codec.DecoderException;
@@ -19,16 +20,20 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-import it.albertus.acodec.engine.Cancelable;
-import it.albertus.acodec.engine.CodecAlgorithm;
-import it.albertus.acodec.engine.CodecConfig;
-import it.albertus.acodec.engine.ProcessFileTask;
+import it.albertus.acodec.common.engine.Cancelable;
+import it.albertus.acodec.common.engine.CodecAlgorithm;
+import it.albertus.acodec.common.engine.CodecConfig;
+import it.albertus.acodec.common.engine.ProcessFileTask;
+import it.albertus.acodec.common.resources.Messages;
 import it.albertus.acodec.gui.CodecGui;
 import it.albertus.acodec.gui.Images;
 import it.albertus.acodec.gui.ProcessFileException;
 import it.albertus.acodec.gui.ProcessFileRunnable;
-import it.albertus.acodec.resources.Messages;
+import it.albertus.acodec.gui.resources.GuiMessages;
+import it.albertus.jface.DisplayThreadExecutor;
+import it.albertus.jface.DisplayThreadExecutor.Mode;
 import it.albertus.jface.EnhancedErrorDialog;
+import it.albertus.jface.SwtUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -38,6 +43,8 @@ import lombok.extern.java.Log;
 public class ProcessFileAction {
 
 	private static final String MSG_APPLICATION_NAME = "msg.application.name";
+
+	private static final Messages messages = GuiMessages.INSTANCE;
 
 	protected final CodecGui gui;
 
@@ -78,22 +85,25 @@ public class ProcessFileAction {
 			final File outputFile = new File(destinationFileName);
 			final ProcessFileTask task = new ProcessFileTask(new CodecConfig(gui.getMode(), gui.getAlgorithm(), gui.getCharset()), inputFile, outputFile);
 			final ProcessFileRunnable runnable = new ProcessFileRunnable(task);
-			new LocalizedProgressMonitorDialog(gui.getShell(), task).run(true, true, runnable); // execute in separate thread
+			final LocalizedProgressMonitorDialog dialog = new LocalizedProgressMonitorDialog(gui.getShell(), task);
+			dialog.setOpenOnRun(false);
+			dialog.run(true, true, runnable); // execute in separate thread
 			if (runnable.getResult() != null) { // result can be null in certain cases
 				gui.setDirty(false);
 				gui.getInputText().setText(inputFile.getName());
 				gui.getOutputText().setText(runnable.getResult());
 				gui.setDirty(true);
+				gui.refreshOutputTextStyle();
 			}
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
-			box.setMessage(Messages.get("msg.file.process.ok.message"));
-			box.setText(Messages.get(MSG_APPLICATION_NAME));
+			box.setMessage(messages.get("gui.message.file.process.ok.message"));
+			box.setText(messages.get(MSG_APPLICATION_NAME));
 			box.open();
 		}
 		catch (final InterruptedException e) { // NOSONAR
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
-			box.setMessage(Messages.get("msg.file.process.cancel.message"));
-			box.setText(Messages.get(MSG_APPLICATION_NAME));
+			box.setMessage(messages.get("gui.message.file.process.cancel.message"));
+			box.setText(messages.get(MSG_APPLICATION_NAME));
 			box.open();
 		}
 		catch (final InvocationTargetException e) {
@@ -101,26 +111,28 @@ public class ProcessFileAction {
 			final String message;
 			final Throwable throwable = e.getCause() instanceof ProcessFileException ? e.getCause().getCause() : e;
 			if (throwable instanceof EncoderException) {
-				message = Messages.get("err.cannot.encode", gui.getAlgorithm().getName());
+				message = messages.get("gui.error.cannot.encode", gui.getAlgorithm().getName());
 			}
 			else if (throwable instanceof DecoderException) {
-				message = Messages.get("err.cannot.decode", gui.getAlgorithm().getName());
+				message = messages.get("gui.error.cannot.decode", gui.getAlgorithm().getName());
 			}
 			else if (throwable instanceof FileNotFoundException) {
-				message = Messages.get("msg.missing.file", throwable.getMessage());
+				message = messages.get("gui.message.missing.file", throwable.getMessage());
 			}
 			else {
-				message = Messages.get("err.unexpected.error");
+				message = messages.get("gui.error.unexpected.error");
 			}
-			EnhancedErrorDialog.openError(gui.getShell(), Messages.get(MSG_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIconArray());
+			EnhancedErrorDialog.openError(gui.getShell(), messages.get(MSG_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIconArray());
 		}
 		catch (final Exception e) {
 			log.log(Level.SEVERE, e.toString(), e);
-			EnhancedErrorDialog.openError(gui.getShell(), Messages.get(MSG_APPLICATION_NAME), e.toString(), IStatus.ERROR, e, Images.getMainIconArray());
+			EnhancedErrorDialog.openError(gui.getShell(), messages.get(MSG_APPLICATION_NAME), e.toString(), IStatus.ERROR, e, Images.getMainIconArray());
 		}
 	}
 
 	private static class LocalizedProgressMonitorDialog extends ProgressMonitorDialog {
+
+		private static final int OPEN_DELAY_MILLIS = 1000;
 
 		private final Cancelable cancelable;
 
@@ -132,10 +144,10 @@ public class ProcessFileAction {
 		@Override // improved localization
 		public void create() {
 			super.create();
-			getShell().setText(Messages.get("lbl.process.file.dialog.title"));
+			getShell().setText(messages.get("gui.label.process.file.dialog.title"));
 			final Button cancelButton = getButton(IDialogConstants.CANCEL_ID);
 			if (cancelButton != null && !cancelButton.isDisposed()) {
-				cancelButton.setText(Messages.get("lbl.process.file.dialog.button.cancel"));
+				cancelButton.setText(messages.get("gui.label.process.file.dialog.button.cancel"));
 			}
 		}
 
@@ -144,6 +156,30 @@ public class ProcessFileAction {
 			super.cancelPressed();
 			progressIndicator.showError();
 			cancelable.cancel();
+		}
+
+		@Override
+		protected void aboutToRun() {
+			super.aboutToRun();
+			SwtUtils.blockShell(getParentShell());
+			final Thread opener = new Thread(() -> {
+				try {
+					TimeUnit.MILLISECONDS.sleep(OPEN_DELAY_MILLIS); // do not show the progress dialog if processing takes a short time
+					new DisplayThreadExecutor(getParentShell(), Mode.ASYNC).execute(() -> {
+						if (getShell() != null && !getShell().isDisposed()) {
+							open();
+						}
+					});
+				}
+				catch (final InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+				finally {
+					new DisplayThreadExecutor(getParentShell(), Mode.ASYNC).execute(() -> SwtUtils.unblockShell(getParentShell()));
+				}
+			});
+			opener.setDaemon(false);
+			opener.start();
 		}
 	}
 

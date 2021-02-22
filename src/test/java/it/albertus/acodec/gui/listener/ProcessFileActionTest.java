@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
-import it.albertus.acodec.engine.CodecAlgorithm;
+import it.albertus.acodec.common.engine.CodecAlgorithm;
 
 public class ProcessFileActionTest {
 

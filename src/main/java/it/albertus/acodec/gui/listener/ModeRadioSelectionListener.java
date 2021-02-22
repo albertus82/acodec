@@ -4,7 +4,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 
-import it.albertus.acodec.engine.CodecMode;
+import it.albertus.acodec.common.engine.CodecMode;
 import it.albertus.acodec.gui.CodecGui;
 import lombok.RequiredArgsConstructor;
 

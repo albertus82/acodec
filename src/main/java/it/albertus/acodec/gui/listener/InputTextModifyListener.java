@@ -9,10 +9,11 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
 
-import it.albertus.acodec.engine.CodecConfig;
-import it.albertus.acodec.engine.StringCodec;
+import it.albertus.acodec.common.engine.CodecConfig;
+import it.albertus.acodec.common.engine.StringCodec;
+import it.albertus.acodec.common.resources.Messages;
 import it.albertus.acodec.gui.CodecGui;
-import it.albertus.acodec.resources.Messages;
+import it.albertus.acodec.gui.resources.GuiMessages;
 import lombok.extern.java.Log;
 
 @Log
@@ -20,6 +21,8 @@ public class InputTextModifyListener implements ModifyListener {
 
 	private static final String ERROR_SUFFIX = " --";
 	private static final String ERROR_PREFIX = "-- ";
+
+	private static final Messages messages = GuiMessages.INSTANCE;
 
 	private final CodecGui gui;
 
@@ -37,11 +40,11 @@ public class InputTextModifyListener implements ModifyListener {
 
 		// Preliminary checks
 		if (gui.getAlgorithm() == null) {
-			print(Messages.get("msg.missing.algorithm.banner"), true);
+			print(messages.get("gui.message.missing.algorithm.banner"), true);
 			return;
 		}
 		if (gui.getInputText().getText().isEmpty()) {
-			print(Messages.get("msg.missing.input.banner"), true);
+			print(messages.get("gui.message.missing.input.banner"), true);
 			return;
 		}
 
@@ -51,24 +54,25 @@ public class InputTextModifyListener implements ModifyListener {
 			result = new StringCodec(codecConfig).run(gui.getInputText().getText());
 		}
 		catch (final EncoderException e) {
-			print(Messages.get("err.cannot.encode.banner", codecConfig.getAlgorithm().getName()), true);
-			log.log(Level.INFO, Messages.get("err.cannot.encode", codecConfig.getAlgorithm().getName()), e);
+			print(messages.get("gui.error.cannot.encode.banner", codecConfig.getAlgorithm().getName()), true);
+			log.log(Level.INFO, messages.get("gui.error.cannot.encode", codecConfig.getAlgorithm().getName()), e);
 			return;
 		}
 		catch (final DecoderException e) {
-			print(Messages.get("err.cannot.decode.banner", codecConfig.getAlgorithm().getName()), true);
-			log.log(Level.INFO, Messages.get("err.cannot.decode", codecConfig.getAlgorithm().getName()), e);
+			print(messages.get("gui.error.cannot.decode.banner", codecConfig.getAlgorithm().getName()), true);
+			log.log(Level.INFO, messages.get("gui.error.cannot.decode", codecConfig.getAlgorithm().getName()), e);
 			return;
 		}
 		catch (final Exception e) {
-			print(Messages.get("err.unexpected.error.banner"), true);
-			log.log(Level.SEVERE, Messages.get("err.unexpected.error"), e);
+			print(messages.get("gui.error.unexpected.error.banner"), true);
+			log.log(Level.SEVERE, messages.get("gui.error.unexpected.error"), e);
 			return;
 		}
 		print(result, false);
 	}
 
 	private void print(final String text, final boolean error) {
+		gui.setError(error);
 		String outputText = text != null ? text : "";
 		if (error) {
 			outputText = new StringBuilder(outputText).insert(0, ERROR_PREFIX).append(ERROR_SUFFIX).toString();
@@ -84,6 +88,7 @@ public class InputTextModifyListener implements ModifyListener {
 			}
 		}
 		gui.getOutputText().setText(outputText);
+		gui.refreshOutputTextStyle();
 	}
 
 }

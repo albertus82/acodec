@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IStatus;
@@ -16,6 +15,9 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -26,8 +28,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import it.albertus.acodec.engine.CodecAlgorithm;
-import it.albertus.acodec.engine.CodecMode;
+import it.albertus.acodec.common.engine.CodecAlgorithm;
+import it.albertus.acodec.common.engine.CodecMode;
+import it.albertus.acodec.common.resources.ConfigurableMessages;
+import it.albertus.acodec.common.resources.Messages.Language;
 import it.albertus.acodec.gui.listener.AlgorithmComboSelectionListener;
 import it.albertus.acodec.gui.listener.CharsetComboSelectionListener;
 import it.albertus.acodec.gui.listener.CloseListener;
@@ -35,81 +39,99 @@ import it.albertus.acodec.gui.listener.InputTextModifyListener;
 import it.albertus.acodec.gui.listener.ModeRadioSelectionListener;
 import it.albertus.acodec.gui.listener.ProcessFileButtonSelectionListener;
 import it.albertus.acodec.gui.listener.ShellDropListener;
-import it.albertus.acodec.gui.listener.TextKeyListener;
-import it.albertus.acodec.resources.Messages;
-import it.albertus.acodec.resources.Messages.Language;
+import it.albertus.acodec.gui.listener.TextCopySelectionKeyListener;
+import it.albertus.acodec.gui.listener.TextSelectAllKeyListener;
+import it.albertus.acodec.gui.resources.GuiMessages;
 import it.albertus.jface.EnhancedErrorDialog;
 import it.albertus.jface.Multilanguage;
 import it.albertus.jface.closeable.CloseableDevice;
 import it.albertus.util.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.java.Log;
 
 @Log
 @Getter
+@Setter
 public class CodecGui implements IShellProvider, Multilanguage {
 
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
 
-	@Setter
+	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
+
 	private CodecMode mode = CodecMode.ENCODE;
-	@Setter
 	private CodecAlgorithm algorithm;
-	@Setter
 	private Charset charset = Charset.defaultCharset();
 
 	private final Shell shell;
 	private final MenuBar menuBar;
 
 	@Getter(AccessLevel.NONE)
-	private final Collection<Label> labels = new ArrayList<>();
+	private final Collection<Label> localizedLabels = new ArrayList<>();
+	@Getter(AccessLevel.NONE)
+	private final Collection<Button> localizedButtons = new ArrayList<>();
 
-	private final Text inputText;
-	private final Text outputText;
+	private Text inputText;
+	private final Button hideInputTextCheck;
+	private Text outputText;
+	private final Button hideOutputTextCheck;
 	private final Combo algorithmCombo;
 	private final Combo charsetCombo;
 	private final Map<CodecMode, Button> modeRadios = new EnumMap<>(CodecMode.class);
 	private final Button processFileButton;
 	private final DropTarget shellDropTarget;
 
-	@Setter
 	private boolean dirty = false;
+	private boolean error = false;
 
 	private CodecGui(final Display display) {
 		shell = new Shell(display);
 		shell.setImages(Images.getMainIconArray());
-		shell.setData("msg.application.name");
-		shell.setText(Messages.get(shell));
+		shell.setData("gui.message.application.name");
+		shell.setText(messages.get(shell));
 		shell.setLayout(new GridLayout(5, false));
 
 		menuBar = new MenuBar(this);
 
 		/* Input text */
-		final Label inputLabel = new Label(shell, SWT.NONE);
-		labels.add(inputLabel);
-		inputLabel.setData("lbl.input");
-		inputLabel.setText(Messages.get(inputLabel));
-		inputLabel.setLayoutData(new GridData());
+		final Label inputLabel = newLocalizedLabel(shell, SWT.NONE, "gui.label.input");
+		GridDataFactory.swtDefaults().applyTo(inputLabel);
 
 		inputText = createInputText();
 
+		new Label(shell, SWT.NONE).setLayoutData(GridDataFactory.swtDefaults().create()); // Spacer
+
+		hideInputTextCheck = newLocalizedButton(shell, SWT.CHECK, "gui.label.input.hide");
+		hideInputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(4, 1).create());
+		hideInputTextCheck.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				refreshInputTextStyle();
+			}
+		});
+
 		/* Output text */
-		final Label outputLabel = new Label(shell, SWT.NONE);
-		labels.add(outputLabel);
-		outputLabel.setData("lbl.output");
-		outputLabel.setText(Messages.get(outputLabel));
+		final Label outputLabel = newLocalizedLabel(shell, SWT.NONE, "gui.label.output");
 		outputLabel.setLayoutData(new GridData());
 
 		outputText = createOutputText();
 
+		new Label(shell, SWT.NONE).setLayoutData(GridDataFactory.swtDefaults().create()); // Spacer
+
+		hideOutputTextCheck = newLocalizedButton(shell, SWT.CHECK, "gui.label.output.hide");
+		hideOutputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(4, 1).create());
+		hideOutputTextCheck.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				refreshOutputTextStyle();
+			}
+		});
+
 		/* Codec combo */
-		final Label algorithmLabel = new Label(shell, SWT.NONE);
-		labels.add(algorithmLabel);
-		algorithmLabel.setData("lbl.algorithm");
-		algorithmLabel.setText(Messages.get(algorithmLabel));
+		final Label algorithmLabel = newLocalizedLabel(shell, SWT.NONE, "gui.label.algorithm");
 		algorithmLabel.setLayoutData(new GridData());
 
 		algorithmCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -117,10 +139,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		algorithmCombo.setLayoutData(new GridData());
 
 		/* Charset combo */
-		final Label charsetLabel = new Label(shell, SWT.NONE);
-		labels.add(charsetLabel);
-		charsetLabel.setData("lbl.charset");
-		charsetLabel.setText(Messages.get(charsetLabel));
+		final Label charsetLabel = newLocalizedLabel(shell, SWT.NONE, "gui.label.charset");
 		charsetLabel.setLayoutData(new GridData());
 
 		charsetCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -129,35 +148,28 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		charsetCombo.setLayoutData(new GridData());
 
 		// Process file button
-		processFileButton = new Button(shell, SWT.NONE);
+		processFileButton = newLocalizedButton(shell, SWT.NONE, "gui.label.file.process");
 		processFileButton.setEnabled(false);
-		processFileButton.setData("lbl.file.process");
-		processFileButton.setText(Messages.get(processFileButton));
 		GridDataFactory.swtDefaults().span(1, 2).align(SWT.BEGINNING, SWT.FILL).applyTo(processFileButton);
 		processFileButton.addSelectionListener(new ProcessFileButtonSelectionListener(this));
 
 		/* Mode radio */
-		final Label modeLabel = new Label(shell, SWT.NONE);
-		labels.add(modeLabel);
-		modeLabel.setData("lbl.mode");
-		modeLabel.setText(Messages.get(modeLabel));
+		final Label modeLabel = newLocalizedLabel(shell, SWT.NONE, "gui.label.mode");
 		modeLabel.setLayoutData(new GridData());
 
 		final Composite radioComposite = new Composite(shell, SWT.NONE);
 		RowLayoutFactory.swtDefaults().applyTo(radioComposite);
 		GridDataFactory.swtDefaults().span(3, 1).applyTo(radioComposite);
 		for (final CodecMode m : CodecMode.values()) {
-			final Button radio = new Button(radioComposite, SWT.RADIO);
-			radio.setSelection(m.equals(this.mode));
-			radio.setText(m.getName());
-			radio.addSelectionListener(new ModeRadioSelectionListener(this, radio, m));
+			final Button radio = newLocalizedButton(radioComposite, SWT.RADIO, "gui.label.mode." + m.getAbbreviation());
 			modeRadios.put(m, radio);
+			radio.setSelection(m.equals(this.mode));
+			radio.addSelectionListener(new ModeRadioSelectionListener(this, radio, m));
 		}
 
 		/* Listener */
 		algorithmCombo.addSelectionListener(new AlgorithmComboSelectionListener(this));
 		charsetCombo.addSelectionListener(new CharsetComboSelectionListener(this));
-		inputText.addModifyListener(new InputTextModifyListener(this));
 
 		/* Drag and drop */
 		shellDropTarget = new DropTarget(shell, DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK);
@@ -168,7 +180,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	public static void main(final String... args) {
-		Display.setAppName(Messages.get("msg.application.name"));
+		Display.setAppName(messages.get("gui.message.application.name"));
 		Display.setAppVersion(Version.getNumber());
 		try (final CloseableDevice<Display> cd = new CloseableDevice<>(Display.getDefault())) {
 			final Display display = cd.getDevice();
@@ -183,7 +195,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			catch (final Exception e) {
 				final String message = e.toString();
 				log.log(Level.SEVERE, message, e);
-				EnhancedErrorDialog.openError(shell, Messages.get("msg.error"), message, IStatus.ERROR, e, Images.getMainIconArray());
+				EnhancedErrorDialog.openError(shell, messages.get("gui.message.error"), message, IStatus.ERROR, e, Images.getMainIconArray());
 			}
 		}
 	}
@@ -198,36 +210,83 @@ public class CodecGui implements IShellProvider, Multilanguage {
 					}
 				}
 				catch (final NullPointerException e) { // at org.eclipse.swt.widgets.Display.filterMessage(Unknown Source)
-					log.log(Level.FINE, e.toString(), e);
+					log.log(Level.WARNING, e.toString(), e);
 				}
 			}
 		}
 	}
 
 	private Text createInputText() {
-		final Text text = new Text(shell, SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
-		final GridData inputTextGridData = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
+		final Composite composite = new Composite(shell, SWT.NONE);
+		composite.setLayout(new FillLayout());
+		final GridData compositeGridData = GridDataFactory.fillDefaults().grab(true, true).span(4, 1).create();
+		composite.setLayoutData(compositeGridData);
+		final Text text = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+		configureInputText(text);
 		if (TEXT_HEIGHT_MULTIPLIER > 1) {
-			inputTextGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+			compositeGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
 		}
-		text.setLayoutData(inputTextGridData);
-		text.setTextLimit(TEXT_LIMIT_CHARS);
-		text.addKeyListener(new TextKeyListener(text));
 		return text;
 	}
 
-	private Text createOutputText() {
-		final Text text = new Text(shell, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
-		final GridData outputTextGridData = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
-		if (TEXT_HEIGHT_MULTIPLIER > 1) {
-			outputTextGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+	private void refreshInputTextStyle() {
+		final boolean mask = hideInputTextCheck.getSelection();
+		if ((inputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
+			final Text oldText = inputText;
+			final Composite parent = oldText.getParent();
+			final Text newText = new Text(parent, mask ? SWT.BORDER | SWT.PASSWORD : SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+			configureInputText(newText);
+			if (mask) {
+				newText.addKeyListener(TextCopySelectionKeyListener.INSTANCE);
+			}
+			newText.setText(oldText.getText());
+			inputText = newText;
+			oldText.dispose();
+			parent.requestLayout();
 		}
-		text.setLayoutData(outputTextGridData);
+	}
+
+	private void configureInputText(final Text text) {
+		text.setTextLimit(TEXT_LIMIT_CHARS);
+		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
+		text.addModifyListener(new InputTextModifyListener(this));
+	}
+
+	private Text createOutputText() {
+		final Composite composite = new Composite(shell, SWT.NONE);
+		composite.setLayout(new FillLayout());
+		final GridData compositeGridData = GridDataFactory.fillDefaults().grab(true, true).span(4, 1).create();
+		composite.setLayoutData(compositeGridData);
+		final Text text = new Text(composite, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+		if (TEXT_HEIGHT_MULTIPLIER > 1) {
+			compositeGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+		}
+		configureOutputText(text);
+		return text;
+	}
+
+	public void refreshOutputTextStyle() {
+		final boolean mask = !error && !dirty && hideOutputTextCheck.getSelection();
+		if ((outputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
+			final Text oldText = outputText;
+			final Composite parent = oldText.getParent();
+			final Text newText = new Text(parent, mask ? SWT.READ_ONLY | SWT.BORDER | SWT.PASSWORD : SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+			configureOutputText(newText);
+			if (mask) {
+				newText.addKeyListener(TextCopySelectionKeyListener.INSTANCE);
+			}
+			newText.setText(oldText.getText());
+			outputText = newText;
+			oldText.dispose();
+			parent.requestLayout();
+		}
+	}
+
+	private void configureOutputText(final Text text) {
 		if (Util.isWindows()) {
 			text.setBackground(inputText.getBackground());
 		}
-		text.addKeyListener(new TextKeyListener(text));
-		return text;
+		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
 	}
 
 	public void refreshOutput() {
@@ -237,7 +296,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	public void setLanguage(final Language language) {
-		Messages.setLanguage(language.getLocale().getLanguage());
+		messages.setLanguage(language);
 		shell.setRedraw(false);
 		updateLanguage();
 		shell.layout(true, true);
@@ -247,16 +306,35 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	@Override
 	public void updateLanguage() {
-		shell.setText(Messages.get(shell));
-		for (final Label label : labels) {
-			label.setText(Messages.get(label));
+		shell.setText(messages.get(shell));
+		for (final Label label : localizedLabels) {
+			if (label != null && !label.isDisposed()) {
+				label.setText(messages.get(label));
+			}
 		}
-		processFileButton.setText(Messages.get(processFileButton));
-		for (final Entry<CodecMode, Button> entry : modeRadios.entrySet()) {
-			entry.getValue().setText(entry.getKey().getName());
+		for (final Button button : localizedButtons) {
+			if (button != null && !button.isDisposed()) {
+				button.setText(messages.get(button));
+			}
 		}
 		refreshOutput();
 		menuBar.updateLanguage();
+	}
+
+	private Label newLocalizedLabel(final Composite parent, final int style, @NonNull final String messageKey) {
+		final Label label = new Label(parent, style);
+		label.setData(messageKey);
+		label.setText(messages.get(label));
+		localizedLabels.add(label);
+		return label;
+	}
+
+	private Button newLocalizedButton(final Composite parent, final int style, @NonNull final String messageKey) {
+		final Button button = new Button(parent, style);
+		button.setData(messageKey);
+		button.setText(messages.get(button));
+		localizedButtons.add(button);
+		return button;
 	}
 
 }

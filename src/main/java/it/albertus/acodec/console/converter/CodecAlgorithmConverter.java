@@ -1,6 +1,6 @@
 package it.albertus.acodec.console.converter;
 
-import it.albertus.acodec.engine.CodecAlgorithm;
+import it.albertus.acodec.common.engine.CodecAlgorithm;
 import lombok.NonNull;
 import picocli.CommandLine.ITypeConverter;
 

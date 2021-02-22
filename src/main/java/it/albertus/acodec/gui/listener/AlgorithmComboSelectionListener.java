@@ -1,7 +1,7 @@
 package it.albertus.acodec.gui.listener;
 
-import static it.albertus.acodec.engine.CodecMode.DECODE;
-import static it.albertus.acodec.engine.CodecMode.ENCODE;
+import static it.albertus.acodec.common.engine.CodecMode.DECODE;
+import static it.albertus.acodec.common.engine.CodecMode.ENCODE;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -11,7 +11,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 
-import it.albertus.acodec.engine.CodecAlgorithm;
+import it.albertus.acodec.common.engine.CodecAlgorithm;
 import it.albertus.acodec.gui.CodecGui;
 import lombok.RequiredArgsConstructor;
 

@@ -2,7 +2,7 @@
 <!DOCTYPE project>
 <project name="acodec" default="all" xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" xmlns:jacoco="antlib:org.jacoco.ant">
 
-	<property name="version.number" value="2.1.1" />
+	<property name="version.number" value="2.2.0" />
 
 	<property environment="env" />
 	<property name="env.JRE8_HOME" value="${env.JAVA_HOME}/../jdk1.8.0_261/jre" />
@@ -74,7 +74,7 @@
 		</javac>
 
 		<typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
-			<classpath path="${animalSniffer.directory}/animal-sniffer-ant-tasks-1.18.jar" />
+			<classpath path="${animalSniffer.directory}/animal-sniffer-ant-tasks-1.20.jar" />
 		</typedef>
 		<as:check-signature signature="${animalSniffer.directory}/java18-1.0.signature">
 			<path path="${build.outputDirectory}" />
