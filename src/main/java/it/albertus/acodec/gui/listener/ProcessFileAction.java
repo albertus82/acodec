@@ -42,7 +42,7 @@ import lombok.extern.java.Log;
 @RequiredArgsConstructor
 public class ProcessFileAction {
 
-	private static final String MSG_APPLICATION_NAME = "msg.application.name";
+	private static final String GUI_MESSAGE_APPLICATION_NAME = "gui.message.application.name";
 
 	private static final Messages messages = GuiMessages.INSTANCE;
 
@@ -97,13 +97,13 @@ public class ProcessFileAction {
 			}
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
 			box.setMessage(messages.get("gui.message.file.process.ok.message"));
-			box.setText(messages.get(MSG_APPLICATION_NAME));
+			box.setText(messages.get(GUI_MESSAGE_APPLICATION_NAME));
 			box.open();
 		}
 		catch (final InterruptedException e) { // NOSONAR
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
 			box.setMessage(messages.get("gui.message.file.process.cancel.message"));
-			box.setText(messages.get(MSG_APPLICATION_NAME));
+			box.setText(messages.get(GUI_MESSAGE_APPLICATION_NAME));
 			box.open();
 		}
 		catch (final InvocationTargetException e) {
@@ -122,11 +122,11 @@ public class ProcessFileAction {
 			else {
 				message = messages.get("gui.error.unexpected.error");
 			}
-			EnhancedErrorDialog.openError(gui.getShell(), messages.get(MSG_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIconArray());
+			EnhancedErrorDialog.openError(gui.getShell(), messages.get(GUI_MESSAGE_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIconArray());
 		}
 		catch (final Exception e) {
 			log.log(Level.SEVERE, e.toString(), e);
-			EnhancedErrorDialog.openError(gui.getShell(), messages.get(MSG_APPLICATION_NAME), e.toString(), IStatus.ERROR, e, Images.getMainIconArray());
+			EnhancedErrorDialog.openError(gui.getShell(), messages.get(GUI_MESSAGE_APPLICATION_NAME), e.toString(), IStatus.ERROR, e, Images.getMainIconArray());
 		}
 	}
 
