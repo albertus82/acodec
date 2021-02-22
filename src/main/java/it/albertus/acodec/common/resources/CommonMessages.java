@@ -30,12 +30,12 @@ public enum CommonMessages implements ConfigurableMessages {
 
 	@Override
 	public String get(@NonNull final String key) {
-		return Defaults.get(key, resourceBundle, () -> JFaceMessages.get(key));
+		return Defaults.get(key, resourceBundle, JFaceMessages::get);
 	}
 
 	@Override
 	public String get(@NonNull final String key, final Object... params) {
-		return Defaults.get(key, params, resourceBundle, () -> JFaceMessages.get(key, params));
+		return Defaults.get(key, params, resourceBundle, JFaceMessages::get);
 	}
 
 }

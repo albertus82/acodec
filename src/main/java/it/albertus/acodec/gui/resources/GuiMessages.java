@@ -33,12 +33,12 @@ public enum GuiMessages implements ConfigurableMessages {
 
 	@Override
 	public String get(@NonNull final String key) {
-		return Defaults.get(key, resourceBundle, () -> commonMessages.get(key));
+		return Defaults.get(key, resourceBundle, commonMessages::get);
 	}
 
 	@Override
 	public String get(@NonNull final String key, final Object... params) {
-		return Defaults.get(key, params, resourceBundle, () -> commonMessages.get(key, params));
+		return Defaults.get(key, params, resourceBundle, commonMessages::get);
 	}
 
 }

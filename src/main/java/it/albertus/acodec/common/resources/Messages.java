@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.function.Supplier;
+import java.util.function.BiFunction;
+import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 
 import org.eclipse.swt.widgets.Widget;
@@ -35,15 +36,15 @@ public interface Messages {
 			return get(key, resourceBundle, null);
 		}
 
-		public static String get(@NonNull final String key, @NonNull final ResourceBundle resourceBundle, final Supplier<String> fallbackSupplier) {
+		public static String get(@NonNull final String key, @NonNull final ResourceBundle resourceBundle, final UnaryOperator<String> fallbackFunction) {
 			String message;
 			try {
 				message = resourceBundle.getString(key);
 				message = message != null ? message.replace("''", "'").trim() : "";
 			}
 			catch (final MissingResourceException e) {
-				if (fallbackSupplier != null) {
-					message = fallbackSupplier.get();
+				if (fallbackFunction != null) {
+					message = fallbackFunction.apply(key);
 				}
 				else {
 					log.log(Level.WARNING, e, () -> "No message found with key \"" + key + "\"!");
@@ -57,7 +58,7 @@ public interface Messages {
 			return get(key, params, resourceBundle, null);
 		}
 
-		public static String get(@NonNull final String key, @NonNull final Object[] params, @NonNull final ResourceBundle resourceBundle, final Supplier<String> fallbackSupplier) {
+		public static String get(@NonNull final String key, @NonNull final Object[] params, @NonNull final ResourceBundle resourceBundle, final BiFunction<String, Object[], String> fallbackFunction) {
 			final List<String> stringParams = new ArrayList<>(params.length);
 			for (final Object param : params) {
 				stringParams.add(String.valueOf(param));
@@ -68,8 +69,8 @@ public interface Messages {
 				message = message != null ? message.trim() : "";
 			}
 			catch (final MissingResourceException e) {
-				if (fallbackSupplier != null) {
-					message = fallbackSupplier.get();
+				if (fallbackFunction != null) {
+					message = fallbackFunction.apply(key, params);
 				}
 				else {
 					log.log(Level.WARNING, e, () -> "No message found with key \"" + key + "\"!");
