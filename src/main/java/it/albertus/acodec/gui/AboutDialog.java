@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -69,7 +70,7 @@ public class AboutDialog extends Dialog {
 	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
 	public AboutDialog(final Shell parent) {
-		this(parent, SWT.SHEET);
+		this(parent, SWT.SHEET | SWT.RESIZE);
 	}
 
 	public AboutDialog(final Shell parent, final int style) {
@@ -123,12 +124,18 @@ public class AboutDialog extends Dialog {
 		appLicense.setText(loadTextResource("/META-INF/LICENSE.txt"));
 		appLicense.setEditable(false);
 		appLicense.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(appLicense, 80)).applyTo(appLicense);
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(appLicense, 80)).applyTo(appLicense);
 
 		final Label thirdPartySoftwareLabel = new Label(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(thirdPartySoftwareLabel);
 		thirdPartySoftwareLabel.setText(messages.get("gui.label.about.3rdparty"));
-		new ThirdPartySoftwareTable(shell);
+
+		final ScrolledComposite scrolledComposite = new ScrolledComposite(shell, SWT.V_SCROLL);
+		GridLayoutFactory.swtDefaults().applyTo(scrolledComposite);
+		scrolledComposite.setExpandVertical(true);
+		scrolledComposite.setExpandHorizontal(true);
+		scrolledComposite.setContent(new ThirdPartySoftwareTable(scrolledComposite).getTableViewer().getControl());
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(scrolledComposite, 80)).applyTo(scrolledComposite);
 
 		final Button okButton = new Button(shell, SWT.PUSH);
 		okButton.setText(messages.get("gui.label.button.ok"));
@@ -175,6 +182,7 @@ public class AboutDialog extends Dialog {
 		return text.length() <= System.lineSeparator().length() ? "" : text.substring(System.lineSeparator().length());
 	}
 
+	@Getter
 	private static class ThirdPartySoftwareTable {
 
 		private static final byte COL_IDX_THIRDPARTY_NAME = 0;
