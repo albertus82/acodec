@@ -464,13 +464,24 @@
 		<condition property="launch4j.bindir" value="${launch4j.directory}/bin/linux-armhf">
 			<and>
 				<os family="unix" />
-				<os arch="arm" />
+				<os arch="armhf" />
 				<not>
 					<os name="mac os x" />
 				</not>
 				<available file="${launch4j.directory}/bin/linux-armhf" type="dir" />
 			</and>
 		</condition>
+		<condition property="launch4j.bindir" value="${launch4j.directory}/bin/linux-armhf">
+			<and>
+				<os family="unix" />
+				<os arch="arm64" />
+				<not>
+					<os name="mac os x" />
+				</not>
+				<available file="${launch4j.directory}/bin/linux-aarch64" type="dir" />
+			</and>
+		</condition>
+
 
 		<echo message="launch4j.bindir: ${launch4j.bindir}" />
 
