@@ -122,6 +122,12 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
+		<copy todir="${build.packagesDirectory}/gtk-linux-aarch64/app/${dependencies.directory}">
+			<resources refid="lib" />
+			<fileset dir="${dependencies.directory}/compile/platform-dependent/gtk-linux-aarch64">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
 		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/app/${dependencies.directory}">
 			<resources refid="lib" />
 			<fileset dir="${dependencies.directory}/compile/platform-dependent/cocoa-macosx-x86_64">
@@ -165,6 +171,13 @@
 				</fileset>
 			</classpath>
 		</manifestclasspath>
+		<manifestclasspath property="classpath.gtk-linux-aarch64" jarfile="${build.packagesDirectory}/gtk-linux-aarch64/app/${linux.jarFileName}" maxParentLevels="0">
+			<classpath>
+				<fileset dir="${build.packagesDirectory}/gtk-linux-aarch64/app/${dependencies.directory}">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</manifestclasspath>
 		<manifestclasspath property="classpath.cocoa-macosx-x86_64" jarfile="${build.packagesDirectory}/cocoa-macosx-x86_64/app/${macos.jarFileName}" maxParentLevels="0">
 			<classpath>
 				<fileset dir="${build.packagesDirectory}/cocoa-macosx-x86_64/app/${dependencies.directory}">
@@ -193,6 +206,10 @@
 		</copy>
 		<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/gtk-linux-armhf/app/.${project.artifactId}/${linux.cfgFileName}" failonerror="false" />
 		<copy todir="${build.packagesDirectory}/gtk-linux-armhf/app/.${project.artifactId}" includeemptydirs="false" failonerror="false">
+			<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
+		</copy>
+		<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/gtk-linux-aarch64/app/.${project.artifactId}/${linux.cfgFileName}" failonerror="false" />
+		<copy todir="${build.packagesDirectory}/gtk-linux-aarch64/app/.${project.artifactId}" includeemptydirs="false" failonerror="false">
 			<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
 		</copy>
 		<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/cocoa-macosx-x86_64/config/${macos.cfgFileName}" failonerror="false" />
@@ -227,6 +244,9 @@
 		<copy todir="${build.packagesDirectory}/gtk-linux-armhf/app" failonerror="false" filtering="true">
 			<fileset refid="sh" />
 		</copy>
+		<copy todir="${build.packagesDirectory}/gtk-linux-aarch64/app" failonerror="false" filtering="true">
+			<fileset refid="sh" />
+		</copy>
 		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/scripts" failonerror="false" filtering="true">
 			<fileset refid="command" />
 		</copy>
@@ -254,6 +274,9 @@
 		<copy todir="${build.packagesDirectory}/gtk-linux-armhf/app">
 			<fileset refid="docs" />
 		</copy>
+		<copy todir="${build.packagesDirectory}/gtk-linux-aarch64/app">
+			<fileset refid="docs" />
+		</copy>
 		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/docs">
 			<fileset refid="docs" />
 		</copy>
@@ -277,6 +300,9 @@
 		<copy todir="${build.packagesDirectory}/gtk-linux-armhf/app/${3rdparty.license.directory}">
 			<fileset refid="licenses" />
 		</copy>
+		<copy todir="${build.packagesDirectory}/gtk-linux-aarch64/app/${3rdparty.license.directory}">
+			<fileset refid="licenses" />
+		</copy>
 		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/docs/${3rdparty.license.directory}">
 			<fileset refid="licenses" />
 		</copy>
@@ -286,6 +312,7 @@
 		<copy file="${icons.directory}/main.ico" tofile="${build.packagesDirectory}/gtk-linux-x86/app/${linux.iconFileName}" failonerror="false" />
 		<copy file="${icons.directory}/main.ico" tofile="${build.packagesDirectory}/gtk-linux-x86_64/app/${linux.iconFileName}" failonerror="false" />
 		<copy file="${icons.directory}/main.ico" tofile="${build.packagesDirectory}/gtk-linux-armhf/app/${linux.iconFileName}" failonerror="false" />
+		<copy file="${icons.directory}/main.ico" tofile="${build.packagesDirectory}/gtk-linux-aarch64/app/${linux.iconFileName}" failonerror="false" />
 		<copy file="${icons.directory}/main.icns" tofile="${build.packagesDirectory}/cocoa-macosx-x86_64/app/${macos.iconFileName}" failonerror="false" />
 	</target>
 
@@ -338,6 +365,17 @@
 			<manifest>
 				<attribute name="Main-Class" value="${mainClass}" />
 				<attribute name="Class-Path" value="${classpath.gtk-linux-armhf}" />
+				<attribute name="Implementation-Title" value="${project.name}" />
+				<attribute name="Implementation-Version" value="${version.number}" />
+				<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
+				<attribute name="X-Compile-Target-JDK" value="${build.compiler.target}" />
+			</manifest>
+			<metainf refid="docs" />
+		</jar>
+		<jar destfile="${build.packagesDirectory}/gtk-linux-aarch64/app/${linux.jarFileName}" basedir="${build.outputDirectory}" level="9">
+			<manifest>
+				<attribute name="Main-Class" value="${mainClass}" />
+				<attribute name="Class-Path" value="${classpath.gtk-linux-aarch64}" />
 				<attribute name="Implementation-Title" value="${project.name}" />
 				<attribute name="Implementation-Version" value="${version.number}" />
 				<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
@@ -417,6 +455,16 @@
 				<include name="*.sh" />
 			</tarfileset>
 			<tarfileset dir="${build.packagesDirectory}/gtk-linux-armhf/app" prefix="${project.artifactId}">
+				<exclude name="*.jar" />
+				<exclude name="*.sh" />
+			</tarfileset>
+		</tar>
+		<tar destfile="${build.distDirectory}/${project.artifactId}-${version.number}-gtk-linux-aarch64-bin.tar.gz" compression="gzip">
+			<tarfileset dir="${build.packagesDirectory}/gtk-linux-aarch64/app" prefix="${project.artifactId}" filemode="755">
+				<include name="*.jar" />
+				<include name="*.sh" />
+			</tarfileset>
+			<tarfileset dir="${build.packagesDirectory}/gtk-linux-aarch64/app" prefix="${project.artifactId}">
 				<exclude name="*.jar" />
 				<exclude name="*.sh" />
 			</tarfileset>
