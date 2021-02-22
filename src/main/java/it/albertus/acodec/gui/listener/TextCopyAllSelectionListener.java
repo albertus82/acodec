@@ -20,7 +20,7 @@ public class TextCopyAllSelectionListener extends SelectionAdapter {
 	@Override
 	public void widgetSelected(final SelectionEvent e) {
 		final Text text = textSupplier.get();
-		if (text != null && !text.isDisposed()) {
+		if (text != null && !text.isDisposed() && text.getCharCount() != 0) {
 			try (final CloseableClipboard cc = new CloseableClipboard(new Clipboard(text.getDisplay()))) {
 				cc.getClipboard().setContents(new String[] { text.getText() }, new Transfer[] { TextTransfer.getInstance() });
 			}

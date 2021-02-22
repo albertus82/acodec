@@ -94,9 +94,9 @@ public class MenuBar implements Multilanguage {
 
 		final ArmMenuListener editMenuListener = e -> {
 			final Text inputText = gui.getInputText();
-			editCopyInputTextMenuItem.setEnabled(inputText != null && !inputText.isDisposed() && !inputText.getText().isEmpty());
+			editCopyInputTextMenuItem.setEnabled(inputText != null && !inputText.isDisposed() && inputText.getCharCount() != 0);
 			final Text outputText = gui.getOutputText();
-			editCopyOutputTextMenuItem.setEnabled(!gui.isError() && outputText != null && !outputText.isDisposed() && !outputText.getText().isEmpty());
+			editCopyOutputTextMenuItem.setEnabled(!gui.isError() && outputText != null && !outputText.isDisposed() && outputText.getCharCount() != 0);
 		};
 		editMenu.addMenuListener(editMenuListener);
 		editMenuHeader.addArmListener(editMenuListener);
