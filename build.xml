@@ -471,7 +471,7 @@
 				<available file="${launch4j.directory}/bin/linux-armhf" type="dir" />
 			</and>
 		</condition>
-		<condition property="launch4j.bindir" value="${launch4j.directory}/bin/linux-armhf">
+		<condition property="launch4j.bindir" value="${launch4j.directory}/bin/linux-aarch64">
 			<and>
 				<os family="unix" />
 				<os arch="aarch64" />
