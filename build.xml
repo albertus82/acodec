@@ -256,7 +256,7 @@
 	</target>
 
 	<target name="jar" depends="resources, compile, lib">
-		<ac:for trim="true" list="${build.platforms.windows}" param="platform" parallel="true">
+		<ac:for trim="true" list="${build.platforms.windows}" param="platform" parallel="${build.parallel}">
 			<ac:sequential>
 				<jar destfile="${build.packagesDirectory}/@{platform}/app/${windows.jarFileName}" basedir="${build.outputDirectory}" level="9">
 					<manifest>
@@ -271,7 +271,7 @@
 				</jar>
 			</ac:sequential>
 		</ac:for>
-		<ac:for trim="true" list="${build.platforms.linux}" param="platform" parallel="true">
+		<ac:for trim="true" list="${build.platforms.linux}" param="platform" parallel="${build.parallel}">
 			<ac:sequential>
 				<jar destfile="${build.packagesDirectory}/@{platform}/app/${linux.jarFileName}" basedir="${build.outputDirectory}" level="9">
 					<manifest>
@@ -286,7 +286,7 @@
 				</jar>
 			</ac:sequential>
 		</ac:for>
-		<ac:for trim="true" list="${build.platforms.macos}" param="platform" parallel="true">
+		<ac:for trim="true" list="${build.platforms.macos}" param="platform" parallel="${build.parallel}">
 			<ac:sequential>
 				<jar destfile="${build.packagesDirectory}/@{platform}/app/${macos.jarFileName}" basedir="${build.outputDirectory}" level="9">
 					<manifest>
@@ -306,7 +306,7 @@
 	<target name="dist-macos">
 		<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpath="${jarBundler.directory}/jarbundler-core-3.3.0.jar" />
 
-		<ac:for trim="true" list="${build.platforms.macos}" param="platform" parallel="true">
+		<ac:for trim="true" list="${build.platforms.macos}" param="platform" parallel="${build.parallel}">
 			<ac:sequential>
 				<mkdir dir="${build.packagesDirectory}/@{platform}/bundle" />
 				<jarbundler vmoptions="${macos.vmoptions}" dir="${build.packagesDirectory}/@{platform}/bundle" name="${project.name}" mainclass="${mainClass}" startonmainthread="true" version="${version.number}" icon="${build.packagesDirectory}/@{platform}/app/${macos.iconFileName}" usejavaxkey="true" jvmversion="${build.compiler.target}+" stubfile="${jarBundler.directory}/universalJavaApplicationStub" highresolutioncapable="true">
@@ -340,7 +340,7 @@
 	</target>
 
 	<target name="dist-linux">
-		<ac:for trim="true" list="${build.platforms.linux}" param="platform" parallel="true">
+		<ac:for trim="true" list="${build.platforms.linux}" param="platform" parallel="${build.parallel}">
 			<ac:sequential>
 				<tar destfile="${build.distDirectory}/${project.artifactId}-${version.number}-@{platform}-bin.tar.gz" compression="gzip">
 					<tarfileset dir="${build.packagesDirectory}/@{platform}/app" prefix="${project.artifactId}" filemode="755">
@@ -464,7 +464,7 @@
 			</config>
 		</launch4j>
 
-		<ac:for trim="true" list="${build.platforms.windows}" param="platform" parallel="true">
+		<ac:for trim="true" list="${build.platforms.windows}" param="platform" parallel="${build.parallel}">
 			<ac:sequential>
 				<zip destfile="${build.distDirectory}/${project.artifactId}-${version.number}-@{platform}-bin.zip" level="9">
 					<zipfileset dir="${build.packagesDirectory}/@{platform}/app" prefix="${project.name}" />
@@ -585,7 +585,7 @@
 			end;
 		</echo>
 
-		<ac:for trim="true" list="${build.platforms.windows}" param="platform" parallel="true">
+		<ac:for trim="true" list="${build.platforms.windows}" param="platform" parallel="${build.parallel}">
 			<ac:sequential>
 				<pathconvert pathsep="&#13;&#10;" property="dependencies.log.@{platform}">
 					<fileset dir="${build.packagesDirectory}/@{platform}/app/${dependencies.directory}">
