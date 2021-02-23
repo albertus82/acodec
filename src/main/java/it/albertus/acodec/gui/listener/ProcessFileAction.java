@@ -99,7 +99,6 @@ public class ProcessFileAction {
 				gui.setStatus(GuiStatus.DIRTY);
 				gui.refreshInputTextStyle();
 				gui.getOutputText().setText(runnable.getResult());
-				gui.setStatus(GuiStatus.DIRTY);
 				gui.refreshOutputTextStyle();
 			}
 		}
