@@ -11,6 +11,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -37,6 +38,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -131,11 +133,11 @@ public class AboutDialog extends Dialog {
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(thirdPartySoftwareLabel);
 		thirdPartySoftwareLabel.setText(messages.get("gui.label.about.3rdparty"));
 
-		final ScrolledComposite scrolledComposite = new ScrolledComposite(shell, SWT.V_SCROLL);
-		GridLayoutFactory.swtDefaults().applyTo(scrolledComposite);
+		final ScrolledComposite scrolledComposite = new ScrolledComposite(shell, SWT.V_SCROLL | SWT.H_SCROLL);
+		scrolledComposite.setLayout(new FillLayout());
 		scrolledComposite.setExpandVertical(true);
 		scrolledComposite.setExpandHorizontal(true);
-		final ThirdPartySoftwareTable thirdPartySoftwareTable = new ThirdPartySoftwareTable(scrolledComposite, GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).create());
+		final ThirdPartySoftwareTable thirdPartySoftwareTable = new ThirdPartySoftwareTable(scrolledComposite, Optional.empty());
 		scrolledComposite.setContent(thirdPartySoftwareTable.getTableViewer().getControl());
 		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(scrolledComposite, 40)).applyTo(scrolledComposite);
 
@@ -195,12 +197,12 @@ public class AboutDialog extends Dialog {
 
 		private final TableViewer tableViewer;
 
-		private ThirdPartySoftwareTable(@NonNull final Composite parent, final Object layoutData) {
+		private ThirdPartySoftwareTable(@NonNull final Composite parent, @NonNull final Optional<Object> layoutData) {
 			tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
 			ColumnViewerToolTipSupport.enableFor(tableViewer);
 			final Table table = tableViewer.getTable();
-			if (layoutData != null) {
-				table.setLayoutData(layoutData);
+			if (layoutData.isPresent()) {
+				table.setLayoutData(layoutData.get());
 			}
 			table.setLinesVisible(true);
 			table.setHeaderVisible(true);
