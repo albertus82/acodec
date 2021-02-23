@@ -8,13 +8,13 @@ environment:
   matrix:
     - platform: x86
       JAVA_HOME: ${ProgramFiles(x86)}\Java\jdk1.8.0
-      ANT_VERSION: 1.10.5
+      ANT_VERSION: 1.10.9
     - platform: x64
       JAVA_HOME: $(ProgramFiles)\Java\jdk1.8.0
-      ANT_VERSION: 1.10.5
+      ANT_VERSION: 1.10.9
     - platform: x64
       JAVA_HOME: $(ProgramFiles)\Java\jdk11
-      ANT_VERSION: 1.10.5
+      ANT_VERSION: 1.10.9
       VT_API_KEY:
         secure: 3sqJDjLAS708tR/LiAqKLZTnLLrhGJuWVzzI4nCjLbUUsZB+PPRG3y0BWWnMo14CDhBT4v6yjHTA23RdopoHDWJlBcGhKELKZOLhHsnJLU8=
 
