@@ -31,7 +31,7 @@ Download the [latest release](https://github.com/albertus82/acodec/releases/late
 ## Command line reference
 
 ```ruby
-Usage: acodec <mode> <algorithm> [-c <charset>] { <text to process> | -f <source file> [<destination file>] }
+Usage: acodec <mode> <algorithm> [-c <charset>] { <text to process> | -f <source file> [<destination file>] | -i }
 
 Mode:
     e    Encode
@@ -48,15 +48,16 @@ Example: acodec e base64 -c UTF-8 "Lorem ipsum dolor sit amet"
 
 ## Acknowledgements
 
-This application includes third party software developed by:
+This application uses or includes portions of the following third party software:
 
-|Author                     |License                                               |Home page                                     |
-|---------------------------|------------------------------------------------------|----------------------------------------------|
-|Apache Software Foundation |[License](https://www.apache.org/licenses/LICENSE-2.0)|[Home page](https://www.apache.org)           |
-|Eclipse Foundation         |[License](https://www.eclipse.org/legal/epl-2.0/)     |[Home page](https://www.eclipse.org)          |
-|Joachim Henke              |[License](http://base91.sourceforge.net/license.txt)  |[Home page](http://base91.sourceforge.net)    |
-|Jordan Russell             |[License](https://jrsoftware.org/files/is/license.txt)|[Home page](https://jrsoftware.org/isinfo.php)|
-|Legion of the Bouncy Castle|[License](https://www.bouncycastle.org/license.html)  |[Home page](https://www.bouncycastle.org)     |
-|Mark Donszelmann           |[License](https://java.freehep.org/license.html)      |[Home page](https://java.freehep.org)         |
-|Remko Popma                |[License](https://git.io/JUqAY)                       |[Home page](https://picocli.info)             |
-|Tobias Fischer             |[License](https://git.io/JUqAq)                       |[Home page](https://git.io/JUqAF)             |
+|Component               |Author                     |License                                               |Home page                                     |
+|------------------------|---------------------------|------------------------------------------------------|----------------------------------------------|
+|Apache Commons & OpenJPA|Apache Software Foundation |[License](https://www.apache.org/licenses/LICENSE-2.0)|[Home page](https://www.apache.org)           |
+|basE91                  |Joachim Henke              |[License](http://base91.sourceforge.net/license.txt)  |[Home page](http://base91.sourceforge.net)    |
+|Bouncy Castle           |Legion of the Bouncy Castle|[License](https://www.bouncycastle.org/license.html)  |[Home page](https://www.bouncycastle.org)     |
+|Eclipse Platform & SWT  |Eclipse Foundation         |[License](https://www.eclipse.org/legal/epl-2.0/)     |[Home page](https://www.eclipse.org)          |
+|FreeHEP                 |Mark Donszelmann           |[License](https://java.freehep.org/license.html)      |[Home page](https://java.freehep.org)         |
+|Inno Setup              |Jordan Russell             |[License](https://jrsoftware.org/files/is/license.txt)|[Home page](https://jrsoftware.org/isinfo.php)|
+|Launch4j                |Grzegorz Kowal             |[License](http://opensource.org/licenses/BSD-3-Clause)|[Home page](http://launch4j.sourceforge.net)  |
+|Picocli                 |Remko Popma                |[License](https://git.io/JUqAY)                       |[Home page](https://picocli.info)             |
+|Tobias Fischer          |Tobias Fischer             |[License](https://git.io/JUqAq)                       |[Home page](https://git.io/JUqAF)             |
