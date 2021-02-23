@@ -11,6 +11,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -37,6 +38,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -57,6 +59,7 @@ import it.albertus.jface.closeable.CloseableResource;
 import it.albertus.util.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 
@@ -64,6 +67,8 @@ import lombok.extern.java.Log;
 public class AboutDialog extends Dialog {
 
 	private static final double MONITOR_SIZE_DIVISOR = 1.2;
+
+	private static final int SCROLLABLE_VERTICAL_SIZE_DLUS = 25;
 
 	private static final String SYM_NAME_FONT_DEFAULT = AboutDialog.class.getName() + ".default";
 
@@ -124,18 +129,19 @@ public class AboutDialog extends Dialog {
 		appLicense.setText(loadTextResource("/META-INF/LICENSE.txt"));
 		appLicense.setEditable(false);
 		appLicense.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(appLicense, 40)).applyTo(appLicense);
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(appLicense, SCROLLABLE_VERTICAL_SIZE_DLUS)).applyTo(appLicense);
 
 		final Label thirdPartySoftwareLabel = new Label(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(thirdPartySoftwareLabel);
 		thirdPartySoftwareLabel.setText(messages.get("gui.label.about.3rdparty"));
 
-		final ScrolledComposite scrolledComposite = new ScrolledComposite(shell, SWT.V_SCROLL);
-		GridLayoutFactory.swtDefaults().applyTo(scrolledComposite);
+		final ScrolledComposite scrolledComposite = new ScrolledComposite(shell, SWT.V_SCROLL | SWT.H_SCROLL);
+		scrolledComposite.setLayout(new FillLayout());
 		scrolledComposite.setExpandVertical(true);
 		scrolledComposite.setExpandHorizontal(true);
-		scrolledComposite.setContent(new ThirdPartySoftwareTable(scrolledComposite).getTableViewer().getControl());
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(scrolledComposite, 40)).applyTo(scrolledComposite);
+		final ThirdPartySoftwareTable thirdPartySoftwareTable = new ThirdPartySoftwareTable(scrolledComposite, Optional.empty());
+		scrolledComposite.setContent(thirdPartySoftwareTable.getTableViewer().getControl());
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(scrolledComposite, SCROLLABLE_VERTICAL_SIZE_DLUS)).applyTo(scrolledComposite);
 
 		final Button okButton = new Button(shell, SWT.PUSH);
 		okButton.setText(messages.get("gui.label.button.ok"));
@@ -193,11 +199,13 @@ public class AboutDialog extends Dialog {
 
 		private final TableViewer tableViewer;
 
-		private ThirdPartySoftwareTable(final Composite parent) {
+		private ThirdPartySoftwareTable(@NonNull final Composite parent, @NonNull final Optional<Object> layoutData) {
 			tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
 			ColumnViewerToolTipSupport.enableFor(tableViewer);
 			final Table table = tableViewer.getTable();
-			GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).applyTo(table);
+			if (layoutData.isPresent()) {
+				table.setLayoutData(layoutData.get());
+			}
 			table.setLinesVisible(true);
 			table.setHeaderVisible(true);
 
