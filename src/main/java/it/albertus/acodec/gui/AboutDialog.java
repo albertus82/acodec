@@ -57,6 +57,7 @@ import it.albertus.jface.closeable.CloseableResource;
 import it.albertus.util.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 
@@ -134,7 +135,8 @@ public class AboutDialog extends Dialog {
 		GridLayoutFactory.swtDefaults().applyTo(scrolledComposite);
 		scrolledComposite.setExpandVertical(true);
 		scrolledComposite.setExpandHorizontal(true);
-		scrolledComposite.setContent(new ThirdPartySoftwareTable(scrolledComposite).getTableViewer().getControl());
+		final ThirdPartySoftwareTable thirdPartySoftwareTable = new ThirdPartySoftwareTable(scrolledComposite, GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).create());
+		scrolledComposite.setContent(thirdPartySoftwareTable.getTableViewer().getControl());
 		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(scrolledComposite, 40)).applyTo(scrolledComposite);
 
 		final Button okButton = new Button(shell, SWT.PUSH);
@@ -193,11 +195,13 @@ public class AboutDialog extends Dialog {
 
 		private final TableViewer tableViewer;
 
-		private ThirdPartySoftwareTable(final Composite parent) {
+		private ThirdPartySoftwareTable(@NonNull final Composite parent, final Object layoutData) {
 			tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
 			ColumnViewerToolTipSupport.enableFor(tableViewer);
 			final Table table = tableViewer.getTable();
-			GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).applyTo(table);
+			if (layoutData != null) {
+				table.setLayoutData(layoutData);
+			}
 			table.setLinesVisible(true);
 			table.setHeaderVisible(true);
 
