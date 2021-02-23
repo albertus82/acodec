@@ -273,6 +273,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			final Composite parent = oldText.getParent();
 			final Text newText = new Text(parent, mask ? SWT.READ_ONLY | SWT.BORDER | SWT.PASSWORD : SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 			configureOutputText(newText);
+			newText.setForeground(oldText.getForeground());
 			if (mask) {
 				newText.addKeyListener(TextCopySelectionKeyListener.INSTANCE);
 			}
