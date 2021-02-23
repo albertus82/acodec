@@ -229,8 +229,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return text;
 	}
 
-	private void refreshInputTextStyle() {
-		final boolean mask = hideInputTextCheck.getSelection();
+	public void refreshInputTextStyle() {
+		final boolean mask = !dirty && hideInputTextCheck.getSelection();
 		if ((inputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
 			final Text oldText = inputText;
 			final Composite parent = oldText.getParent();
