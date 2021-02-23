@@ -26,6 +26,7 @@ import it.albertus.acodec.common.engine.CodecConfig;
 import it.albertus.acodec.common.engine.ProcessFileTask;
 import it.albertus.acodec.common.resources.Messages;
 import it.albertus.acodec.gui.CodecGui;
+import it.albertus.acodec.gui.CodecGui.GuiStatus;
 import it.albertus.acodec.gui.Images;
 import it.albertus.acodec.gui.ProcessFileException;
 import it.albertus.acodec.gui.ProcessFileRunnable;
@@ -93,14 +94,14 @@ public class ProcessFileAction {
 			box.setText(messages.get(GUI_MESSAGE_APPLICATION_NAME));
 			box.open();
 			if (runnable.getResult() != null) { // result can be null in certain cases
-				gui.setDirty(false);
+				gui.setStatus(GuiStatus.OK);
 				gui.getInputText().setText(inputFile.getName());
-				gui.setDirty(true);
+				gui.setStatus(GuiStatus.DIRTY);
 				gui.refreshInputTextStyle();
 				gui.getOutputText().setText(runnable.getResult());
-				gui.setDirty(true);
+				gui.setStatus(GuiStatus.DIRTY);
 				gui.refreshOutputTextStyle();
-				gui.setError(false);
+				gui.setStatus(GuiStatus.DIRTY);
 			}
 		}
 		catch (final InterruptedException e) { // NOSONAR
