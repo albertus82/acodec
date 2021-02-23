@@ -84,8 +84,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private final Button processFileButton;
 	private final DropTarget shellDropTarget;
 
-	private boolean dirty = false;
-	private boolean error = false;
+	@NonNull
+	private GuiStatus status = GuiStatus.UNKNOWN;
 
 	private CodecGui(final Display display) {
 		shell = new Shell(display);
@@ -229,8 +229,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return text;
 	}
 
-	private void refreshInputTextStyle() {
-		final boolean mask = hideInputTextCheck.getSelection();
+	public void refreshInputTextStyle() {
+		final boolean mask = !GuiStatus.DIRTY.equals(status) && hideInputTextCheck.getSelection();
 		if ((inputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
 			final Text oldText = inputText;
 			final Composite parent = oldText.getParent();
@@ -267,7 +267,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	public void refreshOutputTextStyle() {
-		final boolean mask = !error && !dirty && hideOutputTextCheck.getSelection();
+		final boolean mask = GuiStatus.OK.equals(status) && hideOutputTextCheck.getSelection();
 		if ((outputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
 			final Text oldText = outputText;
 			final Composite parent = oldText.getParent();
@@ -337,6 +337,13 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		button.setText(messages.get(button));
 		localizedButtons.add(button);
 		return button;
+	}
+
+	public enum GuiStatus {
+		OK,
+		DIRTY,
+		ERROR,
+		UNKNOWN;
 	}
 
 }

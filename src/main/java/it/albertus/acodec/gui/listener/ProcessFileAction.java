@@ -26,6 +26,7 @@ import it.albertus.acodec.common.engine.CodecConfig;
 import it.albertus.acodec.common.engine.ProcessFileTask;
 import it.albertus.acodec.common.resources.Messages;
 import it.albertus.acodec.gui.CodecGui;
+import it.albertus.acodec.gui.CodecGui.GuiStatus;
 import it.albertus.acodec.gui.Images;
 import it.albertus.acodec.gui.ProcessFileException;
 import it.albertus.acodec.gui.ProcessFileRunnable;
@@ -88,17 +89,20 @@ public class ProcessFileAction {
 			final LocalizedProgressMonitorDialog dialog = new LocalizedProgressMonitorDialog(gui.getShell(), task);
 			dialog.setOpenOnRun(false);
 			dialog.run(true, true, runnable); // execute in separate thread
-			if (runnable.getResult() != null) { // result can be null in certain cases
-				gui.setDirty(false);
-				gui.getInputText().setText(inputFile.getName());
-				gui.getOutputText().setText(runnable.getResult());
-				gui.setDirty(true);
-				gui.refreshOutputTextStyle();
-			}
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
 			box.setMessage(messages.get("gui.message.file.process.ok.message"));
 			box.setText(messages.get(GUI_MESSAGE_APPLICATION_NAME));
 			box.open();
+			if (runnable.getResult() != null) { // result can be null in certain cases
+				gui.setStatus(GuiStatus.OK);
+				gui.getInputText().setText(inputFile.getName());
+				gui.setStatus(GuiStatus.DIRTY);
+				gui.refreshInputTextStyle();
+				gui.getOutputText().setText(runnable.getResult());
+				gui.setStatus(GuiStatus.DIRTY);
+				gui.refreshOutputTextStyle();
+				gui.setStatus(GuiStatus.DIRTY);
+			}
 		}
 		catch (final InterruptedException e) { // NOSONAR
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);

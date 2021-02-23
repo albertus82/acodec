@@ -13,6 +13,7 @@ import it.albertus.acodec.common.engine.CodecConfig;
 import it.albertus.acodec.common.engine.StringCodec;
 import it.albertus.acodec.common.resources.Messages;
 import it.albertus.acodec.gui.CodecGui;
+import it.albertus.acodec.gui.CodecGui.GuiStatus;
 import it.albertus.acodec.gui.resources.GuiMessages;
 import lombok.extern.java.Log;
 
@@ -33,8 +34,8 @@ public class InputTextModifyListener implements ModifyListener {
 	@Override
 	public void modifyText(final ModifyEvent event) {
 		String result;
-		if (gui.isDirty()) {
-			gui.setDirty(false);
+		if (GuiStatus.DIRTY.equals(gui.getStatus())) {
+			gui.setStatus(GuiStatus.OK);
 			gui.getInputText().setText("");
 		}
 
@@ -72,7 +73,7 @@ public class InputTextModifyListener implements ModifyListener {
 	}
 
 	private void print(final String text, final boolean error) {
-		gui.setError(error);
+		gui.setStatus(error ? GuiStatus.ERROR : GuiStatus.OK);
 		String outputText = text != null ? text : "";
 		if (error) {
 			outputText = new StringBuilder(outputText).insert(0, ERROR_PREFIX).append(ERROR_SUFFIX).toString();
