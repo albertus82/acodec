@@ -68,6 +68,8 @@ public class AboutDialog extends Dialog {
 
 	private static final double MONITOR_SIZE_DIVISOR = 1.2;
 
+	private static final int SCROLLABLE_VERTICAL_SIZE_DLUS = 25;
+
 	private static final String SYM_NAME_FONT_DEFAULT = AboutDialog.class.getName() + ".default";
 
 	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
@@ -127,7 +129,7 @@ public class AboutDialog extends Dialog {
 		appLicense.setText(loadTextResource("/META-INF/LICENSE.txt"));
 		appLicense.setEditable(false);
 		appLicense.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(appLicense, 40)).applyTo(appLicense);
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(appLicense, SCROLLABLE_VERTICAL_SIZE_DLUS)).applyTo(appLicense);
 
 		final Label thirdPartySoftwareLabel = new Label(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(thirdPartySoftwareLabel);
@@ -139,7 +141,7 @@ public class AboutDialog extends Dialog {
 		scrolledComposite.setExpandHorizontal(true);
 		final ThirdPartySoftwareTable thirdPartySoftwareTable = new ThirdPartySoftwareTable(scrolledComposite, Optional.empty());
 		scrolledComposite.setContent(thirdPartySoftwareTable.getTableViewer().getControl());
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(scrolledComposite, 40)).applyTo(scrolledComposite);
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(scrolledComposite, SCROLLABLE_VERTICAL_SIZE_DLUS)).applyTo(scrolledComposite);
 
 		final Button okButton = new Button(shell, SWT.PUSH);
 		okButton.setText(messages.get("gui.label.button.ok"));
