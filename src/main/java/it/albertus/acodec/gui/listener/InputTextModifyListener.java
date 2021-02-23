@@ -83,7 +83,7 @@ public class InputTextModifyListener implements ModifyListener {
 			}
 		}
 		else {
-			final Color defaultTextColor = gui.getOutputText().getForeground(); // Fix color issues on some Linux GUIs
+			final Color defaultTextColor = gui.getInputText().getForeground(); // Fix color issues on some Linux GUIs
 			if (!gui.getOutputText().getForeground().equals(defaultTextColor)) {
 				gui.getOutputText().setForeground(defaultTextColor);
 			}
