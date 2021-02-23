@@ -5,7 +5,7 @@
 	<property name="version.number" value="2.2.0" />
 
 	<property environment="env" />
-	<property name="env.JRE8_HOME" value="${env.JAVA_HOME}/../jdk1.8.0_261/jre" />
+	<property name="env.JRE8_HOME" value="${env.JAVA_HOME}/../jdk1.8.0_281/jre" />
 
 	<property file="build.properties" />
 
@@ -96,164 +96,86 @@
 		</union>
 
 		<!-- Copy dependencies -->
-		<copy todir="${build.packagesDirectory}/win32-win32-x86/app/${dependencies.directory}">
-			<resources refid="lib" />
-			<fileset dir="${dependencies.directory}/compile/platform-dependent/win32-win32-x86">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
-		<copy todir="${build.packagesDirectory}/win32-win32-x86_64/app/${dependencies.directory}">
-			<resources refid="lib" />
-			<fileset dir="${dependencies.directory}/compile/platform-dependent/win32-win32-x86_64">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-x86/app/${dependencies.directory}">
-			<resources refid="lib" />
-			<fileset dir="${dependencies.directory}/compile/platform-dependent/gtk-linux-x86">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-x86_64/app/${dependencies.directory}">
-			<resources refid="lib" />
-			<fileset dir="${dependencies.directory}/compile/platform-dependent/gtk-linux-x86_64">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-armhf/app/${dependencies.directory}">
-			<resources refid="lib" />
-			<fileset dir="${dependencies.directory}/compile/platform-dependent/gtk-linux-armhf">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-aarch64/app/${dependencies.directory}">
-			<resources refid="lib" />
-			<fileset dir="${dependencies.directory}/compile/platform-dependent/gtk-linux-aarch64">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
-		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/app/${dependencies.directory}">
-			<resources refid="lib" />
-			<fileset dir="${dependencies.directory}/compile/platform-dependent/cocoa-macosx-x86_64">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
+		<ac:for list="${build.platforms.all}" param="platform">
+			<ac:sequential>
+				<copy todir="${build.packagesDirectory}/@{platform}/app/${dependencies.directory}">
+					<resources refid="lib" />
+					<fileset dir="${dependencies.directory}/compile/platform-dependent/@{platform}">
+						<include name="*.jar" />
+					</fileset>
+				</copy>
+			</ac:sequential>
+		</ac:for>
 
 		<!-- Prepare MANIFEST.MF files -->
-		<manifestclasspath property="classpath.win32-win32-x86" jarfile="${build.packagesDirectory}/win32-win32-x86/app/${windows.jarFileName}" maxParentLevels="0">
-			<classpath>
-				<fileset dir="${build.packagesDirectory}/win32-win32-x86/app/${dependencies.directory}">
-					<include name="*.jar" />
-				</fileset>
-			</classpath>
-		</manifestclasspath>
-		<manifestclasspath property="classpath.win32-win32-x86_64" jarfile="${build.packagesDirectory}/win32-win32-x86_64/app/${windows.jarFileName}" maxParentLevels="0">
-			<classpath>
-				<fileset dir="${build.packagesDirectory}/win32-win32-x86_64/app/${dependencies.directory}">
-					<include name="*.jar" />
-				</fileset>
-			</classpath>
-		</manifestclasspath>
-		<manifestclasspath property="classpath.gtk-linux-x86" jarfile="${build.packagesDirectory}/gtk-linux-x86/app/${linux.jarFileName}" maxParentLevels="0">
-			<classpath>
-				<fileset dir="${build.packagesDirectory}/gtk-linux-x86/app/${dependencies.directory}">
-					<include name="*.jar" />
-				</fileset>
-			</classpath>
-		</manifestclasspath>
-		<manifestclasspath property="classpath.gtk-linux-x86_64" jarfile="${build.packagesDirectory}/gtk-linux-x86_64/app/${linux.jarFileName}" maxParentLevels="0">
-			<classpath>
-				<fileset dir="${build.packagesDirectory}/gtk-linux-x86_64/app/${dependencies.directory}">
-					<include name="*.jar" />
-				</fileset>
-			</classpath>
-		</manifestclasspath>
-		<manifestclasspath property="classpath.gtk-linux-armhf" jarfile="${build.packagesDirectory}/gtk-linux-armhf/app/${linux.jarFileName}" maxParentLevels="0">
-			<classpath>
-				<fileset dir="${build.packagesDirectory}/gtk-linux-armhf/app/${dependencies.directory}">
-					<include name="*.jar" />
-				</fileset>
-			</classpath>
-		</manifestclasspath>
-		<manifestclasspath property="classpath.gtk-linux-aarch64" jarfile="${build.packagesDirectory}/gtk-linux-aarch64/app/${linux.jarFileName}" maxParentLevels="0">
-			<classpath>
-				<fileset dir="${build.packagesDirectory}/gtk-linux-aarch64/app/${dependencies.directory}">
-					<include name="*.jar" />
-				</fileset>
-			</classpath>
-		</manifestclasspath>
-		<manifestclasspath property="classpath.cocoa-macosx-x86_64" jarfile="${build.packagesDirectory}/cocoa-macosx-x86_64/app/${macos.jarFileName}" maxParentLevels="0">
-			<classpath>
-				<fileset dir="${build.packagesDirectory}/cocoa-macosx-x86_64/app/${dependencies.directory}">
-					<include name="*.jar" />
-				</fileset>
-			</classpath>
-		</manifestclasspath>
+		<ac:for list="${build.platforms.all}" param="platform">
+			<ac:sequential>
+				<manifestclasspath property="classpath.@{platform}" jarfile="${build.packagesDirectory}/@{platform}/app/${windows.jarFileName}" maxParentLevels="0">
+					<classpath>
+						<fileset dir="${build.packagesDirectory}/@{platform}/app/${dependencies.directory}">
+							<include name="*.jar" />
+						</fileset>
+					</classpath>
+				</manifestclasspath>
+			</ac:sequential>
+		</ac:for>
 	</target>
 
 	<target name="config">
-		<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/win32-win32-x86/config/${windows.cfgFileName}" failonerror="false" />
-		<copy todir="${build.packagesDirectory}/win32-win32-x86/config" includeemptydirs="false" failonerror="false">
-			<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
-		</copy>
-		<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/win32-win32-x86_64/config/${windows.cfgFileName}" failonerror="false" />
-		<copy todir="${build.packagesDirectory}/win32-win32-x86_64/config" includeemptydirs="false" failonerror="false">
-			<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
-		</copy>
-		<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/gtk-linux-x86/app/.${project.artifactId}/${linux.cfgFileName}" failonerror="false" />
-		<copy todir="${build.packagesDirectory}/gtk-linux-x86/app/.${project.artifactId}" includeemptydirs="false" failonerror="false">
-			<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
-		</copy>
-		<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/gtk-linux-x86_64/app/.${project.artifactId}/${linux.cfgFileName}" failonerror="false" />
-		<copy todir="${build.packagesDirectory}/gtk-linux-x86_64/app/.${project.artifactId}" includeemptydirs="false" failonerror="false">
-			<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
-		</copy>
-		<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/gtk-linux-armhf/app/.${project.artifactId}/${linux.cfgFileName}" failonerror="false" />
-		<copy todir="${build.packagesDirectory}/gtk-linux-armhf/app/.${project.artifactId}" includeemptydirs="false" failonerror="false">
-			<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
-		</copy>
-		<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/gtk-linux-aarch64/app/.${project.artifactId}/${linux.cfgFileName}" failonerror="false" />
-		<copy todir="${build.packagesDirectory}/gtk-linux-aarch64/app/.${project.artifactId}" includeemptydirs="false" failonerror="false">
-			<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
-		</copy>
-		<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/cocoa-macosx-x86_64/config/${macos.cfgFileName}" failonerror="false" />
-		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/config" includeemptydirs="false" failonerror="false">
-			<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
-		</copy>
+		<ac:for list="${build.platforms.windows}" param="platform">
+			<ac:sequential>
+				<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/@{platform}/config/${windows.cfgFileName}" failonerror="false" />
+				<copy todir="${build.packagesDirectory}/@{platform}/config" includeemptydirs="false" failonerror="false">
+					<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
+				</copy>
+			</ac:sequential>
+		</ac:for>
+		<ac:for list="${build.platforms.linux}" param="platform">
+			<ac:sequential>
+				<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/@{platform}/app/.${project.artifactId}/${linux.cfgFileName}" failonerror="false" />
+				<copy todir="${build.packagesDirectory}/@{platform}/app/.${project.artifactId}" includeemptydirs="false" failonerror="false">
+					<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
+				</copy>
+			</ac:sequential>
+		</ac:for>
+		<ac:for list="${build.platforms.macos}" param="platform">
+			<ac:sequential>
+				<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/@{platform}/config/${macos.cfgFileName}" failonerror="false" />
+				<copy todir="${build.packagesDirectory}/@{platform}/config" includeemptydirs="false" failonerror="false">
+					<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
+				</copy>
+			</ac:sequential>
+		</ac:for>
 	</target>
 
 	<target name="scripts">
-		<fileset id="bat" dir="${build.scriptSourceDirectory}">
-			<include name="*.bat" />
-		</fileset>
-		<fileset id="sh" dir="${build.scriptSourceDirectory}">
-			<include name="*.sh" />
-		</fileset>
-		<fileset id="command" dir="${build.scriptSourceDirectory}">
-			<include name="*.command" />
-		</fileset>
-
-		<copy todir="${build.packagesDirectory}/win32-win32-x86/app" failonerror="false" filtering="true">
-			<fileset refid="bat" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/win32-win32-x86_64/app" failonerror="false" filtering="true">
-			<fileset refid="bat" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-x86/app" failonerror="false" filtering="true">
-			<fileset refid="sh" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-x86_64/app" failonerror="false" filtering="true">
-			<fileset refid="sh" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-armhf/app" failonerror="false" filtering="true">
-			<fileset refid="sh" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-aarch64/app" failonerror="false" filtering="true">
-			<fileset refid="sh" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/scripts" failonerror="false" filtering="true">
-			<fileset refid="command" />
-		</copy>
+		<ac:for list="${build.platforms.windows}" param="platform">
+			<ac:sequential>
+				<copy todir="${build.packagesDirectory}/@{platform}/app" failonerror="false" filtering="true">
+					<fileset dir="${build.scriptSourceDirectory}">
+						<include name="*.bat" />
+					</fileset>
+				</copy>
+			</ac:sequential>
+		</ac:for>
+		<ac:for list="${build.platforms.linux}" param="platform">
+			<ac:sequential>
+				<copy todir="${build.packagesDirectory}/@{platform}/app" failonerror="false" filtering="true">
+					<fileset dir="${build.scriptSourceDirectory}">
+						<include name="*.sh" />
+					</fileset>
+				</copy>
+			</ac:sequential>
+		</ac:for>
+		<ac:for list="${build.platforms.macos}" param="platform">
+			<ac:sequential>
+				<copy todir="${build.packagesDirectory}/@{platform}/scripts" failonerror="false" filtering="true">
+					<fileset dir="${build.scriptSourceDirectory}">
+						<include name="*.command" />
+					</fileset>
+				</copy>
+			</ac:sequential>
+		</ac:for>
 	</target>
 
 	<fileset id="docs" dir="">
@@ -263,216 +185,153 @@
 	</fileset>
 
 	<target name="docs">
-		<copy todir="${build.packagesDirectory}/win32-win32-x86/app">
-			<fileset refid="docs" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/win32-win32-x86_64/app">
-			<fileset refid="docs" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-x86/app">
-			<fileset refid="docs" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-x86_64/app">
-			<fileset refid="docs" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-armhf/app">
-			<fileset refid="docs" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-aarch64/app">
-			<fileset refid="docs" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/docs">
-			<fileset refid="docs" />
-		</copy>
+		<ac:for list="${build.platforms.windows},${build.platforms.linux}" param="platform">
+			<ac:sequential>
+				<copy todir="${build.packagesDirectory}/@{platform}/app">
+					<fileset refid="docs" />
+				</copy>
+			</ac:sequential>
+		</ac:for>
+		<ac:for list="${build.platforms.macos}" param="platform">
+			<ac:sequential>
+				<copy todir="${build.packagesDirectory}/@{platform}/docs">
+					<fileset refid="docs" />
+				</copy>
+			</ac:sequential>
+		</ac:for>
 	</target>
 
 	<target name="licenses">
 		<fileset id="licenses" dir="${3rdparty.license.directory}" />
 
-		<copy todir="${build.packagesDirectory}/win32-win32-x86/app/${3rdparty.license.directory}">
-			<fileset refid="licenses" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/win32-win32-x86_64/app/${3rdparty.license.directory}">
-			<fileset refid="licenses" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-x86/app/${3rdparty.license.directory}">
-			<fileset refid="licenses" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-x86_64/app/${3rdparty.license.directory}">
-			<fileset refid="licenses" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-armhf/app/${3rdparty.license.directory}">
-			<fileset refid="licenses" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/gtk-linux-aarch64/app/${3rdparty.license.directory}">
-			<fileset refid="licenses" />
-		</copy>
-		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/docs/${3rdparty.license.directory}">
-			<fileset refid="licenses" />
-		</copy>
+		<ac:for list="${build.platforms.windows},${build.platforms.linux}" param="platform">
+			<ac:sequential>
+				<copy todir="${build.packagesDirectory}/@{platform}/app/${3rdparty.license.directory}">
+					<fileset refid="licenses" />
+				</copy>
+			</ac:sequential>
+		</ac:for>
+		<ac:for list="${build.platforms.macos}" param="platform">
+			<ac:sequential>
+				<copy todir="${build.packagesDirectory}/@{platform}/docs/${3rdparty.license.directory}">
+					<fileset refid="licenses" />
+				</copy>
+			</ac:sequential>
+		</ac:for>
 	</target>
 
 	<target name="icons">
-		<copy file="${icons.directory}/main.ico" tofile="${build.packagesDirectory}/gtk-linux-x86/app/${linux.iconFileName}" failonerror="false" />
-		<copy file="${icons.directory}/main.ico" tofile="${build.packagesDirectory}/gtk-linux-x86_64/app/${linux.iconFileName}" failonerror="false" />
-		<copy file="${icons.directory}/main.ico" tofile="${build.packagesDirectory}/gtk-linux-armhf/app/${linux.iconFileName}" failonerror="false" />
-		<copy file="${icons.directory}/main.ico" tofile="${build.packagesDirectory}/gtk-linux-aarch64/app/${linux.iconFileName}" failonerror="false" />
-		<copy file="${icons.directory}/main.icns" tofile="${build.packagesDirectory}/cocoa-macosx-x86_64/app/${macos.iconFileName}" failonerror="false" />
+		<ac:for list="${build.platforms.linux}" param="platform">
+			<ac:sequential>
+				<copy file="${icons.directory}/main.ico" tofile="${build.packagesDirectory}/@{platform}/app/${linux.iconFileName}" failonerror="false" />
+			</ac:sequential>
+		</ac:for>
+		<ac:for list="${build.platforms.macos}" param="platform">
+			<ac:sequential>
+				<copy file="${icons.directory}/main.icns" tofile="${build.packagesDirectory}/@{platform}/app/${macos.iconFileName}" failonerror="false" />
+			</ac:sequential>
+		</ac:for>
 	</target>
 
 	<target name="jar" depends="resources, compile, lib">
-		<jar destfile="${build.packagesDirectory}/win32-win32-x86/app/${windows.jarFileName}" basedir="${build.outputDirectory}" level="9">
-			<manifest>
-				<attribute name="Main-Class" value="${mainClass}" />
-				<attribute name="Class-Path" value="${classpath.win32-win32-x86}" />
-				<attribute name="Implementation-Title" value="${project.name}" />
-				<attribute name="Implementation-Version" value="${version.number}" />
-				<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
-				<attribute name="X-Compile-Target-JDK" value="${build.compiler.target}" />
-			</manifest>
-			<metainf refid="docs" />
-		</jar>
-		<jar destfile="${build.packagesDirectory}/win32-win32-x86_64/app/${windows.jarFileName}" basedir="${build.outputDirectory}" level="9">
-			<manifest>
-				<attribute name="Main-Class" value="${mainClass}" />
-				<attribute name="Class-Path" value="${classpath.win32-win32-x86_64}" />
-				<attribute name="Implementation-Title" value="${project.name}" />
-				<attribute name="Implementation-Version" value="${version.number}" />
-				<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
-				<attribute name="X-Compile-Target-JDK" value="${build.compiler.target}" />
-			</manifest>
-			<metainf refid="docs" />
-		</jar>
-		<jar destfile="${build.packagesDirectory}/gtk-linux-x86/app/${linux.jarFileName}" basedir="${build.outputDirectory}" level="9">
-			<manifest>
-				<attribute name="Main-Class" value="${mainClass}" />
-				<attribute name="Class-Path" value="${classpath.gtk-linux-x86}" />
-				<attribute name="Implementation-Title" value="${project.name}" />
-				<attribute name="Implementation-Version" value="${version.number}" />
-				<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
-				<attribute name="X-Compile-Target-JDK" value="${build.compiler.target}" />
-			</manifest>
-			<metainf refid="docs" />
-		</jar>
-		<jar destfile="${build.packagesDirectory}/gtk-linux-x86_64/app/${linux.jarFileName}" basedir="${build.outputDirectory}" level="9">
-			<manifest>
-				<attribute name="Main-Class" value="${mainClass}" />
-				<attribute name="Class-Path" value="${classpath.gtk-linux-x86_64}" />
-				<attribute name="Implementation-Title" value="${project.name}" />
-				<attribute name="Implementation-Version" value="${version.number}" />
-				<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
-				<attribute name="X-Compile-Target-JDK" value="${build.compiler.target}" />
-			</manifest>
-			<metainf refid="docs" />
-		</jar>
-		<jar destfile="${build.packagesDirectory}/gtk-linux-armhf/app/${linux.jarFileName}" basedir="${build.outputDirectory}" level="9">
-			<manifest>
-				<attribute name="Main-Class" value="${mainClass}" />
-				<attribute name="Class-Path" value="${classpath.gtk-linux-armhf}" />
-				<attribute name="Implementation-Title" value="${project.name}" />
-				<attribute name="Implementation-Version" value="${version.number}" />
-				<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
-				<attribute name="X-Compile-Target-JDK" value="${build.compiler.target}" />
-			</manifest>
-			<metainf refid="docs" />
-		</jar>
-		<jar destfile="${build.packagesDirectory}/gtk-linux-aarch64/app/${linux.jarFileName}" basedir="${build.outputDirectory}" level="9">
-			<manifest>
-				<attribute name="Main-Class" value="${mainClass}" />
-				<attribute name="Class-Path" value="${classpath.gtk-linux-aarch64}" />
-				<attribute name="Implementation-Title" value="${project.name}" />
-				<attribute name="Implementation-Version" value="${version.number}" />
-				<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
-				<attribute name="X-Compile-Target-JDK" value="${build.compiler.target}" />
-			</manifest>
-			<metainf refid="docs" />
-		</jar>
-		<jar destfile="${build.packagesDirectory}/cocoa-macosx-x86_64/app/${macos.jarFileName}" basedir="${build.outputDirectory}" level="9">
-			<manifest>
-				<attribute name="Main-Class" value="${mainClass}" />
-				<attribute name="Class-Path" value="${classpath.cocoa-macosx-x86_64}" />
-				<attribute name="Implementation-Title" value="${project.name}" />
-				<attribute name="Implementation-Version" value="${version.number}" />
-				<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
-				<attribute name="X-Compile-Target-JDK" value="${build.compiler.target}" />
-			</manifest>
-			<metainf refid="docs" />
-		</jar>
+		<ac:for list="${build.platforms.windows}" param="platform">
+			<ac:sequential>
+				<jar destfile="${build.packagesDirectory}/@{platform}/app/${windows.jarFileName}" basedir="${build.outputDirectory}" level="9">
+					<manifest>
+						<attribute name="Main-Class" value="${mainClass}" />
+						<attribute name="Class-Path" value="${classpath.@{platform}}" />
+						<attribute name="Implementation-Title" value="${project.name}" />
+						<attribute name="Implementation-Version" value="${version.number}" />
+						<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
+						<attribute name="X-Compile-Target-JDK" value="${build.compiler.target}" />
+					</manifest>
+					<metainf refid="docs" />
+				</jar>
+			</ac:sequential>
+		</ac:for>
+		<ac:for list="${build.platforms.linux}" param="platform">
+			<ac:sequential>
+				<jar destfile="${build.packagesDirectory}/@{platform}/app/${linux.jarFileName}" basedir="${build.outputDirectory}" level="9">
+					<manifest>
+						<attribute name="Main-Class" value="${mainClass}" />
+						<attribute name="Class-Path" value="${classpath.@{platform}}" />
+						<attribute name="Implementation-Title" value="${project.name}" />
+						<attribute name="Implementation-Version" value="${version.number}" />
+						<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
+						<attribute name="X-Compile-Target-JDK" value="${build.compiler.target}" />
+					</manifest>
+					<metainf refid="docs" />
+				</jar>
+			</ac:sequential>
+		</ac:for>
+		<ac:for list="${build.platforms.macos}" param="platform">
+			<ac:sequential>
+				<jar destfile="${build.packagesDirectory}/@{platform}/app/${macos.jarFileName}" basedir="${build.outputDirectory}" level="9">
+					<manifest>
+						<attribute name="Main-Class" value="${mainClass}" />
+						<attribute name="Class-Path" value="${classpath.@{platform}}" />
+						<attribute name="Implementation-Title" value="${project.name}" />
+						<attribute name="Implementation-Version" value="${version.number}" />
+						<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
+						<attribute name="X-Compile-Target-JDK" value="${build.compiler.target}" />
+					</manifest>
+					<metainf refid="docs" />
+				</jar>
+			</ac:sequential>
+		</ac:for>
 	</target>
 
 	<target name="dist-macos">
 		<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpath="${jarBundler.directory}/jarbundler-core-3.3.0.jar" />
 
-		<mkdir dir="${build.packagesDirectory}/cocoa-macosx-x86_64/bundle" />
-		<jarbundler vmoptions="${macos.vmoptions}" dir="${build.packagesDirectory}/cocoa-macosx-x86_64/bundle" name="${project.name}" mainclass="${mainClass}" startonmainthread="true" version="${version.number}" icon="${build.packagesDirectory}/cocoa-macosx-x86_64/app/${macos.iconFileName}" usejavaxkey="true" jvmversion="${build.compiler.target}+" stubfile="${jarBundler.directory}/universalJavaApplicationStub" highresolutioncapable="true">
-			<jarfileset dir="${build.packagesDirectory}/cocoa-macosx-x86_64/app" includes="**/*.jar" />
-		</jarbundler>
+		<ac:for list="${build.platforms.macos}" param="platform">
+			<ac:sequential>
+				<mkdir dir="${build.packagesDirectory}/@{platform}/bundle" />
+				<jarbundler vmoptions="${macos.vmoptions}" dir="${build.packagesDirectory}/@{platform}/bundle" name="${project.name}" mainclass="${mainClass}" startonmainthread="true" version="${version.number}" icon="${build.packagesDirectory}/@{platform}/app/${macos.iconFileName}" usejavaxkey="true" jvmversion="${build.compiler.target}+" stubfile="${jarBundler.directory}/universalJavaApplicationStub" highresolutioncapable="true">
+					<jarfileset dir="${build.packagesDirectory}/@{platform}/app" includes="**/*.jar" />
+				</jarbundler>
 
-		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/bundle/${project.name}.app/Contents/Library/Preferences" failonerror="false">
-			<fileset dir="${build.packagesDirectory}/cocoa-macosx-x86_64/config" />
-		</copy>
+				<copy todir="${build.packagesDirectory}/@{platform}/bundle/${project.name}.app/Contents/Library/Preferences" failonerror="false">
+					<fileset dir="${build.packagesDirectory}/@{platform}/config" />
+				</copy>
 
-		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/bundle/${project.name}.app/Contents/SharedSupport">
-			<fileset dir="${build.packagesDirectory}/cocoa-macosx-x86_64/docs" />
-		</copy>
+				<copy todir="${build.packagesDirectory}/@{platform}/bundle/${project.name}.app/Contents/SharedSupport">
+					<fileset dir="${build.packagesDirectory}/@{platform}/docs" />
+				</copy>
 
-		<copy todir="${build.packagesDirectory}/cocoa-macosx-x86_64/bundle/${project.name}.app/Contents/Resources/Java" failonerror="false" filtering="true">
-			<fileset dir="${build.packagesDirectory}/cocoa-macosx-x86_64/scripts" />
-		</copy>
+				<copy todir="${build.packagesDirectory}/@{platform}/bundle/${project.name}.app/Contents/Resources/Java" failonerror="false" filtering="true">
+					<fileset dir="${build.packagesDirectory}/@{platform}/scripts" />
+				</copy>
 
-		<tar destfile="${build.distDirectory}/${project.artifactId}-${version.number}-cocoa-macosx-x86_64-app.tar.gz" compression="gzip">
-			<tarfileset dir="${build.packagesDirectory}/cocoa-macosx-x86_64/bundle" filemode="755">
-				<include name="${project.name}.app/Contents/MacOS/*" />
-				<include name="${project.name}.app/Contents/Resources/Java/*.command" />
-			</tarfileset>
-			<tarfileset dir="${build.packagesDirectory}/cocoa-macosx-x86_64/bundle">
-				<exclude name="${project.name}.app/Contents/MacOS/*" />
-				<exclude name="${project.name}.app/Contents/Resources/Java/*.command" />
-			</tarfileset>
-		</tar>
+				<tar destfile="${build.distDirectory}/${project.artifactId}-${version.number}-@{platform}-app.tar.gz" compression="gzip">
+					<tarfileset dir="${build.packagesDirectory}/@{platform}/bundle" filemode="755">
+						<include name="${project.name}.app/Contents/MacOS/*" />
+						<include name="${project.name}.app/Contents/Resources/Java/*.command" />
+					</tarfileset>
+					<tarfileset dir="${build.packagesDirectory}/@{platform}/bundle">
+						<exclude name="${project.name}.app/Contents/MacOS/*" />
+						<exclude name="${project.name}.app/Contents/Resources/Java/*.command" />
+					</tarfileset>
+				</tar>
+			</ac:sequential>
+		</ac:for>
 	</target>
 
 	<target name="dist-linux">
-		<tar destfile="${build.distDirectory}/${project.artifactId}-${version.number}-gtk-linux-x86-bin.tar.gz" compression="gzip">
-			<tarfileset dir="${build.packagesDirectory}/gtk-linux-x86/app" prefix="${project.artifactId}" filemode="755">
-				<include name="*.jar" />
-				<include name="*.sh" />
-			</tarfileset>
-			<tarfileset dir="${build.packagesDirectory}/gtk-linux-x86/app" prefix="${project.artifactId}">
-				<exclude name="*.jar" />
-				<exclude name="*.sh" />
-			</tarfileset>
-		</tar>
-		<tar destfile="${build.distDirectory}/${project.artifactId}-${version.number}-gtk-linux-x86_64-bin.tar.gz" compression="gzip">
-			<tarfileset dir="${build.packagesDirectory}/gtk-linux-x86_64/app" prefix="${project.artifactId}" filemode="755">
-				<include name="*.jar" />
-				<include name="*.sh" />
-			</tarfileset>
-			<tarfileset dir="${build.packagesDirectory}/gtk-linux-x86_64/app" prefix="${project.artifactId}">
-				<exclude name="*.jar" />
-				<exclude name="*.sh" />
-			</tarfileset>
-		</tar>
-		<tar destfile="${build.distDirectory}/${project.artifactId}-${version.number}-gtk-linux-armhf-bin.tar.gz" compression="gzip">
-			<tarfileset dir="${build.packagesDirectory}/gtk-linux-armhf/app" prefix="${project.artifactId}" filemode="755">
-				<include name="*.jar" />
-				<include name="*.sh" />
-			</tarfileset>
-			<tarfileset dir="${build.packagesDirectory}/gtk-linux-armhf/app" prefix="${project.artifactId}">
-				<exclude name="*.jar" />
-				<exclude name="*.sh" />
-			</tarfileset>
-		</tar>
-		<tar destfile="${build.distDirectory}/${project.artifactId}-${version.number}-gtk-linux-aarch64-bin.tar.gz" compression="gzip">
-			<tarfileset dir="${build.packagesDirectory}/gtk-linux-aarch64/app" prefix="${project.artifactId}" filemode="755">
-				<include name="*.jar" />
-				<include name="*.sh" />
-			</tarfileset>
-			<tarfileset dir="${build.packagesDirectory}/gtk-linux-aarch64/app" prefix="${project.artifactId}">
-				<exclude name="*.jar" />
-				<exclude name="*.sh" />
-			</tarfileset>
-		</tar>
+		<ac:for list="${build.platforms.linux}" param="platform">
+			<ac:sequential>
+				<tar destfile="${build.distDirectory}/${project.artifactId}-${version.number}-@{platform}-bin.tar.gz" compression="gzip">
+					<tarfileset dir="${build.packagesDirectory}/@{platform}/app" prefix="${project.artifactId}" filemode="755">
+						<include name="*.jar" />
+						<include name="*.sh" />
+					</tarfileset>
+					<tarfileset dir="${build.packagesDirectory}/@{platform}/app" prefix="${project.artifactId}">
+						<exclude name="*.jar" />
+						<exclude name="*.sh" />
+					</tarfileset>
+				</tar>
+			</ac:sequential>
+		</ac:for>
 	</target>
 
 	<target name="dist-windows">
@@ -625,7 +484,7 @@
 			end;
 		</echo>
 
-		<pathconvert pathsep="&#13;&#10;" property="dependencies.log.x86">
+		<pathconvert pathsep="&#13;&#10;" property="dependencies.log.win32-win32-x86">
 			<fileset dir="${build.packagesDirectory}/win32-win32-x86/app/${dependencies.directory}">
 				<include name="*.jar" />
 			</fileset>
@@ -634,7 +493,7 @@
 			</mapper>
 		</pathconvert>
 
-		<echo file="${build.packagesDirectory}/win32-win32-x86/${dependencies.logFileName}">${dependencies.log.x86}</echo>
+		<echo file="${build.packagesDirectory}/win32-win32-x86/${dependencies.logFileName}">${dependencies.log.win32-win32-x86}</echo>
 
 		<exec osfamily="windows" executable="${innoSetup.directory}/ISCC.exe" failonerror="true">
 			<arg value="${build.packagesDirectory}/win32-win32-x86/setup.iss" />
@@ -727,7 +586,7 @@
 			end;
 		</echo>
 
-		<pathconvert pathsep="&#13;&#10;" property="dependencies.log.x86_64">
+		<pathconvert pathsep="&#13;&#10;" property="dependencies.log.win32-win32-x86_64">
 			<fileset dir="${build.packagesDirectory}/win32-win32-x86_64/app/${dependencies.directory}">
 				<include name="*.jar" />
 			</fileset>
@@ -736,7 +595,7 @@
 			</mapper>
 		</pathconvert>
 
-		<echo file="${build.packagesDirectory}/win32-win32-x86_64/${dependencies.logFileName}">${dependencies.log.x86_64}</echo>
+		<echo file="${build.packagesDirectory}/win32-win32-x86_64/${dependencies.logFileName}">${dependencies.log.win32-win32-x86_64}</echo>
 
 		<exec osfamily="windows" executable="${innoSetup.directory}/ISCC.exe" failonerror="true">
 			<arg value="${build.packagesDirectory}/win32-win32-x86_64/setup.iss" />
