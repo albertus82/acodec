@@ -171,7 +171,7 @@ public class MenuBar implements Multilanguage {
 		fileProcessMenuItem.setEnabled(true);
 	}
 
-	private MenuItem newLocalizedMenuItem(final Menu parent, final int style, @NonNull final String messageKey) {
+	private MenuItem newLocalizedMenuItem(@NonNull final Menu parent, final int style, @NonNull final String messageKey) {
 		final MenuItem menuItem = new MenuItem(parent, style);
 		menuItem.setData(messageKey);
 		menuItem.setText(messages.get(menuItem));

@@ -74,11 +74,11 @@ public class AboutDialog extends Dialog {
 
 	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
-	public AboutDialog(final Shell parent) {
+	public AboutDialog(@NonNull final Shell parent) {
 		this(parent, SWT.SHEET | SWT.RESIZE);
 	}
 
-	public AboutDialog(final Shell parent, final int style) {
+	public AboutDialog(@NonNull final Shell parent, final int style) {
 		super(parent, style);
 		this.setText(messages.get("gui.label.about.title"));
 	}
