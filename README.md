@@ -1,5 +1,5 @@
 ACodec
-=====
+======
 
 [![Latest release](https://img.shields.io/github/release/albertus82/acodec.svg)](https://github.com/albertus82/acodec/releases/latest)
 [![Build status](https://github.com/albertus82/acodec/workflows/build/badge.svg)](https://github.com/albertus82/acodec/actions)
