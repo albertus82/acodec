@@ -125,7 +125,7 @@ public class AboutDialog extends Dialog {
 		linkLicense.setText(messages.get("gui.label.about.license", buildAnchor(messages.get("gui.message.gpl.url"), messages.get("gui.label.gpl"))));
 		linkLicense.addSelectionListener(linkSelectionListener);
 
-		final Text appLicense = new Text(shell, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		final Text appLicense = new Text(shell, SWT.BORDER | SWT.V_SCROLL);
 		appLicense.setText(loadTextResource("/META-INF/LICENSE.txt"));
 		appLicense.setEditable(false);
 		appLicense.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
