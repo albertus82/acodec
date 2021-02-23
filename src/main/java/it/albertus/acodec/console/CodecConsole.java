@@ -56,6 +56,7 @@ public class CodecConsole implements Callable<Integer> {
 
 	private static final char OPTION_CHARSET = 'c';
 	private static final char OPTION_FILE = 'f';
+	private static final char OPTION_INTERACTIVE = 'i';
 	private static final char OPTION_HELP = 'h';
 
 	private static final Messages messages = ConsoleMessages.INSTANCE;
@@ -67,7 +68,10 @@ public class CodecConsole implements Callable<Integer> {
 	private CodecAlgorithm algorithm;
 
 	@Parameters(index = "2", arity = "0..1")
-	private String inputText;
+	private String inputTextCommandLine;
+
+	@Option(names = { "-" + OPTION_INTERACTIVE, "--interactive" }, interactive = true, echo = false, description = "input")
+	private String inputTextInteractive;
 
 	@Option(names = { "-" + OPTION_CHARSET, "--charset" })
 	private Charset charset = Charset.defaultCharset();
@@ -105,6 +109,8 @@ public class CodecConsole implements Callable<Integer> {
 			printHelp();
 			return ExitCode.OK;
 		}
+
+		final String inputText = inputTextInteractive != null ? inputTextInteractive : inputTextCommandLine;
 
 		if (files == null && inputText == null || files != null && inputText != null) {
 			System.out.println(messages.get("console.error.incorrect.command.syntax"));
@@ -175,7 +181,7 @@ public class CodecConsole implements Callable<Integer> {
 
 	private static void printHelp() {
 		/* Usage */
-		final StringBuilder help = new StringBuilder(messages.get("console.help.usage", OPTION_CHARSET, OPTION_FILE));
+		final StringBuilder help = new StringBuilder(messages.get("console.help.usage", OPTION_CHARSET, OPTION_FILE, OPTION_INTERACTIVE));
 		help.append(SYSTEM_LINE_SEPARATOR).append(SYSTEM_LINE_SEPARATOR);
 
 		/* Modes */
