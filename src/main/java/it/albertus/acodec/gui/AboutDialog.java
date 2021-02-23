@@ -154,15 +154,15 @@ public class AboutDialog extends Dialog {
 	private static void constrainShellSize(final Shell shell) {
 		final Point preferredSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		final int clientWidth = shell.getMonitor().getClientArea().width;
+		final int desiredWidth;
 		if (preferredSize.x > clientWidth / MONITOR_SIZE_DIVISOR) {
-			final int wHint = (int) (clientWidth / MONITOR_SIZE_DIVISOR);
-			shell.setSize(wHint, shell.getSize().y);
-			shell.setMinimumSize(wHint, preferredSize.y);
+			desiredWidth = (int) (clientWidth / MONITOR_SIZE_DIVISOR);
 		}
 		else {
-			shell.setSize(preferredSize.x, shell.getSize().y);
-			shell.setMinimumSize(preferredSize.x, preferredSize.y);
+			desiredWidth = preferredSize.x;
 		}
+		shell.setSize(desiredWidth, shell.getSize().y);
+		shell.setMinimumSize(desiredWidth, preferredSize.y);
 	}
 
 	private static String buildAnchor(final String href, final String label) {
