@@ -120,11 +120,11 @@ public class AboutDialog extends Dialog {
 		linkLicense.setText(messages.get("gui.label.about.license", buildAnchor(messages.get("gui.message.gpl.url"), messages.get("gui.label.gpl"))));
 		linkLicense.addSelectionListener(linkSelectionListener);
 
-		final Text appLicense = new Text(shell, SWT.BORDER | SWT.V_SCROLL);
+		final Text appLicense = new Text(shell, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		appLicense.setText(loadTextResource("/META-INF/LICENSE.txt"));
 		appLicense.setEditable(false);
 		appLicense.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(appLicense, 80)).applyTo(appLicense);
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(appLicense, 40)).applyTo(appLicense);
 
 		final Label thirdPartySoftwareLabel = new Label(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(thirdPartySoftwareLabel);
@@ -135,7 +135,7 @@ public class AboutDialog extends Dialog {
 		scrolledComposite.setExpandVertical(true);
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setContent(new ThirdPartySoftwareTable(scrolledComposite).getTableViewer().getControl());
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(scrolledComposite, 80)).applyTo(scrolledComposite);
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(scrolledComposite, 40)).applyTo(scrolledComposite);
 
 		final Button okButton = new Button(shell, SWT.PUSH);
 		okButton.setText(messages.get("gui.label.button.ok"));
@@ -152,16 +152,17 @@ public class AboutDialog extends Dialog {
 	}
 
 	private static void constrainShellSize(final Shell shell) {
-		final int preferredWidth = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
+		final Point preferredSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		final int clientWidth = shell.getMonitor().getClientArea().width;
-		if (preferredWidth > clientWidth / MONITOR_SIZE_DIVISOR) {
-			final int wHint = (int) (clientWidth / MONITOR_SIZE_DIVISOR);
-			shell.setSize(wHint, shell.computeSize(wHint, SWT.DEFAULT, true).y);
+		final int desiredWidth;
+		if (preferredSize.x > clientWidth / MONITOR_SIZE_DIVISOR) {
+			desiredWidth = (int) (clientWidth / MONITOR_SIZE_DIVISOR);
 		}
 		else {
-			shell.pack();
+			desiredWidth = preferredSize.x;
 		}
-		shell.setMinimumSize(shell.getSize());
+		shell.setSize(desiredWidth, shell.getSize().y);
+		shell.setMinimumSize(desiredWidth, preferredSize.y);
 	}
 
 	private static String buildAnchor(final String href, final String label) {
