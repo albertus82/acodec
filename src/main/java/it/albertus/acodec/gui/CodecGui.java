@@ -81,16 +81,25 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	@Getter(AccessLevel.NONE)
 	private final Collection<Button> localizedButtons = new ArrayList<>();
 
+	@NonNull
+	@Setter(AccessLevel.PRIVATE)
 	private Text inputText;
 	private final Button hideInputTextCheck;
+
+	@NonNull
+	@Setter(AccessLevel.PRIVATE)
 	private Text outputText;
 	private final Button hideOutputTextCheck;
+
 	private final Combo algorithmCombo;
 	private final Combo charsetCombo;
 	private final Map<CodecMode, Button> modeRadios = new EnumMap<>(CodecMode.class);
+
 	private final Button processFileButton;
+
 	private final DropTarget shellDropTarget;
 
+	@Getter(AccessLevel.PRIVATE)
 	private final Color inactiveTextColor;
 
 	@NonNull
@@ -228,17 +237,17 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		}
 	}
 
-	private Text createInputText() {
-		final Composite composite = new Composite(shell, SWT.NONE);
-		composite.setLayout(new FillLayout());
-		final GridData compositeGridData = GridDataFactory.fillDefaults().grab(true, true).span(4, 1).create();
-		composite.setLayoutData(compositeGridData);
-		final Text text = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
-		configureInputText(text);
-		if (TEXT_HEIGHT_MULTIPLIER > 1) {
-			compositeGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+	public void setInputText(final String text, @NonNull final GuiStatus status) {
+		setStatus(GuiStatus.UNKNOWN); // Invalidate a possibly previous DIRTY state
+		inputText.setText(text != null ? text : "");
+		setStatus(status);
+		if (GuiStatus.DIRTY.equals(status)) {
+			inputText.setForeground(getInactiveTextColor());
 		}
-		return text;
+		else {
+			inputText.setForeground(getDefaultTextColor());
+		}
+		refreshInputTextStyle();
 	}
 
 	public void setOutputText(String text, @NonNull final GuiStatus status) {
@@ -261,7 +270,20 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		refreshOutputTextStyle();
 	}
 
-	public void refreshInputTextStyle() {
+	private Text createInputText() {
+		final Composite composite = new Composite(shell, SWT.NONE);
+		composite.setLayout(new FillLayout());
+		final GridData compositeGridData = GridDataFactory.fillDefaults().grab(true, true).span(4, 1).create();
+		composite.setLayoutData(compositeGridData);
+		final Text text = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+		configureInputText(text);
+		if (TEXT_HEIGHT_MULTIPLIER > 1) {
+			compositeGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+		}
+		return text;
+	}
+
+	private void refreshInputTextStyle() {
 		final boolean mask = !GuiStatus.DIRTY.equals(status) && hideInputTextCheck.getSelection();
 		if ((inputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
 			final Text oldText = inputText;
@@ -301,7 +323,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return text;
 	}
 
-	public void refreshOutputTextStyle() {
+	private void refreshOutputTextStyle() {
 		final boolean mask = GuiStatus.OK.equals(status) && hideOutputTextCheck.getSelection();
 		if ((outputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
 			final Text oldText = outputText;
@@ -373,7 +395,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return button;
 	}
 
-	public Color getDefaultTextColor() {
+	private static Color getDefaultTextColor() {
 		return JFaceResources.getColorRegistry().get(DEFAULT_TEXT_COLOR_SYMBOLIC_NAME);
 	}
 
@@ -382,18 +404,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		DIRTY,
 		ERROR,
 		UNKNOWN;
-	}
-
-	public void setInputText(final String text, @NonNull final GuiStatus status) {
-		inputText.setText(text != null ? text : "");
-		setStatus(status);
-		if (GuiStatus.DIRTY.equals(status)) {
-			inputText.setForeground(getInactiveTextColor());
-		}
-		else {
-			inputText.setForeground(getDefaultTextColor());
-		}
-		refreshInputTextStyle();
 	}
 
 }
