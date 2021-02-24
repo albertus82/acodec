@@ -233,6 +233,15 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		inputText.setText(text != null ? text : "");
 		setStatus(status);
 		refreshInputTextStyle();
+		if (GuiStatus.DIRTY.equals(status)) {
+			final Color inactiveTextColor = getInactiveTextColor();
+			if (!inactiveTextColor.equals(inputText.getForeground())) {
+				inputText.setForeground(inactiveTextColor);
+			}
+		}
+		else {
+			inputText.setForeground(null);
+		}
 	}
 
 	public void setOutputText(String text, @NonNull final GuiStatus status) {
@@ -243,6 +252,15 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		}
 		outputText.setText(text);
 		refreshOutputTextStyle();
+		if (EnumSet.of(GuiStatus.ERROR, GuiStatus.DIRTY).contains(status)) {
+			final Color inactiveTextColor = getInactiveTextColor();
+			if (!inactiveTextColor.equals(outputText.getForeground())) {
+				outputText.setForeground(inactiveTextColor);
+			}
+		}
+		else {
+			outputText.setForeground(inputText.getForeground()); // Override READ_ONLY style on some platforms.
+		}
 	}
 
 	private Text createInputText() {
@@ -299,15 +317,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			parent.requestLayout();
 			parent.layout(); // armhf
 		}
-		if (GuiStatus.DIRTY.equals(status)) {
-			final Color inactiveTextColor = getInactiveTextColor();
-			if (!inactiveTextColor.equals(inputText.getForeground())) {
-				inputText.setForeground(inactiveTextColor);
-			}
-		}
-		else {
-			inputText.setForeground(null);
-		}
 	}
 
 	private void refreshOutputTextStyle() {
@@ -326,15 +335,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			oldText.dispose();
 			parent.requestLayout();
 			parent.layout(); // armhf
-		}
-		if (EnumSet.of(GuiStatus.ERROR, GuiStatus.DIRTY).contains(status)) {
-			final Color inactiveTextColor = getInactiveTextColor();
-			if (!inactiveTextColor.equals(outputText.getForeground())) {
-				outputText.setForeground(inactiveTextColor);
-			}
-		}
-		else {
-			outputText.setForeground(inputText.getForeground()); // Override READ_ONLY style on some platforms.
 		}
 	}
 
