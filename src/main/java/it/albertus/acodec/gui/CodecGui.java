@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.RowLayoutFactory;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -62,8 +61,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
 
-	private static final String DEFAULT_TEXT_COLOR_SYMBOLIC_NAME = CodecGui.class.getName() + '.' + "defaultTextColor";
-
 	private static final String ERROR_PREFIX = "-- ";
 	private static final String ERROR_SUFFIX = " --";
 
@@ -99,15 +96,10 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	private final DropTarget shellDropTarget;
 
-	@Getter(AccessLevel.PRIVATE)
-	private final Color inactiveTextColor;
-
 	@NonNull
 	private GuiStatus status = GuiStatus.UNDEFINED;
 
 	private CodecGui(final Display display) {
-		inactiveTextColor = display.getSystemColor(SWT.COLOR_RED); // FIXME SWT.COLOR_TITLE_INACTIVE_FOREGROUND
-
 		shell = new Shell(display);
 		shell.setImages(Images.getMainIconArray());
 		shell.setData("gui.message.application.name");
@@ -121,7 +113,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		GridDataFactory.swtDefaults().applyTo(inputLabel);
 
 		inputText = createInputText();
-		JFaceResources.getColorRegistry().put(DEFAULT_TEXT_COLOR_SYMBOLIC_NAME, inputText.getForeground().getRGB());
 
 		new Label(shell, SWT.NONE).setLayoutData(GridDataFactory.swtDefaults().create()); // Spacer
 
@@ -242,15 +233,13 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		inputText.setText(text != null ? text : "");
 		setStatus(status);
 		if (GuiStatus.DIRTY.equals(status)) {
+			final Color inactiveTextColor = getInactiveTextColor();
 			if (!inactiveTextColor.equals(inputText.getForeground())) {
 				inputText.setForeground(inactiveTextColor);
 			}
 		}
 		else {
-			final Color defaultTextColor = getDefaultTextColor();
-			if (!defaultTextColor.equals(inputText.getForeground())) {
-				inputText.setForeground(defaultTextColor);
-			}
+			inputText.setForeground(null);
 		}
 		refreshInputTextStyle();
 	}
@@ -262,15 +251,13 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			text = new StringBuilder(text).insert(0, ERROR_PREFIX).append(ERROR_SUFFIX).toString();
 		}
 		if (EnumSet.of(GuiStatus.ERROR, GuiStatus.DIRTY).contains(status)) {
+			final Color inactiveTextColor = getInactiveTextColor();
 			if (!inactiveTextColor.equals(outputText.getForeground())) {
 				outputText.setForeground(inactiveTextColor);
 			}
 		}
 		else {
-			final Color defaultTextColor = getDefaultTextColor();
-			if (!defaultTextColor.equals(outputText.getForeground())) {
-				outputText.setForeground(defaultTextColor);
-			}
+			outputText.setForeground(null);
 		}
 		outputText.setText(text);
 		refreshOutputTextStyle();
@@ -401,8 +388,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return button;
 	}
 
-	private static Color getDefaultTextColor() {
-		return JFaceResources.getColorRegistry().get(DEFAULT_TEXT_COLOR_SYMBOLIC_NAME);
+	private Color getInactiveTextColor() {
+		return shell.getDisplay().getSystemColor(SWT.COLOR_RED); // FIXME SWT.COLOR_TITLE_INACTIVE_FOREGROUND
 	}
 
 	public enum GuiStatus {
