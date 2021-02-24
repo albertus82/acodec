@@ -241,7 +241,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return text;
 	}
 
-	public void print(String text, final GuiStatus status) {
+	public void print(String text, @NonNull final GuiStatus status) {
 		setStatus(status);
 		text = text != null ? text : "";
 		if (GuiStatus.ERROR.equals(status)) {
