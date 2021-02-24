@@ -95,14 +95,8 @@ public class ProcessFileAction {
 			box.open();
 			if (runnable.getResult() != null) { // result can be null in certain cases
 				gui.setStatus(GuiStatus.OK); // invalidate a possibly previous DIRTY state
-				gui.getInputText().setText(inputFile.getName());
-				gui.getInputText().setForeground(gui.getInactiveTextColor());
-				gui.setStatus(GuiStatus.DIRTY);
-				gui.refreshInputTextStyle();
-				gui.getOutputText().setText(runnable.getResult());
-				gui.getOutputText().setForeground(gui.getInactiveTextColor());
-				gui.setStatus(GuiStatus.DIRTY);
-				gui.refreshOutputTextStyle();
+				gui.setInputText(inputFile.getName(), GuiStatus.DIRTY);
+				gui.setOutputText(runnable.getResult(), GuiStatus.DIRTY);
 			}
 		}
 		catch (final InterruptedException e) { // NOSONAR

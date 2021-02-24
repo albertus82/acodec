@@ -241,7 +241,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return text;
 	}
 
-	public void print(String text, @NonNull final GuiStatus status) {
+	public void setOutputText(String text, @NonNull final GuiStatus status) {
 		setStatus(status);
 		text = text != null ? text : "";
 		if (GuiStatus.ERROR.equals(status)) {
@@ -382,6 +382,18 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		DIRTY,
 		ERROR,
 		UNKNOWN;
+	}
+
+	public void setInputText(final String text, @NonNull final GuiStatus status) {
+		inputText.setText(text != null ? text : "");
+		if (GuiStatus.DIRTY.equals(status)) {
+			inputText.setForeground(getInactiveTextColor());
+		}
+		else {
+			inputText.setForeground(getDefaultTextColor());
+		}
+		setStatus(status);
+		refreshInputTextStyle();
 	}
 
 }
