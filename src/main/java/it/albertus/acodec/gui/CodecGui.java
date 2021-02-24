@@ -402,7 +402,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	private Color getInactiveTextColor() {
-		return shell.getDisplay().getSystemColor(SWT.COLOR_RED); // FIXME SWT.COLOR_TITLE_INACTIVE_FOREGROUND
+		return shell.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
 	}
 
 }
