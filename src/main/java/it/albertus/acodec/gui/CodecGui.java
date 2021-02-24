@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -229,9 +230,19 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	public void setInputText(final String text, @NonNull final GuiStatus status) {
-		setStatus(GuiStatus.UNDEFINED); // Invalidate a possibly previous DIRTY state
-		inputText.setText(text != null ? text : "");
 		setStatus(status);
+		final Listener[] modifyListeners = inputText.getListeners(SWT.Modify);
+		if (GuiStatus.DIRTY.equals(status)) {
+			for (final Listener modifyListener : modifyListeners) {
+				inputText.removeListener(SWT.Modify, modifyListener);
+			}
+		}
+		inputText.setText(text != null ? text : "");
+		if (GuiStatus.DIRTY.equals(status)) {
+			for (final Listener modifyListener : modifyListeners) {
+				inputText.addListener(SWT.Modify, modifyListener);
+			}
+		}
 		refreshInputTextStyle();
 		if (GuiStatus.DIRTY.equals(status)) {
 			final Color inactiveTextColor = getInactiveTextColor();
