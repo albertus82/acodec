@@ -79,12 +79,12 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private final Collection<Button> localizedButtons = new ArrayList<>();
 
 	@NonNull
-	@Setter(AccessLevel.PRIVATE)
+	@Setter(AccessLevel.NONE)
 	private Text inputText;
 	private final Button hideInputTextCheck;
 
 	@NonNull
-	@Setter(AccessLevel.PRIVATE)
+	@Setter(AccessLevel.NONE)
 	private Text outputText;
 	private final Button hideOutputTextCheck;
 
