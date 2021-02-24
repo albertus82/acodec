@@ -386,13 +386,13 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	public void setInputText(final String text, @NonNull final GuiStatus status) {
 		inputText.setText(text != null ? text : "");
+		setStatus(status);
 		if (GuiStatus.DIRTY.equals(status)) {
 			inputText.setForeground(getInactiveTextColor());
 		}
 		else {
 			inputText.setForeground(getDefaultTextColor());
 		}
-		setStatus(status);
 		refreshInputTextStyle();
 	}
 
