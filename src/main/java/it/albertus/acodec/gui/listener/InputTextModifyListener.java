@@ -1,5 +1,10 @@
 package it.albertus.acodec.gui.listener;
 
+import static it.albertus.acodec.gui.GuiStatus.DIRTY;
+import static it.albertus.acodec.gui.GuiStatus.ERROR;
+import static it.albertus.acodec.gui.GuiStatus.OK;
+import static it.albertus.acodec.gui.GuiStatus.UNDEFINED;
+
 import java.util.logging.Level;
 
 import org.apache.commons.codec.DecoderException;
@@ -11,7 +16,6 @@ import it.albertus.acodec.common.engine.CodecConfig;
 import it.albertus.acodec.common.engine.StringCodec;
 import it.albertus.acodec.common.resources.Messages;
 import it.albertus.acodec.gui.CodecGui;
-import it.albertus.acodec.gui.CodecGui.GuiStatus;
 import it.albertus.acodec.gui.resources.GuiMessages;
 import lombok.extern.java.Log;
 
@@ -29,18 +33,18 @@ public class InputTextModifyListener implements ModifyListener {
 	@Override
 	public void modifyText(final ModifyEvent event) {
 		String result;
-		if (GuiStatus.DIRTY.equals(gui.getStatus())) {
-			gui.setInputText("", GuiStatus.UNDEFINED);
+		if (DIRTY.equals(gui.getStatus())) {
+			gui.setInputText("", UNDEFINED);
 			gui.getInputText().setFocus();
 		}
 
 		// Preliminary checks
 		if (gui.getAlgorithm() == null) {
-			gui.setOutputText(messages.get("gui.message.missing.algorithm.banner"), GuiStatus.ERROR);
+			gui.setOutputText(messages.get("gui.message.missing.algorithm.banner"), ERROR);
 			return;
 		}
 		if (gui.getInputText().getText().isEmpty()) {
-			gui.setOutputText(messages.get("gui.message.missing.input.banner"), GuiStatus.ERROR);
+			gui.setOutputText(messages.get("gui.message.missing.input.banner"), ERROR);
 			return;
 		}
 
@@ -50,21 +54,21 @@ public class InputTextModifyListener implements ModifyListener {
 			result = new StringCodec(codecConfig).run(gui.getInputText().getText());
 		}
 		catch (final EncoderException e) {
-			gui.setOutputText(messages.get("gui.error.cannot.encode.banner", codecConfig.getAlgorithm().getName()), GuiStatus.ERROR);
+			gui.setOutputText(messages.get("gui.error.cannot.encode.banner", codecConfig.getAlgorithm().getName()), ERROR);
 			log.log(Level.FINE, messages.get("gui.error.cannot.encode", codecConfig.getAlgorithm().getName()), e);
 			return;
 		}
 		catch (final DecoderException e) {
-			gui.setOutputText(messages.get("gui.error.cannot.decode.banner", codecConfig.getAlgorithm().getName()), GuiStatus.ERROR);
+			gui.setOutputText(messages.get("gui.error.cannot.decode.banner", codecConfig.getAlgorithm().getName()), ERROR);
 			log.log(Level.FINE, messages.get("gui.error.cannot.decode", codecConfig.getAlgorithm().getName()), e);
 			return;
 		}
 		catch (final Exception e) {
-			gui.setOutputText(messages.get("gui.error.unexpected.error.banner"), GuiStatus.ERROR);
+			gui.setOutputText(messages.get("gui.error.unexpected.error.banner"), ERROR);
 			log.log(Level.SEVERE, messages.get("gui.error.unexpected.error"), e);
 			return;
 		}
-		gui.setOutputText(result, GuiStatus.OK);
+		gui.setOutputText(result, OK);
 	}
 
 }

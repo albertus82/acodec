@@ -1,5 +1,7 @@
 package it.albertus.acodec.gui;
 
+import static it.albertus.acodec.gui.GuiStatus.ERROR;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -18,7 +20,6 @@ import org.eclipse.swt.widgets.Text;
 
 import it.albertus.acodec.common.resources.ConfigurableMessages;
 import it.albertus.acodec.common.resources.Messages.Language;
-import it.albertus.acodec.gui.CodecGui.GuiStatus;
 import it.albertus.acodec.gui.listener.AboutListener;
 import it.albertus.acodec.gui.listener.ArmMenuListener;
 import it.albertus.acodec.gui.listener.CloseListener;
@@ -97,7 +98,7 @@ public class MenuBar implements Multilanguage {
 			final Text inputText = gui.getInputText();
 			editCopyInputTextMenuItem.setEnabled(inputText != null && !inputText.isDisposed() && inputText.getCharCount() != 0);
 			final Text outputText = gui.getOutputText();
-			editCopyOutputTextMenuItem.setEnabled(!GuiStatus.ERROR.equals(gui.getStatus()) && outputText != null && !outputText.isDisposed() && outputText.getCharCount() != 0);
+			editCopyOutputTextMenuItem.setEnabled(!ERROR.equals(gui.getStatus()) && outputText != null && !outputText.isDisposed() && outputText.getCharCount() != 0);
 		};
 		editMenu.addMenuListener(editMenuListener);
 		editMenuHeader.addArmListener(editMenuListener);

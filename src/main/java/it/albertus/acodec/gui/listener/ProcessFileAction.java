@@ -2,6 +2,7 @@ package it.albertus.acodec.gui.listener;
 
 import static it.albertus.acodec.common.engine.CodecMode.DECODE;
 import static it.albertus.acodec.common.engine.CodecMode.ENCODE;
+import static it.albertus.acodec.gui.GuiStatus.DIRTY;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,7 +27,6 @@ import it.albertus.acodec.common.engine.CodecConfig;
 import it.albertus.acodec.common.engine.ProcessFileTask;
 import it.albertus.acodec.common.resources.Messages;
 import it.albertus.acodec.gui.CodecGui;
-import it.albertus.acodec.gui.CodecGui.GuiStatus;
 import it.albertus.acodec.gui.Images;
 import it.albertus.acodec.gui.ProcessFileException;
 import it.albertus.acodec.gui.ProcessFileRunnable;
@@ -94,8 +94,8 @@ public class ProcessFileAction {
 			box.setText(messages.get(GUI_MESSAGE_APPLICATION_NAME));
 			box.open();
 			if (runnable.getResult() != null) { // result can be null in certain cases
-				gui.setInputText(inputFile.getName(), GuiStatus.DIRTY);
-				gui.setOutputText(runnable.getResult(), GuiStatus.DIRTY);
+				gui.setInputText(inputFile.getName(), DIRTY);
+				gui.setOutputText(runnable.getResult(), DIRTY);
 			}
 		}
 		catch (final InterruptedException e) { // NOSONAR

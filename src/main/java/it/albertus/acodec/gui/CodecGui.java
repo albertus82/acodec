@@ -1,5 +1,9 @@
 package it.albertus.acodec.gui;
 
+import static it.albertus.acodec.gui.GuiStatus.DIRTY;
+import static it.albertus.acodec.gui.GuiStatus.ERROR;
+import static it.albertus.acodec.gui.GuiStatus.UNDEFINED;
+
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -98,7 +102,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private final DropTarget shellDropTarget;
 
 	@NonNull
-	private GuiStatus status = GuiStatus.UNDEFINED;
+	private GuiStatus status = UNDEFINED;
 
 	private CodecGui(final Display display) {
 		shell = new Shell(display);
@@ -232,19 +236,19 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	public void setInputText(final String text, @NonNull final GuiStatus status) {
 		setStatus(status);
 		final Listener[] modifyListeners = inputText.getListeners(SWT.Modify);
-		if (GuiStatus.DIRTY.equals(status)) {
+		if (DIRTY.equals(status)) {
 			for (final Listener modifyListener : modifyListeners) {
 				inputText.removeListener(SWT.Modify, modifyListener);
 			}
 		}
 		inputText.setText(text != null ? text : "");
-		if (GuiStatus.DIRTY.equals(status)) {
+		if (DIRTY.equals(status)) {
 			for (final Listener modifyListener : modifyListeners) {
 				inputText.addListener(SWT.Modify, modifyListener);
 			}
 		}
 		refreshInputTextStyle();
-		if (GuiStatus.DIRTY.equals(status)) {
+		if (DIRTY.equals(status)) {
 			final Color inactiveTextColor = getInactiveTextColor();
 			if (!inactiveTextColor.equals(inputText.getForeground())) {
 				inputText.setForeground(inactiveTextColor);
@@ -258,12 +262,12 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	public void setOutputText(String text, @NonNull final GuiStatus status) {
 		setStatus(status);
 		text = text != null ? text : "";
-		if (GuiStatus.ERROR.equals(status)) {
+		if (ERROR.equals(status)) {
 			text = new StringBuilder(text).insert(0, ERROR_PREFIX).append(ERROR_SUFFIX).toString();
 		}
 		outputText.setText(text);
 		refreshOutputTextStyle();
-		if (EnumSet.of(GuiStatus.ERROR, GuiStatus.DIRTY).contains(status)) {
+		if (EnumSet.of(ERROR, DIRTY).contains(status)) {
 			final Color inactiveTextColor = getInactiveTextColor();
 			if (!inactiveTextColor.equals(outputText.getForeground())) {
 				outputText.setForeground(inactiveTextColor);
@@ -313,7 +317,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	private void refreshInputTextStyle() {
-		final boolean mask = !GuiStatus.DIRTY.equals(status) && hideInputTextCheck.getSelection();
+		final boolean mask = !DIRTY.equals(status) && hideInputTextCheck.getSelection();
 		if ((inputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
 			final Text oldText = inputText;
 			final Composite parent = oldText.getParent();
@@ -331,7 +335,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	private void refreshOutputTextStyle() {
-		final boolean mask = GuiStatus.OK.equals(status) && hideOutputTextCheck.getSelection();
+		final boolean mask = !EnumSet.of(ERROR, DIRTY).contains(status) && hideOutputTextCheck.getSelection();
 		if ((outputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
 			final Text oldText = outputText;
 			final Composite parent = oldText.getParent();
@@ -399,13 +403,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	private Color getInactiveTextColor() {
 		return shell.getDisplay().getSystemColor(SWT.COLOR_RED); // FIXME SWT.COLOR_TITLE_INACTIVE_FOREGROUND
-	}
-
-	public enum GuiStatus {
-		OK,
-		DIRTY,
-		ERROR,
-		UNDEFINED;
 	}
 
 }
