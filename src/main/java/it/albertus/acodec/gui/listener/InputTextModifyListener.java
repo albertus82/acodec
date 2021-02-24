@@ -30,7 +30,7 @@ public class InputTextModifyListener implements ModifyListener {
 	public void modifyText(final ModifyEvent event) {
 		String result;
 		if (GuiStatus.DIRTY.equals(gui.getStatus())) {
-			gui.setInputText("", GuiStatus.OK);
+			gui.setInputText("", GuiStatus.UNDEFINED);
 			gui.getInputText().setFocus();
 		}
 
