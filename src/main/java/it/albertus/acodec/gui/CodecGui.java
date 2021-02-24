@@ -2,9 +2,9 @@ package it.albertus.acodec.gui;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -247,7 +247,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		if (GuiStatus.ERROR.equals(status)) {
 			text = new StringBuilder(text).insert(0, ERROR_PREFIX).append(ERROR_SUFFIX).toString();
 		}
-		if (Arrays.asList(GuiStatus.ERROR, GuiStatus.DIRTY).contains(status)) {
+		if (EnumSet.of(GuiStatus.ERROR, GuiStatus.DIRTY).contains(status)) {
 			if (!outputText.getForeground().equals(inactiveTextColor)) {
 				outputText.setForeground(inactiveTextColor);
 			}
