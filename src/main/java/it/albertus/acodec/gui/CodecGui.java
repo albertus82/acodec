@@ -276,6 +276,31 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return text;
 	}
 
+	private Text createOutputText() {
+		final Composite composite = new Composite(shell, SWT.NONE);
+		composite.setLayout(new FillLayout());
+		final GridData compositeGridData = GridDataFactory.fillDefaults().grab(true, true).span(4, 1).create();
+		composite.setLayoutData(compositeGridData);
+		final Text text = new Text(composite, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+		if (TEXT_HEIGHT_MULTIPLIER > 1) {
+			compositeGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
+		}
+		text.setForeground(inputText.getForeground()); // Override READ_ONLY style on some platforms.
+		text.setBackground(inputText.getBackground()); // Override READ_ONLY style on some platforms.
+		configureOutputText(text);
+		return text;
+	}
+
+	private void configureInputText(final Text text) {
+		text.setTextLimit(TEXT_LIMIT_CHARS);
+		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
+		text.addModifyListener(new InputTextModifyListener(this));
+	}
+
+	private void configureOutputText(final Text text) {
+		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
+	}
+
 	private void refreshInputTextStyle() {
 		final boolean mask = !GuiStatus.DIRTY.equals(status) && hideInputTextCheck.getSelection();
 		if ((inputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
@@ -293,27 +318,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			parent.requestLayout();
 			parent.layout(); // armhf
 		}
-	}
-
-	private void configureInputText(final Text text) {
-		text.setTextLimit(TEXT_LIMIT_CHARS);
-		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
-		text.addModifyListener(new InputTextModifyListener(this));
-	}
-
-	private Text createOutputText() {
-		final Composite composite = new Composite(shell, SWT.NONE);
-		composite.setLayout(new FillLayout());
-		final GridData compositeGridData = GridDataFactory.fillDefaults().grab(true, true).span(4, 1).create();
-		composite.setLayoutData(compositeGridData);
-		final Text text = new Text(composite, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
-		if (TEXT_HEIGHT_MULTIPLIER > 1) {
-			compositeGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
-		}
-		text.setForeground(inputText.getForeground()); // Override READ_ONLY style on some platforms.
-		text.setBackground(inputText.getBackground()); // Override READ_ONLY style on some platforms.
-		configureOutputText(text);
-		return text;
 	}
 
 	private void refreshOutputTextStyle() {
@@ -334,10 +338,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			parent.requestLayout();
 			parent.layout(); // armhf
 		}
-	}
-
-	private void configureOutputText(final Text text) {
-		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
 	}
 
 	public void refreshOutput() {
