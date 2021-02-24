@@ -33,6 +33,8 @@ public class InputTextModifyListener implements ModifyListener {
 			gui.setStatus(GuiStatus.OK);
 			gui.getInputText().setText("");
 			gui.getInputText().setForeground(gui.getDefaultTextColor());
+			gui.refreshInputTextStyle();
+			gui.getInputText().setFocus();
 		}
 
 		// Preliminary checks
