@@ -4,10 +4,8 @@ import java.util.logging.Level;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.graphics.Color;
 
 import it.albertus.acodec.common.engine.CodecConfig;
 import it.albertus.acodec.common.engine.StringCodec;
@@ -19,9 +17,6 @@ import lombok.extern.java.Log;
 
 @Log
 public class InputTextModifyListener implements ModifyListener {
-
-	private static final String ERROR_SUFFIX = " --";
-	private static final String ERROR_PREFIX = "-- ";
 
 	private static final Messages messages = GuiMessages.INSTANCE;
 
@@ -37,15 +32,16 @@ public class InputTextModifyListener implements ModifyListener {
 		if (GuiStatus.DIRTY.equals(gui.getStatus())) {
 			gui.setStatus(GuiStatus.OK);
 			gui.getInputText().setText("");
+			gui.getInputText().setForeground(gui.getDefaultTextColor());
 		}
 
 		// Preliminary checks
 		if (gui.getAlgorithm() == null) {
-			print(messages.get("gui.message.missing.algorithm.banner"), true);
+			gui.print(messages.get("gui.message.missing.algorithm.banner"), GuiStatus.ERROR);
 			return;
 		}
 		if (gui.getInputText().getText().isEmpty()) {
-			print(messages.get("gui.message.missing.input.banner"), true);
+			gui.print(messages.get("gui.message.missing.input.banner"), GuiStatus.ERROR);
 			return;
 		}
 
@@ -55,41 +51,21 @@ public class InputTextModifyListener implements ModifyListener {
 			result = new StringCodec(codecConfig).run(gui.getInputText().getText());
 		}
 		catch (final EncoderException e) {
-			print(messages.get("gui.error.cannot.encode.banner", codecConfig.getAlgorithm().getName()), true);
+			gui.print(messages.get("gui.error.cannot.encode.banner", codecConfig.getAlgorithm().getName()), GuiStatus.ERROR);
 			log.log(Level.INFO, messages.get("gui.error.cannot.encode", codecConfig.getAlgorithm().getName()), e);
 			return;
 		}
 		catch (final DecoderException e) {
-			print(messages.get("gui.error.cannot.decode.banner", codecConfig.getAlgorithm().getName()), true);
+			gui.print(messages.get("gui.error.cannot.decode.banner", codecConfig.getAlgorithm().getName()), GuiStatus.ERROR);
 			log.log(Level.INFO, messages.get("gui.error.cannot.decode", codecConfig.getAlgorithm().getName()), e);
 			return;
 		}
 		catch (final Exception e) {
-			print(messages.get("gui.error.unexpected.error.banner"), true);
+			gui.print(messages.get("gui.error.unexpected.error.banner"), GuiStatus.ERROR);
 			log.log(Level.SEVERE, messages.get("gui.error.unexpected.error"), e);
 			return;
 		}
-		print(result, false);
-	}
-
-	private void print(final String text, final boolean error) {
-		gui.setStatus(error ? GuiStatus.ERROR : GuiStatus.OK);
-		String outputText = text != null ? text : "";
-		if (error) {
-			outputText = new StringBuilder(outputText).insert(0, ERROR_PREFIX).append(ERROR_SUFFIX).toString();
-			final Color inactiveTextColor = gui.getShell().getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
-			if (!gui.getOutputText().getForeground().equals(inactiveTextColor)) {
-				gui.getOutputText().setForeground(inactiveTextColor);
-			}
-		}
-		else {
-			final Color defaultTextColor = gui.getInputText().getForeground(); // Fix color issues on some Linux GUIs
-			if (!gui.getOutputText().getForeground().equals(defaultTextColor)) {
-				gui.getOutputText().setForeground(defaultTextColor);
-			}
-		}
-		gui.getOutputText().setText(outputText);
-		gui.refreshOutputTextStyle();
+		gui.print(result, GuiStatus.OK);
 	}
 
 }

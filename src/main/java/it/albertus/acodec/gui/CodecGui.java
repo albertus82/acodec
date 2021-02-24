@@ -2,6 +2,7 @@ package it.albertus.acodec.gui;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -59,6 +61,9 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
 
+	private static final String ERROR_SUFFIX = " --";
+	private static final String ERROR_PREFIX = "-- ";
+
 	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
 	private CodecMode mode = CodecMode.ENCODE;
@@ -83,10 +88,15 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private final Button processFileButton;
 	private final DropTarget shellDropTarget;
 
+	private final Color defaultTextColor;
+	private final Color inactiveTextColor;
+
 	@NonNull
 	private GuiStatus status = GuiStatus.UNKNOWN;
 
 	private CodecGui(final Display display) {
+		inactiveTextColor = display.getSystemColor(SWT.COLOR_RED); // FIXME SWT.COLOR_TITLE_INACTIVE_FOREGROUND
+
 		shell = new Shell(display);
 		shell.setImages(Images.getMainIconArray());
 		shell.setData("gui.message.application.name");
@@ -100,6 +110,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		GridDataFactory.swtDefaults().applyTo(inputLabel);
 
 		inputText = createInputText();
+		defaultTextColor = inputText.getForeground();
 
 		new Label(shell, SWT.NONE).setLayoutData(GridDataFactory.swtDefaults().create()); // Spacer
 
@@ -228,6 +239,26 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return text;
 	}
 
+	public void print(String text, final GuiStatus status) {
+		setStatus(status);
+		text = text != null ? text : "";
+		if (GuiStatus.ERROR.equals(status)) {
+			text = new StringBuilder(text).insert(0, ERROR_PREFIX).append(ERROR_SUFFIX).toString();
+		}
+		if (Arrays.asList(GuiStatus.ERROR, GuiStatus.DIRTY).contains(status)) {
+			if (!outputText.getForeground().equals(inactiveTextColor)) {
+				outputText.setForeground(inactiveTextColor);
+			}
+		}
+		else {
+			if (!outputText.getForeground().equals(defaultTextColor)) {
+				outputText.setForeground(defaultTextColor);
+			}
+		}
+		outputText.setText(text);
+		refreshOutputTextStyle();
+	}
+
 	public void refreshInputTextStyle() {
 		final boolean mask = !GuiStatus.DIRTY.equals(status) && hideInputTextCheck.getSelection();
 		if ((inputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
@@ -235,6 +266,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			final Composite parent = oldText.getParent();
 			final Text newText = new Text(parent, mask ? SWT.BORDER | SWT.PASSWORD : SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 			newText.setText(oldText.getText());
+			newText.setForeground(oldText.getForeground());
 			configureInputText(newText);
 			if (mask) {
 				newText.addKeyListener(TextCopySelectionKeyListener.INSTANCE);
@@ -261,8 +293,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		if (TEXT_HEIGHT_MULTIPLIER > 1) {
 			compositeGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
 		}
-		text.setBackground(inputText.getBackground());
-		text.setForeground(inputText.getForeground());
+		text.setForeground(inputText.getForeground()); // Override READ_ONLY style on some platforms.
+		text.setBackground(inputText.getBackground()); // Override READ_ONLY style on some platforms.
 		configureOutputText(text);
 		return text;
 	}
@@ -274,12 +306,12 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			final Composite parent = oldText.getParent();
 			final Text newText = new Text(parent, mask ? SWT.READ_ONLY | SWT.BORDER | SWT.PASSWORD : SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 			newText.setText(oldText.getText());
+			newText.setForeground(oldText.getForeground());
+			newText.setBackground(oldText.getBackground());
 			configureOutputText(newText);
 			if (mask) {
 				newText.addKeyListener(TextCopySelectionKeyListener.INSTANCE);
 			}
-			newText.setForeground(oldText.getForeground());
-			newText.setBackground(oldText.getBackground());
 			outputText = newText;
 			oldText.dispose();
 			parent.requestLayout();
