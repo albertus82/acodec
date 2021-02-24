@@ -232,15 +232,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		setStatus(GuiStatus.UNDEFINED); // Invalidate a possibly previous DIRTY state
 		inputText.setText(text != null ? text : "");
 		setStatus(status);
-		if (GuiStatus.DIRTY.equals(status)) {
-			final Color inactiveTextColor = getInactiveTextColor();
-			if (!inactiveTextColor.equals(inputText.getForeground())) {
-				inputText.setForeground(inactiveTextColor);
-			}
-		}
-		else {
-			inputText.setForeground(null);
-		}
 		refreshInputTextStyle();
 	}
 
@@ -249,15 +240,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		text = text != null ? text : "";
 		if (GuiStatus.ERROR.equals(status)) {
 			text = new StringBuilder(text).insert(0, ERROR_PREFIX).append(ERROR_SUFFIX).toString();
-		}
-		if (EnumSet.of(GuiStatus.ERROR, GuiStatus.DIRTY).contains(status)) {
-			final Color inactiveTextColor = getInactiveTextColor();
-			if (!inactiveTextColor.equals(outputText.getForeground())) {
-				outputText.setForeground(inactiveTextColor);
-			}
-		}
-		else {
-			outputText.setForeground(null);
 		}
 		outputText.setText(text);
 		refreshOutputTextStyle();
@@ -308,7 +290,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			final Composite parent = oldText.getParent();
 			final Text newText = new Text(parent, mask ? SWT.BORDER | SWT.PASSWORD : SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 			newText.setText(oldText.getText());
-			newText.setForeground(oldText.getForeground());
 			configureInputText(newText);
 			if (mask) {
 				newText.addKeyListener(TextCopySelectionKeyListener.INSTANCE);
@@ -317,6 +298,15 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			oldText.dispose();
 			parent.requestLayout();
 			parent.layout(); // armhf
+		}
+		if (GuiStatus.DIRTY.equals(status)) {
+			final Color inactiveTextColor = getInactiveTextColor();
+			if (!inactiveTextColor.equals(inputText.getForeground())) {
+				inputText.setForeground(inactiveTextColor);
+			}
+		}
+		else {
+			inputText.setForeground(null);
 		}
 	}
 
@@ -327,8 +317,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			final Composite parent = oldText.getParent();
 			final Text newText = new Text(parent, mask ? SWT.READ_ONLY | SWT.BORDER | SWT.PASSWORD : SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 			newText.setText(oldText.getText());
-			newText.setForeground(oldText.getForeground());
-			newText.setBackground(oldText.getBackground());
+			newText.setBackground(inputText.getBackground()); // Override READ_ONLY style on some platforms.
 			configureOutputText(newText);
 			if (mask) {
 				newText.addKeyListener(TextCopySelectionKeyListener.INSTANCE);
@@ -337,6 +326,15 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			oldText.dispose();
 			parent.requestLayout();
 			parent.layout(); // armhf
+		}
+		if (EnumSet.of(GuiStatus.ERROR, GuiStatus.DIRTY).contains(status)) {
+			final Color inactiveTextColor = getInactiveTextColor();
+			if (!inactiveTextColor.equals(outputText.getForeground())) {
+				outputText.setForeground(inactiveTextColor);
+			}
+		}
+		else {
+			outputText.setForeground(inputText.getForeground()); // Override READ_ONLY style on some platforms.
 		}
 	}
 
