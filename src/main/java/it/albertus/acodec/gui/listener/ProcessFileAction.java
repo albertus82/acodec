@@ -94,7 +94,7 @@ public class ProcessFileAction {
 			box.setText(messages.get(GUI_MESSAGE_APPLICATION_NAME));
 			box.open();
 			if (runnable.getResult() != null) { // result can be null in certain cases
-				gui.setStatus(GuiStatus.OK); // invalidate a possibly previous DIRTY state
+				gui.setStatus(GuiStatus.UNKNOWN); // invalidate a possibly previous DIRTY state
 				gui.setInputText(inputFile.getName(), GuiStatus.DIRTY);
 				gui.setOutputText(runnable.getResult(), GuiStatus.DIRTY);
 			}
