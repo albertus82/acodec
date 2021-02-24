@@ -114,7 +114,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 		inputText = createInputText();
 
-		new Label(shell, SWT.NONE).setLayoutData(GridDataFactory.swtDefaults().create()); // Spacer
+		GridDataFactory.swtDefaults().applyTo(new Label(shell, SWT.NONE)); // Spacer
 
 		hideInputTextCheck = newLocalizedButton(shell, SWT.CHECK, "gui.label.input.hide");
 		hideInputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(4, 1).create());
@@ -131,7 +131,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 		outputText = createOutputText();
 
-		new Label(shell, SWT.NONE).setLayoutData(GridDataFactory.swtDefaults().create()); // Spacer
+		GridDataFactory.swtDefaults().applyTo(new Label(shell, SWT.NONE)); // Spacer
 
 		hideOutputTextCheck = newLocalizedButton(shell, SWT.CHECK, "gui.label.output.hide");
 		hideOutputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(4, 1).create());
