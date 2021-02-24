@@ -11,7 +11,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -139,7 +138,7 @@ public class AboutDialog extends Dialog {
 		scrolledComposite.setLayout(new FillLayout());
 		scrolledComposite.setExpandVertical(true);
 		scrolledComposite.setExpandHorizontal(true);
-		final ThirdPartySoftwareTable thirdPartySoftwareTable = new ThirdPartySoftwareTable(scrolledComposite, Optional.empty());
+		final ThirdPartySoftwareTable thirdPartySoftwareTable = new ThirdPartySoftwareTable(scrolledComposite, null);
 		scrolledComposite.setContent(thirdPartySoftwareTable.getTableViewer().getControl());
 		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(scrolledComposite, SCROLLABLE_VERTICAL_SIZE_DLUS)).applyTo(scrolledComposite);
 
@@ -199,12 +198,12 @@ public class AboutDialog extends Dialog {
 
 		private final TableViewer tableViewer;
 
-		private ThirdPartySoftwareTable(@NonNull final Composite parent, @NonNull final Optional<Object> layoutData) {
+		private ThirdPartySoftwareTable(@NonNull final Composite parent, final Object layoutData) {
 			tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
 			ColumnViewerToolTipSupport.enableFor(tableViewer);
 			final Table table = tableViewer.getTable();
-			if (layoutData.isPresent()) {
-				table.setLayoutData(layoutData.get());
+			if (layoutData != null) {
+				table.setLayoutData(layoutData);
 			}
 			table.setLinesVisible(true);
 			table.setHeaderVisible(true);
