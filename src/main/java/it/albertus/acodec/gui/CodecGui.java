@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.RowLayoutFactory;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -262,6 +261,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		if (TEXT_HEIGHT_MULTIPLIER > 1) {
 			compositeGridData.heightHint = text.getLineHeight() * TEXT_HEIGHT_MULTIPLIER;
 		}
+		text.setBackground(inputText.getBackground());
+		text.setForeground(inputText.getForeground());
 		configureOutputText(text);
 		return text;
 	}
@@ -273,10 +274,11 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			final Composite parent = oldText.getParent();
 			final Text newText = new Text(parent, mask ? SWT.READ_ONLY | SWT.BORDER | SWT.PASSWORD : SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
 			configureOutputText(newText);
-			newText.setForeground(oldText.getForeground());
 			if (mask) {
 				newText.addKeyListener(TextCopySelectionKeyListener.INSTANCE);
 			}
+			newText.setForeground(oldText.getForeground());
+			newText.setBackground(oldText.getBackground());
 			newText.setText(oldText.getText());
 			outputText = newText;
 			oldText.dispose();
@@ -286,9 +288,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	private void configureOutputText(final Text text) {
-		if (Util.isWindows()) {
-			text.setBackground(inputText.getBackground());
-		}
 		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
 	}
 
