@@ -64,8 +64,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	private static final String DEFAULT_TEXT_COLOR_SYMBOLIC_NAME = CodecGui.class.getName() + '.' + "defaultTextColor";
 
-	private static final String ERROR_SUFFIX = " --";
 	private static final String ERROR_PREFIX = "-- ";
+	private static final String ERROR_SUFFIX = " --";
 
 	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
@@ -103,7 +103,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private final Color inactiveTextColor;
 
 	@NonNull
-	private GuiStatus status = GuiStatus.UNKNOWN;
+	private GuiStatus status = GuiStatus.UNDEFINED;
 
 	private CodecGui(final Display display) {
 		inactiveTextColor = display.getSystemColor(SWT.COLOR_RED); // FIXME SWT.COLOR_TITLE_INACTIVE_FOREGROUND
@@ -238,14 +238,19 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	public void setInputText(final String text, @NonNull final GuiStatus status) {
-		setStatus(GuiStatus.UNKNOWN); // Invalidate a possibly previous DIRTY state
+		setStatus(GuiStatus.UNDEFINED); // Invalidate a possibly previous DIRTY state
 		inputText.setText(text != null ? text : "");
 		setStatus(status);
 		if (GuiStatus.DIRTY.equals(status)) {
-			inputText.setForeground(getInactiveTextColor());
+			if (!inactiveTextColor.equals(inputText.getForeground())) {
+				inputText.setForeground(inactiveTextColor);
+			}
 		}
 		else {
-			inputText.setForeground(getDefaultTextColor());
+			final Color defaultTextColor = getDefaultTextColor();
+			if (!defaultTextColor.equals(inputText.getForeground())) {
+				inputText.setForeground(defaultTextColor);
+			}
 		}
 		refreshInputTextStyle();
 	}
@@ -257,13 +262,14 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			text = new StringBuilder(text).insert(0, ERROR_PREFIX).append(ERROR_SUFFIX).toString();
 		}
 		if (EnumSet.of(GuiStatus.ERROR, GuiStatus.DIRTY).contains(status)) {
-			if (!outputText.getForeground().equals(inactiveTextColor)) {
+			if (!inactiveTextColor.equals(outputText.getForeground())) {
 				outputText.setForeground(inactiveTextColor);
 			}
 		}
 		else {
-			if (!outputText.getForeground().equals(getDefaultTextColor())) {
-				outputText.setForeground(getDefaultTextColor());
+			final Color defaultTextColor = getDefaultTextColor();
+			if (!defaultTextColor.equals(outputText.getForeground())) {
+				outputText.setForeground(defaultTextColor);
 			}
 		}
 		outputText.setText(text);
@@ -403,7 +409,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		OK,
 		DIRTY,
 		ERROR,
-		UNKNOWN;
+		UNDEFINED;
 	}
 
 }
