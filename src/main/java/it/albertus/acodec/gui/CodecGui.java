@@ -234,11 +234,11 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			final Text oldText = inputText;
 			final Composite parent = oldText.getParent();
 			final Text newText = new Text(parent, mask ? SWT.BORDER | SWT.PASSWORD : SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+			newText.setText(oldText.getText());
 			configureInputText(newText);
 			if (mask) {
 				newText.addKeyListener(TextCopySelectionKeyListener.INSTANCE);
 			}
-			newText.setText(oldText.getText());
 			inputText = newText;
 			oldText.dispose();
 			parent.requestLayout();
@@ -273,13 +273,13 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			final Text oldText = outputText;
 			final Composite parent = oldText.getParent();
 			final Text newText = new Text(parent, mask ? SWT.READ_ONLY | SWT.BORDER | SWT.PASSWORD : SWT.READ_ONLY | SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+			newText.setText(oldText.getText());
 			configureOutputText(newText);
 			if (mask) {
 				newText.addKeyListener(TextCopySelectionKeyListener.INSTANCE);
 			}
 			newText.setForeground(oldText.getForeground());
 			newText.setBackground(oldText.getBackground());
-			newText.setText(oldText.getText());
 			outputText = newText;
 			oldText.dispose();
 			parent.requestLayout();
