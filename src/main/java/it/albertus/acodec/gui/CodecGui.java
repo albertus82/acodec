@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.RowLayoutFactory;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -61,6 +62,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
 
+	private static final String DEFAULT_TEXT_COLOR_SYMBOLIC_NAME = CodecGui.class.getName() + '.' + "defaultTextColor";
+
 	private static final String ERROR_SUFFIX = " --";
 	private static final String ERROR_PREFIX = "-- ";
 
@@ -88,7 +91,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private final Button processFileButton;
 	private final DropTarget shellDropTarget;
 
-	private final Color defaultTextColor;
 	private final Color inactiveTextColor;
 
 	@NonNull
@@ -110,7 +112,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		GridDataFactory.swtDefaults().applyTo(inputLabel);
 
 		inputText = createInputText();
-		defaultTextColor = inputText.getForeground();
+		JFaceResources.getColorRegistry().put(DEFAULT_TEXT_COLOR_SYMBOLIC_NAME, inputText.getForeground().getRGB());
 
 		new Label(shell, SWT.NONE).setLayoutData(GridDataFactory.swtDefaults().create()); // Spacer
 
@@ -251,8 +253,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			}
 		}
 		else {
-			if (!outputText.getForeground().equals(defaultTextColor)) {
-				outputText.setForeground(defaultTextColor);
+			if (!outputText.getForeground().equals(getDefaultTextColor())) {
+				outputText.setForeground(getDefaultTextColor());
 			}
 		}
 		outputText.setText(text);
@@ -329,7 +331,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		}
 	}
 
-	public void setLanguage(final Language language) {
+	public void setLanguage(@NonNull final Language language) {
 		messages.setLanguage(language);
 		shell.setRedraw(false);
 		updateLanguage();
@@ -369,6 +371,10 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		button.setText(messages.get(button));
 		localizedButtons.add(button);
 		return button;
+	}
+
+	public Color getDefaultTextColor() {
+		return JFaceResources.getColorRegistry().get(DEFAULT_TEXT_COLOR_SYMBOLIC_NAME);
 	}
 
 	public enum GuiStatus {
