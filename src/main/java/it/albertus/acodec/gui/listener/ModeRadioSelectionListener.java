@@ -19,7 +19,7 @@ public class ModeRadioSelectionListener extends SelectionAdapter {
 	public void widgetSelected(final SelectionEvent event) {
 		if (radio.getSelection()) {
 			gui.setMode(mode);
-			gui.refreshOutput();
+			gui.evaluateInputText();
 		}
 	}
 

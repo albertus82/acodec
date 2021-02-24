@@ -202,7 +202,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			shell.addShellListener(new CloseListener(gui));
 			try {
 				shell.open();
-				gui.refreshOutput();
+				gui.evaluateInputText();
 				loop(shell);
 			}
 			catch (final Exception e) {
@@ -349,7 +349,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		}
 	}
 
-	public void refreshOutput() {
+	public void evaluateInputText() {
 		if (inputText != null && !inputText.isDisposed()) {
 			inputText.notifyListeners(SWT.Modify, null);
 		}
@@ -377,7 +377,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 				button.setText(messages.get(button));
 			}
 		}
-		refreshOutput();
+		evaluateInputText(); // force the update of any error message
 		menuBar.updateLanguage();
 	}
 
