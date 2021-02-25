@@ -1,10 +1,13 @@
 package it.albertus.acodec.gui.listener;
 
+import static it.albertus.acodec.common.engine.AlgorithmType.CHECKSUM;
+import static it.albertus.acodec.common.engine.AlgorithmType.HASH;
 import static it.albertus.acodec.gui.GuiStatus.DIRTY;
 import static it.albertus.acodec.gui.GuiStatus.ERROR;
 import static it.albertus.acodec.gui.GuiStatus.OK;
 import static it.albertus.acodec.gui.GuiStatus.UNDEFINED;
 
+import java.util.EnumSet;
 import java.util.logging.Level;
 
 import org.apache.commons.codec.DecoderException;
@@ -43,7 +46,7 @@ public class InputTextModifyListener implements ModifyListener {
 			gui.setOutputText(messages.get("gui.message.missing.algorithm.banner"), ERROR);
 			return;
 		}
-		if (gui.getInputText().getText().isEmpty()) {
+		if (gui.getInputText().getText().isEmpty() && !EnumSet.of(CHECKSUM, HASH).contains(gui.getAlgorithm().getType())) {
 			gui.setOutputText(messages.get("gui.message.missing.input.banner"), ERROR);
 			return;
 		}
