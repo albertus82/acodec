@@ -47,7 +47,7 @@ import picocli.CommandLine.Parameters;
 
 @Log
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@Command
+@Command(versionProvider = VersionProvider.class)
 @SuppressWarnings("java:S106") // "Standard outputs should not be used directly to log anything"
 public class CodecConsole implements Callable<Integer> {
 
@@ -58,6 +58,7 @@ public class CodecConsole implements Callable<Integer> {
 	private static final char OPTION_FILE = 'f';
 	private static final char OPTION_INTERACTIVE = 'i';
 	private static final char OPTION_HELP = 'h';
+	private static final char OPTION_VERSION = 'v';
 
 	private static final Messages messages = ConsoleMessages.INSTANCE;
 
@@ -80,7 +81,10 @@ public class CodecConsole implements Callable<Integer> {
 	private File[] files;
 
 	@Option(names = { "-" + OPTION_HELP, "--help", "-?", "/?" }, help = true)
-	private boolean helpRequested;
+	private boolean usageHelpRequested;
+
+	@Option(names = { "-" + OPTION_VERSION, "--version" }, versionHelp = true)
+	private boolean versionInfoRequested;
 
 	public static void main(final String... args) {
 		System.exit(new CommandLine(new CodecConsole()).setCommandName(ACodec.class.getSimpleName().toLowerCase()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
@@ -105,7 +109,7 @@ public class CodecConsole implements Callable<Integer> {
 
 	@Override
 	public Integer call() {
-		if (helpRequested) {
+		if (usageHelpRequested) {
 			printHelp();
 			return ExitCode.OK;
 		}
@@ -212,7 +216,7 @@ public class CodecConsole implements Callable<Integer> {
 			log.log(Level.FINE, "Invalid version date:", e);
 			versionDate = new Date();
 		}
-		System.out.println(messages.get("console.message.application.name") + ' ' + messages.get("console.message.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(versionDate)) + " [" + messages.get("console.message.project.url") + ']');
+		System.out.println(messages.get("console.help.header", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(versionDate)));
 		System.out.println();
 		System.out.println(help.toString().trim());
 	}
