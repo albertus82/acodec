@@ -24,7 +24,7 @@
 	<filter token="console.vm.maxHeapSize" value="${console.vm.maxHeapSize}" />
 
 	<typedef uri="antlib:net.sf.antcontrib">
-		<classpath path="ant/ant-contrib/ant-contrib-1.0b3.jar" />
+		<classpath path="${antContrib.directory}/ant-contrib-1.0b3.jar" />
 	</typedef>
 
 	<target name="clean">
