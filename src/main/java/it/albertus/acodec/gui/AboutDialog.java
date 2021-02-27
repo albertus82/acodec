@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -23,7 +22,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Util;
-import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -226,39 +225,23 @@ public class AboutDialog extends Dialog {
 		private void createNameColumn() {
 			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
 			column.getColumn().setText(messages.get("gui.label.about.3rdparty.name"));
-			column.setLabelProvider(new CellLabelProvider() {
-				@Override
-				public void update(final ViewerCell cell) {
-					if (cell.getElement() instanceof ThirdPartySoftware) {
-						final ThirdPartySoftware element = (ThirdPartySoftware) cell.getElement();
-						cell.setText(element.getName());
-					}
-				}
-			});
+			column.setLabelProvider(new TextColumnLabelProvider(ThirdPartySoftware::getName));
 		}
 
 		private void createAuthorColumn() {
 			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
 			column.getColumn().setText(messages.get("gui.label.about.3rdparty.author"));
-			column.setLabelProvider(new CellLabelProvider() {
-				@Override
-				public void update(final ViewerCell cell) {
-					if (cell.getElement() instanceof ThirdPartySoftware) {
-						final ThirdPartySoftware element = (ThirdPartySoftware) cell.getElement();
-						cell.setText(element.getAuthor());
-					}
-				}
-			});
+			column.setLabelProvider(new TextColumnLabelProvider(ThirdPartySoftware::getAuthor));
 		}
 
 		private void createLicenseColumn() {
 			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
-			column.setLabelProvider(new LinkLabelProvider(() -> messages.get("gui.label.about.3rdparty.license"), element -> element.getLicenseUri().toString()));
+			column.setLabelProvider(new LinkStyledCellLabelProvider(messages.get("gui.label.about.3rdparty.license"), ThirdPartySoftware::getLicenseUri));
 		}
 
 		private void createHomePageColumn() {
 			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
-			column.setLabelProvider(new LinkLabelProvider(() -> messages.get("gui.label.about.3rdparty.homepage"), element -> element.getHomePageUri().toString()));
+			column.setLabelProvider(new LinkStyledCellLabelProvider(messages.get("gui.label.about.3rdparty.homepage"), ThirdPartySoftware::getHomePageUri));
 		}
 
 		private void configureMouseListener() {
@@ -313,25 +296,42 @@ public class AboutDialog extends Dialog {
 		}
 
 		@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-		private static class LinkLabelProvider extends StyledCellLabelProvider { // NOSONAR This class has 6 parents which is greater than 5 authorized. Inheritance tree of classes should not be too deep (java:S110)
+		private static class TextColumnLabelProvider extends ColumnLabelProvider {
 
-			private final Supplier<String> labelSupplier;
-			private final Function<ThirdPartySoftware, String> toolTipTextFunction;
+			private final Function<ThirdPartySoftware, String> textFunction;
+
+			@Override
+			public String getText(final Object element) {
+				if (element instanceof ThirdPartySoftware) {
+					final ThirdPartySoftware thirdPartySoftware = (ThirdPartySoftware) element;
+					return textFunction.apply(thirdPartySoftware);
+				}
+				else {
+					return super.getText(element);
+				}
+			}
+		}
+
+		@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+		private static class LinkStyledCellLabelProvider extends StyledCellLabelProvider { // NOSONAR This class has 6 parents which is greater than 5 authorized. Inheritance tree of classes should not be too deep (java:S110)
+
+			private final String label;
+			private final Function<ThirdPartySoftware, URI> toolTipTextFunction;
 
 			@Override
 			public void update(final ViewerCell cell) {
-				setLinkStyle(cell, labelSupplier.get());
+				setLinkStyle(cell, label);
 				super.update(cell);
 			}
 
 			@Override
-			public String getToolTipText(final Object o) {
-				if (o instanceof ThirdPartySoftware) {
-					final ThirdPartySoftware element = (ThirdPartySoftware) o;
-					return toolTipTextFunction.apply(element);
+			public String getToolTipText(final Object element) {
+				if (element instanceof ThirdPartySoftware) {
+					final ThirdPartySoftware thirdPartySoftware = (ThirdPartySoftware) element;
+					return String.valueOf(toolTipTextFunction.apply(thirdPartySoftware));
 				}
 				else {
-					return super.getToolTipText(o);
+					return super.getToolTipText(element);
 				}
 			}
 
