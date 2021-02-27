@@ -1,7 +1,5 @@
 package it.albertus.acodec.common.resources;
 
-import java.util.ResourceBundle;
-
 import it.albertus.jface.JFaceMessages;
 import lombok.NonNull;
 
@@ -11,7 +9,7 @@ public enum CommonMessages implements ConfigurableMessages {
 
 	private static final ConfigurableMessages fallbackMessages = FallbackMessages.INSTANCE;
 
-	private final MessageBundle bundle = new MessageBundle(ResourceBundle.getBundle(getClass().getName().toLowerCase(), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES)));
+	private final MessageBundle bundle = new MessageBundle(getClass().getName().toLowerCase());
 
 	@Override
 	public String get(@NonNull final String key) {

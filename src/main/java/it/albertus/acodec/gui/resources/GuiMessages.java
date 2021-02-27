@@ -1,7 +1,5 @@
 package it.albertus.acodec.gui.resources;
 
-import java.util.ResourceBundle;
-
 import it.albertus.acodec.common.resources.CommonMessages;
 import it.albertus.acodec.common.resources.ConfigurableMessages;
 import it.albertus.acodec.common.resources.Language;
@@ -14,7 +12,7 @@ public enum GuiMessages implements ConfigurableMessages {
 
 	private static final ConfigurableMessages fallbackMessages = CommonMessages.INSTANCE;
 
-	private final MessageBundle bundle = new MessageBundle(ResourceBundle.getBundle(getClass().getName().toLowerCase(), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES)));
+	private final MessageBundle bundle = new MessageBundle(getClass().getName().toLowerCase());
 
 	@Override
 	public String get(@NonNull final String key) {

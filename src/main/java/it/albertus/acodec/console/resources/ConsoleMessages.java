@@ -1,7 +1,5 @@
 package it.albertus.acodec.console.resources;
 
-import java.util.ResourceBundle;
-
 import it.albertus.acodec.common.resources.CommonMessages;
 import it.albertus.acodec.common.resources.MessageBundle;
 import it.albertus.acodec.common.resources.Messages;
@@ -13,7 +11,7 @@ public enum ConsoleMessages implements Messages {
 
 	private static final Messages fallbackMessages = CommonMessages.INSTANCE;
 
-	private final MessageBundle bundle = new MessageBundle(ResourceBundle.getBundle(getClass().getName().toLowerCase(), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES)));
+	private final MessageBundle bundle = new MessageBundle(getClass().getName().toLowerCase());
 
 	@Override
 	public String get(@NonNull final String key) {

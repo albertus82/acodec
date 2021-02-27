@@ -11,15 +11,17 @@ import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 
 @Log
-@RequiredArgsConstructor
 public class MessageBundle {
 
 	@NonNull
 	private ResourceBundle resourceBundle;
+
+	public MessageBundle(@NonNull final String baseName) {
+		resourceBundle = ResourceBundle.getBundle(baseName, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
+	}
 
 	public Language getLanguage() {
 		for (final Language language : Language.values()) {
