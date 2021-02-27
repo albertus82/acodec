@@ -37,7 +37,7 @@ public class MessageBundle {
 		}
 	}
 
-	public String get(@NonNull final String key, final UnaryOperator<String> fallbackFunction) {
+	public String getMessage(@NonNull final String key, final UnaryOperator<String> fallbackFunction) {
 		String message;
 		try {
 			message = resourceBundle.getString(key);
@@ -55,7 +55,7 @@ public class MessageBundle {
 		return message;
 	}
 
-	public String get(@NonNull final String key, @NonNull final Object[] params, final BiFunction<String, Object[], String> fallbackFunction) {
+	public String getMessage(@NonNull final String key, @NonNull final Object[] params, final BiFunction<String, Object[], String> fallbackFunction) {
 		final List<String> stringParams = new ArrayList<>(params.length);
 		for (final Object param : params) {
 			stringParams.add(String.valueOf(param));

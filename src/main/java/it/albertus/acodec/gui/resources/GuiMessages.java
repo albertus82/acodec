@@ -28,12 +28,12 @@ public enum GuiMessages implements ConfigurableMessages {
 
 	@Override
 	public String get(@NonNull final String key) {
-		return bundle.get(key, fallbackMessages::get);
+		return bundle.getMessage(key, fallbackMessages::get);
 	}
 
 	@Override
 	public String get(@NonNull final String key, final Object... params) {
-		return bundle.get(key, params, fallbackMessages::get);
+		return bundle.getMessage(key, params, fallbackMessages::get);
 	}
 
 }
