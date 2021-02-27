@@ -16,7 +16,7 @@ import lombok.extern.java.Log;
 
 @Log
 @RequiredArgsConstructor
-public class MessageBundle implements ConfigurableMessages {
+public class MessageBundle {
 
 	@NonNull
 	private ResourceBundle resourceBundle;
@@ -75,24 +75,6 @@ public class MessageBundle implements ConfigurableMessages {
 			}
 		}
 		return message;
-	}
-
-	@Override
-	public String get(@NonNull String key) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String get(@NonNull String key, Object... params) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setLanguage(@NonNull Language language) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
