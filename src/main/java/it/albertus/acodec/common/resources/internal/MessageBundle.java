@@ -3,7 +3,6 @@ package it.albertus.acodec.common.resources.internal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.function.BiFunction;
@@ -18,7 +17,7 @@ import lombok.extern.java.Log;
 
 @Log
 @RequiredArgsConstructor
-public class MessagesImpl {
+public class MessageBundle {
 
 	@NonNull
 	private ResourceBundle resourceBundle;
@@ -32,8 +31,8 @@ public class MessagesImpl {
 		return Language.ENGLISH; // Default.
 	}
 
-	public void setLanguage(@NonNull final String language, final Consumer<String> fallbackConsumer) {
-		resourceBundle = ResourceBundle.getBundle(resourceBundle.getBaseBundleName(), new Locale(language), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
+	public void setLanguage(@NonNull final Language language, final Consumer<Language> fallbackConsumer) {
+		resourceBundle = ResourceBundle.getBundle(resourceBundle.getBaseBundleName(), language.getLocale(), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
 		if (fallbackConsumer != null) {
 			fallbackConsumer.accept(language);
 		}

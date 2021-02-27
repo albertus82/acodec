@@ -2,7 +2,7 @@ package it.albertus.acodec.common.resources;
 
 import java.util.ResourceBundle;
 
-import it.albertus.acodec.common.resources.internal.MessagesImpl;
+import it.albertus.acodec.common.resources.internal.MessageBundle;
 import it.albertus.jface.JFaceMessages;
 import lombok.NonNull;
 
@@ -12,26 +12,26 @@ public enum CommonMessages implements ConfigurableMessages {
 
 	private static final ConfigurableMessages fallbackMessages = FallbackMessages.INSTANCE;
 
-	private final MessagesImpl impl = new MessagesImpl(ResourceBundle.getBundle(getClass().getName().toLowerCase(), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES)));
+	private final MessageBundle bundle = new MessageBundle(ResourceBundle.getBundle(getClass().getName().toLowerCase(), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES)));
 
 	@Override
 	public Language getLanguage() {
-		return impl.getLanguage();
+		return bundle.getLanguage();
 	}
 
 	@Override
-	public void setLanguage(@NonNull final String language) { // NOSONAR Enum singleton
-		impl.setLanguage(language, fallbackMessages::setLanguage);
+	public void setLanguage(@NonNull final Language language) { // NOSONAR Enum singleton
+		bundle.setLanguage(language, fallbackMessages::setLanguage);
 	}
 
 	@Override
 	public String get(@NonNull final String key) {
-		return impl.get(key, fallbackMessages::get);
+		return bundle.get(key, fallbackMessages::get);
 	}
 
 	@Override
 	public String get(@NonNull final String key, final Object... params) {
-		return impl.get(key, params, fallbackMessages::get);
+		return bundle.get(key, params, fallbackMessages::get);
 	}
 
 	private enum FallbackMessages implements ConfigurableMessages {
@@ -54,8 +54,8 @@ public enum CommonMessages implements ConfigurableMessages {
 		}
 
 		@Override
-		public void setLanguage(@NonNull final String language) { // NOSONAR Enum singleton
-			JFaceMessages.setLanguage(language);
+		public void setLanguage(@NonNull final Language language) { // NOSONAR Enum singleton
+			JFaceMessages.setLanguage(language.getLocale().getLanguage());
 		}
 
 	}

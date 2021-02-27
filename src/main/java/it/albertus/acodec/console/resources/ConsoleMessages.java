@@ -4,7 +4,7 @@ import java.util.ResourceBundle;
 
 import it.albertus.acodec.common.resources.CommonMessages;
 import it.albertus.acodec.common.resources.Messages;
-import it.albertus.acodec.common.resources.internal.MessagesImpl;
+import it.albertus.acodec.common.resources.internal.MessageBundle;
 import lombok.NonNull;
 
 public enum ConsoleMessages implements Messages {
@@ -13,16 +13,16 @@ public enum ConsoleMessages implements Messages {
 
 	private static final Messages fallbackMessages = CommonMessages.INSTANCE;
 
-	private final MessagesImpl impl = new MessagesImpl(ResourceBundle.getBundle(getClass().getName().toLowerCase(), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES)));
+	private final MessageBundle bundle = new MessageBundle(ResourceBundle.getBundle(getClass().getName().toLowerCase(), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES)));
 
 	@Override
 	public String get(@NonNull final String key) {
-		return impl.get(key, fallbackMessages::get);
+		return bundle.get(key, fallbackMessages::get);
 	}
 
 	@Override
 	public String get(@NonNull final String key, final Object... params) {
-		return impl.get(key, params, fallbackMessages::get);
+		return bundle.get(key, params, fallbackMessages::get);
 	}
 
 }

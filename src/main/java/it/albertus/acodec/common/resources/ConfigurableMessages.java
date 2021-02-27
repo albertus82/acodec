@@ -6,10 +6,6 @@ public interface ConfigurableMessages extends Messages {
 
 	Language getLanguage();
 
-	default void setLanguage(@NonNull final Language language) {
-		setLanguage(language.getLocale().getLanguage());
-	}
-
-	void setLanguage(@NonNull String language);
+	void setLanguage(@NonNull final Language language);
 
 }
