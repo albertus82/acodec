@@ -71,8 +71,11 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
+	@NonNull
 	private CodecMode mode = CodecMode.ENCODE;
-	private CodecAlgorithm algorithm;
+	@NonNull
+	private CodecAlgorithm algorithm = null;
+	@NonNull
 	private Charset charset = Charset.defaultCharset();
 
 	private final Shell shell;
