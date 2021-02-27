@@ -21,7 +21,7 @@ public enum ConsoleMessages implements Messages {
 	}
 
 	@Override
-	public String get(@NonNull final String key, final Object... params) {
+	public String get(@NonNull final String key, @NonNull final Object... params) {
 		return bundle.getMessage(key, params, fallbackMessages::get);
 	}
 

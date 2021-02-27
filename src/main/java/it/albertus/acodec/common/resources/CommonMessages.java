@@ -14,6 +14,16 @@ public enum CommonMessages implements ConfigurableMessages {
 	private final MessageBundle bundle = new MessageBundle(ResourceBundle.getBundle(getClass().getName().toLowerCase(), ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES)));
 
 	@Override
+	public String get(@NonNull final String key) {
+		return bundle.getMessage(key, fallbackMessages::get);
+	}
+
+	@Override
+	public String get(@NonNull final String key, @NonNull final Object... params) {
+		return bundle.getMessage(key, params, fallbackMessages::get);
+	}
+
+	@Override
 	public Language getLanguage() {
 		return bundle.getLanguage();
 	}
@@ -21,16 +31,6 @@ public enum CommonMessages implements ConfigurableMessages {
 	@Override
 	public void setLanguage(@NonNull final Language language) { // NOSONAR Enum singleton
 		bundle.setLanguage(language, fallbackMessages::setLanguage);
-	}
-
-	@Override
-	public String get(@NonNull final String key) {
-		return bundle.getMessage(key, fallbackMessages::get);
-	}
-
-	@Override
-	public String get(@NonNull final String key, final Object... params) {
-		return bundle.getMessage(key, params, fallbackMessages::get);
 	}
 
 	private enum FallbackMessages implements ConfigurableMessages {
@@ -43,7 +43,7 @@ public enum CommonMessages implements ConfigurableMessages {
 		}
 
 		@Override
-		public String get(@NonNull final String key, final Object... params) {
+		public String get(@NonNull final String key, @NonNull final Object... params) {
 			return JFaceMessages.get(key, params);
 		}
 

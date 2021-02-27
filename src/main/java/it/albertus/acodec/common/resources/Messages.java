@@ -8,7 +8,7 @@ public interface Messages {
 
 	String get(@NonNull String key);
 
-	String get(@NonNull String key, Object... params);
+	String get(@NonNull String key, @NonNull Object... params);
 
 	default String get(@NonNull final Widget widget) {
 		return get(String.valueOf(widget.getData()));
