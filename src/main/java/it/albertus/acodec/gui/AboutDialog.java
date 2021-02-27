@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Properties;
 import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -251,46 +253,12 @@ public class AboutDialog extends Dialog {
 
 		private void createLicenseColumn() {
 			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
-			column.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
-				@Override
-				public void update(final ViewerCell cell) {
-					setLinkStyle(cell, messages.get("gui.label.about.3rdparty.license"));
-					super.update(cell);
-				}
-
-				@Override
-				public String getToolTipText(final Object o) {
-					if (o instanceof ThirdPartySoftware) {
-						final ThirdPartySoftware element = (ThirdPartySoftware) o;
-						return element.getLicenseUri().toString();
-					}
-					else {
-						return super.getToolTipText(o);
-					}
-				}
-			});
+			column.setLabelProvider(new LinkLabelProvider(() -> messages.get("gui.label.about.3rdparty.license"), element -> element.getLicenseUri().toString()));
 		}
 
 		private void createHomePageColumn() {
 			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
-			column.setLabelProvider(new StyledCellLabelProvider() { // NOSONAR Cannot avoid extending this JFace class.
-				@Override
-				public void update(final ViewerCell cell) {
-					setLinkStyle(cell, messages.get("gui.label.about.3rdparty.homepage"));
-					super.update(cell);
-				}
-
-				@Override
-				public String getToolTipText(final Object o) {
-					if (o instanceof ThirdPartySoftware) {
-						final ThirdPartySoftware element = (ThirdPartySoftware) o;
-						return element.getHomePageUri().toString();
-					}
-					else {
-						return super.getToolTipText(o);
-					}
-				}
-			});
+			column.setLabelProvider(new LinkLabelProvider(() -> messages.get("gui.label.about.3rdparty.homepage"), element -> element.getHomePageUri().toString()));
 		}
 
 		private void configureMouseListener() {
@@ -344,13 +312,37 @@ public class AboutDialog extends Dialog {
 			}
 		}
 
-		private static void setLinkStyle(final ViewerCell cell, final String label) {
-			cell.setForeground(cell.getControl().getDisplay().getSystemColor(SWT.COLOR_LINK_FOREGROUND));
-			cell.setText(label);
-			final StyleRange styleRange = new StyleRange();
-			styleRange.underline = true;
-			styleRange.length = label.length();
-			cell.setStyleRanges(new StyleRange[] { styleRange });
+		@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+		private static class LinkLabelProvider extends StyledCellLabelProvider { // NOSONAR This class has 6 parents which is greater than 5 authorized. Inheritance tree of classes should not be too deep (java:S110)
+
+			private final Supplier<String> labelSupplier;
+			private final Function<ThirdPartySoftware, String> toolTipTextFunction;
+
+			@Override
+			public void update(final ViewerCell cell) {
+				setLinkStyle(cell, labelSupplier.get());
+				super.update(cell);
+			}
+
+			@Override
+			public String getToolTipText(final Object o) {
+				if (o instanceof ThirdPartySoftware) {
+					final ThirdPartySoftware element = (ThirdPartySoftware) o;
+					return toolTipTextFunction.apply(element);
+				}
+				else {
+					return super.getToolTipText(o);
+				}
+			}
+
+			private static void setLinkStyle(final ViewerCell cell, final String label) {
+				cell.setForeground(cell.getControl().getDisplay().getSystemColor(SWT.COLOR_LINK_FOREGROUND));
+				cell.setText(label);
+				final StyleRange styleRange = new StyleRange();
+				styleRange.underline = true;
+				styleRange.length = label.length();
+				cell.setStyleRanges(new StyleRange[] { styleRange });
+			}
 		}
 
 		@Getter(AccessLevel.PRIVATE)
