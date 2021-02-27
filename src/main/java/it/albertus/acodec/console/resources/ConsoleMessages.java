@@ -3,8 +3,8 @@ package it.albertus.acodec.console.resources;
 import java.util.ResourceBundle;
 
 import it.albertus.acodec.common.resources.CommonMessages;
+import it.albertus.acodec.common.resources.MessageBundle;
 import it.albertus.acodec.common.resources.Messages;
-import it.albertus.acodec.common.resources.internal.MessageBundle;
 import lombok.NonNull;
 
 public enum ConsoleMessages implements Messages {

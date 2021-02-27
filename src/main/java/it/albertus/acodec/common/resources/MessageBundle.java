@@ -1,4 +1,4 @@
-package it.albertus.acodec.common.resources.internal;
+package it.albertus.acodec.common.resources;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -10,14 +10,13 @@ import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 
-import it.albertus.acodec.common.resources.Language;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 
 @Log
 @RequiredArgsConstructor
-public class MessageBundle {
+public class MessageBundle implements ConfigurableMessages {
 
 	@NonNull
 	private ResourceBundle resourceBundle;
@@ -76,6 +75,24 @@ public class MessageBundle {
 			}
 		}
 		return message;
+	}
+
+	@Override
+	public String get(@NonNull String key) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String get(@NonNull String key, Object... params) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setLanguage(@NonNull Language language) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

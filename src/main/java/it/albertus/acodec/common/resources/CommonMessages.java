@@ -2,7 +2,6 @@ package it.albertus.acodec.common.resources;
 
 import java.util.ResourceBundle;
 
-import it.albertus.acodec.common.resources.internal.MessageBundle;
 import it.albertus.jface.JFaceMessages;
 import lombok.NonNull;
 

@@ -5,7 +5,7 @@ import java.util.ResourceBundle;
 import it.albertus.acodec.common.resources.CommonMessages;
 import it.albertus.acodec.common.resources.ConfigurableMessages;
 import it.albertus.acodec.common.resources.Language;
-import it.albertus.acodec.common.resources.internal.MessageBundle;
+import it.albertus.acodec.common.resources.MessageBundle;
 import lombok.NonNull;
 
 public enum GuiMessages implements ConfigurableMessages {
