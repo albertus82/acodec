@@ -209,10 +209,19 @@ public class AboutDialog extends Dialog {
 			table.setLinesVisible(true);
 			table.setHeaderVisible(true);
 
-			createNameColumn();
-			createAuthorColumn();
-			createLicenseColumn();
-			createHomePageColumn();
+			final TableViewerColumn nameColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+			nameColumn.getColumn().setText(messages.get("gui.label.about.3rdparty.name"));
+			nameColumn.setLabelProvider(new TextColumnLabelProvider(ThirdPartySoftware::getName));
+
+			final TableViewerColumn authorColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+			authorColumn.getColumn().setText(messages.get("gui.label.about.3rdparty.author"));
+			authorColumn.setLabelProvider(new TextColumnLabelProvider(ThirdPartySoftware::getAuthor));
+
+			final TableViewerColumn licenseColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+			licenseColumn.setLabelProvider(new LinkStyledCellLabelProvider(messages.get("gui.label.about.3rdparty.license"), ThirdPartySoftware::getLicenseUri));
+
+			final TableViewerColumn homePageColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+			homePageColumn.setLabelProvider(new LinkStyledCellLabelProvider(messages.get("gui.label.about.3rdparty.homepage"), ThirdPartySoftware::getHomePageUri));
 
 			tableViewer.add(ThirdPartySoftware.loadFromProperties().toArray());
 
@@ -220,28 +229,6 @@ public class AboutDialog extends Dialog {
 
 			configureMouseListener();
 			configureMouseMoveListener();
-		}
-
-		private void createNameColumn() {
-			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
-			column.getColumn().setText(messages.get("gui.label.about.3rdparty.name"));
-			column.setLabelProvider(new TextColumnLabelProvider(ThirdPartySoftware::getName));
-		}
-
-		private void createAuthorColumn() {
-			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
-			column.getColumn().setText(messages.get("gui.label.about.3rdparty.author"));
-			column.setLabelProvider(new TextColumnLabelProvider(ThirdPartySoftware::getAuthor));
-		}
-
-		private void createLicenseColumn() {
-			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
-			column.setLabelProvider(new LinkStyledCellLabelProvider(messages.get("gui.label.about.3rdparty.license"), ThirdPartySoftware::getLicenseUri));
-		}
-
-		private void createHomePageColumn() {
-			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
-			column.setLabelProvider(new LinkStyledCellLabelProvider(messages.get("gui.label.about.3rdparty.homepage"), ThirdPartySoftware::getHomePageUri));
 		}
 
 		private void configureMouseListener() {

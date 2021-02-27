@@ -73,8 +73,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	@NonNull
 	private CodecMode mode = CodecMode.ENCODE;
-	@NonNull
-	private CodecAlgorithm algorithm = null;
+
+	private CodecAlgorithm algorithm;
 	@NonNull
 	private Charset charset = Charset.defaultCharset();
 
