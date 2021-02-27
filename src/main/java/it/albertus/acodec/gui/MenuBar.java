@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 
 import it.albertus.acodec.common.resources.ConfigurableMessages;
-import it.albertus.acodec.common.resources.Messages.Language;
+import it.albertus.acodec.common.resources.Language;
 import it.albertus.acodec.gui.listener.AboutListener;
 import it.albertus.acodec.gui.listener.ArmMenuListener;
 import it.albertus.acodec.gui.listener.CloseListener;

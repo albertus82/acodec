@@ -5,7 +5,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.MenuItem;
 
 import it.albertus.acodec.common.resources.ConfigurableMessages;
-import it.albertus.acodec.common.resources.Messages.Language;
+import it.albertus.acodec.common.resources.Language;
 import it.albertus.acodec.gui.CodecGui;
 import it.albertus.acodec.gui.resources.GuiMessages;
 import lombok.RequiredArgsConstructor;

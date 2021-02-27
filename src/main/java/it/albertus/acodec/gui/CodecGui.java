@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Text;
 import it.albertus.acodec.common.engine.CodecAlgorithm;
 import it.albertus.acodec.common.engine.CodecMode;
 import it.albertus.acodec.common.resources.ConfigurableMessages;
-import it.albertus.acodec.common.resources.Messages.Language;
+import it.albertus.acodec.common.resources.Language;
 import it.albertus.acodec.gui.listener.AlgorithmComboSelectionListener;
 import it.albertus.acodec.gui.listener.CharsetComboSelectionListener;
 import it.albertus.acodec.gui.listener.CloseListener;
