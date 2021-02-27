@@ -23,7 +23,7 @@ public class MessageBundle {
 
 	public Language getLanguage() {
 		for (final Language language : Language.values()) {
-			if (language.getLocale().equals(resourceBundle.getLocale())) {
+			if (language.getLocale().getLanguage().equals(resourceBundle.getLocale().getLanguage())) {
 				return language;
 			}
 		}
