@@ -48,7 +48,7 @@ import picocli.CommandLine.Parameters;
 @Log
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Command(versionProvider = VersionProvider.class)
-@SuppressWarnings("java:S106") // "Standard outputs should not be used directly to log anything"
+@SuppressWarnings("java:S106") // Replace this use of System.out or System.err by a logger. Standard outputs should not be used directly to log anything (java:S106)
 public class CodecConsole implements Callable<Integer> {
 
 	private static final String SYSTEM_LINE_SEPARATOR = System.lineSeparator();
