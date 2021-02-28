@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
@@ -80,7 +81,7 @@ public enum CodecAlgorithm {
 	}
 
 	private CodecAlgorithm(final String name, final AlgorithmType type, final String... aliases) {
-		this(name, name.toLowerCase().replaceAll("[^0-9a-z]", ""), type, aliases);
+		this(name, name.toLowerCase(Locale.ROOT).replaceAll("[^0-9a-z]", ""), type, aliases);
 	}
 
 	public Set<String> getAliases() {

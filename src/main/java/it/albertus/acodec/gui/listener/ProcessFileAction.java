@@ -7,6 +7,7 @@ import static it.albertus.acodec.gui.GuiStatus.DIRTY;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -65,7 +66,7 @@ public class ProcessFileAction {
 		if (ENCODE.equals(gui.getMode())) {
 			final CodecAlgorithm algorithm = gui.getAlgorithm();
 			saveDialog.setFilterExtensions(buildFilterExtensions(algorithm));
-			saveDialog.setFileName(sourceFile.getName() + '.' + algorithm.getFileExtension().toLowerCase());
+			saveDialog.setFileName(sourceFile.getName() + '.' + algorithm.getFileExtension().toLowerCase(Locale.ROOT));
 		}
 		else {
 			if (sourceFile.getName().indexOf('.') != -1) {
@@ -77,7 +78,7 @@ public class ProcessFileAction {
 
 	static String[] buildFilterExtensions(final CodecAlgorithm algorithm) {
 		final String extension = algorithm.getFileExtension();
-		return new String[] { "*." + extension.toLowerCase() + ";*." + extension.toUpperCase(), "*.*" };
+		return new String[] { "*." + extension.toLowerCase(Locale.ROOT) + ";*." + extension.toUpperCase(Locale.ROOT), "*.*" };
 	}
 
 	protected void execute(@NonNull final String sourceFileName, @NonNull final String destinationFileName) {

@@ -48,6 +48,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -163,7 +164,7 @@ public class CodecEngineTest {
 				Assert.assertEquals(ca.toString(), originalString, stringCodec.run(encodedStrings.get(ca)));
 
 				if (Arrays.asList(BASE16, BASE32, BASE32HEX).contains(ca)) {
-					Assert.assertEquals(ca.toString(), originalString, stringCodec.run(encodedStrings.get(ca).toLowerCase()));
+					Assert.assertEquals(ca.toString(), originalString, stringCodec.run(encodedStrings.get(ca).toLowerCase(Locale.ROOT)));
 				}
 				if (ASCII85.equals(ca)) {
 					Assert.assertEquals(ca.toString(), originalString, stringCodec.run("<~" + encodedStrings.get(ASCII85)));
@@ -209,7 +210,7 @@ public class CodecEngineTest {
 					Assert.assertNotEquals(file.toString(), 0, lines.size());
 					try (final BufferedWriter bw = Files.newBufferedWriter(file.toPath())) {
 						for (final String line : lines) {
-							bw.append(line.toLowerCase()).append(NewLine.CRLF.toString());
+							bw.append(line.toLowerCase(Locale.ROOT)).append(NewLine.CRLF.toString());
 						}
 					}
 					Assert.assertEquals(ca.toString(), originalString, testFileDecoder(codecConfig, file));
@@ -232,7 +233,7 @@ public class CodecEngineTest {
 	private String testFileEncoder(final CodecConfig codecConfig) throws IOException, EncoderException, DecoderException {
 		File outputFile = null;
 		try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-			outputFile = File.createTempFile(ENCODE.name().toLowerCase() + '-', '.' + codecConfig.getAlgorithm().getFileExtension());
+			outputFile = File.createTempFile(ENCODE.name().toLowerCase(Locale.ROOT) + '-', '.' + codecConfig.getAlgorithm().getFileExtension());
 			log.log(Level.INFO, "Created temporary encoded file \"{0}\"", outputFile);
 			final String value = new ProcessFileTask(codecConfig, originalFile, outputFile).run(() -> false);
 			if (AlgorithmType.ENCODING.equals(codecConfig.getAlgorithm().getType())) {
@@ -269,7 +270,7 @@ public class CodecEngineTest {
 	private String testFileDecoder(final CodecConfig codecConfig, final File file) throws IOException, EncoderException, DecoderException {
 		File outputFile = null;
 		try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-			outputFile = File.createTempFile(DECODE.name().toLowerCase() + '-', ".txt");
+			outputFile = File.createTempFile(DECODE.name().toLowerCase(Locale.ROOT) + '-', ".txt");
 			log.log(Level.INFO, "Created temporary decoded file \"{0}\"", outputFile);
 			new ProcessFileTask(codecConfig, file, outputFile).run(() -> false);
 			try (final InputStream fis = Files.newInputStream(outputFile.toPath())) {

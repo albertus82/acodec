@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -87,7 +88,7 @@ public class CodecConsole implements Callable<Integer> {
 	private boolean versionInfoRequested;
 
 	public static void main(final String... args) {
-		System.exit(new CommandLine(new CodecConsole()).setCommandName(ACodec.class.getSimpleName().toLowerCase()).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
+		System.exit(new CommandLine(new CodecConsole()).setCommandName(ACodec.class.getSimpleName().toLowerCase(Locale.ROOT)).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
 			if (e.getCause() instanceof InvalidCharsetException) {
 				System.out.println(messages.get("console.error.invalid.charset", e.getCause().getMessage()));
 			}
