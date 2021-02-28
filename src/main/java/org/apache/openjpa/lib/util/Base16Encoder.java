@@ -56,34 +56,39 @@ public class Base16Encoder {
 	public static byte[] decode(final String s) {
 		final byte[] r = new byte[s.length() / 2];
 		for (int i = 0; i < r.length; i++) {
-			int digit1 = s.charAt(i * 2);
-			if (digit1 >= 'a') {
-				digit1 -= 32; // toLowerCase
-			}
-			int digit2 = s.charAt(i * 2 + 1);
-			if (digit2 >= 'a') {
-				digit2 -= 32; // toLowerCase
-			}
-			if (!Arrays.contains(HEX, (char) digit1) || !Arrays.contains(HEX, (char) digit2)) {
+			final char digit1 = toUpperCase(s.charAt(i * 2));
+			final char digit2 = toUpperCase(s.charAt(i * 2 + 1));
+			if (!Arrays.contains(HEX, digit1) || !Arrays.contains(HEX, digit2)) {
 				throw new IllegalArgumentException(messages.get("common.error.invalid.input"));
 			}
-
-			if (digit1 >= '0' && digit1 <= '9') {
-				digit1 -= '0';
-			}
-			else if (digit1 >= 'A' && digit1 <= 'F') {
-				digit1 -= 'A' - 10;
-			}
-
-			if (digit2 >= '0' && digit2 <= '9') {
-				digit2 -= '0';
-			}
-			else if (digit2 >= 'A' && digit2 <= 'F') {
-				digit2 -= 'A' - 10;
-			}
-
-			r[i] = (byte) ((digit1 << 4) + digit2);
+			r[i] = decode(digit1, digit2);
 		}
 		return r;
 	}
+
+	private static char toUpperCase(char digit) {
+		if (digit >= 'a') {
+			digit -= 32;
+		}
+		return digit;
+	}
+
+	private static byte decode(char digit1, char digit2) {
+		if (digit1 >= '0' && digit1 <= '9') {
+			digit1 -= '0';
+		}
+		else if (digit1 >= 'A' && digit1 <= 'F') {
+			digit1 -= 'A' - 10;
+		}
+
+		if (digit2 >= '0' && digit2 <= '9') {
+			digit2 -= '0';
+		}
+		else if (digit2 >= 'A' && digit2 <= 'F') {
+			digit2 -= 'A' - 10;
+		}
+
+		return (byte) ((digit1 << 4) + digit2);
+	}
+
 }
