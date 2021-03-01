@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -161,9 +162,10 @@ public class CodecConsole implements Callable<Integer> {
 			System.out.print(messages.get("console.message.overwrite.file.question") + ' ');
 			final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			try {
-				final String answer = StringUtils.trimToEmpty(br.readLine()).toLowerCase();
-				if (!Arrays.asList(messages.get("console.message.overwrite.file.answers.yes").split(",")).contains(answer)) {
-					return ExitCode.OK;
+				final String userAnswer = StringUtils.trimToEmpty(br.readLine());
+				final Collection<String> yesAnswers = Arrays.asList(messages.get("console.message.overwrite.file.answers.yes").split(","));
+				if (!yesAnswers.contains(userAnswer.toLowerCase()) && !yesAnswers.contains(userAnswer.toLowerCase(Locale.ROOT))) {
+					return ExitCode.OK; // exit immediately
 				}
 			}
 			catch (final IOException e) {
