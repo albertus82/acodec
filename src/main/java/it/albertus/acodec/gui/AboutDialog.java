@@ -275,9 +275,14 @@ public class AboutDialog extends Dialog {
 
 		private static void packColumn(final TableColumn column) {
 			column.pack();
-			if (Util.isGtk()) { // colmuns are badly resized on GTK, more space is actually needed
+			if (Util.isCocoa()) { // colmuns are badly resized on Cocoa, more space is actually needed
 				try (final CloseableResource<GC> cr = new CloseableResource<>(new GC(column.getParent()))) {
 					column.setWidth(column.getWidth() + cr.getResource().stringExtent("  ").x);
+				}
+			}
+			else if (Util.isGtk()) { // colmuns are badly resized on GTK, more space is actually needed
+				try (final CloseableResource<GC> cr = new CloseableResource<>(new GC(column.getParent()))) {
+					column.setWidth(column.getWidth() + cr.getResource().stringExtent(" ").x);
 				}
 			}
 		}
@@ -300,7 +305,8 @@ public class AboutDialog extends Dialog {
 		}
 
 		@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-		private static class LinkStyledCellLabelProvider extends StyledCellLabelProvider { // NOSONAR This class has 6 parents which is greater than 5 authorized. Inheritance tree of classes should not be too deep (java:S110)
+		private static class LinkStyledCellLabelProvider extends StyledCellLabelProvider { // NOSONAR This class has 6 parents which is greater than 5 authorized.
+																							// Inheritance tree of classes should not be too deep (java:S110)
 
 			private final String label;
 			private final Function<ThirdPartySoftware, URI> toolTipTextFunction;
