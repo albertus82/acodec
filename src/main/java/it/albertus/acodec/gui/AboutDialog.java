@@ -305,8 +305,7 @@ public class AboutDialog extends Dialog {
 		}
 
 		@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-		private static class LinkStyledCellLabelProvider extends StyledCellLabelProvider { // NOSONAR This class has 6 parents which is greater than 5 authorized.
-																							// Inheritance tree of classes should not be too deep (java:S110)
+		private static class LinkStyledCellLabelProvider extends StyledCellLabelProvider { // NOSONAR This class has 6 parents which is greater than 5 authorized. Inheritance tree of classes should not be too deep (java:S110)
 
 			private final String label;
 			private final Function<ThirdPartySoftware, URI> toolTipTextFunction;
