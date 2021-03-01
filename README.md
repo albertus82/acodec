@@ -60,4 +60,5 @@ This application uses or includes portions of the following third party software
 |Inno Setup                  |Jordan Russell             |[License](https://jrsoftware.org/files/is/license.txt) |[Home page](https://jrsoftware.org/isinfo.php)|
 |Launch4j                    |Grzegorz Kowal             |[License](https://opensource.org/licenses/BSD-3-Clause)|[Home page](http://launch4j.sourceforge.net)  |
 |Picocli                     |Remko Popma                |[License](https://git.io/JUqAY)                        |[Home page](https://picocli.info)             |
+|Reflections                 |ronmamo                    |[License](https://git.io/Jtp8i)                        |[Home page](https://git.io/Jtp81)             |
 |universalJavaApplicationStub|Tobias Fischer             |[License](https://git.io/JUqAq)                        |[Home page](https://git.io/JUqAF)             |
