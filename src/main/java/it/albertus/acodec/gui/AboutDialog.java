@@ -86,7 +86,7 @@ public class AboutDialog extends Dialog {
 	public void open() {
 		final Shell shell = new Shell(getParent(), getStyle());
 		shell.setText(getText());
-		shell.setImage(Images.getMainIconMap().get(new Rectangle(0, 0, 16, 16)));
+		shell.setImage(Images.getAppIconMap().get(new Rectangle(0, 0, 16, 16)));
 		createContents(shell);
 		constrainShellSize(shell);
 		shell.open();

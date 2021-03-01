@@ -109,7 +109,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	private CodecGui(final Display display) {
 		shell = new Shell(display);
-		shell.setImages(Images.getMainIconArray());
+		shell.setImages(Images.getAppIconArray());
 		shell.setData("gui.message.application.name");
 		shell.setText(messages.get(shell));
 		shell.setLayout(new GridLayout(5, false));
@@ -215,7 +215,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			catch (final Exception e) {
 				final String message = e.toString();
 				log.log(Level.SEVERE, message, e);
-				EnhancedErrorDialog.openError(shell, messages.get("gui.message.error"), message, IStatus.ERROR, e, Images.getMainIconArray());
+				EnhancedErrorDialog.openError(shell, messages.get("gui.message.error"), message, IStatus.ERROR, e, Images.getAppIconArray());
 			}
 		}
 	}

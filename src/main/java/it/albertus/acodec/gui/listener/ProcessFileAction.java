@@ -121,11 +121,11 @@ public class ProcessFileAction {
 			else {
 				message = messages.get("gui.error.unexpected.error");
 			}
-			EnhancedErrorDialog.openError(gui.getShell(), messages.get(GUI_MESSAGE_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getMainIconArray());
+			EnhancedErrorDialog.openError(gui.getShell(), messages.get(GUI_MESSAGE_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getAppIconArray());
 		}
 		catch (final Exception e) {
 			log.log(Level.SEVERE, e.toString(), e);
-			EnhancedErrorDialog.openError(gui.getShell(), messages.get(GUI_MESSAGE_APPLICATION_NAME), e.toString(), IStatus.ERROR, e, Images.getMainIconArray());
+			EnhancedErrorDialog.openError(gui.getShell(), messages.get(GUI_MESSAGE_APPLICATION_NAME), e.toString(), IStatus.ERROR, e, Images.getAppIconArray());
 		}
 	}
 

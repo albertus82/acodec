@@ -21,6 +21,7 @@
 	<classpathentry kind="lib" path="lib/compile/common/org.eclipse.equinox.common-3.14.0.jar" sourcepath="lib/compile/common/src/org.eclipse.equinox.common-3.14.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/org.eclipse.osgi-3.16.100.jar" sourcepath="lib/compile/common/src/org.eclipse.osgi-3.16.100-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/picocli-4.6.1.jar" sourcepath="lib/compile/common/src/picocli-4.6.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/compile/common/reflections-0.9.12.jar" sourcepath="lib/compile/common/src/reflections-0.9.12-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/platform-dependent/win32-win32-x86_64/org.eclipse.jface-3.22.0.jar" sourcepath="lib/compile/platform-dependent/win32-win32-x86_64/src/org.eclipse.jface-3.22.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/platform-dependent/win32-win32-x86_64/org.eclipse.swt.win32.win32.x86_64-3.115.100.jar" sourcepath="lib/compile/platform-dependent/win32-win32-x86_64/src/org.eclipse.swt.win32.win32.x86_64-3.115.100-sources.jar"/>
 	<classpathentry kind="lib" path="lib/provided/lombok-1.18.18.jar" sourcepath="lib/provided/src/lombok-1.18.18-sources.jar"/>
