@@ -1,23 +1,19 @@
 package it.albertus.acodec.gui;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.Level;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.swing.SortOrder;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
+import it.albertus.jface.ImageUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,18 +22,6 @@ import lombok.extern.java.Log;
 @Log
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Images {
-
-	private static final Comparator<Rectangle> areaComparatorDescending = (r1, r2) -> {
-		final int a1 = r1.width * r1.height;
-		final int a2 = r2.width * r2.height;
-		if (a1 > a2) {
-			return -1;
-		}
-		if (a1 < a2) {
-			return 1;
-		}
-		return 0;
-	};
 
 	/**
 	 * Main application icon in various formats, sorted by size (area)
@@ -48,20 +32,8 @@ public class Images {
 
 	private static Map<Rectangle, Image> loadFromResource(final String packageName) {
 		final Reflections reflections = new Reflections(packageName, new ResourcesScanner());
-		final Iterable<String> resourceNames = reflections.getResources(Pattern.compile(".*\\.png"));
-
-		final Map<Rectangle, Image> map = new TreeMap<>(areaComparatorDescending);
-		for (final String resourceName : resourceNames) {
-			try (final InputStream stream = Images.class.getResourceAsStream('/' + resourceName)) {
-				for (final ImageData data : new ImageLoader().load(stream)) {
-					final Image image = new Image(Display.getCurrent(), data);
-					map.put(image.getBounds(), image);
-				}
-			}
-			catch (final IOException e) {
-				throw new UncheckedIOException(e);
-			}
-		}
+		final Iterable<String> resourceNames = reflections.getResources(name -> name.toLowerCase(Locale.ROOT).endsWith(".png")).stream().map(name -> '/' + name).collect(Collectors.toSet());
+		final Map<Rectangle, Image> map = ImageUtils.createImageMap(resourceNames, SortOrder.DESCENDING);
 		log.log(Level.CONFIG, "{0}: {1}", new Object[] { packageName, map });
 		return map;
 	}
