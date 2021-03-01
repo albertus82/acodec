@@ -702,14 +702,17 @@
 	<target name="all" depends="clean, dist, test, sonar" />
 
 	<target name="virustotal">
+		<delete file="${build.directory}/checksums.txt" />
 		<checksum algorithm="SHA-256" todir="${build.directory}/checksums" forceoverwrite="yes" fileext=".sha256" pattern="* {1}&#13;&#10;[`{0}`](https://www.virustotal.com/it/file/{0}/analysis/)">
 			<fileset dir="${build.directory}">
 				<include name="*" />
 			</fileset>
 		</checksum>
-		<concat>
+		<concat destfile="${build.directory}/checksums.txt" append="false">
 			<fileset dir="${build.directory}/checksums" />
 		</concat>
+		<loadfile property="checksums" srcFile="${build.directory}/checksums.txt" />
+		<echo message="${checksums}" />
 	</target>
 
 </project>
