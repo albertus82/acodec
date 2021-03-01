@@ -115,10 +115,10 @@ public class AboutDialog extends Dialog {
 		info.setText(buildAnchor(messages.get("gui.message.project.url"), messages.get("gui.message.application.name")) + ' ' + messages.get("gui.message.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM, messages.getLanguage().getLocale()).format(versionDate)));
 		info.addSelectionListener(linkSelectionListener);
 
-		final Link acknowledgementsLocations = new Link(shell, SWT.WRAP);
-		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(acknowledgementsLocations);
-		acknowledgementsLocations.setText(messages.get("gui.label.about.acknowledgements.icon", buildAnchor(messages.get("gui.message.icon.url"), messages.get("gui.label.icon"))));
-		acknowledgementsLocations.addSelectionListener(linkSelectionListener);
+		final Link acknowledgementsIcon = new Link(shell, SWT.WRAP);
+		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(acknowledgementsIcon);
+		acknowledgementsIcon.setText(messages.get("gui.label.about.acknowledgements.icon", buildAnchor(messages.get("gui.message.icon.url"), messages.get("gui.label.icon"))));
+		acknowledgementsIcon.addSelectionListener(linkSelectionListener);
 
 		final Link linkLicense = new Link(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(linkLicense);
