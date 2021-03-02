@@ -165,6 +165,7 @@ public class CodecConsole implements Callable<Integer> {
 				final String userAnswer = StringUtils.trimToEmpty(br.readLine());
 				final Collection<String> yesAnswers = Arrays.asList(messages.get("console.message.overwrite.file.answers.yes").split(","));
 				if (!yesAnswers.contains(userAnswer.toLowerCase()) && !yesAnswers.contains(userAnswer.toLowerCase(Locale.ROOT))) {
+					System.out.println(messages.get("console.message.file.process.cancel.message"));
 					return ExitCode.OK; // exit immediately
 				}
 			}
