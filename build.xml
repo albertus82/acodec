@@ -702,17 +702,20 @@
 	<target name="all" depends="clean, dist, test, sonar" />
 
 	<target name="virustotal">
-		<delete file="${build.directory}/checksums.txt" />
-		<checksum algorithm="SHA-256" todir="${build.directory}/checksums" forceoverwrite="yes" fileext=".sha256" pattern="* {1}&#13;&#10;[`{0}`](https://www.virustotal.com/it/file/{0}/analysis/)">
+		<property name="checksums.file" value="${build.directory}/checksums.md" />
+		<property name="checksums.directory" value="${build.directory}/checksums" />
+		<delete file="${checksums.file}" />
+		<checksum algorithm="SHA-256" todir="${checksums.directory}" forceoverwrite="yes" fileext=".sha256" pattern="* {1}&#13;&#10;[`{0}`](https://www.virustotal.com/it/file/{0}/analysis/)">
 			<fileset dir="${build.directory}">
 				<include name="*" />
 			</fileset>
 		</checksum>
-		<concat destfile="${build.directory}/checksums.txt" append="false">
-			<fileset dir="${build.directory}/checksums" />
+		<echo file="${checksums.file}" message="### Checksums SHA-256&#13;&#10;" />
+		<concat destfile="${checksums.file}" append="true">
+			<fileset dir="${checksums.directory}" />
 		</concat>
-		<loadfile property="checksums" srcFile="${build.directory}/checksums.txt" />
-		<echo message="${checksums}" />
+		<loadfile property="checksums.file.contents" srcFile="${checksums.file}" />
+		<echo message="${checksums.file.contents}" />
 	</target>
 
 </project>
