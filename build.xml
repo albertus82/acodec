@@ -415,7 +415,6 @@
 			</and>
 		</condition>
 
-
 		<echo message="launch4j.bindir: ${launch4j.bindir}" />
 
 		<condition property="wine.failonerror" else="false">
