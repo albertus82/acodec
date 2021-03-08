@@ -11,6 +11,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.function.Function;
@@ -35,7 +36,9 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -44,6 +47,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
@@ -66,13 +70,21 @@ import lombok.extern.java.Log;
 @Log
 public class AboutDialog extends Dialog {
 
-	private static final double MONITOR_SIZE_DIVISOR = 1.2;
+	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
+	private static final float MONITOR_SIZE_DIVISOR = 1.2f;
+	private static final float TITLE_FONT_SIZE_MULTIPLIER = 1.6f;
+
+	private static final int ICON_VERTICAL_SIZE_DLUS = 26;
 	private static final int SCROLLABLE_VERTICAL_SIZE_DLUS = 25;
 
+	private static final String SYM_NAME_FONT_APPNAME = AboutDialog.class.getName() + ".appname";
 	private static final String SYM_NAME_FONT_DEFAULT = AboutDialog.class.getName() + ".default";
 
-	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
+	private final LinkSelectionListener linkSelectionListener = new LinkSelectionListener();
+
+	private Text appLicenseText;
+	private ScrolledComposite thirdPartyScrolledComposite;
 
 	public AboutDialog(@NonNull final Shell parent) {
 		this(parent, SWT.SHEET | SWT.RESIZE);
@@ -86,62 +98,45 @@ public class AboutDialog extends Dialog {
 	public void open() {
 		final Shell shell = new Shell(getParent(), getStyle());
 		shell.setText(getText());
-		shell.setImage(Images.getAppIconMap().get(new Rectangle(0, 0, 16, 16)));
+		shell.setImages(Images.getAppIconArray());
 		createContents(shell);
 		constrainShellSize(shell);
 		shell.open();
 	}
 
-	private static void createContents(final Shell shell) {
+	private void createContents(@NonNull final Shell shell) {
 		GridLayoutFactory.swtDefaults().applyTo(shell);
 
-		final LinkSelectionListener linkSelectionListener = new LinkSelectionListener();
+		createHeaderComposite(shell, GridDataFactory.swtDefaults().create());
 
-		final Link info = new Link(shell, SWT.WRAP);
-		final FontRegistry fontRegistry = JFaceResources.getFontRegistry();
-		if (!fontRegistry.hasValueFor(SYM_NAME_FONT_DEFAULT)) {
-			fontRegistry.put(SYM_NAME_FONT_DEFAULT, info.getFont().getFontData());
-		}
-		info.setFont(fontRegistry.getBold(SYM_NAME_FONT_DEFAULT));
-		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(info);
-		Date versionDate;
-		try {
-			versionDate = Version.getDate();
-		}
-		catch (final ParseException e) {
-			log.log(Level.WARNING, "Invalid version date:", e);
-			versionDate = new Date();
-		}
-		info.setText(buildAnchor(messages.get("gui.message.project.url"), messages.get("gui.message.application.name")) + ' ' + messages.get("gui.message.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM, messages.getLanguage().getLocale()).format(versionDate)));
-		info.addSelectionListener(linkSelectionListener);
+		createAcknowledgementsGroup(shell, GridDataFactory.fillDefaults().grab(true, false).create());
 
-		final Link acknowledgementsIcon = new Link(shell, SWT.WRAP);
-		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(acknowledgementsIcon);
-		acknowledgementsIcon.setText(messages.get("gui.label.about.acknowledgements.icon", buildAnchor(messages.get("gui.message.icon.url"), messages.get("gui.label.icon"))));
-		acknowledgementsIcon.addSelectionListener(linkSelectionListener);
+		addInvisibleSeparator(shell);
 
-		final Link linkLicense = new Link(shell, SWT.WRAP);
-		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(linkLicense);
-		linkLicense.setText(messages.get("gui.label.about.license", buildAnchor(messages.get("gui.message.gpl.url"), messages.get("gui.label.gpl"))));
-		linkLicense.addSelectionListener(linkSelectionListener);
+		final Link appLicenseLink = new Link(shell, SWT.WRAP);
+		GridDataFactory.swtDefaults().grab(true, false).applyTo(appLicenseLink);
+		appLicenseLink.setText(messages.get("gui.label.about.license", buildAnchor(messages.get("gui.message.gpl.url"), messages.get("gui.label.gpl"))));
+		appLicenseLink.addSelectionListener(linkSelectionListener);
 
-		final Text appLicense = new Text(shell, SWT.BORDER | SWT.V_SCROLL);
-		appLicense.setText(loadTextResource("/META-INF/LICENSE.txt"));
-		appLicense.setEditable(false);
-		appLicense.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(appLicense, SCROLLABLE_VERTICAL_SIZE_DLUS)).applyTo(appLicense);
+		appLicenseText = new Text(shell, SWT.BORDER | SWT.V_SCROLL);
+		appLicenseText.setText(loadTextResource("/META-INF/LICENSE.txt"));
+		appLicenseText.setEditable(false);
+		appLicenseText.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(appLicenseText, SCROLLABLE_VERTICAL_SIZE_DLUS)).applyTo(appLicenseText);
+
+		addInvisibleSeparator(shell);
 
 		final Label thirdPartySoftwareLabel = new Label(shell, SWT.WRAP);
-		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, false).applyTo(thirdPartySoftwareLabel);
+		GridDataFactory.swtDefaults().grab(true, false).applyTo(thirdPartySoftwareLabel);
 		thirdPartySoftwareLabel.setText(messages.get("gui.label.about.3rdparty"));
 
-		final ScrolledComposite scrolledComposite = new ScrolledComposite(shell, SWT.V_SCROLL | SWT.H_SCROLL);
-		scrolledComposite.setLayout(new FillLayout());
-		scrolledComposite.setExpandVertical(true);
-		scrolledComposite.setExpandHorizontal(true);
-		final ThirdPartySoftwareTable thirdPartySoftwareTable = new ThirdPartySoftwareTable(scrolledComposite, null);
-		scrolledComposite.setContent(thirdPartySoftwareTable.getTableViewer().getControl());
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(scrolledComposite, SCROLLABLE_VERTICAL_SIZE_DLUS)).applyTo(scrolledComposite);
+		thirdPartyScrolledComposite = new ScrolledComposite(shell, SWT.V_SCROLL | SWT.H_SCROLL);
+		thirdPartyScrolledComposite.setLayout(new FillLayout());
+		thirdPartyScrolledComposite.setExpandVertical(true);
+		thirdPartyScrolledComposite.setExpandHorizontal(true);
+		final ThirdPartySoftwareTable thirdPartySoftwareTable = new ThirdPartySoftwareTable(thirdPartyScrolledComposite, null);
+		thirdPartyScrolledComposite.setContent(thirdPartySoftwareTable.getTableViewer().getControl());
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(thirdPartyScrolledComposite, SCROLLABLE_VERTICAL_SIZE_DLUS)).applyTo(thirdPartyScrolledComposite);
 
 		final Button okButton = new Button(shell, SWT.PUSH);
 		okButton.setText(messages.get("gui.label.button.ok"));
@@ -157,27 +152,102 @@ public class AboutDialog extends Dialog {
 		shell.setDefaultButton(okButton);
 	}
 
-	private static void constrainShellSize(final Shell shell) {
-		final Point preferredSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+	private void createHeaderComposite(@NonNull final Composite parent, final Object layoutData) {
+		final Composite headerComposite = new Composite(parent, SWT.NONE);
+		if (layoutData != null) {
+			headerComposite.setLayoutData(layoutData);
+		}
+		GridLayoutFactory.swtDefaults().numColumns(3).applyTo(headerComposite);
+
+		final Label iconLabel = new Label(headerComposite, SWT.NONE);
+		GridDataFactory.swtDefaults().span(1, 2).grab(true, false).applyTo(iconLabel);
+		for (final Entry<Rectangle, Image> entry : Images.getAppIconMap().entrySet()) {
+			final int pixels = SwtUtils.convertVerticalDLUsToPixels(iconLabel, ICON_VERTICAL_SIZE_DLUS);
+			if (entry.getKey().height <= pixels) {
+				log.log(Level.FINE, "{0} DLUs -> {1} pixels -> {2}", new Object[] { ICON_VERTICAL_SIZE_DLUS, pixels, entry });
+				iconLabel.setImage(entry.getValue());
+				break;
+			}
+		}
+
+		GridDataFactory.swtDefaults().span(1, 2).applyTo(new Label(headerComposite, SWT.NONE)); // Invisible separator
+
+		final Link appNameLink = new Link(headerComposite, SWT.WRAP);
+		final FontRegistry fontRegistry = JFaceResources.getFontRegistry();
+		if (!fontRegistry.hasValueFor(SYM_NAME_FONT_APPNAME)) {
+			final FontData[] fontData = appNameLink.getFont().getFontData();
+			for (final FontData fd : fontData) {
+				fd.setHeight(Math.round(fd.getHeight() * TITLE_FONT_SIZE_MULTIPLIER));
+			}
+			fontRegistry.put(SYM_NAME_FONT_APPNAME, fontData);
+		}
+		appNameLink.setFont(fontRegistry.getBold(SYM_NAME_FONT_APPNAME));
+		GridDataFactory.swtDefaults().grab(true, false).applyTo(appNameLink);
+		Date versionDate;
+		try {
+			versionDate = Version.getDate();
+		}
+		catch (final ParseException e) {
+			log.log(Level.WARNING, "Invalid version date:", e);
+			versionDate = new Date();
+		}
+		appNameLink.setText(buildAnchor(messages.get("gui.message.project.url"), messages.get("gui.message.application.name")));
+		appNameLink.addSelectionListener(linkSelectionListener);
+
+		final Label appVersionLabel = new Label(headerComposite, SWT.NONE);
+		appVersionLabel.setText(messages.get("gui.message.version", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM, messages.getLanguage().getLocale()).format(versionDate)));
+		if (!fontRegistry.hasValueFor(SYM_NAME_FONT_DEFAULT)) {
+			fontRegistry.put(SYM_NAME_FONT_DEFAULT, appVersionLabel.getFont().getFontData());
+		}
+		appVersionLabel.setFont(fontRegistry.getBold(SYM_NAME_FONT_DEFAULT));
+		GridDataFactory.swtDefaults().grab(true, false).applyTo(appVersionLabel);
+	}
+
+	private void createAcknowledgementsGroup(@NonNull final Composite parent, final Object layoutData) {
+		final Group acknowledgementsGroup = new Group(parent, SWT.NONE);
+		if (layoutData != null) {
+			acknowledgementsGroup.setLayoutData(layoutData);
+		}
+		acknowledgementsGroup.setForeground(acknowledgementsGroup.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+		acknowledgementsGroup.setText(messages.get("gui.label.about.acknowledgements"));
+		GridLayoutFactory.swtDefaults().applyTo(acknowledgementsGroup);
+
+		final Link acknowledgementsIcon = new Link(acknowledgementsGroup, SWT.WRAP);
+		GridDataFactory.swtDefaults().grab(true, false).applyTo(acknowledgementsIcon);
+		acknowledgementsIcon.setText(messages.get("gui.label.about.acknowledgements.icon", buildAnchor(messages.get("gui.message.icon.url"), messages.get("gui.label.icon"))));
+		acknowledgementsIcon.addSelectionListener(linkSelectionListener);
+	}
+
+	private void constrainShellSize(@NonNull final Shell shell) {
+		int appLicenseTextWidth = appLicenseText.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
+		log.log(Level.FINE, "appLicenseTextWidth: {0}", appLicenseTextWidth);
+		if (appLicenseText.getVerticalBar() != null && !appLicenseText.getVerticalBar().isDisposed()) {
+			appLicenseTextWidth += Math.round(appLicenseText.getVerticalBar().getSize().x * 1.5f);
+		}
+		int thirdPartyScrolledCompositeWidth = thirdPartyScrolledComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
+		log.log(Level.FINE, "thirdPartyScrolledCompositeWidth: {0}", thirdPartyScrolledCompositeWidth);
+		if (thirdPartyScrolledComposite.getVerticalBar() != null && !thirdPartyScrolledComposite.getVerticalBar().isDisposed()) {
+			thirdPartyScrolledCompositeWidth += Math.round(thirdPartyScrolledComposite.getVerticalBar().getSize().x * 1.5f);
+		}
 		final int clientWidth = shell.getMonitor().getClientArea().width;
-		final int desiredWidth;
-		if (preferredSize.x > clientWidth / MONITOR_SIZE_DIVISOR) {
-			desiredWidth = (int) (clientWidth / MONITOR_SIZE_DIVISOR);
+		log.log(Level.FINE, "clientWidth: {0}", clientWidth);
+		int shellInitialWidth = Math.max(appLicenseTextWidth, thirdPartyScrolledCompositeWidth);
+		if (shellInitialWidth > clientWidth / MONITOR_SIZE_DIVISOR) {
+			shellInitialWidth = Math.round(clientWidth / MONITOR_SIZE_DIVISOR);
 		}
-		else {
-			desiredWidth = preferredSize.x;
-		}
-		shell.setSize(desiredWidth, shell.getSize().y);
-		shell.setMinimumSize(desiredWidth, preferredSize.y);
+
+		final Point shellInitialSize = new Point(shellInitialWidth, shell.getSize().y);
+		log.log(Level.FINE, "shellInitialSize: {0}", shellInitialSize);
+		shell.setSize(shellInitialSize);
+
+		final Point shellMinimumSize = new Point(appLicenseTextWidth, shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y);
+		log.log(Level.FINE, "shellMinimumSize: {0}", shellMinimumSize);
+		shell.setMinimumSize(shellMinimumSize);
 	}
 
-	private static String buildAnchor(final String href, final String label) {
-		return new StringBuilder("<a href=\"").append(href).append("\">").append(label).append("</a>").toString();
-	}
-
-	private static String loadTextResource(final String name) {
+	private String loadTextResource(@NonNull final String name) {
 		final StringBuilder text = new StringBuilder();
-		try (final InputStream is = AboutDialog.class.getResourceAsStream(name); final InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8); final BufferedReader br = new BufferedReader(isr)) {
+		try (final InputStream is = getClass().getResourceAsStream(name); final InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8); final BufferedReader br = new BufferedReader(isr)) {
 			String line;
 			while ((line = br.readLine()) != null) {
 				text.append(System.lineSeparator()).append(line);
@@ -187,6 +257,15 @@ public class AboutDialog extends Dialog {
 			log.log(Level.WARNING, e.toString(), e);
 		}
 		return text.length() <= System.lineSeparator().length() ? "" : text.substring(System.lineSeparator().length());
+	}
+
+	private static String buildAnchor(@NonNull final String href, @NonNull final String label) {
+		return new StringBuilder("<a href=\"").append(href).append("\">").append(label).append("</a>").toString();
+	}
+
+	private static void addInvisibleSeparator(@NonNull final Composite parent) {
+		final Label separator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR | SWT.SHADOW_NONE); // Invisible separator
+		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(separator);
 	}
 
 	@Getter
