@@ -2,8 +2,6 @@ package it.albertus.acodec.gui;
 
 import static it.albertus.acodec.gui.GuiStatus.ERROR;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
@@ -30,6 +28,7 @@ import it.albertus.acodec.gui.resources.GuiMessages;
 import it.albertus.jface.Multilanguage;
 import it.albertus.jface.cocoa.CocoaEnhancerException;
 import it.albertus.jface.cocoa.CocoaUIEnhancer;
+import it.albertus.jface.i18n.LocalizedWidgets;
 import it.albertus.jface.sysinfo.SystemInformationDialog;
 import lombok.NonNull;
 import lombok.extern.java.Log;
@@ -48,7 +47,7 @@ public class MenuBar implements Multilanguage {
 
 	private final MenuItem fileProcessMenuItem;
 	private final Map<Language, MenuItem> viewLanguageMenuItems = new EnumMap<>(Language.class);
-	private final Collection<MenuItem> localizedMenuItems = new ArrayList<>();
+	private final LocalizedWidgets localizedWidgets = new LocalizedWidgets();
 
 	MenuBar(final CodecGui gui) {
 		final CloseListener closeListener = new CloseListener(gui);
@@ -154,11 +153,7 @@ public class MenuBar implements Multilanguage {
 
 	@Override
 	public void updateLanguage() {
-		for (final MenuItem menuItem : localizedMenuItems) {
-			if (menuItem != null && !menuItem.isDisposed() && menuItem.getData() instanceof String) {
-				menuItem.setText(messages.get(menuItem));
-			}
-		}
+		localizedWidgets.resetAllTexts();
 		for (final Entry<Language, MenuItem> entry : viewLanguageMenuItems.entrySet()) {
 			final MenuItem menuItem = entry.getValue();
 			if (menuItem != null && !menuItem.isDisposed()) {
@@ -173,11 +168,7 @@ public class MenuBar implements Multilanguage {
 	}
 
 	private MenuItem newLocalizedMenuItem(@NonNull final Menu parent, final int style, @NonNull final String messageKey) {
-		final MenuItem menuItem = new MenuItem(parent, style);
-		menuItem.setData(messageKey);
-		menuItem.setText(messages.get(menuItem));
-		localizedMenuItems.add(menuItem);
-		return menuItem;
+		return localizedWidgets.putAndReturn(new MenuItem(parent, style), () -> messages.get(messageKey)).getKey();
 	}
 
 }
