@@ -98,10 +98,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	@NonNull private GuiStatus status = UNDEFINED;
 
 	private CodecGui(final Display display) {
-		shell = new Shell(display);
+		shell = localizeWidget(new Shell(display), "gui.message.application.name");
 		shell.setImages(Images.getAppIconArray());
-		shell.setData("gui.message.application.name");
-		shell.setText(messages.get(shell));
 		shell.setLayout(new GridLayout(5, false));
 
 		menuBar = new MenuBar(this);
@@ -363,7 +361,6 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	@Override
 	public void updateLanguage() {
-		shell.setText(messages.get(shell));
 		localizedWidgets.resetAllTexts();
 		evaluateInputText(); // force the update of any error message
 		menuBar.updateLanguage();
