@@ -2,10 +2,6 @@ package it.albertus.acodec.gui;
 
 import static it.albertus.acodec.gui.GuiStatus.ERROR;
 
-import java.util.EnumMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import org.eclipse.jface.util.Util;
@@ -30,6 +26,7 @@ import it.albertus.jface.cocoa.CocoaEnhancerException;
 import it.albertus.jface.cocoa.CocoaUIEnhancer;
 import it.albertus.jface.i18n.LocalizedWidgets;
 import it.albertus.jface.sysinfo.SystemInformationDialog;
+import it.albertus.util.ISupplier;
 import lombok.NonNull;
 import lombok.extern.java.Log;
 
@@ -46,10 +43,9 @@ public class MenuBar implements Multilanguage {
 	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
 	private final MenuItem fileProcessMenuItem;
-	private final Map<Language, MenuItem> viewLanguageMenuItems = new EnumMap<>(Language.class);
 	private final LocalizedWidgets localizedWidgets = new LocalizedWidgets();
 
-	MenuBar(final CodecGui gui) {
+	MenuBar(@NonNull final CodecGui gui) {
 		final CloseListener closeListener = new CloseListener(gui);
 		final AboutListener aboutListener = new AboutListener(gui);
 
@@ -112,17 +108,16 @@ public class MenuBar implements Multilanguage {
 		final Menu viewLanguageSubMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
 		viewLanguageSubMenuItem.setMenu(viewLanguageSubMenu);
 
-		final LanguageSelectionListener languageSelectionListener = new LanguageSelectionListener(gui);
+		final LanguageSelectionListener languageSelectionListener = new LanguageSelectionListener(gui::setLanguage);
 
 		for (final Language language : Language.values()) {
-			final MenuItem languageMenuItem = new MenuItem(viewLanguageSubMenu, SWT.RADIO);
-			languageMenuItem.setText(language.getLocale().getDisplayLanguage(language.getLocale()));
-			languageMenuItem.setData(language);
+			final MenuItem languageMenuItem = newLocalizedMenuItem(viewLanguageSubMenu, SWT.RADIO, () -> language.getLocale().getDisplayLanguage(language.getLocale()));
+			languageMenuItem.setData(language.getClass().getName(), language);
 			languageMenuItem.addSelectionListener(languageSelectionListener);
-			viewLanguageMenuItems.put(language, languageMenuItem);
+			if (language.equals(messages.getLanguage())) {
+				languageMenuItem.setSelection(true); // Default
+			}
 		}
-
-		viewLanguageMenuItems.get(messages.getLanguage()).setSelection(true); // Default
 
 		// Help
 		final Menu helpMenu = new Menu(gui.getShell(), SWT.DROP_DOWN);
@@ -154,13 +149,6 @@ public class MenuBar implements Multilanguage {
 	@Override
 	public void updateLanguage() {
 		localizedWidgets.resetAllTexts();
-		for (final Entry<Language, MenuItem> entry : viewLanguageMenuItems.entrySet()) {
-			final MenuItem menuItem = entry.getValue();
-			if (menuItem != null && !menuItem.isDisposed()) {
-				final Locale locale = entry.getKey().getLocale();
-				menuItem.setText(locale.getDisplayLanguage(locale));
-			}
-		}
 	}
 
 	public void enableFileProcessMenuItem() {
@@ -168,7 +156,11 @@ public class MenuBar implements Multilanguage {
 	}
 
 	private MenuItem newLocalizedMenuItem(@NonNull final Menu parent, final int style, @NonNull final String messageKey) {
-		return localizedWidgets.putAndReturn(new MenuItem(parent, style), () -> messages.get(messageKey)).getKey();
+		return newLocalizedMenuItem(parent, style, () -> messages.get(messageKey));
+	}
+
+	private MenuItem newLocalizedMenuItem(@NonNull final Menu parent, final int style, @NonNull final ISupplier<String> textSupplier) {
+		return localizedWidgets.putAndReturn(new MenuItem(parent, style), textSupplier).getKey();
 	}
 
 }
