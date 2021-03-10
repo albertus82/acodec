@@ -6,14 +6,15 @@ import org.eclipse.swt.widgets.Button;
 
 import it.albertus.acodec.common.engine.CodecMode;
 import it.albertus.acodec.gui.CodecGui;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class ModeRadioSelectionListener extends SelectionAdapter {
 
-	private final CodecGui gui;
-	private final Button radio;
-	private final CodecMode mode;
+	@NonNull private final CodecGui gui;
+	@NonNull private final Button radio;
+	@NonNull private final CodecMode mode;
 
 	@Override
 	public void widgetSelected(final SelectionEvent event) {

@@ -6,15 +6,16 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 
 import it.albertus.acodec.gui.CodecGui;
+import lombok.NonNull;
 
 public class ShellDropListener extends ProcessFileAction implements DropTargetListener {
 
-	public ShellDropListener(final CodecGui gui) {
+	public ShellDropListener(@NonNull final CodecGui gui) {
 		super(gui);
 	}
 
 	@Override
-	public void drop(final DropTargetEvent event) {
+	public void drop(@NonNull final DropTargetEvent event) {
 		if (gui.getAlgorithm() != null) {
 			if (event.data instanceof String[]) { // file
 				final String[] data = (String[]) event.data;
@@ -28,11 +29,11 @@ public class ShellDropListener extends ProcessFileAction implements DropTargetLi
 		}
 	}
 
-	private void processText(final String text) {
+	private void processText(@NonNull final String text) {
 		gui.getInputText().setText(text);
 	}
 
-	private void processFile(final File file) {
+	private void processFile(@NonNull final File file) {
 		if (file.exists() && !file.isDirectory()) {
 			final String sourceFileName = file.getPath();
 			final String destinationFileName = getDestinationFile(sourceFileName);

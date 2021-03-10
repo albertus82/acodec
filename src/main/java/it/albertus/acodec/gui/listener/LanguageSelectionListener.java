@@ -20,7 +20,7 @@ public class LanguageSelectionListener extends SelectionAdapter {
 	@NonNull private final Consumer<Language> consumer;
 
 	@Override
-	public void widgetSelected(final SelectionEvent event) {
+	public void widgetSelected(@NonNull final SelectionEvent event) {
 		if (event.widget instanceof MenuItem) {
 			final MenuItem languageMenuItem = (MenuItem) event.widget;
 			if (languageMenuItem.getSelection()) {

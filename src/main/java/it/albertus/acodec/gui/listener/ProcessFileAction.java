@@ -48,7 +48,7 @@ public class ProcessFileAction {
 
 	private static final Messages messages = GuiMessages.INSTANCE;
 
-	protected final CodecGui gui;
+	@NonNull protected final CodecGui gui;
 
 	protected String getSourceFile() {
 		final FileDialog openDialog = new FileDialog(gui.getShell(), SWT.OPEN);
@@ -58,7 +58,7 @@ public class ProcessFileAction {
 		return openDialog.open();
 	}
 
-	protected String getDestinationFile(final String sourceFileName) {
+	protected String getDestinationFile(@NonNull final String sourceFileName) {
 		final FileDialog saveDialog = new FileDialog(gui.getShell(), SWT.SAVE);
 		saveDialog.setOverwrite(true);
 		final File sourceFile = new File(sourceFileName);
@@ -76,7 +76,7 @@ public class ProcessFileAction {
 		return saveDialog.open();
 	}
 
-	static String[] buildFilterExtensions(final CodecAlgorithm algorithm) {
+	static String[] buildFilterExtensions(@NonNull final CodecAlgorithm algorithm) {
 		final String extension = algorithm.getFileExtension();
 		return new String[] { "*." + extension.toLowerCase(Locale.ROOT) + ";*." + extension.toUpperCase(Locale.ROOT), "*.*" };
 	}

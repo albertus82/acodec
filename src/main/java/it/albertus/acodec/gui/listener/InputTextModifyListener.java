@@ -20,18 +20,17 @@ import it.albertus.acodec.common.engine.StringCodec;
 import it.albertus.acodec.common.resources.Messages;
 import it.albertus.acodec.gui.CodecGui;
 import it.albertus.acodec.gui.resources.GuiMessages;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 
 @Log
+@RequiredArgsConstructor
 public class InputTextModifyListener implements ModifyListener {
 
 	private static final Messages messages = GuiMessages.INSTANCE;
 
-	private final CodecGui gui;
-
-	public InputTextModifyListener(final CodecGui gui) {
-		this.gui = gui;
-	}
+	@NonNull private final CodecGui gui;
 
 	@Override
 	public void modifyText(final ModifyEvent event) {

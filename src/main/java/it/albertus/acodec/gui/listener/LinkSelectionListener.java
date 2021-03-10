@@ -4,10 +4,12 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.program.Program;
 
+import lombok.NonNull;
+
 public class LinkSelectionListener implements SelectionListener {
 
 	@Override
-	public void widgetSelected(final SelectionEvent event) {
+	public void widgetSelected(@NonNull final SelectionEvent event) {
 		Program.launch(event.text);
 	}
 

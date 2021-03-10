@@ -13,12 +13,13 @@ import org.eclipse.swt.widgets.Button;
 
 import it.albertus.acodec.common.engine.CodecAlgorithm;
 import it.albertus.acodec.gui.CodecGui;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class AlgorithmComboSelectionListener extends SelectionAdapter {
 
-	private final CodecGui gui;
+	@NonNull private final CodecGui gui;
 
 	@Override
 	public void widgetSelected(final SelectionEvent event) {

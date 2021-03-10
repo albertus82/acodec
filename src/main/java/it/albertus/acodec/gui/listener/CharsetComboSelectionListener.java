@@ -6,12 +6,13 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
 import it.albertus.acodec.gui.CodecGui;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class CharsetComboSelectionListener extends SelectionAdapter {
 
-	private final CodecGui gui;
+	@NonNull private final CodecGui gui;
 
 	@Override
 	public void widgetSelected(final SelectionEvent event) {

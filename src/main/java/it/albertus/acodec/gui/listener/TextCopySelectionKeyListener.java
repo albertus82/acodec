@@ -10,13 +10,14 @@ import org.eclipse.swt.widgets.Text;
 
 import it.albertus.jface.SwtUtils;
 import it.albertus.jface.closeable.CloseableClipboard;
+import lombok.NonNull;
 
 public enum TextCopySelectionKeyListener implements KeyListener {
 
 	INSTANCE;
 
 	@Override
-	public void keyPressed(final KeyEvent e) {
+	public void keyPressed(@NonNull final KeyEvent e) {
 		if (e.stateMask == SWT.MOD1 && e.keyCode == SwtUtils.KEY_COPY && e.widget instanceof Text && !e.widget.isDisposed()) {
 			final Text text = (Text) e.widget;
 			final String selectionText = text.getSelectionText();
@@ -30,6 +31,6 @@ public enum TextCopySelectionKeyListener implements KeyListener {
 	}
 
 	@Override
-	public void keyReleased(final KeyEvent e) { /* Ignore */ }
+	public void keyReleased(final KeyEvent e) {/* Ignore */}
 
 }

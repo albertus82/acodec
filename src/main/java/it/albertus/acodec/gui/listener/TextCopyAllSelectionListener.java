@@ -10,12 +10,13 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Text;
 
 import it.albertus.jface.closeable.CloseableClipboard;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class TextCopyAllSelectionListener extends SelectionAdapter {
 
-	private final Supplier<Text> textSupplier;
+	@NonNull private final Supplier<Text> textSupplier;
 
 	@Override
 	public void widgetSelected(final SelectionEvent e) {

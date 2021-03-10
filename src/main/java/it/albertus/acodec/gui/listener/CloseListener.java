@@ -9,12 +9,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class CloseListener implements ShellListener, SelectionListener, Listener {
 
-	private final IShellProvider provider;
+	@NonNull private final IShellProvider provider;
 
 	private void disposeShellAndDisplay() {
 		provider.getShell().dispose();
@@ -24,19 +25,19 @@ public class CloseListener implements ShellListener, SelectionListener, Listener
 		}
 	}
 
-	/* OS X Menu */
+	// OS X Menu
 	@Override
 	public void handleEvent(final Event event) {
 		disposeShellAndDisplay();
 	}
 
-	/* Menu */
+	// Menu
 	@Override
 	public void widgetSelected(final SelectionEvent event) {
 		disposeShellAndDisplay();
 	}
 
-	/* Shell close command */
+	// Shell close command
 	@Override
 	public void shellClosed(final ShellEvent event) {
 		disposeShellAndDisplay();
