@@ -68,7 +68,7 @@ public class AboutDialog extends Dialog {
 
 	private static final double MONITOR_SIZE_DIVISOR = 1.2;
 
-	private static final int SCROLLABLE_VERTICAL_SIZE_DLUS = 25;
+	private static final int SCROLLABLE_VERTICAL_SIZE_DLUS = 42; // scrollbar issues below 42 on GTK
 
 	private static final String SYM_NAME_FONT_DEFAULT = AboutDialog.class.getName() + ".default";
 
