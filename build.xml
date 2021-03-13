@@ -245,7 +245,9 @@
 	<target name="icons">
 		<ac:for trim="true" list="${build.platforms.linux}" param="platform">
 			<ac:sequential>
-				<copy file="${icons.directory}/app.ico" tofile="${build.packagesDirectory}/@{platform}/app/${linux.iconFileName}" failonerror="false" />
+				<copy todir="${build.packagesDirectory}/@{platform}/app/${linux.iconFileDir}" failonerror="false">
+					<fileset dir="${icons.directory}/app" />
+				</copy>
 			</ac:sequential>
 		</ac:for>
 		<ac:for trim="true" list="${build.platforms.macos}" param="platform">
