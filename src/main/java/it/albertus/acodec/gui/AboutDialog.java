@@ -74,7 +74,7 @@ public class AboutDialog extends Dialog {
 	private static final float TITLE_FONT_SIZE_MULTIPLIER = 1.6f;
 
 	private static final int ICON_VERTICAL_SIZE_DLUS = 26;
-	private static final int SCROLLABLE_VERTICAL_SIZE_DLUS = 42; // scrollbar issues below 42 on GTK
+	private static final int SCROLLABLE_VERTICAL_SIZE_DLUS = 34; // scrollbar issues below 34 on GTK
 
 	private static final String SYM_NAME_FONT_APPNAME = AboutDialog.class.getName() + ".appname";
 	private static final String SYM_NAME_FONT_DEFAULT = AboutDialog.class.getName() + ".default";
