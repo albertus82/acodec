@@ -5,3 +5,4 @@
 sonar-project.properties
 lombok.config
 hs_err_pid*.log
+junit*.properties
