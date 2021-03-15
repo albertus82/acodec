@@ -111,7 +111,7 @@ public class AboutDialog extends Dialog {
 
 		createAcknowledgementsGroup(shell, GridDataFactory.fillDefaults().grab(true, false).create());
 
-		addInvisibleSeparator(shell);
+		addUnobtrusiveSeparator(shell);
 
 		final Link appLicenseLink = new Link(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().grab(true, false).applyTo(appLicenseLink);
@@ -124,7 +124,7 @@ public class AboutDialog extends Dialog {
 		appLicenseText.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, SwtUtils.convertVerticalDLUsToPixels(appLicenseText, SCROLLABLE_VERTICAL_SIZE_DLUS)).applyTo(appLicenseText);
 
-		addInvisibleSeparator(shell);
+		addUnobtrusiveSeparator(shell);
 
 		final Label thirdPartySoftwareLabel = new Label(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().grab(true, false).applyTo(thirdPartySoftwareLabel);
@@ -265,7 +265,7 @@ public class AboutDialog extends Dialog {
 		return new StringBuilder("<a href=\"").append(href).append("\">").append(label).append("</a>").toString();
 	}
 
-	private static void addInvisibleSeparator(@NonNull final Composite parent) {
+	private static void addUnobtrusiveSeparator(@NonNull final Composite parent) {
 		final Label separator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR | SWT.SHADOW_NONE); // Invisible separator
 		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(separator);
 	}
