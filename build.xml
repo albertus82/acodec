@@ -2,7 +2,7 @@
 <!DOCTYPE project>
 <project name="acodec" default="all" xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" xmlns:jacoco="antlib:org.jacoco.ant" xmlns:ac="antlib:net.sf.antcontrib">
 
-	<property name="version.number" value="2.2.1" />
+	<property name="version.number" value="2.2.2" />
 
 	<property environment="env" />
 	<property name="env.JRE8_HOME" value="${env.JAVA_HOME}/../jdk1.8.0_281/jre" />
