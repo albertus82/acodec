@@ -17,9 +17,9 @@
 	<classpathentry kind="lib" path="lib/compile/common/commons-io-2.8.0.jar" sourcepath="lib/compile/common/src/commons-io-2.8.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/jface-utils-17.3.0.jar" sourcepath="lib/compile/common/src/jface-utils-17.3.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/org.eclipse.core.commands-3.9.800.jar" sourcepath="lib/compile/common/src/org.eclipse.core.commands-3.9.800-sources.jar"/>
-	<classpathentry kind="lib" path="lib/compile/common/org.eclipse.core.jobs-3.10.1000.jar" sourcepath="lib/compile/common/src/org.eclipse.core.jobs-3.10.1000-sources.jar"/>
-	<classpathentry kind="lib" path="lib/compile/common/org.eclipse.equinox.common-3.14.0.jar" sourcepath="lib/compile/common/src/org.eclipse.equinox.common-3.14.0-sources.jar"/>
-	<classpathentry kind="lib" path="lib/compile/common/org.eclipse.osgi-3.16.100.jar" sourcepath="lib/compile/common/src/org.eclipse.osgi-3.16.100-sources.jar"/>
+	<classpathentry kind="lib" path="lib/compile/common/org.eclipse.core.jobs-3.10.1100.jar" sourcepath="lib/compile/common/src/org.eclipse.core.jobs-3.10.1100-sources.jar"/>
+	<classpathentry kind="lib" path="lib/compile/common/org.eclipse.equinox.common-3.14.100.jar" sourcepath="lib/compile/common/src/org.eclipse.equinox.common-3.14.100-sources.jar"/>
+	<classpathentry kind="lib" path="lib/compile/common/org.eclipse.osgi-3.16.200.jar" sourcepath="lib/compile/common/src/org.eclipse.osgi-3.16.200-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/picocli-4.6.1.jar" sourcepath="lib/compile/common/src/picocli-4.6.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/common/reflections-0.9.12.jar" sourcepath="lib/compile/common/src/reflections-0.9.12-sources.jar"/>
 	<classpathentry kind="lib" path="lib/compile/platform-dependent/win32-win32-x86_64/org.eclipse.jface-3.22.0.jar" sourcepath="lib/compile/platform-dependent/win32-win32-x86_64/src/org.eclipse.jface-3.22.0-sources.jar"/>
