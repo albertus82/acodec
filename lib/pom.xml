@@ -5,8 +5,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>it.albertus</groupId>
-	<artifactId>acodec</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>acodec-dependencies</artifactId>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -28,7 +28,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/lib/compile</outputDirectory>
+							<outputDirectory>compile/common</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
 							<includeScope>runtime</includeScope>
 						</configuration>
@@ -40,7 +40,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/lib/compile/src</outputDirectory>
+							<outputDirectory>compile/common/src</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
 							<classifier>sources</classifier>
 							<includeScope>runtime</includeScope>
@@ -53,7 +53,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/lib/runtime</outputDirectory>
+							<outputDirectory>runtime</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
 							<excludeScope>compile</excludeScope>
 						</configuration>
@@ -65,7 +65,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/lib/runtime/src</outputDirectory>
+							<outputDirectory>runtime/src</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
 							<classifier>sources</classifier>
 							<excludeScope>compile</excludeScope>
@@ -78,7 +78,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/lib/provided</outputDirectory>
+							<outputDirectory>provided</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
 							<includeScope>provided</includeScope>
 						</configuration>
@@ -90,7 +90,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/lib/provided/src</outputDirectory>
+							<outputDirectory>provided/src</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
 							<classifier>sources</classifier>
 							<includeScope>provided</includeScope>
@@ -103,7 +103,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/lib/test</outputDirectory>
+							<outputDirectory>test</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
 							<excludeScope>runtime</excludeScope>
 						</configuration>
@@ -115,7 +115,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/lib/test/src</outputDirectory>
+							<outputDirectory>test/src</outputDirectory>
 							<classifier>sources</classifier>
 							<excludeTransitive>true</excludeTransitive>
 							<excludeScope>runtime</excludeScope>
@@ -133,11 +133,11 @@
 						<configuration>
 							<target>
 								<delete verbose="true">
-									<fileset dir="${project.build.directory}/lib/test">
-										<present present="both" targetdir="${project.build.directory}/lib/provided" />
+									<fileset dir="test">
+										<present present="both" targetdir="provided" />
 									</fileset>
-									<fileset dir="${project.build.directory}/lib/runtime">
-										<present present="both" targetdir="${project.build.directory}/lib/test" />
+									<fileset dir="runtime">
+										<present present="both" targetdir="test" />
 									</fileset>
 								</delete>
 							</target>
@@ -145,6 +145,55 @@
 						<goals>
 							<goal>run</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>auto-clean</id>
+						<phase>package</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>lib-clean</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>compile/common</directory>
+									<includes>
+										<include>**/*</include>
+									</includes>
+								</fileset>
+								<fileset>
+									<directory>runtime</directory>
+									<includes>
+										<include>**/*</include>
+									</includes>
+								</fileset>
+								<fileset>
+									<directory>provided</directory>
+									<includes>
+										<include>**/*</include>
+									</includes>
+								</fileset>
+								<fileset>
+									<directory>test</directory>
+									<includes>
+										<include>**/*</include>
+									</includes>
+								</fileset>
+							</filesets>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -195,8 +244,20 @@
 		</plugins>
 	</build>
 
+	<repositories>
+		<repository>
+			<id>albertus82-github</id>
+			<url>https://albertus82.github.io/maven</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<!-- Compile -->
+		<dependency>
+			<groupId>it.albertus</groupId>
+			<artifactId>jface-utils</artifactId>
+			<version>17.3.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
