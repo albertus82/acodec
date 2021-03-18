@@ -132,7 +132,7 @@
 						<phase>package</phase>
 						<configuration>
 							<target>
-								<delete>
+								<delete verbose="true">
 									<fileset dir="${project.build.directory}/lib/test">
 										<present present="both" targetdir="${project.build.directory}/lib/provided" />
 									</fileset>
