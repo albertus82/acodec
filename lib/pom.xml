@@ -159,14 +159,7 @@
 				<version>3.1.0</version>
 				<executions>
 					<execution>
-						<id>auto-clean</id>
-						<phase>package</phase>
-						<goals>
-							<goal>clean</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>lib-clean</id>
+						<id>pre-clean</id>
 						<phase>initialize</phase>
 						<goals>
 							<goal>clean</goal>
@@ -202,6 +195,13 @@
 								</fileset>
 							</filesets>
 						</configuration>
+					</execution>
+					<execution>
+						<id>post-clean</id>
+						<phase>package</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
