@@ -22,29 +22,129 @@
 				<version>3.1.2</version>
 				<executions>
 					<execution>
-						<id>copy-dependencies</id>
-						<phase>package</phase>
+						<id>copy-dependencies-compile</id>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<outputDirectory>${project.build.directory}/lib/compile</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
-							<includeScope>test</includeScope>
+							<includeScope>runtime</includeScope>
 						</configuration>
 					</execution>
 					<execution>
-						<id>copy-dependencies-src</id>
-						<phase>package</phase>
+						<id>copy-dependencies-compile-sources</id>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/lib/src</outputDirectory>
+							<outputDirectory>${project.build.directory}/lib/compile/src</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
-							<includeScope>test</includeScope>
 							<classifier>sources</classifier>
+							<includeScope>runtime</includeScope>
 						</configuration>
+					</execution>
+					<execution>
+						<id>copy-dependencies-runtime</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib/runtime</outputDirectory>
+							<excludeTransitive>true</excludeTransitive>
+							<excludeScope>compile</excludeScope>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-dependencies-runtime-sources</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib/runtime/src</outputDirectory>
+							<excludeTransitive>true</excludeTransitive>
+							<classifier>sources</classifier>
+							<excludeScope>compile</excludeScope>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-dependencies-provided</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib/provided</outputDirectory>
+							<excludeTransitive>true</excludeTransitive>
+							<includeScope>provided</includeScope>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-dependencies-provided-sources</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib/provided/src</outputDirectory>
+							<excludeTransitive>true</excludeTransitive>
+							<classifier>sources</classifier>
+							<includeScope>provided</includeScope>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-dependencies-test</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib/test</outputDirectory>
+							<excludeTransitive>true</excludeTransitive>
+							<excludeScope>runtime</excludeScope>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-dependencies-test-sources</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib/test/src</outputDirectory>
+							<classifier>sources</classifier>
+							<excludeTransitive>true</excludeTransitive>
+							<excludeScope>runtime</excludeScope>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<delete>
+									<fileset dir="${project.build.directory}/lib/test">
+										<present present="both" targetdir="${project.build.directory}/lib/provided" />
+									</fileset>
+									<fileset dir="${project.build.directory}/lib/runtime">
+										<present present="both" targetdir="${project.build.directory}/lib/test" />
+									</fileset>
+								</delete>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
