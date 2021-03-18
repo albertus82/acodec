@@ -12,6 +12,11 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<dependencies.compile.common.directory>compile/common</dependencies.compile.common.directory>
+		<dependencies.runtime.directory>runtime</dependencies.runtime.directory>
+		<dependencies.provided.directory>provided</dependencies.provided.directory>
+		<dependencies.test.directory>test</dependencies.test.directory>
+		<dependencies.src.directory>src</dependencies.src.directory>
 	</properties>
 
 	<build>
@@ -28,7 +33,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>compile/common</outputDirectory>
+							<outputDirectory>${dependencies.compile.common.directory}</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
 							<includeScope>runtime</includeScope>
 						</configuration>
@@ -40,7 +45,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>compile/common/src</outputDirectory>
+							<outputDirectory>${dependencies.compile.common.directory}/${dependencies.src.directory}</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
 							<classifier>sources</classifier>
 							<includeScope>runtime</includeScope>
@@ -53,7 +58,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>runtime</outputDirectory>
+							<outputDirectory>${dependencies.runtime.directory}</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
 							<excludeScope>compile</excludeScope>
 						</configuration>
@@ -65,7 +70,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>runtime/src</outputDirectory>
+							<outputDirectory>${dependencies.runtime.directory}/${dependencies.src.directory}</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
 							<classifier>sources</classifier>
 							<excludeScope>compile</excludeScope>
@@ -78,7 +83,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>provided</outputDirectory>
+							<outputDirectory>${dependencies.provided.directory}</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
 							<includeScope>provided</includeScope>
 						</configuration>
@@ -90,7 +95,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>provided/src</outputDirectory>
+							<outputDirectory>${dependencies.provided.directory}/${dependencies.src.directory}</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
 							<classifier>sources</classifier>
 							<includeScope>provided</includeScope>
@@ -103,7 +108,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>test</outputDirectory>
+							<outputDirectory>${dependencies.test.directory}</outputDirectory>
 							<excludeTransitive>true</excludeTransitive>
 							<excludeScope>runtime</excludeScope>
 						</configuration>
@@ -115,7 +120,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>test/src</outputDirectory>
+							<outputDirectory>${dependencies.test.directory}/${dependencies.src.directory}</outputDirectory>
 							<classifier>sources</classifier>
 							<excludeTransitive>true</excludeTransitive>
 							<excludeScope>runtime</excludeScope>
@@ -133,11 +138,11 @@
 						<configuration>
 							<target>
 								<delete verbose="true">
-									<fileset dir="test">
-										<present present="both" targetdir="provided" />
+									<fileset dir="${dependencies.test.directory}">
+										<present present="both" targetdir="${dependencies.provided.directory}" />
 									</fileset>
-									<fileset dir="runtime">
-										<present present="both" targetdir="test" />
+									<fileset dir="${dependencies.runtime.directory}">
+										<present present="both" targetdir="${dependencies.test.directory}" />
 									</fileset>
 								</delete>
 							</target>
@@ -169,25 +174,28 @@
 						<configuration>
 							<filesets>
 								<fileset>
-									<directory>compile/common</directory>
+									<directory>${dependencies.compile.common.directory}</directory>
+									<includes>
+										<include>**/*</include>
+									</includes>
+									<excludes>
+										<exclude>**/*nebula*</exclude>
+									</excludes>
+								</fileset>
+								<fileset>
+									<directory>${dependencies.runtime.directory}</directory>
 									<includes>
 										<include>**/*</include>
 									</includes>
 								</fileset>
 								<fileset>
-									<directory>runtime</directory>
+									<directory>${dependencies.provided.directory}</directory>
 									<includes>
 										<include>**/*</include>
 									</includes>
 								</fileset>
 								<fileset>
-									<directory>provided</directory>
-									<includes>
-										<include>**/*</include>
-									</includes>
-								</fileset>
-								<fileset>
-									<directory>test</directory>
+									<directory>${dependencies.test.directory}</directory>
 									<includes>
 										<include>**/*</include>
 									</includes>
