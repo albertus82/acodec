@@ -629,15 +629,13 @@
 		<mkdir dir="${build.outputTestClassesDirectory}" />
 		<javac srcdir="${build.testSourceDirectory}" destdir="${build.outputTestClassesDirectory}" source="${build.compiler.source}" target="${build.compiler.target}" debug="true" includeantruntime="false">
 			<classpath path="${build.outputDirectory}">
-				<union>
-					<resources refid="classpath" />
-					<fileset dir="${dependencies.directory}">
-						<!-- Platform-independent libraries -->
-						<include name="test/common/*.jar" />
-						<!-- Oldest SWT version in the package -->
-						<include name="test/platform-specific/${classpath.platform}/*.jar" />
-					</fileset>
-				</union>
+				<fileset refid="classpath" />
+				<fileset dir="${dependencies.directory}">
+					<!-- Platform-independent libraries -->
+					<include name="test/common/*.jar" />
+					<!-- Oldest SWT version in the package -->
+					<include name="test/platform-specific/${classpath.platform}/*.jar" />
+				</fileset>
 			</classpath>
 			<bootclasspath path="${build.compiler.compilerArguments.bootclasspath}" />
 		</javac>
