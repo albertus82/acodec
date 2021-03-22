@@ -627,7 +627,18 @@
 						<exclusions>
 							<exclusion>
 								<groupId>*</groupId>
-								<artifactId>*</artifactId>
+								<artifactId>ant</artifactId>
+							</exclusion>
+						</exclusions>
+					</dependency>
+					<dependency>
+						<groupId>com.ultramixer.jarbundler</groupId>
+						<artifactId>jarbundler-core</artifactId>
+						<version>3.3.0</version>
+						<exclusions>
+							<exclusion>
+								<groupId>*</groupId>
+								<artifactId>ant</artifactId>
 							</exclusion>
 						</exclusions>
 					</dependency>
@@ -660,6 +671,7 @@
 						<configuration>
 							<target>
 								<typedef uri="antlib:net.sf.antcontrib" classpathref="maven.plugin.classpath" />
+								<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpathref="maven.plugin.classpath" />
 								<ant antfile="${project.basedir}/build.xml" />
 							</target>
 						</configuration>
