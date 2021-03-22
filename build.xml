@@ -1,151 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE project>
-<project name="acodec" default="all" xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" xmlns:jacoco="antlib:org.jacoco.ant" xmlns:ac="antlib:net.sf.antcontrib">
-
-	<property name="version.number" value="2.2.2" />
-
-	<property environment="env" />
-	<property name="env.JRE8_HOME" value="${env.JAVA_HOME}/../jdk1.8.0_281/jre" />
-
-	<property file="build.properties" />
-
-	<property name="classpath.platform" value="gtk-linux-armhf" />
+<project name="acodec" default="all" xmlns:ac="antlib:net.sf.antcontrib">
 
 	<filter token="project.artifactId" value="${project.artifactId}" />
 	<filter token="project.name" value="${project.name}" />
 	<filter token="project.url" value="${project.url}" />
 
+	<property name="windows.jarFileName" value="${windows.build.finalName}.jar" />
+	<property name="linux.jarFileName" value="${linux.build.finalName}.jar" />
+	<property name="macos.jarFileName" value="${macos.build.finalName}.jar" />
 	<filter token="windows.jarFileName" value="${windows.jarFileName}" />
-	<filter token="macos.jarFileName" value="${macos.jarFileName}" />
 	<filter token="linux.jarFileName" value="${linux.jarFileName}" />
+	<filter token="macos.jarFileName" value="${macos.jarFileName}" />
 	<filter token="mainClass" value="${mainClass}" />
+
+	<property file="build.properties" />
+
 	<filter token="vm.initialHeapSize" value="${vm.initialHeapSize}" />
 	<filter token="vm.maxHeapSize" value="${vm.maxHeapSize}" />
 
 	<filter token="console.vm.initialHeapSize" value="${console.vm.initialHeapSize}" />
 	<filter token="console.vm.maxHeapSize" value="${console.vm.maxHeapSize}" />
 
-	<typedef uri="antlib:net.sf.antcontrib">
-		<classpath path="${antContrib.directory}/ant-contrib-1.0b3.jar" />
-	</typedef>
-
 	<target name="clean">
 		<delete dir="${build.directory}" />
-		<delete file="sonar-project.properties" />
-		<delete file="lombok.config" />
 	</target>
 
-	<target name="distclean">
-		<delete dir="${build.distDirectory}" includes="*.*" />
-	</target>
-
-	<fileset id="classpath" dir="${dependencies.directory}">
-		<!-- Platform-independent libraries -->
-		<include name="compile/common/*.jar" />
-		<include name="provided/common/*.jar" />
-		<include name="runtime/common/*.jar" />
-		<!-- Oldest SWT version in the package -->
-		<include name="compile/platform-specific/${classpath.platform}/*.jar" />
-		<include name="provided/platform-specific/${classpath.platform}/*.jar" />
-		<include name="runtime/platform-specific/${classpath.platform}/*.jar" />
-	</fileset>
-
-	<target name="resources">
-		<copy todir="${build.outputDirectory}" includeemptydirs="false">
-			<fileset dir="${build.resourcesDirectory}" excludes="**/*.properties" />
-		</copy>
-		<!-- Filtering "properties" files -->
-		<filter token="version.number" value="${version.number}" />
-		<tstamp>
-			<format property="version.date" pattern="yyyy-MM-dd" />
-		</tstamp>
-		<filter token="version.date" value="${version.date}" />
-		<copy todir="${build.outputDirectory}" filtering="true" overwrite="true" includeemptydirs="false">
-			<fileset dir="${build.resourcesDirectory}" includes="**/*.properties" />
-		</copy>
-	</target>
-
-	<target name="compile">
-		<propertyfile file="lombok.config" jdkproperties="true">
-			<entry key="config.stopBubbling" value="true" />
-			<entry key="lombok.addLombokGeneratedAnnotation" value="true" />
-		</propertyfile>
-
-		<mkdir dir="${build.outputDirectory}" />
-
-		<javac srcdir="${build.sourceDirectory}" destdir="${build.outputDirectory}" source="${build.compiler.source}" target="${build.compiler.target}" debug="true" includeantruntime="false">
-			<classpath>
-				<fileset refid="classpath" />
-			</classpath>
-			<bootclasspath path="${build.compiler.compilerArguments.bootclasspath}" />
-			<compilerarg value="-version" />
-			<compilerarg value="-Xlint" />
-		</javac>
-
-		<typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
-			<classpath path="${animalSniffer.directory}/animal-sniffer-ant-tasks-1.20.jar" />
-		</typedef>
-		<as:check-signature signature="${animalSniffer.directory}/java18-1.0.signature">
-			<path path="${build.outputDirectory}" />
-			<classpath>
-				<fileset refid="classpath" />
-			</classpath>
-		</as:check-signature>
-	</target>
-
-	<target name="lib">
-		<union id="lib">
-			<fileset dir="${dependencies.directory}">
-				<include name="compile/common/*.jar" />
-				<include name="runtime/common/*.jar" />
-			</fileset>
-		</union>
-
-		<!-- Copy dependencies -->
+	<target name="jars">
 		<ac:for trim="true" list="${build.platforms.all}" param="platform">
 			<ac:sequential>
-				<copy flatten="true" todir="${build.packagesDirectory}/@{platform}/app/${dependencies.directory}">
-					<resources refid="lib" />
-					<fileset dir="${dependencies.directory}">
-						<include name="compile/platform-specific/@{platform}/*.jar" />
-						<include name="runtime/platform-specific/@{platform}/*.jar" />
+				<copy todir="${build.packagesDirectory}/@{platform}/app">
+					<fileset dir="${project.build.basedir}/@{platform}">
+						<include name="*.jar" />
 					</fileset>
 				</copy>
-			</ac:sequential>
-		</ac:for>
-
-		<!-- Prepare MANIFEST.MF files -->
-		<ac:for trim="true" list="${build.platforms.windows}" param="platform">
-			<ac:sequential>
-				<manifestclasspath property="classpath.@{platform}" jarfile="${build.packagesDirectory}/@{platform}/app/${windows.jarFileName}" maxParentLevels="0">
-					<classpath>
-						<fileset dir="${build.packagesDirectory}/@{platform}/app/${dependencies.directory}">
-							<include name="*.jar" />
-						</fileset>
-					</classpath>
-				</manifestclasspath>
-			</ac:sequential>
-		</ac:for>
-		<ac:for trim="true" list="${build.platforms.linux}" param="platform">
-			<ac:sequential>
-				<manifestclasspath property="classpath.@{platform}" jarfile="${build.packagesDirectory}/@{platform}/app/${linux.jarFileName}" maxParentLevels="0">
-					<classpath>
-						<fileset dir="${build.packagesDirectory}/@{platform}/app/${dependencies.directory}">
-							<include name="*.jar" />
-						</fileset>
-					</classpath>
-				</manifestclasspath>
-			</ac:sequential>
-		</ac:for>
-		<ac:for trim="true" list="${build.platforms.macos}" param="platform">
-			<ac:sequential>
-				<manifestclasspath property="classpath.@{platform}" jarfile="${build.packagesDirectory}/@{platform}/app/${macos.jarFileName}" maxParentLevels="0">
-					<classpath>
-						<fileset dir="${build.packagesDirectory}/@{platform}/app/${dependencies.directory}">
-							<include name="*.jar" />
-						</fileset>
-					</classpath>
-				</manifestclasspath>
+				<copy todir="${build.packagesDirectory}/@{platform}/app/${dependencies.directory}">
+					<fileset dir="${project.build.basedir}/@{platform}/${dependencies.directory}">
+						<include name="*.jar" />
+					</fileset>
+				</copy>
 			</ac:sequential>
 		</ac:for>
 	</target>
@@ -264,61 +157,13 @@
 		</ac:for>
 	</target>
 
-	<target name="jar" depends="resources, compile, lib">
-		<ac:for trim="true" list="${build.platforms.windows}" param="platform" parallel="${build.parallel}">
-			<ac:sequential>
-				<jar destfile="${build.packagesDirectory}/@{platform}/app/${windows.jarFileName}" basedir="${build.outputDirectory}" level="9">
-					<manifest>
-						<attribute name="Main-Class" value="${mainClass}" />
-						<attribute name="Class-Path" value="${classpath.@{platform}}" />
-						<attribute name="Implementation-Title" value="${project.name}" />
-						<attribute name="Implementation-Version" value="${version.number}" />
-						<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
-						<attribute name="X-Compile-Target-JDK" value="${build.compiler.target}" />
-					</manifest>
-					<metainf refid="docs" />
-				</jar>
-			</ac:sequential>
-		</ac:for>
-		<ac:for trim="true" list="${build.platforms.linux}" param="platform" parallel="${build.parallel}">
-			<ac:sequential>
-				<jar destfile="${build.packagesDirectory}/@{platform}/app/${linux.jarFileName}" basedir="${build.outputDirectory}" level="9">
-					<manifest>
-						<attribute name="Main-Class" value="${mainClass}" />
-						<attribute name="Class-Path" value="${classpath.@{platform}}" />
-						<attribute name="Implementation-Title" value="${project.name}" />
-						<attribute name="Implementation-Version" value="${version.number}" />
-						<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
-						<attribute name="X-Compile-Target-JDK" value="${build.compiler.target}" />
-					</manifest>
-					<metainf refid="docs" />
-				</jar>
-			</ac:sequential>
-		</ac:for>
-		<ac:for trim="true" list="${build.platforms.macos}" param="platform" parallel="${build.parallel}">
-			<ac:sequential>
-				<jar destfile="${build.packagesDirectory}/@{platform}/app/${macos.jarFileName}" basedir="${build.outputDirectory}" level="9">
-					<manifest>
-						<attribute name="Main-Class" value="${mainClass}" />
-						<attribute name="Class-Path" value="${classpath.@{platform}}" />
-						<attribute name="Implementation-Title" value="${project.name}" />
-						<attribute name="Implementation-Version" value="${version.number}" />
-						<attribute name="X-Compile-Source-JDK" value="${build.compiler.source}" />
-						<attribute name="X-Compile-Target-JDK" value="${build.compiler.target}" />
-					</manifest>
-					<metainf refid="docs" />
-				</jar>
-			</ac:sequential>
-		</ac:for>
-	</target>
-
 	<target name="dist-macos">
 		<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpath="${jarBundler.directory}/jarbundler-core-3.3.0.jar" />
 
 		<ac:for trim="true" list="${build.platforms.macos}" param="platform" parallel="${build.parallel}">
 			<ac:sequential>
 				<mkdir dir="${build.packagesDirectory}/@{platform}/bundle" />
-				<jarbundler vmoptions="${macos.vmoptions}" dir="${build.packagesDirectory}/@{platform}/bundle" name="${project.name}" mainclass="${mainClass}" startonmainthread="true" version="${version.number}" icon="${build.packagesDirectory}/@{platform}/app/${macos.iconFileName}" usejavaxkey="true" jvmversion="${build.compiler.target}+" stubfile="${jarBundler.directory}/universalJavaApplicationStub" highresolutioncapable="true">
+				<jarbundler vmoptions="${macos.vmoptions}" dir="${build.packagesDirectory}/@{platform}/bundle" name="${project.name}" mainclass="${mainClass}" startonmainthread="true" version="${project.version}" icon="${build.packagesDirectory}/@{platform}/app/${macos.iconFileName}" usejavaxkey="true" jvmversion="${maven.compiler.target}+" stubfile="${jarBundler.directory}/universalJavaApplicationStub" highresolutioncapable="true">
 					<jarfileset dir="${build.packagesDirectory}/@{platform}/app" includes="**/*.jar" />
 				</jarbundler>
 
@@ -334,7 +179,7 @@
 					<fileset dir="${build.packagesDirectory}/@{platform}/scripts" />
 				</copy>
 
-				<tar destfile="${build.distDirectory}/${project.artifactId}-${version.number}-@{platform}-app.tar.gz" compression="gzip">
+				<tar destfile="${build.distDirectory}/${project.artifactId}-${project.version}-@{platform}-app.tar.gz" compression="gzip">
 					<tarfileset dir="${build.packagesDirectory}/@{platform}/bundle" filemode="755">
 						<include name="${project.name}.app/Contents/MacOS/*" />
 						<include name="${project.name}.app/Contents/Resources/Java/*.command" />
@@ -351,7 +196,7 @@
 	<target name="dist-linux">
 		<ac:for trim="true" list="${build.platforms.linux}" param="platform" parallel="${build.parallel}">
 			<ac:sequential>
-				<tar destfile="${build.distDirectory}/${project.artifactId}-${version.number}-@{platform}-bin.tar.gz" compression="gzip">
+				<tar destfile="${build.distDirectory}/${project.artifactId}-${project.version}-@{platform}-bin.tar.gz" compression="gzip">
 					<tarfileset dir="${build.packagesDirectory}/@{platform}/app" prefix="${project.artifactId}" filemode="755">
 						<include name="*.jar" />
 						<include name="*.sh" />
@@ -385,41 +230,29 @@
 		</condition>
 		<condition property="launch4j.bindir" value="${launch4j.directory}/bin/linux">
 			<and>
-				<os family="unix" />
+				<os name="linux" />
 				<os arch="x86" />
-				<not>
-					<os name="mac os x" />
-				</not>
 				<available file="${launch4j.directory}/bin/linux" type="dir" />
 			</and>
 		</condition>
 		<condition property="launch4j.bindir" value="${launch4j.directory}/bin/linux-x64">
 			<and>
-				<os family="unix" />
+				<os name="linux" />
 				<os arch="amd64" />
-				<not>
-					<os name="mac os x" />
-				</not>
 				<available file="${launch4j.directory}/bin/linux-x64" type="dir" />
 			</and>
 		</condition>
 		<condition property="launch4j.bindir" value="${launch4j.directory}/bin/linux-armhf">
 			<and>
-				<os family="unix" />
+				<os name="linux" />
 				<os arch="arm" />
-				<not>
-					<os name="mac os x" />
-				</not>
 				<available file="${launch4j.directory}/bin/linux-armhf" type="dir" />
 			</and>
 		</condition>
 		<condition property="launch4j.bindir" value="${launch4j.directory}/bin/linux-aarch64">
 			<and>
-				<os family="unix" />
+				<os name="linux" />
 				<os arch="aarch64" />
-				<not>
-					<os name="mac os x" />
-				</not>
 				<available file="${launch4j.directory}/bin/linux-aarch64" type="dir" />
 			</and>
 		</condition>
@@ -439,42 +272,42 @@
 		<launch4j bindir="${launch4j.bindir}">
 			<config outfile="${build.packagesDirectory}/win32-win32-x86/app/${windows.exeFileName}" jarpath="${windows.jarFileName}" headertype="gui" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir="." icon="${icons.directory}/app.ico">
 				<singleInstance mutexname="${mainClass}" windowtitle="${project.name}" />
-				<jre runtimebits="32" minversion="${build.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${vm.initialHeapSize}" maxheapsize="${vm.maxHeapSize}">
+				<jre runtimebits="32" minversion="${maven.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${vm.initialHeapSize}" maxheapsize="${vm.maxHeapSize}">
 					<opt>-Dit.albertus.acodec.ACodec.main.mode=gui</opt>
 				</jre>
-				<versionInfo fileversion="${version.number}.0" txtfileversion="${version.number}" filedescription="${project.name}" copyright="${launch4j.copyright}" productversion="${version.number}.0" txtproductversion="${version.number}" productname="${project.name}" internalname="${project.artifactId}" originalfilename="${windows.exeFileName}" companyname="${launch4j.companyName}" />
+				<versionInfo fileversion="${project.version}.0" txtfileversion="${project.version}" filedescription="${project.name}" copyright="${launch4j.copyright}" productversion="${project.version}.0" txtproductversion="${project.version}" productname="${project.name}" internalname="${project.artifactId}" originalfilename="${windows.exeFileName}" companyname="${launch4j.companyName}" />
 			</config>
 		</launch4j>
 		<launch4j bindir="${launch4j.bindir}">
 			<config outfile="${build.packagesDirectory}/win32-win32-x86/app/${project.name}.exe" jarpath="${windows.jarFileName}" headertype="console" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir=".">
-				<jre minversion="${build.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${console.vm.initialHeapSize}" maxheapsize="${console.vm.maxHeapSize}">
+				<jre minversion="${maven.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${console.vm.initialHeapSize}" maxheapsize="${console.vm.maxHeapSize}">
 					<opt>-Dit.albertus.acodec.ACodec.main.mode=console</opt>
 				</jre>
-				<versionInfo fileversion="${version.number}.0" txtfileversion="${version.number}" filedescription="${project.name}" copyright="${launch4j.copyright}" productversion="${version.number}.0" txtproductversion="${version.number}" productname="${project.name}" internalname="${project.name}" originalfilename="${project.name}.exe" companyname="${launch4j.companyName}" />
+				<versionInfo fileversion="${project.version}.0" txtfileversion="${project.version}" filedescription="${project.name}" copyright="${launch4j.copyright}" productversion="${project.version}.0" txtproductversion="${project.version}" productname="${project.name}" internalname="${project.name}" originalfilename="${project.name}.exe" companyname="${launch4j.companyName}" />
 			</config>
 		</launch4j>
 
 		<launch4j bindir="${launch4j.bindir}">
 			<config outfile="${build.packagesDirectory}/win32-win32-x86_64/app/${windows.exeFileName}" jarpath="${windows.jarFileName}" headertype="gui" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir="." icon="${icons.directory}/app.ico">
 				<singleInstance mutexname="${mainClass}" windowtitle="${project.name}" />
-				<jre runtimebits="64" minversion="${build.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${vm.initialHeapSize}" maxheapsize="${vm.maxHeapSize}">
+				<jre runtimebits="64" minversion="${maven.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${vm.initialHeapSize}" maxheapsize="${vm.maxHeapSize}">
 					<opt>-Dit.albertus.acodec.ACodec.main.mode=gui</opt>
 				</jre>
-				<versionInfo fileversion="${version.number}.0" txtfileversion="${version.number}" filedescription="${project.name}" copyright="${launch4j.copyright}" productversion="${version.number}.0" txtproductversion="${version.number}" productname="${project.name}" internalname="${project.artifactId}" originalfilename="${windows.exeFileName}" companyname="${launch4j.companyName}" />
+				<versionInfo fileversion="${project.version}.0" txtfileversion="${project.version}" filedescription="${project.name}" copyright="${launch4j.copyright}" productversion="${project.version}.0" txtproductversion="${project.version}" productname="${project.name}" internalname="${project.artifactId}" originalfilename="${windows.exeFileName}" companyname="${launch4j.companyName}" />
 			</config>
 		</launch4j>
 		<launch4j bindir="${launch4j.bindir}">
 			<config outfile="${build.packagesDirectory}/win32-win32-x86_64/app/${project.name}.exe" jarpath="${windows.jarFileName}" headertype="console" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir=".">
-				<jre minversion="${build.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${console.vm.initialHeapSize}" maxheapsize="${console.vm.maxHeapSize}">
+				<jre minversion="${maven.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${console.vm.initialHeapSize}" maxheapsize="${console.vm.maxHeapSize}">
 					<opt>-Dit.albertus.acodec.ACodec.main.mode=console</opt>
 				</jre>
-				<versionInfo fileversion="${version.number}.0" txtfileversion="${version.number}" filedescription="${project.name}" copyright="${launch4j.copyright}" productversion="${version.number}.0" txtproductversion="${version.number}" productname="${project.name}" internalname="${project.name}" originalfilename="${project.name}.exe" companyname="${launch4j.companyName}" />
+				<versionInfo fileversion="${project.version}.0" txtfileversion="${project.version}" filedescription="${project.name}" copyright="${launch4j.copyright}" productversion="${project.version}.0" txtproductversion="${project.version}" productname="${project.name}" internalname="${project.name}" originalfilename="${project.name}.exe" companyname="${launch4j.companyName}" />
 			</config>
 		</launch4j>
 
 		<ac:for trim="true" list="${build.platforms.windows}" param="platform" parallel="${build.parallel}">
 			<ac:sequential>
-				<zip destfile="${build.distDirectory}/${project.artifactId}-${version.number}-@{platform}-bin.zip" level="9">
+				<zip destfile="${build.distDirectory}/${project.artifactId}-${project.version}-@{platform}-bin.zip" level="9">
 					<zipfileset dir="${build.packagesDirectory}/@{platform}/app" prefix="${project.name}" />
 				</zip>
 			</ac:sequential>
@@ -483,8 +316,8 @@
 		<echo file="${build.packagesDirectory}/win32-win32-x86/setup.iss">
 			[Setup]
 			AppName=${project.name}
-			AppVersion=${version.number}
-			VersionInfoVersion=${version.number}
+			AppVersion=${project.version}
+			VersionInfoVersion=${project.version}
 			AppId=${innoSetup.AppId.x86}
 			AppPublisherURL=${innoSetup.AppPublisherURL}
 			AppSupportURL=${innoSetup.AppSupportURL}
@@ -539,8 +372,8 @@
 		<echo file="${build.packagesDirectory}/win32-win32-x86_64/setup.iss">
 			[Setup]
 			AppName=${project.name}
-			AppVersion=${version.number}
-			VersionInfoVersion=${version.number}
+			AppVersion=${project.version}
+			VersionInfoVersion=${project.version}
 			AppId=${innoSetup.AppId.x64}
 			AppPublisherURL=${innoSetup.AppPublisherURL}
 			AppSupportURL=${innoSetup.AppSupportURL}
@@ -609,111 +442,19 @@
 				<exec osfamily="windows" executable="${innoSetup.directory}/ISCC.exe" failonerror="true">
 					<arg value="${build.packagesDirectory}/@{platform}/setup.iss" />
 					<arg value="/O${build.distDirectory}" />
-					<arg value="/F${project.artifactId}-${version.number}-@{platform}-setup" />
+					<arg value="/F${project.artifactId}-${project.version}-@{platform}-setup" />
 				</exec>
 				<exec osfamily="unix" executable="wine" failonerror="${wine.failonerror}" failifexecutionfails="${wine.failifexecutionfails}">
 					<arg value="${innoSetup.directory}/ISCC.exe" />
 					<arg value="${build.packagesDirectory}/@{platform}/setup.iss" />
 					<arg value="/O${build.distDirectory}" />
-					<arg value="/F${project.artifactId}-${version.number}-@{platform}-setup" />
+					<arg value="/F${project.artifactId}-${project.version}-@{platform}-setup" />
 				</exec>
 			</ac:sequential>
 		</ac:for>
 	</target>
 
-	<target name="dist" depends="jar, config, scripts, docs, licenses, icons, dist-linux, dist-macos, dist-windows" />
-
-	<available file="${build.testSourceDirectory}" type="dir" property="build.test" />
-
-	<target name="test" if="build.test">
-		<mkdir dir="${build.outputTestClassesDirectory}" />
-		<javac srcdir="${build.testSourceDirectory}" destdir="${build.outputTestClassesDirectory}" source="${build.compiler.source}" target="${build.compiler.target}" debug="true" includeantruntime="false">
-			<classpath path="${build.outputDirectory}">
-				<fileset refid="classpath" />
-				<fileset dir="${dependencies.directory}">
-					<!-- Platform-independent libraries -->
-					<include name="test/common/*.jar" />
-					<!-- Oldest SWT version in the package -->
-					<include name="test/platform-specific/${classpath.platform}/*.jar" />
-				</fileset>
-			</classpath>
-			<bootclasspath path="${build.compiler.compilerArguments.bootclasspath}" />
-		</javac>
-
-		<copy todir="${build.outputTestClassesDirectory}" failonerror="false">
-			<fileset dir="${build.testResourcesDirectory}" />
-		</copy>
-
-		<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
-			<classpath path="${jacoco.directory}/jacocoant.jar" />
-		</taskdef>
-
-		<mkdir dir="${build.outputTestResultsDirectory}" />
-		<jacoco:coverage destfile="${build.outputTestResultsDirectory}/jacoco/jacoco.exec">
-			<junit showoutput="true" printsummary="yes" haltonfailure="yes" fork="true" forkmode="once" maxmemory="64m">
-				<classpath path="${build.outputTestClassesDirectory}">
-					<path location="${build.packagesDirectory}/${classpath.platform}/app/${linux.jarFileName}" />
-					<fileset dir="${dependencies.directory}">
-						<!-- Platform-independent libraries -->
-						<include name="test/common/*.jar" />
-						<!-- Oldest SWT version in the package -->
-						<include name="test/platform-specific/${classpath.platform}/*.jar" />
-					</fileset>
-				</classpath>
-				<batchtest todir="${build.outputTestResultsDirectory}">
-					<fileset dir="${build.outputTestClassesDirectory}">
-						<include name="**/*Test*.class" />
-						<exclude name="**/*$*.class" />
-					</fileset>
-				</batchtest>
-				<formatter type="xml" />
-			</junit>
-		</jacoco:coverage>
-		<jacoco:report>
-			<executiondata>
-				<file file="${build.outputTestResultsDirectory}/jacoco/jacoco.exec" />
-			</executiondata>
-			<structure name="${project.artifactId}">
-				<classfiles>
-					<fileset dir="${build.outputDirectory}" />
-				</classfiles>
-				<sourcefiles encoding="UTF-8">
-					<fileset dir="${build.sourceDirectory}" />
-				</sourcefiles>
-			</structure>
-			<xml destfile="${build.outputTestResultsDirectory}/jacoco/jacoco.xml" />
-		</jacoco:report>
-	</target>
-
-	<target name="sonar-main">
-		<propertyfile file="sonar-project.properties" jdkproperties="true">
-			<entry key="sonar.projectKey" value="${project.groupId}:${project.artifactId}" />
-			<entry key="sonar.projectName" value="${project.name}" />
-			<entry key="sonar.projectVersion" value="${version.number}" />
-			<entry key="sonar.sources" value="${build.sourceDirectory}" />
-			<entry key="sonar.language" value="java" />
-			<entry key="sonar.java.source" value="${build.compiler.source}" />
-			<entry key="sonar.java.target" value="${build.compiler.target}" />
-			<entry key="sonar.java.libraries" value="${dependencies.directory}/**/*.jar" />
-			<entry key="sonar.java.binaries" value="${build.outputDirectory}" />
-			<entry key="sonar.sourceEncoding" value="UTF-8" />
-		</propertyfile>
-	</target>
-
-	<target name="sonar-test" depends="sonar-main" if="build.test">
-		<propertyfile file="sonar-project.properties" jdkproperties="true">
-			<entry key="sonar.tests" value="${build.testSourceDirectory}" />
-			<entry key="sonar.java.test.libraries" value="${dependencies.directory}/**/*.jar" />
-			<entry key="sonar.java.test.binaries" value="${build.outputTestClassesDirectory}" />
-			<entry key="sonar.coverage.jacoco.xmlReportPaths" value="${build.outputTestResultsDirectory}/jacoco/jacoco.xml" />
-		</propertyfile>
-	</target>
-
-	<target name="sonar" depends="sonar-main, sonar-test">
-		<echoproperties srcfile="sonar-project.properties" />
-	</target>
-
-	<target name="all" depends="clean, dist, test, sonar" />
+	<target name="dist" depends="jars, config, scripts, docs, licenses, icons, dist-linux, dist-macos, dist-windows" />
 
 	<target name="virustotal">
 		<property name="checksums.file" value="${build.directory}/checksums.md" />
@@ -731,5 +472,7 @@
 		<loadfile property="checksums.file.contents" srcFile="${checksums.file}" />
 		<echo message="${checksums.file.contents}" />
 	</target>
+
+	<target name="all" depends="clean, dist, virustotal" />
 
 </project>

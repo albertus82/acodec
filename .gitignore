@@ -2,7 +2,9 @@
 /build/
 /target/
 .settings/
-sonar-project.properties
+.project
+.classpath
+interpolated-pom.xml
 lombok.config
 hs_err_pid*.log
 junit*.properties
