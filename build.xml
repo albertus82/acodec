@@ -46,24 +46,24 @@
 	<target name="config">
 		<ac:for trim="true" list="${build.platforms.windows}" param="platform">
 			<ac:sequential>
-				<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/@{platform}/config/${windows.cfgFileName}" failonerror="false" />
-				<copy todir="${build.packagesDirectory}/@{platform}/config" includeemptydirs="false" failonerror="false">
+				<copy quiet="true" file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/@{platform}/config/${windows.cfgFileName}" failonerror="false" />
+				<copy quiet="true" todir="${build.packagesDirectory}/@{platform}/config" includeemptydirs="false" failonerror="false">
 					<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
 				</copy>
 			</ac:sequential>
 		</ac:for>
 		<ac:for trim="true" list="${build.platforms.linux}" param="platform">
 			<ac:sequential>
-				<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/@{platform}/app/.${project.artifactId}/${linux.cfgFileName}" failonerror="false" />
-				<copy todir="${build.packagesDirectory}/@{platform}/app/.${project.artifactId}" includeemptydirs="false" failonerror="false">
+				<copy quiet="true" file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/@{platform}/app/.${project.artifactId}/${linux.cfgFileName}" failonerror="false" />
+				<copy quiet="true" todir="${build.packagesDirectory}/@{platform}/app/.${project.artifactId}" includeemptydirs="false" failonerror="false">
 					<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
 				</copy>
 			</ac:sequential>
 		</ac:for>
 		<ac:for trim="true" list="${build.platforms.macos}" param="platform">
 			<ac:sequential>
-				<copy file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/@{platform}/config/${macos.cfgFileName}" failonerror="false" />
-				<copy todir="${build.packagesDirectory}/@{platform}/config" includeemptydirs="false" failonerror="false">
+				<copy quiet="true" file="${build.configDirectory}/${project.artifactId}.cfg" tofile="${build.packagesDirectory}/@{platform}/config/${macos.cfgFileName}" failonerror="false" />
+				<copy quiet="true" todir="${build.packagesDirectory}/@{platform}/config" includeemptydirs="false" failonerror="false">
 					<fileset dir="${build.configDirectory}" excludes="${project.artifactId}.cfg" />
 				</copy>
 			</ac:sequential>
@@ -167,7 +167,7 @@
 					<jarfileset dir="${build.packagesDirectory}/@{platform}/app" includes="**/*.jar" />
 				</jarbundler>
 
-				<copy todir="${build.packagesDirectory}/@{platform}/bundle/${project.name}.app/Contents/Library/Preferences" failonerror="false">
+				<copy quiet="true" todir="${build.packagesDirectory}/@{platform}/bundle/${project.name}.app/Contents/Library/Preferences" failonerror="false">
 					<fileset dir="${build.packagesDirectory}/@{platform}/config" />
 				</copy>
 
@@ -175,7 +175,7 @@
 					<fileset dir="${build.packagesDirectory}/@{platform}/docs" />
 				</copy>
 
-				<copy todir="${build.packagesDirectory}/@{platform}/bundle/${project.name}.app/Contents/Resources/Java" failonerror="false" filtering="true">
+				<copy quiet="true" todir="${build.packagesDirectory}/@{platform}/bundle/${project.name}.app/Contents/Resources/Java" failonerror="false" filtering="true">
 					<fileset dir="${build.packagesDirectory}/@{platform}/scripts" />
 				</copy>
 
@@ -211,9 +211,10 @@
 	</target>
 
 	<target name="dist-windows">
-		<echo message="os.name: ${os.name}" />
-		<echo message="os.arch: ${os.arch}" />
-		<echo message="os.version: ${os.version}" />
+		<echo level="info" message="os.family: ${os.family}" />
+		<echo level="info" message="os.name: ${os.name}" />
+		<echo level="info" message="os.arch: ${os.arch}" />
+		<echo level="info" message="os.version: ${os.version}" />
 
 		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${launch4j.directory}/launch4j.jar:${launch4j.directory}/lib/xstream.jar" />
 		<condition property="launch4j.bindir" value="${launch4j.directory}/bin/win32">
@@ -257,7 +258,7 @@
 			</and>
 		</condition>
 
-		<echo message="launch4j.bindir: ${launch4j.bindir}" />
+		<echo level="info" message="launch4j.bindir: ${launch4j.bindir}" />
 
 		<condition property="wine.failonerror" else="false">
 			<isfalse value="${ignoreWineErrors}" />
@@ -470,7 +471,7 @@
 			<fileset dir="${checksums.directory}" />
 		</concat>
 		<loadfile property="checksums.file.contents" srcFile="${checksums.file}" />
-		<echo message="${checksums.file.contents}" />
+		<echo level="info" message="${checksums.file.contents}" />
 	</target>
 
 	<target name="all" depends="clean, dist, virustotal" />
