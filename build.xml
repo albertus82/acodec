@@ -158,8 +158,6 @@
 	</target>
 
 	<target name="dist-macos">
-		<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpath="${jarBundler.directory}/jarbundler-core-3.3.0.jar" />
-
 		<ac:for trim="true" list="${build.platforms.macos}" param="platform" parallel="${build.parallel}">
 			<ac:sequential>
 				<mkdir dir="${build.packagesDirectory}/@{platform}/bundle" />
