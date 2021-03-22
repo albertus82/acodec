@@ -211,10 +211,9 @@
 	</target>
 
 	<target name="dist-windows">
-		<echo level="info" message="os.family: ${os.family}" />
 		<echo level="info" message="os.name: ${os.name}" />
-		<echo level="info" message="os.arch: ${os.arch}" />
 		<echo level="info" message="os.version: ${os.version}" />
+		<echo level="info" message="os.arch: ${os.arch}" />
 
 		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${launch4j.directory}/launch4j.jar:${launch4j.directory}/lib/xstream.jar" />
 		<condition property="launch4j.bindir" value="${launch4j.directory}/bin/win32">
