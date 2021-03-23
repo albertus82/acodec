@@ -78,6 +78,7 @@
 						<include name="*.bat" />
 					</fileset>
 				</copy>
+				<fixcrlf srcdir="${build.packagesDirectory}/@{platform}/app" includes="*.bat" eof="asis" eol="crlf" />
 			</ac:sequential>
 		</ac:for>
 		<ac:for trim="true" list="${build.platforms.linux}" param="platform">
@@ -87,6 +88,7 @@
 						<include name="*.sh" />
 					</fileset>
 				</copy>
+				<fixcrlf srcdir="${build.packagesDirectory}/@{platform}/app" includes="*.sh" eof="remove" eol="lf" />
 			</ac:sequential>
 		</ac:for>
 		<ac:for trim="true" list="${build.platforms.macos}" param="platform">
@@ -96,41 +98,55 @@
 						<include name="*.command" />
 					</fileset>
 				</copy>
+				<fixcrlf srcdir="${build.packagesDirectory}/@{platform}/scripts" includes="*.command" eof="remove" eol="lf" />
 			</ac:sequential>
 		</ac:for>
 	</target>
 
-	<fileset id="docs" dir="">
-		<include name="README*" />
-		<include name="LICENSE*" />
-		<include name="NOTICE*" />
-	</fileset>
-
 	<target name="docs">
-		<ac:for trim="true" list="${build.platforms.windows},${build.platforms.linux}" param="platform">
+		<property name="docs.fileset.includes" value="README*,LICENSE*,NOTICE*" />
+		<ac:for trim="true" list="${build.platforms.windows}" param="platform">
 			<ac:sequential>
 				<copy todir="${build.packagesDirectory}/@{platform}/app">
-					<fileset refid="docs" />
+					<fileset dir="${basedir}" includes="${docs.fileset.includes}" />
 				</copy>
+				<fixcrlf srcdir="${build.packagesDirectory}/@{platform}/app" includes="${docs.fileset.includes}" eof="asis" eol="crlf" />
+			</ac:sequential>
+		</ac:for>
+		<ac:for trim="true" list="${build.platforms.linux}" param="platform">
+			<ac:sequential>
+				<copy todir="${build.packagesDirectory}/@{platform}/app">
+					<fileset dir="${basedir}" includes="${docs.fileset.includes}" />
+				</copy>
+				<fixcrlf srcdir="${build.packagesDirectory}/@{platform}/app" includes="${docs.fileset.includes}" eof="remove" eol="lf" />
 			</ac:sequential>
 		</ac:for>
 		<ac:for trim="true" list="${build.platforms.macos}" param="platform">
 			<ac:sequential>
 				<copy todir="${build.packagesDirectory}/@{platform}/docs">
-					<fileset refid="docs" />
+					<fileset dir="${basedir}" includes="${docs.fileset.includes}" />
 				</copy>
+				<fixcrlf srcdir="${build.packagesDirectory}/@{platform}/docs" includes="${docs.fileset.includes}" eof="remove" eol="lf" />
 			</ac:sequential>
 		</ac:for>
 	</target>
 
 	<target name="licenses">
 		<fileset id="licenses" dir="${3rdparty.license.directory}" />
-
-		<ac:for trim="true" list="${build.platforms.windows},${build.platforms.linux}" param="platform">
+		<ac:for trim="true" list="${build.platforms.windows}" param="platform">
 			<ac:sequential>
 				<copy todir="${build.packagesDirectory}/@{platform}/app/${3rdparty.license.directory}">
 					<fileset refid="licenses" />
 				</copy>
+				<fixcrlf srcdir="${build.packagesDirectory}/@{platform}/app/${3rdparty.license.directory}" includes="*.txt" eof="asis" eol="crlf" />
+			</ac:sequential>
+		</ac:for>
+		<ac:for trim="true" list="${build.platforms.linux}" param="platform">
+			<ac:sequential>
+				<copy todir="${build.packagesDirectory}/@{platform}/app/${3rdparty.license.directory}">
+					<fileset refid="licenses" />
+				</copy>
+				<fixcrlf srcdir="${build.packagesDirectory}/@{platform}/app/${3rdparty.license.directory}" includes="*.txt" eof="remove" eol="lf" />
 			</ac:sequential>
 		</ac:for>
 		<ac:for trim="true" list="${build.platforms.macos}" param="platform">
@@ -138,6 +154,7 @@
 				<copy todir="${build.packagesDirectory}/@{platform}/docs/${3rdparty.license.directory}">
 					<fileset refid="licenses" />
 				</copy>
+				<fixcrlf srcdir="${build.packagesDirectory}/@{platform}/docs/${3rdparty.license.directory}" includes="*.txt" eof="remove" eol="lf" />
 			</ac:sequential>
 		</ac:for>
 	</target>
