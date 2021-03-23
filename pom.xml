@@ -535,6 +535,9 @@
 					<pom>${project.basedir}/pom.xml</pom>
 					<streamLogs>true</streamLogs>
 					<noLog>true</noLog>
+					<properties>
+						<skipTests>${skipTests}</skipTests>
+					</properties>
 				</configuration>
 				<executions>
 					<execution>
