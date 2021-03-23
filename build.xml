@@ -146,13 +146,13 @@
 		<ac:for trim="true" list="${build.platforms.linux}" param="platform">
 			<ac:sequential>
 				<copy todir="${build.packagesDirectory}/@{platform}/app/${linux.iconFileDir}" failonerror="false">
-					<fileset dir="${icons.directory}/app" />
+					<fileset dir="${build.iconsDirectory}/linux" />
 				</copy>
 			</ac:sequential>
 		</ac:for>
 		<ac:for trim="true" list="${build.platforms.macos}" param="platform">
 			<ac:sequential>
-				<copy file="${icons.directory}/app.icns" tofile="${build.packagesDirectory}/@{platform}/app/${macos.iconFileName}" failonerror="false" />
+				<copy file="${build.iconsDirectory}/macos.icns" tofile="${build.packagesDirectory}/@{platform}/app/${macos.iconFileName}" failonerror="false" />
 			</ac:sequential>
 		</ac:for>
 	</target>
@@ -268,7 +268,7 @@
 		<chmod perm="+x" file="${launch4j.bindir}/windres" failonerror="false" failifexecutionfails="false" ignoremissing="true" />
 
 		<launch4j bindir="${launch4j.bindir}">
-			<config outfile="${build.packagesDirectory}/win32-win32-x86/app/${windows.exeFileName}" jarpath="${windows.jarFileName}" headertype="gui" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir="." icon="${icons.directory}/app.ico">
+			<config outfile="${build.packagesDirectory}/win32-win32-x86/app/${windows.exeFileName}" jarpath="${windows.jarFileName}" headertype="gui" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir="." icon="${build.iconsDirectory}/windows.ico">
 				<singleInstance mutexname="${mainClass}" windowtitle="${project.name}" />
 				<jre runtimebits="32" minversion="${maven.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${vm.initialHeapSize}" maxheapsize="${vm.maxHeapSize}">
 					<opt>-Dit.albertus.acodec.ACodec.main.mode=gui</opt>
@@ -286,7 +286,7 @@
 		</launch4j>
 
 		<launch4j bindir="${launch4j.bindir}">
-			<config outfile="${build.packagesDirectory}/win32-win32-x86_64/app/${windows.exeFileName}" jarpath="${windows.jarFileName}" headertype="gui" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir="." icon="${icons.directory}/app.ico">
+			<config outfile="${build.packagesDirectory}/win32-win32-x86_64/app/${windows.exeFileName}" jarpath="${windows.jarFileName}" headertype="gui" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir="." icon="${build.iconsDirectory}/windows.ico">
 				<singleInstance mutexname="${mainClass}" windowtitle="${project.name}" />
 				<jre runtimebits="64" minversion="${maven.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${vm.initialHeapSize}" maxheapsize="${vm.maxHeapSize}">
 					<opt>-Dit.albertus.acodec.ACodec.main.mode=gui</opt>
