@@ -22,9 +22,9 @@
 		<version.date>${maven.build.timestamp}</version.date>
 		<swt.latest.version>3.116.0</swt.latest.version>
 		<mainClass>it.albertus.acodec.ACodec</mainClass>
-		<windows.build.finalName>ACodec</windows.build.finalName>
+		<windows.build.finalName>${project.name}</windows.build.finalName>
 		<linux.build.finalName>${project.artifactId}</linux.build.finalName>
-		<macos.build.finalName>ACodec</macos.build.finalName>
+		<macos.build.finalName>${project.name}</macos.build.finalName>
 		<project.build.basedir>${project.basedir}/target</project.build.basedir>
 		<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
