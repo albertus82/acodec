@@ -23,7 +23,7 @@
 	<filter token="console.vm.maxHeapSize" value="${console.vm.maxHeapSize}" />
 
 	<target name="clean">
-		<delete dir="${build.directory}" />
+		<delete dir="${ant.build.directory}" />
 	</target>
 
 	<target name="jars">
@@ -427,11 +427,11 @@
 	<target name="dist" depends="jars, scripts, docs, licenses, icons, dist-linux, dist-macos, dist-windows" />
 
 	<target name="virustotal">
-		<property name="checksums.file" value="${build.directory}/checksums.md" />
-		<property name="checksums.directory" value="${build.directory}/checksums" />
+		<property name="checksums.file" value="${ant.build.directory}/checksums.md" />
+		<property name="checksums.directory" value="${ant.build.directory}/checksums" />
 		<delete file="${checksums.file}" />
 		<checksum algorithm="SHA-256" todir="${checksums.directory}" forceoverwrite="yes" fileext=".sha256" pattern="* {1}&#13;&#10;[`{0}`](https://www.virustotal.com/it/file/{0}/analysis/)">
-			<fileset dir="${build.directory}">
+			<fileset dir="${ant.build.directory}">
 				<include name="*" />
 			</fileset>
 		</checksum>
