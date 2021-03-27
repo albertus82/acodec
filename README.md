@@ -48,6 +48,8 @@ Example: acodec e base64 -c UTF-8 "Lorem ipsum dolor sit amet"
 
 ## Acknowledgements
 
+Icon designed by [Aha-Soft](https://www.aha-soft.com).
+
 This application uses or includes portions of the following third party software:
 
 |Component                   |Author                     |License                                                |Home page                                     |
