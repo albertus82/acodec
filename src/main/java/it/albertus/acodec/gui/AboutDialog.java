@@ -164,7 +164,7 @@ public class AboutDialog extends Dialog {
 		for (final Entry<Rectangle, Image> entry : Images.getAppIconMap().entrySet()) {
 			final int pixels = SwtUtils.convertVerticalDLUsToPixels(iconLabel, ICON_VERTICAL_SIZE_DLUS);
 			if (entry.getKey().height <= pixels) {
-				log.log(Level.FINE, "{0} DLUs -> {1} pixels -> {2}", new Object[] { ICON_VERTICAL_SIZE_DLUS, pixels, entry });
+				log.log(Level.FINE, "{0,number,#} DLUs -> {1,number,#} pixels -> {2}", new Object[] { ICON_VERTICAL_SIZE_DLUS, pixels, entry });
 				iconLabel.setImage(entry.getValue());
 				break;
 			}
@@ -222,17 +222,17 @@ public class AboutDialog extends Dialog {
 
 	private void constrainShellSize(@NonNull final Shell shell) {
 		int appLicenseTextWidth = appLicenseText.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
-		log.log(Level.FINE, "appLicenseTextWidth: {0}", appLicenseTextWidth);
+		log.log(Level.FINE, "appLicenseTextWidth: {0,number,#}", appLicenseTextWidth);
 		if (appLicenseText.getVerticalBar() != null && !appLicenseText.getVerticalBar().isDisposed()) {
 			appLicenseTextWidth += Math.round(appLicenseText.getVerticalBar().getSize().x * 1.5f);
 		}
 		int thirdPartyScrolledCompositeWidth = thirdPartyScrolledComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
-		log.log(Level.FINE, "thirdPartyScrolledCompositeWidth: {0}", thirdPartyScrolledCompositeWidth);
+		log.log(Level.FINE, "thirdPartyScrolledCompositeWidth: {0,number,#}", thirdPartyScrolledCompositeWidth);
 		if (thirdPartyScrolledComposite.getVerticalBar() != null && !thirdPartyScrolledComposite.getVerticalBar().isDisposed()) {
 			thirdPartyScrolledCompositeWidth += Math.round(thirdPartyScrolledComposite.getVerticalBar().getSize().x * 1.5f);
 		}
 		final int clientWidth = shell.getMonitor().getClientArea().width;
-		log.log(Level.FINE, "clientWidth: {0}", clientWidth);
+		log.log(Level.FINE, "clientWidth: {0,number,#}", clientWidth);
 		int shellInitialWidth = Math.max(appLicenseTextWidth, thirdPartyScrolledCompositeWidth);
 		if (shellInitialWidth > clientWidth / MONITOR_SIZE_DIVISOR) {
 			shellInitialWidth = Math.round(clientWidth / MONITOR_SIZE_DIVISOR);
@@ -256,7 +256,7 @@ public class AboutDialog extends Dialog {
 			}
 		}
 		catch (final Exception e) {
-			log.log(Level.WARNING, e.toString(), e);
+			log.log(Level.WARNING, "Cannot load text resource " + name + ':', e);
 		}
 		return text.length() <= System.lineSeparator().length() ? "" : text.substring(System.lineSeparator().length());
 	}
