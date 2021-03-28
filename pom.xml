@@ -6,7 +6,7 @@
 
 	<groupId>it.albertus</groupId>
 	<artifactId>acodec</artifactId>
-	<version>2.2.2</version>
+	<version>2.3.0</version>
 	<name>ACodec</name>
 	<url>https://github.com/albertus82/${project.artifactId}</url>
 
