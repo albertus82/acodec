@@ -10,4 +10,4 @@ while [ -h "$PRG" ]; do
   fi
 done
 PRGDIR=`dirname "$PRG"`
-java -Xms@gui.vm.initialHeapSize@m -Xmx@gui.vm.maxHeapSize@m -D@mainClass@.main.mode=gui -DSWT_GTK3=0 -jar "$PRGDIR/@linux.jarFileName"
+java -Xms@gui.vm.initialHeapSize@m -Xmx@gui.vm.maxHeapSize@m -D@mainClass@.main.mode=gui -DSWT_GTK3=0 -jar "$PRGDIR/@linux.jarFileName@"
