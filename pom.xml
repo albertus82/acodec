@@ -29,102 +29,92 @@
 		<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
 
+	<dependencies>
+		<!-- Compile -->
+		<dependency>
+			<groupId>org.eclipse.platform</groupId>
+			<artifactId>org.eclipse.jface</artifactId>
+			<version>3.22.100</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>it.albertus</groupId>
+			<artifactId>jface-utils</artifactId>
+			<version>17.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>1.68</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.15</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.platform</groupId>
+			<artifactId>org.eclipse.core.commands</artifactId>
+			<version>3.9.800</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.platform</groupId>
+			<artifactId>org.eclipse.core.jobs</artifactId>
+			<version>3.10.1100</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.platform</groupId>
+			<artifactId>org.eclipse.equinox.common</artifactId>
+			<version>3.14.100</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.platform</groupId>
+			<artifactId>org.eclipse.osgi</artifactId>
+			<version>3.16.200</version>
+		</dependency>
+		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli</artifactId>
+			<version>4.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.12</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>javassist</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- Provided -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.18</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.2</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
 	<profiles>
-		<profile>
-			<id>common</id>
-			<activation>
-				<property>
-					<name>!skipCommonProfile</name>
-				</property>
-			</activation>
-			<properties>
-				<platform />
-			</properties>
-			<dependencies>
-				<!-- Compile -->
-				<dependency>
-					<groupId>org.eclipse.platform</groupId>
-					<artifactId>org.eclipse.jface</artifactId>
-					<version>3.22.100</version>
-					<exclusions>
-						<exclusion>
-							<groupId>*</groupId>
-							<artifactId>*</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>it.albertus</groupId>
-					<artifactId>jface-utils</artifactId>
-					<version>17.3.0</version>
-				</dependency>
-				<dependency>
-					<groupId>org.bouncycastle</groupId>
-					<artifactId>bcprov-jdk15on</artifactId>
-					<version>1.68</version>
-				</dependency>
-				<dependency>
-					<groupId>commons-codec</groupId>
-					<artifactId>commons-codec</artifactId>
-					<version>1.15</version>
-				</dependency>
-				<dependency>
-					<groupId>commons-io</groupId>
-					<artifactId>commons-io</artifactId>
-					<version>2.8.0</version>
-				</dependency>
-				<dependency>
-					<groupId>org.eclipse.platform</groupId>
-					<artifactId>org.eclipse.core.commands</artifactId>
-					<version>3.9.800</version>
-				</dependency>
-				<dependency>
-					<groupId>org.eclipse.platform</groupId>
-					<artifactId>org.eclipse.core.jobs</artifactId>
-					<version>3.10.1100</version>
-				</dependency>
-				<dependency>
-					<groupId>org.eclipse.platform</groupId>
-					<artifactId>org.eclipse.equinox.common</artifactId>
-					<version>3.14.100</version>
-				</dependency>
-				<dependency>
-					<groupId>org.eclipse.platform</groupId>
-					<artifactId>org.eclipse.osgi</artifactId>
-					<version>3.16.200</version>
-				</dependency>
-				<dependency>
-					<groupId>info.picocli</groupId>
-					<artifactId>picocli</artifactId>
-					<version>4.6.1</version>
-				</dependency>
-				<dependency>
-					<groupId>org.reflections</groupId>
-					<artifactId>reflections</artifactId>
-					<version>0.9.12</version>
-					<exclusions>
-						<exclusion>
-							<groupId>*</groupId>
-							<artifactId>javassist</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<!-- Provided -->
-				<dependency>
-					<groupId>org.projectlombok</groupId>
-					<artifactId>lombok</artifactId>
-					<version>1.18.18</version>
-					<scope>provided</scope>
-				</dependency>
-				<!-- Test -->
-				<dependency>
-					<groupId>junit</groupId>
-					<artifactId>junit</artifactId>
-					<version>4.13.2</version>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
 		<profile>
 			<id>cocoa-macosx-x86_64</id>
 			<activation>
@@ -134,6 +124,7 @@
 			</activation>
 			<properties>
 				<platform>cocoa-macosx-x86_64</platform>
+				<ignoreWineErrors>true</ignoreWineErrors>
 			</properties>
 			<build>
 				<finalName>${macos.build.finalName}</finalName>
@@ -162,6 +153,7 @@
 			</activation>
 			<properties>
 				<platform>gtk-linux-aarch64</platform>
+				<ignoreWineErrors>true</ignoreWineErrors>
 			</properties>
 			<build>
 				<finalName>${linux.build.finalName}</finalName>
@@ -190,6 +182,7 @@
 			</activation>
 			<properties>
 				<platform>gtk-linux-armhf</platform>
+				<ignoreWineErrors>true</ignoreWineErrors>
 			</properties>
 			<build>
 				<finalName>${linux.build.finalName}</finalName>

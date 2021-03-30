@@ -16,7 +16,7 @@ jobs:
     - uses: actions/setup-java@v1
       with:
         java-version: ${{ matrix.java }}
-    - run: mvn clean verify -B -V -DignoreWineErrors=true
+    - run: mvn clean verify -B -V
     - if: matrix.os == 'ubuntu-latest' && matrix.java == '11'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
