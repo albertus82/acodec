@@ -4,8 +4,7 @@ ACodec
 [![Latest release](https://img.shields.io/github/release/albertus82/acodec.svg)](https://github.com/albertus82/acodec/releases/latest)
 [![Build status](https://github.com/albertus82/acodec/workflows/build/badge.svg)](https://github.com/albertus82/acodec/actions)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/albertus82/acodec?branch=master&svg=true)](https://ci.appveyor.com/project/albertus82/acodec)
-[![Build status](https://dev.azure.com/albertus82/acodec/_apis/build/status/master)](https://dev.azure.com/albertus82/acodec/_build/)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=it.albertus%3Aacodec&metric=alert_status)](https://sonarcloud.io/dashboard?id=it.albertus%3Aacodec)
+[![Known Vulnerabilities](https://snyk.io/test/github/albertus82/acodec/badge.svg?targetFile=pom.xml)](https://snyk.io/test/github/albertus82/acodec?targetFile=pom.xml)
 
 **Graphical user interface available for Windows, Linux & macOS.**
 
