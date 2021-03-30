@@ -18,8 +18,6 @@
 		<project.url>${project.url}</project.url>
 		<dependencies.directory>lib</dependencies.directory>
 		<project.build.outputTimestamp>${git.commit.time}</project.build.outputTimestamp>
-		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
-		<version.date>${maven.build.timestamp}</version.date>
 		<swt.latest.version>3.116.0</swt.latest.version>
 		<mainClass>it.albertus.acodec.ACodec</mainClass>
 		<windows.build.finalName>${project.name}</windows.build.finalName>
@@ -386,15 +384,27 @@
 				<version>4.0.4</version>
 				<executions>
 					<execution>
+						<id>default</id>
 						<goals>
 							<goal>revision</goal>
 						</goals>
 						<phase>initialize</phase>
+						<configuration>
+							<dateFormat>yyyy-MM-dd'T'HH:mm:ss'Z'</dateFormat>
+						</configuration>
+					</execution>
+					<execution>
+						<id>version</id>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+						<phase>initialize</phase>
+						<configuration>
+							<prefix>version</prefix>
+							<dateFormat>yyyy-MM-dd</dateFormat>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<dateFormat>yyyy-MM-dd'T'HH:mm:ss'Z'</dateFormat>
-				</configuration>
 			</plugin>
 
 			<plugin>
