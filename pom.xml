@@ -729,11 +729,9 @@
 						</goals>
 						<configuration>
 							<target>
-								<propertyfile file="lombok.config"
-									jdkproperties="true">
+								<propertyfile file="lombok.config" jdkproperties="true">
 									<entry key="config.stopBubbling" value="true" />
-									<entry key="lombok.addLombokGeneratedAnnotation"
-										value="true" />
+									<entry key="lombok.addLombokGeneratedAnnotation" value="true" />
 								</propertyfile>
 							</target>
 						</configuration>
@@ -748,11 +746,8 @@
 						</goals>
 						<configuration>
 							<target>
-								<typedef uri="antlib:net.sf.antcontrib"
-									classpathref="maven.plugin.classpath" />
-								<taskdef name="jarbundler"
-									classname="com.ultramixer.jarbundler.JarBundler"
-									classpathref="maven.plugin.classpath" />
+								<typedef uri="antlib:net.sf.antcontrib" classpathref="maven.plugin.classpath" />
+								<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpathref="maven.plugin.classpath" />
 								<ant antfile="build.xml" />
 							</target>
 						</configuration>
