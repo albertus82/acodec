@@ -18,22 +18,22 @@
 		<project.build.basedir>target</project.build.basedir>
 		<project.build.binSourceDirectory>src/main/bin</project.build.binSourceDirectory>
 		<project.build.iconsSourceDirectory>src/main/icons</project.build.iconsSourceDirectory>
-		<console.vm.initialHeapSize>4</console.vm.initialHeapSize>
-		<console.vm.maxHeapSize>16</console.vm.maxHeapSize>
-		<gui.vm.initialHeapSize>8</gui.vm.initialHeapSize>
-		<gui.vm.maxHeapSize>32</gui.vm.maxHeapSize>
 		<assembly.outputDirectory>${project.build.basedir}</assembly.outputDirectory>
 		<assembly.finalName>${project.artifactId}-${project.version}-${platform}</assembly.finalName>
 		<dependencies.directory>lib</dependencies.directory>
 		<thirdparty.license.directory>3rdparty</thirdparty.license.directory>
+		<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+		<maven.version.rules>${project.baseUri}/maven-version-rules.xml</maven.version.rules>
 		<swt.version>3.116.0</swt.version>
 		<jface.version>3.22.100</jface.version>
-		<mainClass>it.albertus.acodec.ACodec</mainClass>
 		<windows.build.finalName>${project.name}</windows.build.finalName>
 		<linux.build.finalName>${project.artifactId}</linux.build.finalName>
 		<mac.build.finalName>${project.name}</mac.build.finalName>
-		<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-		<maven.version.rules>${project.baseUri}/maven-version-rules.xml</maven.version.rules>
+		<gui.vm.initialHeapSize>8</gui.vm.initialHeapSize>
+		<gui.vm.maxHeapSize>32</gui.vm.maxHeapSize>
+		<console.vm.initialHeapSize>4</console.vm.initialHeapSize>
+		<console.vm.maxHeapSize>16</console.vm.maxHeapSize>
+		<mainClass>it.albertus.acodec.ACodec</mainClass>
 	</properties>
 
 	<dependencies>
@@ -729,9 +729,11 @@
 						</goals>
 						<configuration>
 							<target>
-								<propertyfile file="lombok.config" jdkproperties="true">
+								<propertyfile file="lombok.config"
+									jdkproperties="true">
 									<entry key="config.stopBubbling" value="true" />
-									<entry key="lombok.addLombokGeneratedAnnotation" value="true" />
+									<entry key="lombok.addLombokGeneratedAnnotation"
+										value="true" />
 								</propertyfile>
 							</target>
 						</configuration>
@@ -746,8 +748,11 @@
 						</goals>
 						<configuration>
 							<target>
-								<typedef uri="antlib:net.sf.antcontrib" classpathref="maven.plugin.classpath" />
-								<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpathref="maven.plugin.classpath" />
+								<typedef uri="antlib:net.sf.antcontrib"
+									classpathref="maven.plugin.classpath" />
+								<taskdef name="jarbundler"
+									classname="com.ultramixer.jarbundler.JarBundler"
+									classpathref="maven.plugin.classpath" />
 								<ant antfile="build.xml" />
 							</target>
 						</configuration>
