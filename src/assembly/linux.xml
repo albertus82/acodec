@@ -36,6 +36,7 @@
 				<include>NOTICE*</include>
 				<include>README*</include>
 			</includes>
+			<outputDirectory>./</outputDirectory>
 			<lineEnding>lf</lineEnding>
 		</fileSet>
 		<fileSet>
@@ -48,8 +49,8 @@
 			<includes>
 				<include>*.sh</include>
 			</includes>
-			<filtered>true</filtered>
 			<outputDirectory>./</outputDirectory>
+			<filtered>true</filtered>
 			<lineEnding>lf</lineEnding>
 			<fileMode>0755</fileMode>
 		</fileSet>
