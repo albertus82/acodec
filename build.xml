@@ -13,7 +13,7 @@
 
 	<target name="jarbundler">
 		<mkdir dir="${project.build.directory}/jarbundler" />
-		<jarbundler vmoptions="${mac.vmoptions}" dir="${project.build.directory}/jarbundler" name="${project.name}" mainclass="${eqbulletin.mainClass}" startonmainthread="true" version="${project.version}" icon="${project.build.iconsSourceDirectory}/mac/${mac.build.finalName}.icns" usejavaxkey="true" jvmversion="${maven.compiler.target}+" stubfile="${project.build.binSourceDirectory}/mac/universalJavaApplicationStub" highresolutioncapable="true">
+		<jarbundler vmoptions="${mac.vmoptions}" dir="${project.build.directory}/jarbundler" name="${project.name}" mainclass="${mainClass}" startonmainthread="true" version="${project.version}" icon="${project.build.iconsSourceDirectory}/mac/${mac.build.finalName}.icns" usejavaxkey="true" jvmversion="${maven.compiler.target}+" stubfile="${project.build.binSourceDirectory}/mac/universalJavaApplicationStub" highresolutioncapable="true">
 			<jarfileset dir="${project.build.directory}" includes="*.${project.packaging},${dependencies.directory}/*.jar" />
 		</jarbundler>
 	</target>
