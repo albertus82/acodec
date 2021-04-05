@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>it.albertus</groupId>
 			<artifactId>jface-utils</artifactId>
-			<version>17.3.0</version>
+			<version>17.3.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
@@ -131,7 +131,8 @@
 			</activation>
 			<properties>
 				<platform>cocoa-macosx-x86_64</platform>
-				<assembly.skipAssembly>true</assembly.skipAssembly>
+				<assembly.descriptor>mac.xml</assembly.descriptor>
+				<assembly.outputTimestamp>${zoned.git.commit.time}</assembly.outputTimestamp>
 				<ignoreWineErrors>true</ignoreWineErrors>
 			</properties>
 			<build>
@@ -143,6 +144,7 @@
 						<version>3.1.2</version>
 						<configuration>
 							<includeScope>runtime</includeScope>
+							<useBaseVersion>false</useBaseVersion>
 							<outputDirectory>${project.build.directory}/${dependencies.directory}</outputDirectory>
 						</configuration>
 						<executions>
@@ -151,6 +153,38 @@
 								<goals>
 									<goal>copy-dependencies</goal>
 								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<dependencies>
+							<dependency>
+								<groupId>com.ultramixer.jarbundler</groupId>
+								<artifactId>jarbundler-core</artifactId>
+								<version>3.3.0</version>
+								<exclusions>
+									<exclusion>
+										<groupId>*</groupId>
+										<artifactId>ant</artifactId>
+									</exclusion>
+								</exclusions>
+							</dependency>
+						</dependencies>
+						<executions>
+							<execution>
+								<id>jarbundler</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpathref="maven.plugin.classpath" />
+										<ant target="jarbundler" />
+									</target>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>
@@ -181,6 +215,7 @@
 			<properties>
 				<platform>gtk-linux-aarch64</platform>
 				<assembly.descriptor>linux.xml</assembly.descriptor>
+				<assembly.outputTimestamp>${zoned.git.commit.time}</assembly.outputTimestamp>
 				<ignoreWineErrors>true</ignoreWineErrors>
 			</properties>
 			<build>
@@ -211,6 +246,7 @@
 			<properties>
 				<platform>gtk-linux-armhf</platform>
 				<assembly.descriptor>linux.xml</assembly.descriptor>
+				<assembly.outputTimestamp>${zoned.git.commit.time}</assembly.outputTimestamp>
 				<ignoreWineErrors>true</ignoreWineErrors>
 				<jface.version>3.12.2</jface.version>
 			</properties>
@@ -242,6 +278,7 @@
 			<properties>
 				<platform>gtk-linux-x86</platform>
 				<assembly.descriptor>linux.xml</assembly.descriptor>
+				<assembly.outputTimestamp>${zoned.git.commit.time}</assembly.outputTimestamp>
 			</properties>
 			<build>
 				<finalName>${linux.build.finalName}</finalName>
@@ -271,6 +308,7 @@
 			<properties>
 				<platform>gtk-linux-x86_64</platform>
 				<assembly.descriptor>linux.xml</assembly.descriptor>
+				<assembly.outputTimestamp>${zoned.git.commit.time}</assembly.outputTimestamp>
 			</properties>
 			<build>
 				<finalName>${linux.build.finalName}</finalName>
@@ -300,12 +338,31 @@
 			<properties>
 				<platform>win32-win32-x86</platform>
 				<assembly.descriptor>windows.xml</assembly.descriptor>
-				<assembly.outputDirectory>${project.build.directory}</assembly.outputDirectory>
-				<assembly.finalName>assembly</assembly.finalName>
-				<assembly.appendAssemblyId>false</assembly.appendAssemblyId>
+				<assembly.outputTimestamp>${local.git.commit.time}</assembly.outputTimestamp>
+				<launch4j.jre.runtimeBits>32</launch4j.jre.runtimeBits>
 			</properties>
 			<build>
 				<finalName>${windows.build.finalName}</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>launch4j</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="launch4j" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
 			</build>
 			<dependencies>
 				<dependency>
@@ -332,12 +389,31 @@
 			<properties>
 				<platform>win32-win32-x86_64</platform>
 				<assembly.descriptor>windows.xml</assembly.descriptor>
-				<assembly.outputDirectory>${project.build.directory}</assembly.outputDirectory>
-				<assembly.finalName>assembly</assembly.finalName>
-				<assembly.appendAssemblyId>false</assembly.appendAssemblyId>
+				<assembly.outputTimestamp>${local.git.commit.time}</assembly.outputTimestamp>
+				<launch4j.jre.runtimeBits>64</launch4j.jre.runtimeBits>
 			</properties>
 			<build>
 				<finalName>${windows.build.finalName}</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>launch4j</id>
+								<phase>package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<ant target="launch4j" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
 			</build>
 			<dependencies>
 				<dependency>
@@ -386,6 +462,11 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.22.2</version>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>3.0.0</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -416,22 +497,24 @@
 				<version>4.0.4</version>
 				<executions>
 					<execution>
+						<id>zoned</id>
 						<goals>
 							<goal>revision</goal>
 						</goals>
 						<phase>initialize</phase>
 						<configuration>
+							<prefix>zoned.git</prefix>
 							<dateFormat>yyyy-MM-dd'T'HH:mm:ssXXX</dateFormat>
 						</configuration>
 					</execution>
 					<execution>
-						<id>jar</id>
+						<id>local</id>
 						<goals>
 							<goal>revision</goal>
 						</goals>
 						<phase>initialize</phase>
 						<configuration>
-							<prefix>jar.git</prefix>
+							<prefix>local.git</prefix>
 							<dateFormat>yyyy-MM-dd'T'HH:mm:ss'Z'</dateFormat>
 						</configuration>
 					</execution>
@@ -449,7 +532,7 @@
 							<goal>regex-property</goal>
 						</goals>
 						<configuration>
-							<value>${git.commit.time}</value> <!-- yyyy-MM-dd'T'HH:mm:ssXXX -->
+							<value>${zoned.git.commit.time}</value> <!-- yyyy-MM-dd'T'HH:mm:ssXXX -->
 							<regex>T.*$</regex>
 							<name>version.date</name> <!-- yyyy-MM-dd -->
 						</configuration>
@@ -462,7 +545,7 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.2.0</version>
 				<configuration>
-					<outputTimestamp>${jar.git.commit.time}</outputTimestamp>
+					<outputTimestamp>${local.git.commit.time}</outputTimestamp>
 					<archive>
 						<manifestEntries>
 							<X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
@@ -565,10 +648,58 @@
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>ant-contrib</groupId>
+						<artifactId>ant-contrib</artifactId>
+						<version>1.0b3</version>
+						<exclusions>
+							<exclusion>
+								<groupId>*</groupId>
+								<artifactId>ant</artifactId>
+							</exclusion>
+						</exclusions>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<?m2e execute?>
+						<id>lombok</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<skip>${maven.antrun.skip.lombok}</skip>
+							<target>
+								<ant target="lombok" />
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>packages</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<typedef uri="antlib:net.sf.antcontrib" classpathref="maven.plugin.classpath" />
+								<ant target="innosetup" />
+								<ant target="checksums" />
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>3.3.0</version>
 				<configuration>
-					<outputTimestamp>${git.commit.time}</outputTimestamp>
+					<outputTimestamp>${assembly.outputTimestamp}</outputTimestamp>
 					<finalName>${assembly.finalName}</finalName>
 					<outputDirectory>${assembly.outputDirectory}</outputDirectory>
 					<descriptors>
@@ -597,15 +728,14 @@
 						<skipTests>${skipTests}</skipTests>
 						<animal.sniffer.skip>true</animal.sniffer.skip>
 						<maven.gitcommitid.skip>true</maven.gitcommitid.skip>
-						<maven.antrun.skip>true</maven.antrun.skip>
+						<maven.antrun.skip.lombok>true</maven.antrun.skip.lombok>
 						<jacoco.skip>true</jacoco.skip>
-						<jar.git.commit.time>${jar.git.commit.time}</jar.git.commit.time>
-						<git.commit.time>${git.commit.time}</git.commit.time>
+						<local.git.commit.time>${local.git.commit.time}</local.git.commit.time>
+						<zoned.git.commit.time>${zoned.git.commit.time}</zoned.git.commit.time>
 					</properties>
 				</configuration>
 				<executions>
 					<execution>
-						<?m2e ignore?>
 						<id>cocoa-macosx-x86_64</id>
 						<configuration>
 							<profiles>cocoa-macosx-x86_64,!gtk-linux-aarch64,!gtk-linux-armhf,!gtk-linux-x86,!gtk-linux-x86_64,!win32-win32-x86,!win32-win32-x86_64</profiles>
@@ -617,7 +747,6 @@
 						</goals>
 					</execution>
 					<execution>
-						<?m2e ignore?>
 						<id>gtk-linux-aarch64</id>
 						<configuration>
 							<profiles>!cocoa-macosx-x86_64,gtk-linux-aarch64,!gtk-linux-armhf,!gtk-linux-x86,!gtk-linux-x86_64,!win32-win32-x86,!win32-win32-x86_64</profiles>
@@ -629,7 +758,6 @@
 						</goals>
 					</execution>
 					<execution>
-						<?m2e ignore?>
 						<id>gtk-linux-armhf</id>
 						<configuration>
 							<profiles>!cocoa-macosx-x86_64,!gtk-linux-aarch64,gtk-linux-armhf,!gtk-linux-x86,!gtk-linux-x86_64,!win32-win32-x86,!win32-win32-x86_64</profiles>
@@ -641,7 +769,6 @@
 						</goals>
 					</execution>
 					<execution>
-						<?m2e ignore?>
 						<id>gtk-linux-x86</id>
 						<configuration>
 							<profiles>!cocoa-macosx-x86_64,!gtk-linux-aarch64,!gtk-linux-armhf,gtk-linux-x86,!gtk-linux-x86_64,!win32-win32-x86,!win32-win32-x86_64</profiles>
@@ -653,7 +780,6 @@
 						</goals>
 					</execution>
 					<execution>
-						<?m2e ignore?>
 						<id>gtk-linux-x86_64</id>
 						<configuration>
 							<profiles>!cocoa-macosx-x86_64,!gtk-linux-aarch64,!gtk-linux-armhf,!gtk-linux-x86,gtk-linux-x86_64,!win32-win32-x86,!win32-win32-x86_64</profiles>
@@ -665,7 +791,6 @@
 						</goals>
 					</execution>
 					<execution>
-						<?m2e ignore?>
 						<id>win32-win32-x86</id>
 						<configuration>
 							<profiles>!cocoa-macosx-x86_64,!gtk-linux-aarch64,!gtk-linux-armhf,!gtk-linux-x86,!gtk-linux-x86_64,win32-win32-x86,!win32-win32-x86_64</profiles>
@@ -677,7 +802,6 @@
 						</goals>
 					</execution>
 					<execution>
-						<?m2e ignore?>
 						<id>win32-win32-x86_64</id>
 						<configuration>
 							<profiles>!cocoa-macosx-x86_64,!gtk-linux-aarch64,!gtk-linux-armhf,!gtk-linux-x86,!gtk-linux-x86_64,!win32-win32-x86,win32-win32-x86_64</profiles>
@@ -687,70 +811,6 @@
 							<goal>integration-test</goal>
 							<goal>verify</goal>
 						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>3.0.0</version>
-				<dependencies>
-					<dependency>
-						<groupId>ant-contrib</groupId>
-						<artifactId>ant-contrib</artifactId>
-						<version>1.0b3</version>
-						<exclusions>
-							<exclusion>
-								<groupId>*</groupId>
-								<artifactId>ant</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
-					<dependency>
-						<groupId>com.ultramixer.jarbundler</groupId>
-						<artifactId>jarbundler-core</artifactId>
-						<version>3.3.0</version>
-						<exclusions>
-							<exclusion>
-								<groupId>*</groupId>
-								<artifactId>ant</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
-				</dependencies>
-				<executions>
-					<execution>
-						<?m2e execute?>
-						<id>lombok-config</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target>
-								<propertyfile file="lombok.config" jdkproperties="true">
-									<entry key="config.stopBubbling" value="true" />
-									<entry key="lombok.addLombokGeneratedAnnotation" value="true" />
-								</propertyfile>
-							</target>
-						</configuration>
-						<?m2e execute?>
-					</execution>
-					<execution>
-						<?m2e ignore?>
-						<id>packages</id>
-						<phase>integration-test</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target>
-								<typedef uri="antlib:net.sf.antcontrib" classpathref="maven.plugin.classpath" />
-								<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpathref="maven.plugin.classpath" />
-								<ant antfile="build.xml" />
-							</target>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>

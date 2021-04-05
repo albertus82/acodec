@@ -1,64 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE project>
-<project default="all" xmlns:ac="antlib:net.sf.antcontrib">
+<project xmlns:ac="antlib:net.sf.antcontrib">
 
 	<property file="build.properties" />
 
-	<filter token="mainClass" value="${mainClass}" />
-	<filter token="mac.build.finalName" value="${mac.build.finalName}" />
-	<filter token="console.vm.initialHeapSize" value="${console.vm.initialHeapSize}" />
-	<filter token="console.vm.maxHeapSize" value="${console.vm.maxHeapSize}" />
-
-	<target name="dist-macos">
-		<ac:for trim="true" list="${build.platforms.mac}" param="platform" parallel="${build.parallel}">
-			<ac:sequential>
-				<mkdir dir="${project.build.basedir}/@{platform}/jarbundler" />
-
-				<jarbundler vmoptions="${mac.vmoptions}" dir="${project.build.basedir}/@{platform}/jarbundler" name="${project.name}" mainclass="${mainClass}" startonmainthread="true" version="${project.version}" icon="${project.build.iconsSourceDirectory}/mac/${mac.build.finalName}.icns" usejavaxkey="true" jvmversion="${maven.compiler.target}+" stubfile="${project.build.binSourceDirectory}/mac/universalJavaApplicationStub" highresolutioncapable="true">
-					<jarfileset dir="${project.build.basedir}/@{platform}" includes="*.${project.packaging},${dependencies.directory}/*.jar" />
-				</jarbundler>
-
-				<copy todir="${project.build.basedir}/@{platform}/jarbundler/${project.name}.app/Contents/SharedSupport">
-					<fileset dir="${basedir}">
-						<include name="LICENSE*" />
-						<include name="NOTICE*" />
-						<include name="README*" />
-						<include name="${thirdparty.license.directory}/*" />
-					</fileset>
-				</copy>
-
-				<fixcrlf srcdir="${project.build.basedir}/@{platform}/jarbundler/${project.name}.app/Contents/SharedSupport" eol="lf" eof="remove">
-					<include name="LICENSE*" />
-					<include name="NOTICE*" />
-					<include name="README*" />
-					<include name="${thirdparty.license.directory}/*" />
-				</fixcrlf>
-
-				<copy todir="${project.build.basedir}/@{platform}/jarbundler/${project.name}.app/Contents/MacOS" failonerror="false" filtering="true">
-					<fileset dir="${project.build.binSourceDirectory}/mac" includes="*.command" />
-				</copy>
-
-				<fixcrlf srcdir="${project.build.basedir}/@{platform}/jarbundler/${project.name}.app/Contents/MacOS" eol="lf" eof="remove">
-					<include name="**/*JavaApplicationStub" />
-					<include name="**/*.command" />
-				</fixcrlf>
-
-				<tar destfile="${project.build.basedir}/${project.artifactId}-${project.version}-@{platform}-app.tar.gz" compression="gzip">
-					<tarfileset dir="${project.build.basedir}/@{platform}/jarbundler" filemode="755">
-						<include name="${project.name}.app/Contents/MacOS/*" />
-					</tarfileset>
-					<tarfileset dir="${project.build.basedir}/@{platform}/jarbundler">
-						<exclude name="${project.name}.app/Contents/MacOS/*" />
-					</tarfileset>
-				</tar>
-			</ac:sequential>
-		</ac:for>
+	<target name="lombok">
+		<propertyfile file="lombok.config" jdkproperties="true">
+			<entry key="config.stopBubbling" value="true" />
+			<entry key="lombok.addLombokGeneratedAnnotation" value="true" />
+		</propertyfile>
 	</target>
 
-	<target name="dist-windows">
-		<echo level="info" message="os.name: ${os.name}" />
-		<echo level="info" message="os.version: ${os.version}" />
-		<echo level="info" message="os.arch: ${os.arch}" />
+	<target name="jarbundler">
+		<mkdir dir="${project.build.directory}/jarbundler" />
+		<jarbundler vmoptions="${mac.vmoptions}" dir="${project.build.directory}/jarbundler" name="${project.name}" mainclass="${eqbulletin.mainClass}" startonmainthread="true" version="${project.version}" icon="${project.build.iconsSourceDirectory}/mac/${mac.build.finalName}.icns" usejavaxkey="true" jvmversion="${maven.compiler.target}+" stubfile="${project.build.binSourceDirectory}/mac/universalJavaApplicationStub" highresolutioncapable="true">
+			<jarfileset dir="${project.build.directory}" includes="*.${project.packaging},${dependencies.directory}/*.jar" />
+		</jarbundler>
+	</target>
+
+	<target name="launch4j">
+		<echo level="debug" message="os.name: ${os.name}" />
+		<echo level="debug" message="os.version: ${os.version}" />
+		<echo level="debug" message="os.arch: ${os.arch}" />
 
 		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${launch4j.directory}/launch4j.jar:${launch4j.directory}/lib/xstream.jar" />
 		<condition property="launch4j.bindir" value="${launch4j.directory}/bin/win32">
@@ -76,7 +39,7 @@
 		<condition property="launch4j.bindir" value="${launch4j.directory}/bin/linux">
 			<and>
 				<os name="linux" />
-				<os arch="x86" />
+				<os arch="i386" />
 				<available file="${launch4j.directory}/bin/linux" type="dir" />
 			</and>
 		</condition>
@@ -104,61 +67,37 @@
 
 		<echo level="info" message="launch4j.bindir: ${launch4j.bindir}" />
 
-		<condition property="wine.failonerror" else="false">
-			<isfalse value="${ignoreWineErrors}" />
-		</condition>
-		<condition property="wine.failifexecutionfails" else="false">
-			<isfalse value="${ignoreWineErrors}" />
-		</condition>
-
 		<chmod perm="+x" file="${launch4j.bindir}/ld" failonerror="false" failifexecutionfails="false" ignoremissing="true" />
 		<chmod perm="+x" file="${launch4j.bindir}/windres" failonerror="false" failifexecutionfails="false" ignoremissing="true" />
 
+		<mkdir dir="${project.build.directory}/launch4j" />
 		<launch4j bindir="${launch4j.bindir}">
-			<config outfile="${project.build.basedir}/win32-win32-x86/assembly/${project.name}/${windows.gui.exeFileName}" jarpath="${windows.build.finalName}.${project.packaging}" headertype="gui" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir="." icon="${project.build.iconsSourceDirectory}/windows/${windows.build.finalName}.ico">
+			<config outfile="${project.build.directory}/launch4j/${windows.gui.exeFileName}" jarpath="${windows.build.finalName}.${project.packaging}" headertype="gui" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir="." icon="${project.build.iconsSourceDirectory}/windows/${windows.build.finalName}.ico">
 				<singleInstance mutexname="${mainClass}" windowtitle="${project.name}" />
-				<jre runtimebits="32" minversion="${maven.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${gui.vm.initialHeapSize}" maxheapsize="${gui.vm.maxHeapSize}">
+				<jre runtimebits="${launch4j.jre.runtimeBits}" minversion="${maven.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${gui.vm.initialHeapSize}" maxheapsize="${gui.vm.maxHeapSize}">
 					<opt>-Dit.albertus.acodec.ACodec.main.mode=gui</opt>
 				</jre>
 				<versionInfo fileversion="${project.version}.0" txtfileversion="${project.version}" filedescription="${project.name}" copyright="${launch4j.copyright}" productversion="${project.version}.0" txtproductversion="${project.version}" productname="${project.name}" internalname="${project.artifactId}" originalfilename="${windows.gui.exeFileName}" companyname="${launch4j.companyName}" />
 			</config>
 		</launch4j>
 		<launch4j bindir="${launch4j.bindir}">
-			<config outfile="${project.build.basedir}/win32-win32-x86/assembly/${project.name}/${windows.console.exeFileName}" jarpath="${windows.build.finalName}.${project.packaging}" headertype="console" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir=".">
+			<config outfile="${project.build.directory}/launch4j/${windows.console.exeFileName}" jarpath="${windows.build.finalName}.${project.packaging}" headertype="console" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir=".">
 				<jre minversion="${maven.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${console.vm.initialHeapSize}" maxheapsize="${console.vm.maxHeapSize}">
 					<opt>-Dit.albertus.acodec.ACodec.main.mode=console</opt>
 				</jre>
 				<versionInfo fileversion="${project.version}.0" txtfileversion="${project.version}" filedescription="${project.name}" copyright="${launch4j.copyright}" productversion="${project.version}.0" txtproductversion="${project.version}" productname="${project.name}" internalname="${project.name}" originalfilename="${windows.console.exeFileName}" companyname="${launch4j.companyName}" />
 			</config>
 		</launch4j>
+	</target>
 
-		<launch4j bindir="${launch4j.bindir}">
-			<config outfile="${project.build.basedir}/win32-win32-x86_64/assembly/${project.name}/${windows.gui.exeFileName}" jarpath="${windows.build.finalName}.${project.packaging}" headertype="gui" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir="." icon="${project.build.iconsSourceDirectory}/windows/${windows.build.finalName}.ico">
-				<singleInstance mutexname="${mainClass}" windowtitle="${project.name}" />
-				<jre runtimebits="64" minversion="${maven.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${gui.vm.initialHeapSize}" maxheapsize="${gui.vm.maxHeapSize}">
-					<opt>-Dit.albertus.acodec.ACodec.main.mode=gui</opt>
-				</jre>
-				<versionInfo fileversion="${project.version}.0" txtfileversion="${project.version}" filedescription="${project.name}" copyright="${launch4j.copyright}" productversion="${project.version}.0" txtproductversion="${project.version}" productname="${project.name}" internalname="${project.artifactId}" originalfilename="${windows.gui.exeFileName}" companyname="${launch4j.companyName}" />
-			</config>
-		</launch4j>
-		<launch4j bindir="${launch4j.bindir}">
-			<config outfile="${project.build.basedir}/win32-win32-x86_64/assembly/${project.name}/${windows.console.exeFileName}" jarpath="${windows.build.finalName}.${project.packaging}" headertype="console" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir=".">
-				<jre minversion="${maven.compiler.target}.0" jdkpreference="${launch4j.jdkPreference}" initialheapsize="${console.vm.initialHeapSize}" maxheapsize="${console.vm.maxHeapSize}">
-					<opt>-Dit.albertus.acodec.ACodec.main.mode=console</opt>
-				</jre>
-				<versionInfo fileversion="${project.version}.0" txtfileversion="${project.version}" filedescription="${project.name}" copyright="${launch4j.copyright}" productversion="${project.version}.0" txtproductversion="${project.version}" productname="${project.name}" internalname="${project.name}" originalfilename="${windows.console.exeFileName}" companyname="${launch4j.companyName}" />
-			</config>
-		</launch4j>
-
+	<target name="innosetup">
 		<ac:for trim="true" list="${build.platforms.windows}" param="platform" parallel="${build.parallel}">
 			<ac:sequential>
-				<zip destfile="${project.build.basedir}/${project.artifactId}-${project.version}-@{platform}-bin.zip" level="9">
-					<zipfileset dir="${project.build.basedir}/@{platform}/assembly/${project.name}" prefix="${project.name}" />
-				</zip>
+				<unzip src="${project.build.basedir}/${project.artifactId}-${project.version}-@{platform}-bin.zip" dest="${project.build.basedir}/@{platform}/innosetup" />
 			</ac:sequential>
 		</ac:for>
 
-		<echo file="${project.build.basedir}/win32-win32-x86/assembly/${project.artifactId}.iss">
+		<echo file="${project.build.basedir}/win32-win32-x86/innosetup/${project.artifactId}.iss">
 			[Setup]
 			AppName=${project.name}
 			AppVersion=${project.version}
@@ -211,7 +150,7 @@
 			end;
 		</echo>
 
-		<echo file="${project.build.basedir}/win32-win32-x86_64/assembly/${project.artifactId}.iss">
+		<echo file="${project.build.basedir}/win32-win32-x86_64/innosetup/${project.artifactId}.iss">
 			[Setup]
 			AppName=${project.name}
 			AppVersion=${project.version}
@@ -268,7 +207,7 @@
 		<ac:for trim="true" list="${build.platforms.windows}" param="platform" parallel="${build.parallel}">
 			<ac:sequential>
 				<pathconvert pathsep="&#13;&#10;" property="dependencies.log.@{platform}">
-					<fileset dir="${project.build.basedir}/@{platform}/assembly/${project.name}/${dependencies.directory}">
+					<fileset dir="${project.build.basedir}/@{platform}/innosetup/${project.name}/${dependencies.directory}">
 						<include name="*.jar" />
 					</fileset>
 					<mapper>
@@ -276,20 +215,27 @@
 					</mapper>
 				</pathconvert>
 
-				<echo file="${project.build.basedir}/@{platform}/assembly/${innoSetup.dependencies.logFileName}">${dependencies.log.@{platform}}</echo>
+				<echo file="${project.build.basedir}/@{platform}/innosetup/${innoSetup.dependencies.logFileName}">${dependencies.log.@{platform}}</echo>
 			</ac:sequential>
 		</ac:for>
+
+		<condition property="wine.failonerror" else="false">
+			<isfalse value="${ignoreWineErrors}" />
+		</condition>
+		<condition property="wine.failifexecutionfails" else="false">
+			<isfalse value="${ignoreWineErrors}" />
+		</condition>
 
 		<ac:for trim="true" list="${build.platforms.windows}" param="platform" parallel="false">
 			<ac:sequential>
 				<exec osfamily="windows" executable="${innoSetup.directory}/ISCC.exe" failonerror="true">
-					<arg value="${project.build.basedir}/@{platform}/assembly/${project.artifactId}.iss" />
+					<arg value="${project.build.basedir}/@{platform}/innosetup/${project.artifactId}.iss" />
 					<arg value="/O${project.build.basedir}" />
 					<arg value="/F${project.artifactId}-${project.version}-@{platform}-setup" />
 				</exec>
 				<exec osfamily="unix" executable="wine" failonerror="${wine.failonerror}" failifexecutionfails="${wine.failifexecutionfails}">
 					<arg value="${innoSetup.directory}/ISCC.exe" />
-					<arg value="${project.build.basedir}/@{platform}/assembly/${project.artifactId}.iss" />
+					<arg value="${project.build.basedir}/@{platform}/innosetup/${project.artifactId}.iss" />
 					<arg value="/O${project.build.basedir}" />
 					<arg value="/F${project.artifactId}-${project.version}-@{platform}-setup" />
 				</exec>
@@ -297,9 +243,7 @@
 		</ac:for>
 	</target>
 
-	<target name="dist" depends="dist-macos, dist-windows" />
-
-	<target name="virustotal">
+	<target name="checksums">
 		<property name="checksums.file" value="${project.build.basedir}/checksums.md" />
 		<property name="checksums.directory" value="${project.build.basedir}/checksums" />
 		<delete file="${checksums.file}" />
@@ -316,7 +260,5 @@
 		<echo level="info" message="${checksums.file.contents}" />
 		<delete dir="${checksums.directory}" />
 	</target>
-
-	<target name="all" depends="dist, virustotal" />
 
 </project>
