@@ -58,13 +58,6 @@
 			<directory>${project.build.iconsSourceDirectory}/linux</directory>
 			<outputDirectory>icon</outputDirectory>
 		</fileSet>
-		<!-- Fix missing timestamp for the 'lib' directory -->
-		<fileSet>
-			<outputDirectory>${dependencies.directory}</outputDirectory>
-			<excludes>
-				<exclude>**/*</exclude>
-			</excludes>
-		</fileSet>
 	</fileSets>
 
 </assembly>

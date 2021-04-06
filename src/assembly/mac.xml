@@ -46,13 +46,6 @@
 			<lineEnding>lf</lineEnding>
 			<fileMode>0755</fileMode>
 		</fileSet>
-		<!-- Fix missing timestamp for the 'SharedSupport' directory -->
-		<fileSet>
-			<outputDirectory>${project.name}.app/Contents/SharedSupport</outputDirectory>
-			<excludes>
-				<exclude>**/*</exclude>
-			</excludes>
-		</fileSet>
 	</fileSets>
 
 </assembly>
