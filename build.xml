@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE project>
-<project xmlns:ac="antlib:net.sf.antcontrib">
+<project>
 
 	<property file="build.properties" />
 
@@ -91,11 +91,11 @@
 	</target>
 
 	<target name="innosetup">
-		<ac:for trim="true" list="${build.platforms.windows}" param="platform" parallel="${build.parallel}">
-			<ac:sequential>
+		<for trim="true" list="${build.platforms.windows}" param="platform" parallel="${build.parallel}">
+			<sequential>
 				<unzip src="${project.build.basedir}/${project.artifactId}-${project.version}-@{platform}-bin.zip" dest="${project.build.basedir}/@{platform}/innosetup" />
-			</ac:sequential>
-		</ac:for>
+			</sequential>
+		</for>
 
 		<echo file="${project.build.basedir}/win32-win32-x86/innosetup/${project.artifactId}.iss">
 			[Setup]
@@ -204,8 +204,8 @@
 			end;
 		</echo>
 
-		<ac:for trim="true" list="${build.platforms.windows}" param="platform" parallel="${build.parallel}">
-			<ac:sequential>
+		<for trim="true" list="${build.platforms.windows}" param="platform" parallel="${build.parallel}">
+			<sequential>
 				<pathconvert pathsep="&#13;&#10;" property="dependencies.log.@{platform}">
 					<fileset dir="${project.build.basedir}/@{platform}/innosetup/${project.name}/${dependencies.directory}">
 						<include name="*.jar" />
@@ -216,8 +216,8 @@
 				</pathconvert>
 
 				<echo file="${project.build.basedir}/@{platform}/innosetup/${innoSetup.dependencies.logFileName}">${dependencies.log.@{platform}}</echo>
-			</ac:sequential>
-		</ac:for>
+			</sequential>
+		</for>
 
 		<condition property="wine.failonerror" else="false">
 			<isfalse value="${ignoreWineErrors}" />
@@ -226,8 +226,8 @@
 			<isfalse value="${ignoreWineErrors}" />
 		</condition>
 
-		<ac:for trim="true" list="${build.platforms.windows}" param="platform" parallel="false">
-			<ac:sequential>
+		<for trim="true" list="${build.platforms.windows}" param="platform" parallel="false">
+			<sequential>
 				<exec osfamily="windows" executable="${innoSetup.directory}/ISCC.exe" failonerror="true">
 					<arg value="${project.build.basedir}/@{platform}/innosetup/${project.artifactId}.iss" />
 					<arg value="/O${project.build.basedir}" />
@@ -239,8 +239,8 @@
 					<arg value="/O${project.build.basedir}" />
 					<arg value="/F${project.artifactId}-${project.version}-@{platform}-setup" />
 				</exec>
-			</ac:sequential>
-		</ac:for>
+			</sequential>
+		</for>
 	</target>
 
 	<target name="checksums">

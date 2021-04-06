@@ -685,7 +685,7 @@
 						</goals>
 						<configuration>
 							<target>
-								<typedef uri="antlib:net.sf.antcontrib" classpathref="maven.plugin.classpath" />
+								<taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="maven.plugin.classpath" />
 								<ant target="innosetup" />
 							</target>
 						</configuration>
