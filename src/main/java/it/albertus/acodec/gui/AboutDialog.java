@@ -430,7 +430,9 @@ public class AboutDialog extends Dialog {
 			private static Collection<ThirdPartySoftware> loadFromProperties() {
 				final Properties properties = new Properties();
 				try (final InputStream is = ThirdPartySoftware.class.getResourceAsStream("3rdparty.properties")) {
-					properties.load(is);
+					if (is != null) {
+						properties.load(is);
+					}
 				}
 				catch (final IOException e) {
 					throw new UncheckedIOException(e);
