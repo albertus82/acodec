@@ -115,7 +115,7 @@ public class AboutDialog extends Dialog {
 
 		final Link appLicenseLink = new Link(shell, SWT.WRAP);
 		GridDataFactory.swtDefaults().grab(true, false).applyTo(appLicenseLink);
-		appLicenseLink.setText(messages.get("gui.label.about.license", buildAnchor(messages.get("gui.message.gpl.url"), messages.get("gui.label.gpl"))));
+		appLicenseLink.setText(messages.get("gui.label.about.license", buildAnchor(messages.get("gui.label.about.license.gpl.a.href"), messages.get("gui.label.about.license.gpl.a.text"))));
 		appLicenseLink.addSelectionListener(linkSelectionListener);
 
 		appLicenseText = new Text(shell, SWT.BORDER | SWT.V_SCROLL);
