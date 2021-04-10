@@ -216,7 +216,7 @@ public class AboutDialog extends Dialog {
 
 		final Link acknowledgementsIconLink = new Link(acknowledgementsGroup, SWT.WRAP);
 		GridDataFactory.swtDefaults().grab(true, false).applyTo(acknowledgementsIconLink);
-		acknowledgementsIconLink.setText(messages.get("gui.label.about.acknowledgements.icon", buildAnchor(messages.get("gui.message.icon.url"), messages.get("gui.label.icon"))));
+		acknowledgementsIconLink.setText(messages.get("gui.label.about.acknowledgements.icon", buildAnchor(messages.get("gui.label.about.acknowledgements.icon.a.href"), messages.get("gui.label.about.acknowledgements.icon.a.text"))));
 		acknowledgementsIconLink.addSelectionListener(linkSelectionListener);
 	}
 
