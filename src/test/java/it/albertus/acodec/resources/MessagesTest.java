@@ -103,23 +103,28 @@ public class MessagesTest {
 				}
 			});
 		}
-		Assert.assertFalse("No message keys found.", keys.isEmpty());
-		log.log(Level.INFO, "Found {0} message keys referenced in sources.", keys.size());
+		Assert.assertFalse("No message keys found in sources", keys.isEmpty());
+		log.log(Level.INFO, "Found {0} message keys referenced in sources", keys.size());
 		final Collection<String> consoleKeys = ConsoleMessages.INSTANCE.getKeys();
+		log.log(Level.INFO, "{0} message keys available in resource bundle: {1}", new Serializable[] { consoleKeys.size(), ConsoleMessages.class.getSimpleName() });
+		Assert.assertFalse("No message keys found in resource bundle: " + ConsoleMessages.class.getSimpleName(), consoleKeys.isEmpty());
 		final Collection<String> guiKeys = GuiMessages.INSTANCE.getKeys();
+		log.log(Level.INFO, "{0} message keys available in resource bundle: {1}", new Serializable[] { guiKeys.size(), GuiMessages.class.getSimpleName() });
+		Assert.assertFalse("No message keys found in resource bundle: " + GuiMessages.class.getSimpleName(), guiKeys.isEmpty());
+
 		for (final String key : new TreeSet<>(keys)) {
 			if (key.startsWith("console.")) {
-				Assert.assertTrue("Missing message key '" + key + "' in " + ConsoleMessages.class.getSimpleName() + '!', consoleKeys.contains(key));
+				Assert.assertTrue("Missing message key '" + key + "' in " + ConsoleMessages.class.getSimpleName(), consoleKeys.contains(key));
 			}
 			else if (key.startsWith("gui.")) {
-				Assert.assertTrue("Missing message key '" + key + "' in " + GuiMessages.class.getSimpleName() + '!', guiKeys.contains(key));
+				Assert.assertTrue("Missing message key '" + key + "' in " + GuiMessages.class.getSimpleName(), guiKeys.contains(key));
 			}
 			else if (key.startsWith("common.")) {
-				Assert.assertTrue("Missing message key '" + key + "' in " + ConsoleMessages.class.getSimpleName() + '!', consoleKeys.contains(key));
-				Assert.assertTrue("Missing message key '" + key + "' in " + GuiMessages.class.getSimpleName() + '!', guiKeys.contains(key));
+				Assert.assertTrue("Missing message key '" + key + "' in " + ConsoleMessages.class.getSimpleName(), consoleKeys.contains(key));
+				Assert.assertTrue("Missing message key '" + key + "' in " + GuiMessages.class.getSimpleName(), guiKeys.contains(key));
 			}
 			else {
-				Assert.assertTrue("Invalid message key prefix: '" + key + "'!", false);
+				Assert.assertTrue("Invalid message key prefix: '" + key + "'", false);
 			}
 		}
 	}
