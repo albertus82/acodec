@@ -450,6 +450,23 @@
 			</resource>
 		</resources>
 
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/*.properties</exclude>
+				</excludes>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.properties</include>
+				</includes>
+			</testResource>
+		</testResources>
+
 		<pluginManagement>
 			<plugins>
 				<plugin>

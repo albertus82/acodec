@@ -1,5 +1,6 @@
 package it.albertus.acodec.gui.resources;
 
+import java.util.Collection;
 import java.util.Locale;
 
 import it.albertus.acodec.common.resources.CommonMessages;
@@ -34,6 +35,11 @@ public enum GuiMessages implements ConfigurableMessages {
 	@Override
 	public void setLanguage(@NonNull final Language language) { // NOSONAR Enum singleton
 		bundle.setLanguage(language, fallbackMessages::setLanguage);
+	}
+
+	@Override
+	public Collection<String> getKeys() {
+		return bundle.getKeys(fallbackMessages::getKeys);
 	}
 
 }

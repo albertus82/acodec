@@ -1,5 +1,6 @@
 package it.albertus.acodec.console.resources;
 
+import java.util.Collection;
 import java.util.Locale;
 
 import it.albertus.acodec.common.resources.CommonMessages;
@@ -23,6 +24,11 @@ public enum ConsoleMessages implements Messages {
 	@Override
 	public String get(@NonNull final String key, @NonNull final Object... params) {
 		return bundle.getMessage(key, params, fallbackMessages::get);
+	}
+
+	@Override
+	public Collection<String> getKeys() {
+		return bundle.getKeys(fallbackMessages::getKeys);
 	}
 
 }

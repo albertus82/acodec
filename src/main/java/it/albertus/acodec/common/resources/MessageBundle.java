@@ -2,11 +2,15 @@ package it.albertus.acodec.common.resources;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 
@@ -77,6 +81,17 @@ public class MessageBundle {
 			}
 		}
 		return message;
+	}
+
+	public Collection<String> getKeys(final Supplier<Collection<String>> fallbackSupplier) {
+		final Collection<String> keys = new HashSet<>();
+		if (fallbackSupplier != null) {
+			keys.addAll(fallbackSupplier.get());
+		}
+		if (resourceBundle != null) {
+			keys.addAll(Collections.list(resourceBundle.getKeys()));
+		}
+		return keys;
 	}
 
 }

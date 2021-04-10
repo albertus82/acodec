@@ -1,5 +1,6 @@
 package it.albertus.acodec.common.resources;
 
+import java.util.Collection;
 import java.util.Locale;
 
 import it.albertus.jface.JFaceMessages;
@@ -33,6 +34,11 @@ public enum CommonMessages implements ConfigurableMessages {
 		bundle.setLanguage(language, fallbackMessages::setLanguage);
 	}
 
+	@Override
+	public Collection<String> getKeys() {
+		return bundle.getKeys(fallbackMessages::getKeys);
+	}
+
 	private enum FallbackMessages implements ConfigurableMessages {
 
 		INSTANCE;
@@ -57,6 +63,10 @@ public enum CommonMessages implements ConfigurableMessages {
 			JFaceMessages.setLanguage(language.getLocale().getLanguage());
 		}
 
+		@Override
+		public Collection<String> getKeys() {
+			return JFaceMessages.getKeys();
+		}
 	}
 
 }
