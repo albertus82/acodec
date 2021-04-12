@@ -1,5 +1,6 @@
 package it.albertus.acodec.resources;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
@@ -36,24 +38,13 @@ import lombok.extern.java.Log;
 public class MessagesTest {
 
 	@Test
-	public void checkProperties() throws IOException {
-		Reflections reflections = new Reflections(ConsoleMessages.class.getPackage().getName(), new ResourcesScanner());
-		Set<String> resourceNames = reflections.getResources(name -> name.contains(ConsoleMessages.class.getSimpleName().toLowerCase(Locale.ROOT)) && name.endsWith(".properties"));
-		log.log(Level.INFO, "Resources found: {0}", resourceNames);
-		checkProperties(resourceNames, "console.");
-
-		reflections = new Reflections(GuiMessages.class.getPackage().getName(), new ResourcesScanner());
-		resourceNames = reflections.getResources(name -> name.contains(GuiMessages.class.getSimpleName().toLowerCase(Locale.ROOT)) && name.endsWith(".properties"));
-		log.log(Level.INFO, "Resources found: {0}", resourceNames);
-		checkProperties(resourceNames, "gui.");
-
-		reflections = new Reflections(CommonMessages.class.getPackage().getName(), new ResourcesScanner());
-		resourceNames = reflections.getResources(name -> name.contains(CommonMessages.class.getSimpleName().toLowerCase(Locale.ROOT)) && name.endsWith(".properties"));
-		log.log(Level.INFO, "Resources found: {0}", resourceNames);
-		checkProperties(resourceNames, "common.");
+	public void checkMessageFiles() throws IOException {
+		checkMessageFiles(getResourceNames(ConsoleMessages.class), "console.");
+		checkMessageFiles(getResourceNames(GuiMessages.class), "gui.");
+		checkMessageFiles(getResourceNames(CommonMessages.class), "common.");
 	}
 
-	private void checkProperties(@NonNull final Iterable<String> resourceNames, @NonNull final String prefix) throws IOException {
+	private void checkMessageFiles(@NonNull final Iterable<String> resourceNames, final String prefix) throws IOException {
 		final Collection<Properties> pp = new ArrayList<>();
 		for (final String resourceName : resourceNames) {
 			final Properties p = new Properties();
@@ -66,24 +57,20 @@ public class MessagesTest {
 			Assert.assertFalse("Empty resource file: " + resourceName, p.isEmpty());
 		}
 		pp.stream().reduce((p1, p2) -> {
-			p1.keySet().forEach(e -> Assert.assertTrue("Invalid property key '" + e + "': expected prefix '" + prefix + "'!", e.toString().startsWith(prefix)));
-			p2.keySet().forEach(e -> Assert.assertTrue("Invalid property key '" + e + "': expected prefix '" + prefix + "'!", e.toString().startsWith(prefix)));
-			Assert.assertTrue("Uneven resource files!", p1.keySet().containsAll(p2.keySet()));
-			Assert.assertTrue("Uneven resource files!", p2.keySet().containsAll(p1.keySet()));
+			if (prefix != null) {
+				p1.keySet().forEach(e -> Assert.assertTrue("Invalid property key '" + e + "': expected prefix '" + prefix + "'!", e.toString().startsWith(prefix)));
+				p2.keySet().forEach(e -> Assert.assertTrue("Invalid property key '" + e + "': expected prefix '" + prefix + "'!", e.toString().startsWith(prefix)));
+			}
+			Assert.assertTrue("Uneven resource files: " + resourceNames, p1.keySet().containsAll(p2.keySet()));
+			Assert.assertTrue("Uneven resource files: " + resourceNames, p2.keySet().containsAll(p1.keySet()));
 			return p1;
 		});
 	}
 
 	@Test
-	public void checkMessages() throws IOException {
-		final Properties testProperties = new Properties();
-		try (final InputStream is = getClass().getResourceAsStream("/test.properties")) {
-			testProperties.load(is);
-		}
-		final Path sourcesPath = Paths.get(testProperties.getProperty("project.build.sourceDirectory"), ACodec.class.getPackage().getName().replace('.', File.separatorChar));
-		log.log(Level.INFO, "Sources path: {0}", sourcesPath);
+	public void checkMissingMessages() throws IOException {
 		final Set<String> keys = new TreeSet<>();
-		try (final Stream<Path> paths = Files.walk(sourcesPath).filter(Files::isRegularFile).filter(p -> p.toString().endsWith(".java"))) {
+		try (final Stream<Path> paths = newSourceStream()) {
 			paths.forEach(path -> {
 				log.log(Level.FINE, "{0}", path);
 				try {
@@ -103,8 +90,8 @@ public class MessagesTest {
 				}
 			});
 		}
-		Assert.assertFalse("No message keys found in sources", keys.isEmpty());
 		log.log(Level.INFO, "Found {0} message keys referenced in sources", keys.size());
+		Assert.assertFalse("No message keys found in sources", keys.isEmpty());
 		final Collection<String> consoleKeys = ConsoleMessages.INSTANCE.getKeys();
 		log.log(Level.INFO, "{0} message keys available in resource bundle: {1}", new Serializable[] { consoleKeys.size(), ConsoleMessages.class.getSimpleName() });
 		Assert.assertFalse("No message keys found in resource bundle: " + ConsoleMessages.class.getSimpleName(), consoleKeys.isEmpty());
@@ -127,6 +114,64 @@ public class MessagesTest {
 				Assert.assertTrue("Invalid message key prefix: '" + key + "'", false);
 			}
 		}
+	}
+
+	@Test
+	public void checkUnreferencedMessages() throws IOException {
+		checkUnreferencedMessages(getResourceNames(ConsoleMessages.class).iterator().next());
+		checkUnreferencedMessages(getResourceNames(GuiMessages.class).iterator().next());
+		checkUnreferencedMessages(getResourceNames(CommonMessages.class).iterator().next());
+	}
+
+	private void checkUnreferencedMessages(@NonNull final String resourceName) throws IOException {
+		final Properties p = new Properties();
+		try (final InputStream is = getClass().getResourceAsStream('/' + resourceName)) {
+			Assert.assertNotNull("Missing resource file: " + resourceName, is);
+			p.load(is);
+		}
+		log.log(Level.INFO, "{0} messages found in: {1}", new Serializable[] { p.size(), resourceName });
+		Assert.assertFalse("Empty resource file: " + resourceName, p.isEmpty());
+		final Set<String> usedKeys = new TreeSet<>();
+		final Set<String> allKeys = new TreeSet<>(Collections.list(p.propertyNames()).stream().map(Object::toString).collect(Collectors.toSet()));
+		try (final Stream<Path> paths = newSourceStream()) {
+			for (final Path path : paths.collect(Collectors.toSet())) {
+				try (final BufferedReader br = Files.newBufferedReader(path)) {
+					String line;
+					while ((line = br.readLine()) != null) {
+						final String clean = line.trim().replace(" ", "").replace("\"", "");
+						for (final String key : allKeys) {
+							if (clean.contains(key)) {
+								usedKeys.add(key);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		log.log(Level.INFO, "Found {0} message keys referenced in sources", usedKeys.size());
+
+		final Set<String> unreferencedKeys = new TreeSet<>(allKeys.stream().filter(key -> !usedKeys.contains(key)).collect(Collectors.toSet()));
+		if (!unreferencedKeys.isEmpty()) {
+			log.log(Level.WARNING, "Unreferenced message keys: {0}", unreferencedKeys);
+		}
+	}
+
+	private Stream<Path> newSourceStream() throws IOException {
+		final Properties testProperties = new Properties();
+		try (final InputStream is = getClass().getResourceAsStream("/test.properties")) {
+			testProperties.load(is);
+		}
+		final Path sourcesPath = Paths.get(testProperties.getProperty("project.build.sourceDirectory"), ACodec.class.getPackage().getName().replace('.', File.separatorChar));
+		log.log(Level.INFO, "Sources path: {0}", sourcesPath);
+		return Files.walk(sourcesPath).filter(Files::isRegularFile).filter(p -> p.toString().toLowerCase(Locale.ROOT).endsWith(".java"));
+	}
+
+	private static Set<String> getResourceNames(final Class<?> messagesClass) {
+		final Reflections reflections = new Reflections(messagesClass.getPackage().getName(), new ResourcesScanner());
+		final Set<String> resourceNames = reflections.getResources(name -> name.contains(messagesClass.getSimpleName().toLowerCase(Locale.ROOT)) && name.endsWith(".properties"));
+		log.log(Level.INFO, "Resources found: {0}", resourceNames);
+		return resourceNames;
 	}
 
 }
