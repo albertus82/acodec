@@ -27,6 +27,7 @@ import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
 import it.albertus.acodec.ACodec;
+import it.albertus.acodec.BaseTest;
 import it.albertus.acodec.common.resources.CommonMessages;
 import it.albertus.acodec.console.resources.ConsoleMessages;
 import it.albertus.acodec.gui.resources.GuiMessages;
@@ -35,7 +36,7 @@ import lombok.NonNull;
 import lombok.extern.java.Log;
 
 @Log
-public class MessagesTest {
+public class MessagesTest extends BaseTest {
 
 	@Test
 	public void checkMessageFiles() throws IOException {
@@ -157,12 +158,8 @@ public class MessagesTest {
 		}
 	}
 
-	private Stream<Path> newSourceStream() throws IOException {
-		final Properties testProperties = new Properties();
-		try (final InputStream is = getClass().getResourceAsStream("/test.properties")) {
-			testProperties.load(is);
-		}
-		final Path sourcesPath = Paths.get(testProperties.getProperty("project.build.sourceDirectory"), ACodec.class.getPackage().getName().replace('.', File.separatorChar));
+	private static Stream<Path> newSourceStream() throws IOException {
+		final Path sourcesPath = Paths.get(projectProperties.getProperty("project.build.sourceDirectory"), ACodec.class.getPackage().getName().replace('.', File.separatorChar));
 		log.log(Level.INFO, "Sources path: {0}", sourcesPath);
 		return Files.walk(sourcesPath).filter(Files::isRegularFile).filter(p -> p.toString().toLowerCase(Locale.ROOT).endsWith(".java"));
 	}
