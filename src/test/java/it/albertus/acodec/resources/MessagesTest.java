@@ -28,8 +28,8 @@ import org.reflections.scanners.ResourcesScanner;
 
 import it.albertus.acodec.ACodec;
 import it.albertus.acodec.BaseTest;
+import it.albertus.acodec.cli.resources.ConsoleMessages;
 import it.albertus.acodec.common.resources.CommonMessages;
-import it.albertus.acodec.console.resources.ConsoleMessages;
 import it.albertus.acodec.gui.resources.GuiMessages;
 import it.albertus.util.StringUtils;
 import lombok.NonNull;

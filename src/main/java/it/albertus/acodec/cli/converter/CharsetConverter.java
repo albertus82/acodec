@@ -1,4 +1,4 @@
-package it.albertus.acodec.console.converter;
+package it.albertus.acodec.cli.converter;
 
 import java.nio.charset.Charset;
 

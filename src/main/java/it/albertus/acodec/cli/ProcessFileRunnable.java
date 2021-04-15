@@ -1,4 +1,4 @@
-package it.albertus.acodec.console;
+package it.albertus.acodec.cli;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -7,9 +7,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 
+import it.albertus.acodec.cli.resources.ConsoleMessages;
 import it.albertus.acodec.common.engine.ProcessFileTask;
 import it.albertus.acodec.common.resources.Messages;
-import it.albertus.acodec.console.resources.ConsoleMessages;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

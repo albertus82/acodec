@@ -1,9 +1,9 @@
-package it.albertus.acodec.console;
+package it.albertus.acodec.cli;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 
-import it.albertus.acodec.console.resources.ConsoleMessages;
+import it.albertus.acodec.cli.resources.ConsoleMessages;
 import it.albertus.util.Version;
 import picocli.CommandLine.IVersionProvider;
 

@@ -1,6 +1,6 @@
 package it.albertus.acodec;
 
-import it.albertus.acodec.console.CodecConsole;
+import it.albertus.acodec.cli.CodecCli;
 import it.albertus.acodec.gui.CodecGui;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -12,8 +12,8 @@ public class ACodec {
 	public static void main(final String... args) {
 		final String mode = System.getProperty(ACodec.class.getName() + ".main.mode");
 		if (mode != null) {
-			if ("console".equalsIgnoreCase(mode)) {
-				CodecConsole.main(args);
+			if ("cli".equalsIgnoreCase(mode)) {
+				CodecCli.main(args);
 			}
 			else if ("gui".equalsIgnoreCase(mode)) {
 				CodecGui.main();
@@ -21,7 +21,7 @@ public class ACodec {
 		}
 		else {
 			if (args.length > 0) {
-				CodecConsole.main(args);
+				CodecCli.main(args);
 			}
 			else {
 				CodecGui.main();

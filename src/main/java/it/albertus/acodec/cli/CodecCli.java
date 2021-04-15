@@ -1,4 +1,4 @@
-package it.albertus.acodec.console;
+package it.albertus.acodec.cli;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,19 +22,19 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 
 import it.albertus.acodec.ACodec;
+import it.albertus.acodec.cli.converter.CharsetConverter;
+import it.albertus.acodec.cli.converter.CharsetConverter.InvalidCharsetException;
+import it.albertus.acodec.cli.converter.CodecAlgorithmConverter;
+import it.albertus.acodec.cli.converter.CodecAlgorithmConverter.InvalidAlgorithmException;
+import it.albertus.acodec.cli.converter.CodecModeConverter;
+import it.albertus.acodec.cli.converter.CodecModeConverter.InvalidModeException;
+import it.albertus.acodec.cli.resources.ConsoleMessages;
 import it.albertus.acodec.common.engine.CodecAlgorithm;
 import it.albertus.acodec.common.engine.CodecConfig;
 import it.albertus.acodec.common.engine.CodecMode;
 import it.albertus.acodec.common.engine.ProcessFileTask;
 import it.albertus.acodec.common.engine.StringCodec;
 import it.albertus.acodec.common.resources.Messages;
-import it.albertus.acodec.console.converter.CharsetConverter;
-import it.albertus.acodec.console.converter.CharsetConverter.InvalidCharsetException;
-import it.albertus.acodec.console.converter.CodecAlgorithmConverter;
-import it.albertus.acodec.console.converter.CodecAlgorithmConverter.InvalidAlgorithmException;
-import it.albertus.acodec.console.converter.CodecModeConverter;
-import it.albertus.acodec.console.converter.CodecModeConverter.InvalidModeException;
-import it.albertus.acodec.console.resources.ConsoleMessages;
 import it.albertus.util.StringUtils;
 import it.albertus.util.Version;
 import lombok.AccessLevel;
@@ -51,7 +51,7 @@ import picocli.CommandLine.Parameters;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Command(versionProvider = VersionProvider.class)
 @SuppressWarnings("java:S106") // Replace this use of System.out or System.err by a logger. Standard outputs should not be used directly to log anything (java:S106)
-public class CodecConsole implements Callable<Integer> {
+public class CodecCli implements Callable<Integer> {
 
 	private static final String SYSTEM_LINE_SEPARATOR = System.lineSeparator();
 	private static final short WIDTH = 80;
@@ -89,7 +89,7 @@ public class CodecConsole implements Callable<Integer> {
 	private boolean versionInfoRequested;
 
 	public static void main(final String... args) {
-		System.exit(new CommandLine(new CodecConsole()).setCommandName(ACodec.class.getSimpleName().toLowerCase(Locale.ROOT)).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
+		System.exit(new CommandLine(new CodecCli()).setCommandName(ACodec.class.getSimpleName().toLowerCase(Locale.ROOT)).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
 			if (e.getCause() instanceof InvalidCharsetException) {
 				System.out.println(messages.get("console.error.invalid.charset", e.getCause().getMessage()));
 			}

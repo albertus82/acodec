@@ -1,4 +1,4 @@
-package it.albertus.acodec.console.resources;
+package it.albertus.acodec.cli.resources;
 
 import java.util.Collection;
 import java.util.Locale;

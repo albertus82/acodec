@@ -1,4 +1,4 @@
-package it.albertus.acodec.console.converter;
+package it.albertus.acodec.cli.converter;
 
 import it.albertus.acodec.common.engine.CodecMode;
 import lombok.NonNull;
