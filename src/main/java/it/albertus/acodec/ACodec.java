@@ -14,14 +14,14 @@ public class ACodec {
 			CodecCli.main(args);
 		}
 		else if (System.getProperty("G") != null || System.getProperty("g") != null) { // -DG
-			CodecGui.main();
+			CodecGui.main(args);
 		}
 		else {
 			if (args.length > 0) {
 				CodecCli.main(args);
 			}
 			else {
-				CodecGui.main();
+				CodecGui.main(args);
 			}
 		}
 	}
