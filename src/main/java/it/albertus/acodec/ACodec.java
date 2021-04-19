@@ -10,14 +10,11 @@ public class ACodec {
 
 	/* Unique entry point */
 	public static void main(final String... args) {
-		final String mode = System.getProperty(ACodec.class.getName() + ".main.mode");
-		if (mode != null) {
-			if ("cli".equalsIgnoreCase(mode)) {
-				CodecCli.main(args);
-			}
-			else if ("gui".equalsIgnoreCase(mode)) {
-				CodecGui.main();
-			}
+		if (System.getProperty("C") != null || System.getProperty("c") != null) { // -DC
+			CodecCli.main(args);
+		}
+		else if (System.getProperty("G") != null || System.getProperty("g") != null) { // -DG
+			CodecGui.main();
 		}
 		else {
 			if (args.length > 0) {
