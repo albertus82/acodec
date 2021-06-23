@@ -11,7 +11,7 @@ import nl.minvws.encoding.Base45.Decoder;
 
 public class Base45InputStream extends InputStream {
 
-	private static final short READ_BUFFER_SIZE = 512;
+	private static final short BUFFERING_FACTOR = 256;
 
 	private static final byte ENCODED_CHUNK_SIZE = 3;
 	private static final byte DECODED_CHUNK_SIZE = 2;
@@ -20,8 +20,8 @@ public class Base45InputStream extends InputStream {
 
 	private final Decoder decoder = Base45.getDecoder();
 
-	private final ByteBuffer encodedBuffer = ByteBuffer.allocate(READ_BUFFER_SIZE);
-	private final ByteBuffer decodedBuffer = ByteBuffer.allocate(DECODED_CHUNK_SIZE);
+	private final ByteBuffer encodedBuffer = ByteBuffer.allocate(ENCODED_CHUNK_SIZE * BUFFERING_FACTOR);
+	private final ByteBuffer decodedBuffer = ByteBuffer.allocate(DECODED_CHUNK_SIZE * BUFFERING_FACTOR);
 
 	public Base45InputStream(@NonNull final InputStream wrapped) {
 		this.wrapped = wrapped;
@@ -31,23 +31,19 @@ public class Base45InputStream extends InputStream {
 
 	@Override
 	public int read() throws IOException {
+		refillDecodedBuffer();
 		if (!decodedBuffer.hasRemaining()) {
-			refillDecodedBuffer();
-			if (!decodedBuffer.hasRemaining()) {
-				return -1;
-			}
+			return -1;
 		}
 		return Byte.toUnsignedInt(decodedBuffer.get());
 	}
 
-	private byte[] decodeChunk() throws IOException {
-		try (final ByteArrayOutputStream buf = new ByteArrayOutputStream(ENCODED_CHUNK_SIZE)) {
-			while (buf.size() < ENCODED_CHUNK_SIZE) {
+	private byte[] decode() throws IOException {
+		try (final ByteArrayOutputStream buf = new ByteArrayOutputStream(ENCODED_CHUNK_SIZE * BUFFERING_FACTOR)) {
+			while (buf.size() < ENCODED_CHUNK_SIZE * BUFFERING_FACTOR) {
+				refillEncodedBuffer();
 				if (!encodedBuffer.hasRemaining()) {
-					refillEncodedBuffer();
-					if (!encodedBuffer.hasRemaining()) {
-						break;
-					}
+					break;
 				}
 				final int b = Byte.toUnsignedInt(encodedBuffer.get());
 				if (b != '\r' && b != '\n') { // discard CR & LF
@@ -59,15 +55,19 @@ public class Base45InputStream extends InputStream {
 	}
 
 	private void refillEncodedBuffer() throws IOException {
-		encodedBuffer.clear();
-		final int length = wrapped.read(encodedBuffer.array());
-		encodedBuffer.limit(Math.max(length, 0));
+		if (!encodedBuffer.hasRemaining()) {
+			encodedBuffer.clear();
+			final int length = wrapped.read(encodedBuffer.array());
+			encodedBuffer.limit(Math.max(length, 0));
+		}
 	}
 
 	private void refillDecodedBuffer() throws IOException {
-		decodedBuffer.clear();
-		decodedBuffer.put(decodeChunk());
-		decodedBuffer.flip();
+		if (!decodedBuffer.hasRemaining()) {
+			decodedBuffer.clear();
+			decodedBuffer.put(decode());
+			decodedBuffer.flip();
+		}
 	}
 
 	@Override
