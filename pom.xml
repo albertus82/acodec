@@ -6,7 +6,7 @@
 
 	<groupId>it.albertus</groupId>
 	<artifactId>acodec</artifactId>
-	<version>2.3.2</version>
+	<version>2.4.0</version>
 	<name>ACodec</name>
 	<url>https://github.com/albertus82/${project.artifactId}</url>
 
@@ -58,6 +58,11 @@
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
 			<version>1.69</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.ehn-digital-green-development</groupId>
+			<artifactId>base45</artifactId>
+			<version>0.0.3</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>

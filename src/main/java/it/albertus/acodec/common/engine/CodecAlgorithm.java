@@ -32,6 +32,7 @@ public enum CodecAlgorithm {
 	BASE16("Base16", ENCODING),
 	BASE32("Base32", ENCODING),
 	BASE32HEX("base32hex", ENCODING),
+	BASE45("Base45", ENCODING),
 	BASE64("Base64", "b64", ENCODING),
 	BASE64URL("base64url", ENCODING),
 	ASCII85("Ascii85", ENCODING, "BASE85"),

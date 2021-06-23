@@ -91,6 +91,10 @@ public class ProcessFileTask implements Cancelable {
 				cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(MAX_CHARS_PER_LINE, NewLine.CRLF.toString().getBytes(StandardCharsets.US_ASCII), true), true));
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
+			case BASE45:
+				cs.getOutputStreams().add(new Base45OutputStream(cs.getOutputStreams().getLast()));
+				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				break;
 			case BASE64:
 				cs.getOutputStreams().add(new Base64OutputStream(cs.getOutputStreams().getLast()));
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
@@ -156,6 +160,10 @@ public class ProcessFileTask implements Cancelable {
 				break;
 			case BASE32HEX:
 				cs.getInputStreams().add(new BaseNCodecInputStream(cs.getInputStreams().getLast(), new Base32(true), false) {});
+				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
+				break;
+			case BASE45:
+				cs.getInputStreams().add(new Base45InputStream(cs.getInputStreams().getLast()));
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			case BASE64:
