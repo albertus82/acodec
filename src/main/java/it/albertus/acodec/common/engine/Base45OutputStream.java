@@ -3,7 +3,6 @@ package it.albertus.acodec.common.engine;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 
 import it.albertus.util.NewLine;
 import lombok.NonNull;
@@ -27,7 +26,7 @@ public class Base45OutputStream extends FilterOutputStream {
 		if (b0 != null) {
 			final byte[] encodedTuple = encoder.encode(new byte[] { b0.byteValue(), (byte) b });
 			if (len + encodedTuple.length > 76) {
-				out.write(NewLine.CRLF.toString().getBytes(StandardCharsets.US_ASCII));
+				out.write(NewLine.CRLF.toString().getBytes());
 				len = 0;
 			}
 			out.write(encodedTuple);
