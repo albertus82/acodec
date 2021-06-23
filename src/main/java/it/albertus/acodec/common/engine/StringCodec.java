@@ -14,7 +14,6 @@ import it.albertus.acodec.common.resources.Messages;
 import it.albertus.util.CRC16;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import nl.minvws.encoding.Base45;
 
 @RequiredArgsConstructor
 public class StringCodec {
@@ -45,7 +44,7 @@ public class StringCodec {
 			case BASE32HEX:
 				return new Base32(true).encodeAsString(bytes);
 			case BASE45:
-				return Base45.getEncoder().encodeToString(bytes);
+				return Base45.encode(bytes);
 			case BASE64:
 				return Base64.encodeBase64String(bytes);
 			case BASE64URL:
@@ -89,7 +88,7 @@ public class StringCodec {
 			case BASE32HEX:
 				return new String(new Base32(true).decode(input), config.getCharset());
 			case BASE45:
-				return new String(Base45.getDecoder().decode(input), config.getCharset());
+				return new String(Base45.decode(input), config.getCharset());
 			case BASE64:
 			case BASE64URL:
 				return new String(Base64.decodeBase64(input), config.getCharset());

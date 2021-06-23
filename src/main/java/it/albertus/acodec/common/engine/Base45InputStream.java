@@ -34,6 +34,10 @@ public class Base45InputStream extends InputStream {
 		try (final ByteArrayOutputStream encBuf = new ByteArrayOutputStream(ENCODED_CHUNK_SIZE)) {
 			for (int i = 0; i < ENCODED_CHUNK_SIZE; i++) {
 				final int encByte = wrapped.read();
+				if (encByte == '\n' || encByte == '\r') {
+					i--;
+					continue;
+				}
 				if (encByte == -1) {
 					break;
 				}
