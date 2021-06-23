@@ -20,7 +20,7 @@ public class Base45InputStream extends InputStream {
 
 	@Override
 	public int read() throws IOException {
-		if (decBuf == null || decBuf.remaining() == 0) {
+		if (decBuf == null || !decBuf.hasRemaining()) {
 			final byte[] decodedChunk = decodeChunk();
 			if (decodedChunk.length == 0) {
 				return -1;
