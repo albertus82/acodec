@@ -19,31 +19,31 @@ public class Base45InputStream extends InputStream {
 
 	private final Decoder decoder = Base45.getDecoder();
 
-	ByteBuffer decBuf;
-	ByteBuffer encBuf;
+	ByteBuffer encodedBuffer;
+	ByteBuffer decodedBuffer;
 
 	@Override
 	public int read() throws IOException {
-		if (decBuf == null || !decBuf.hasRemaining()) {
+		if (decodedBuffer == null || !decodedBuffer.hasRemaining()) {
 			final byte[] decodedChunk = decodeChunk();
 			if (decodedChunk.length == 0) {
 				return -1;
 			}
-			decBuf = ByteBuffer.wrap(decodedChunk);
+			decodedBuffer = ByteBuffer.wrap(decodedChunk);
 		}
-		return Byte.toUnsignedInt(decBuf.get());
+		return Byte.toUnsignedInt(decodedBuffer.get());
 	}
 
 	private byte[] decodeChunk() throws IOException {
 		try (final ByteArrayOutputStream encBuf2 = new ByteArrayOutputStream(ENCODED_CHUNK_SIZE)) {
 			for (int i = 0; i < ENCODED_CHUNK_SIZE; i++) {
-				if (encBuf == null || !encBuf.hasRemaining()) {
+				if (encodedBuffer == null || !encodedBuffer.hasRemaining()) {
 					refill();
-					if (encBuf == null || !encBuf.hasRemaining()) {
+					if (encodedBuffer == null || !encodedBuffer.hasRemaining()) {
 						break;
 					}
 				}
-				final int encByte = Byte.toUnsignedInt(encBuf.get());
+				final int encByte = Byte.toUnsignedInt(encodedBuffer.get());
 				if (encByte == '\n' || encByte == '\r') {
 					i--;
 					continue;
@@ -62,18 +62,13 @@ public class Base45InputStream extends InputStream {
 	private void refill() throws IOException {
 		final byte[] buf = new byte[512];
 		final int length = wrapped.read(buf);
-		if (length < 1) {
-			encBuf = ByteBuffer.wrap(new byte[0]);
-		}
-		else {
-			encBuf = ByteBuffer.wrap(buf, 0, length);
-		}
+		encodedBuffer = ByteBuffer.wrap(buf, 0, Math.max(length, 0));
 	}
 
 	@Override
 	public void close() throws IOException {
 		wrapped.close();
-		decBuf = null;
+		decodedBuffer = null;
 	}
 
 }
