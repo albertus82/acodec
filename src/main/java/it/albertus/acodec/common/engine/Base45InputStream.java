@@ -6,69 +6,73 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import nl.minvws.encoding.Base45;
 import nl.minvws.encoding.Base45.Decoder;
 
-@RequiredArgsConstructor
 public class Base45InputStream extends InputStream {
 
-	private static final byte ENCODED_CHUNK_SIZE = 3;
+	private static final short READ_BUFFER_SIZE = 512;
 
-	@NonNull private final InputStream wrapped;
+	private static final byte ENCODED_CHUNK_SIZE = 3;
+	private static final byte DECODED_CHUNK_SIZE = 2;
+
+	private final InputStream wrapped;
 
 	private final Decoder decoder = Base45.getDecoder();
 
-	ByteBuffer encodedBuffer;
-	ByteBuffer decodedBuffer;
+	private final ByteBuffer encodedBuffer = ByteBuffer.allocate(READ_BUFFER_SIZE);
+	private final ByteBuffer decodedBuffer = ByteBuffer.allocate(DECODED_CHUNK_SIZE);
+
+	public Base45InputStream(@NonNull final InputStream wrapped) {
+		this.wrapped = wrapped;
+		encodedBuffer.flip();
+		decodedBuffer.flip();
+	}
 
 	@Override
 	public int read() throws IOException {
-		if (decodedBuffer == null || !decodedBuffer.hasRemaining()) {
-			final byte[] decodedChunk = decodeChunk();
-			if (decodedChunk.length == 0) {
+		if (!decodedBuffer.hasRemaining()) {
+			refillDecodedBuffer();
+			if (!decodedBuffer.hasRemaining()) {
 				return -1;
 			}
-			decodedBuffer = ByteBuffer.wrap(decodedChunk);
 		}
 		return Byte.toUnsignedInt(decodedBuffer.get());
 	}
 
 	private byte[] decodeChunk() throws IOException {
-		try (final ByteArrayOutputStream encBuf2 = new ByteArrayOutputStream(ENCODED_CHUNK_SIZE)) {
-			for (int i = 0; i < ENCODED_CHUNK_SIZE; i++) {
-				if (encodedBuffer == null || !encodedBuffer.hasRemaining()) {
-					refill();
-					if (encodedBuffer == null || !encodedBuffer.hasRemaining()) {
+		try (final ByteArrayOutputStream buf = new ByteArrayOutputStream(ENCODED_CHUNK_SIZE)) {
+			while (buf.size() < ENCODED_CHUNK_SIZE) {
+				if (!encodedBuffer.hasRemaining()) {
+					refillEncodedBuffer();
+					if (!encodedBuffer.hasRemaining()) {
 						break;
 					}
 				}
-				final int encByte = Byte.toUnsignedInt(encodedBuffer.get());
-				if (encByte == '\n' || encByte == '\r') {
-					i--;
-					continue;
+				final int b = Byte.toUnsignedInt(encodedBuffer.get());
+				if (b != '\r' && b != '\n') { // discard CR & LF
+					buf.write(b);
 				}
-				encBuf2.write(encByte);
 			}
-			if (encBuf2.size() == 0) {
-				return new byte[] {};
-			}
-			else {
-				return decoder.decode(encBuf2.toByteArray());
-			}
+			return decoder.decode(buf.toByteArray());
 		}
 	}
 
-	private void refill() throws IOException {
-		final byte[] buf = new byte[512];
-		final int length = wrapped.read(buf);
-		encodedBuffer = ByteBuffer.wrap(buf, 0, Math.max(length, 0));
+	private void refillEncodedBuffer() throws IOException {
+		encodedBuffer.clear();
+		final int length = wrapped.read(encodedBuffer.array());
+		encodedBuffer.limit(Math.max(length, 0));
+	}
+
+	private void refillDecodedBuffer() throws IOException {
+		decodedBuffer.clear();
+		decodedBuffer.put(decodeChunk());
+		decodedBuffer.flip();
 	}
 
 	@Override
 	public void close() throws IOException {
 		wrapped.close();
-		decodedBuffer = null;
 	}
 
 }
