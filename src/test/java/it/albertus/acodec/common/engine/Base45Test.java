@@ -40,7 +40,7 @@ public class Base45Test {
 				try (final Base45OutputStream os2 = new Base45OutputStream(os1)) {
 					os2.write(e.getKey().getBytes(StandardCharsets.UTF_8));
 				}
-				Assert.assertEquals(e.getValue(), os1.toString(StandardCharsets.UTF_8.name()));
+				Assert.assertEquals(e.getValue(), os1.toString(StandardCharsets.UTF_8.name()).trim());
 			}
 		}
 	}

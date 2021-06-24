@@ -6,6 +6,9 @@ enum Base45 implements BaseNCodec {
 
 	INSTANCE;
 
+	static final byte ENCODED_CHUNK_SIZE = 3; // bytes
+	static final byte DECODED_CHUNK_SIZE = 2; // bytes
+
 	static Base45 getCodec() {
 		return INSTANCE;
 	}
