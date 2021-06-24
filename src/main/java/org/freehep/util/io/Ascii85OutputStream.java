@@ -10,6 +10,7 @@ import static org.freehep.util.io.Ascii85.MAX_CHARS_PER_LINE;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 import it.albertus.util.NewLine;
 
@@ -66,7 +67,7 @@ public class Ascii85OutputStream extends FilterOutputStream implements Finishabl
 				writeTuple();
 			}
 			writeEOD();
-			for (final byte bt : NewLine.CRLF.toString().getBytes()) {
+			for (final byte bt : NewLine.CRLF.toString().getBytes(StandardCharsets.US_ASCII)) {
 				super.write(bt);
 			}
 			flush();

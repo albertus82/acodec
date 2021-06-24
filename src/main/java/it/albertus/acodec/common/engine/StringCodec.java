@@ -38,21 +38,21 @@ public class StringCodec {
 			final byte[] bytes = input.getBytes(config.getCharset());
 			switch (config.getAlgorithm()) {
 			case BASE16:
-				return Base16.encode(bytes);
+				return Base16.getCodec().encode(bytes);
 			case BASE32:
 				return new Base32().encodeAsString(bytes);
 			case BASE32HEX:
 				return new Base32(true).encodeAsString(bytes);
 			case BASE45:
-				return Base45.encode(bytes);
+				return Base45.getCodec().encode(bytes);
 			case BASE64:
 				return Base64.encodeBase64String(bytes);
 			case BASE64URL:
 				return Base64.encodeBase64URLSafeString(bytes);
 			case ASCII85:
-				return Ascii85.encode(bytes);
+				return Ascii85.getCodec().encode(bytes);
 			case BASE91:
-				return Base91.encode(bytes);
+				return Base91.getCodec().encode(bytes);
 			case CRC16:
 				final CRC16 crc16 = new CRC16();
 				crc16.update(bytes);
@@ -82,20 +82,20 @@ public class StringCodec {
 		try {
 			switch (config.getAlgorithm()) {
 			case BASE16:
-				return new String(Base16.decode(input), config.getCharset());
+				return new String(Base16.getCodec().decode(input), config.getCharset());
 			case BASE32:
 				return new String(new Base32().decode(input), config.getCharset());
 			case BASE32HEX:
 				return new String(new Base32(true).decode(input), config.getCharset());
 			case BASE45:
-				return new String(Base45.decode(input), config.getCharset());
+				return new String(Base45.getCodec().decode(input), config.getCharset());
 			case BASE64:
 			case BASE64URL:
 				return new String(Base64.decodeBase64(input), config.getCharset());
 			case ASCII85:
-				return new String(Ascii85.decode(input), config.getCharset());
+				return new String(Ascii85.getCodec().decode(input), config.getCharset());
 			case BASE91:
-				return new String(Base91.decode(input), config.getCharset());
+				return new String(Base91.getCodec().decode(input), config.getCharset());
 			default:
 				throw new UnsupportedOperationException(messages.get("common.error.invalid.algorithm", config.getAlgorithm()));
 			}

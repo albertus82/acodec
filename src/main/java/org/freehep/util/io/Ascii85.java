@@ -17,7 +17,7 @@ class Ascii85 {
 	/**
 	 * Maxmimum line length for ASCII85
 	 */
-	static final int MAX_CHARS_PER_LINE = 76;
+	static final byte MAX_CHARS_PER_LINE = 76;
 
 	/**
 	 * 85^1

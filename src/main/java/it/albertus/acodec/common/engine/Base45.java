@@ -1,17 +1,21 @@
 package it.albertus.acodec.common.engine;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import it.albertus.util.NewLine;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Base45 {
+enum Base45 implements BaseNCodec {
 
-	static String encode(final byte[] byteArray) {
+	INSTANCE;
+
+	public static Base45 getCodec() {
+		return INSTANCE;
+	}
+
+	public String encode(final byte[] byteArray) {
 		return nl.minvws.encoding.Base45.getEncoder().encodeToString(byteArray);
 	}
 
-	static byte[] decode(final String encoded) {
-		return nl.minvws.encoding.Base45.getDecoder().decode(encoded.replace("\r", "").replace("\n", ""));
+	public byte[] decode(final String encoded) {
+		return nl.minvws.encoding.Base45.getDecoder().decode(encoded.replace(NewLine.CR.toString(), "").replace(NewLine.LF.toString(), ""));
 	}
 
 }
