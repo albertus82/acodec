@@ -13,8 +13,8 @@ class Base45InputStream extends InputStream {
 
 	private static final short BUFFERING_FACTOR = 256;
 
-	private static final byte ENCODED_CHUNK_SIZE = 3;
-	private static final byte DECODED_CHUNK_SIZE = 2;
+	private static final byte ENCODED_CHUNK_SIZE = 3; // bytes
+	private static final byte DECODED_CHUNK_SIZE = 2; // bytes
 
 	private final InputStream wrapped;
 
