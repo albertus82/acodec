@@ -12,7 +12,7 @@ enum Base91 implements BaseNCodec {
 
 	INSTANCE;
 
-	public static Base91 getCodec() {
+	static Base91 getCodec() {
 		return INSTANCE;
 	}
 

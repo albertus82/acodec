@@ -9,7 +9,7 @@ import lombok.NonNull;
 import nl.minvws.encoding.Base45;
 import nl.minvws.encoding.Base45.Decoder;
 
-public class Base45InputStream extends InputStream {
+class Base45InputStream extends InputStream {
 
 	private static final short BUFFERING_FACTOR = 256;
 

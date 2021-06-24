@@ -10,7 +10,7 @@ import lombok.NonNull;
 import nl.minvws.encoding.Base45;
 import nl.minvws.encoding.Base45.Encoder;
 
-public class Base45OutputStream extends FilterOutputStream {
+class Base45OutputStream extends FilterOutputStream {
 
 	private static final byte MAX_CHARS_PER_LINE = 76;
 

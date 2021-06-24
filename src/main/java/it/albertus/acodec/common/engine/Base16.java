@@ -14,7 +14,7 @@ enum Base16 implements BaseNCodec {
 
 	INSTANCE;
 
-	public static Base16 getCodec() {
+	static Base16 getCodec() {
 		return INSTANCE;
 	}
 

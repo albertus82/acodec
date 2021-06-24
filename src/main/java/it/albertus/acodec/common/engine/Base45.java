@@ -6,7 +6,7 @@ enum Base45 implements BaseNCodec {
 
 	INSTANCE;
 
-	public static Base45 getCodec() {
+	static Base45 getCodec() {
 		return INSTANCE;
 	}
 

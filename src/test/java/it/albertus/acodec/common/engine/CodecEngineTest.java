@@ -62,11 +62,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.albertus.acodec.common.engine.AlgorithmType;
-import it.albertus.acodec.common.engine.CodecAlgorithm;
-import it.albertus.acodec.common.engine.CodecConfig;
-import it.albertus.acodec.common.engine.ProcessFileTask;
-import it.albertus.acodec.common.engine.StringCodec;
 import it.albertus.util.NewLine;
 import lombok.extern.java.Log;
 

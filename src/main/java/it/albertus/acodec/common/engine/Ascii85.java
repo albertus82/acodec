@@ -16,7 +16,7 @@ enum Ascii85 implements BaseNCodec {
 
 	INSTANCE;
 
-	public static Ascii85 getCodec() {
+	static Ascii85 getCodec() {
 		return INSTANCE;
 	}
 
