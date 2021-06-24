@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
-import it.albertus.util.NewLine;
-
 /**
  * The ASCII85InputStream encodes binary data as ASCII base-85 encoding. The
  * exact definition of ASCII base-85 encoding can be found in the PostScript
@@ -34,8 +32,6 @@ public class Ascii85OutputStream extends FilterOutputStream implements Finishabl
 	private int bIndex;
 
 	private final int[] c = new int[5];
-
-	private final String newline = NewLine.CRLF.toString();
 
 	/**
 	 * Create an ASCII85 Output Stream from given stream
@@ -67,7 +63,7 @@ public class Ascii85OutputStream extends FilterOutputStream implements Finishabl
 				writeTuple();
 			}
 			writeEOD();
-			for (final byte bt : NewLine.CRLF.toString().getBytes(StandardCharsets.US_ASCII)) {
+			for (final byte bt : System.lineSeparator().getBytes(StandardCharsets.US_ASCII)) {
 				super.write(bt);
 			}
 			flush();
@@ -134,8 +130,8 @@ public class Ascii85OutputStream extends FilterOutputStream implements Finishabl
 
 	private void writeNewLine() throws IOException {
 		// write a newline
-		for (int i = 0; i < newline.length(); i++) {
-			super.write(newline.charAt(i));
+		for (int i = 0; i < System.lineSeparator().length(); i++) {
+			super.write(System.lineSeparator().charAt(i));
 		}
 	}
 }

@@ -42,7 +42,7 @@ enum Base16 implements BaseNCodec {
 		while ((count = input.read(buffer)) != -1) {
 			final byte[] toWrite = Base16Encoder.encode(count == bufferSize ? buffer : Arrays.copyOfRange(buffer, 0, count)).getBytes(StandardCharsets.US_ASCII);
 			output.write(toWrite);
-			output.write(NewLine.CRLF.toString().getBytes(StandardCharsets.US_ASCII));
+			output.write(System.lineSeparator().getBytes(StandardCharsets.US_ASCII));
 		}
 		output.flush();
 	}

@@ -7,14 +7,11 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import it.albertus.util.NewLine;
 import lombok.NonNull;
 
 class Base45OutputStream extends FilterOutputStream {
 
 	private static final byte MAX_CHARS_PER_LINE = 76;
-
-	private static final String NEWLINE = NewLine.CRLF.toString();
 
 	private final nl.minvws.encoding.Base45.Encoder encoder = nl.minvws.encoding.Base45.getEncoder();
 
@@ -43,8 +40,8 @@ class Base45OutputStream extends FilterOutputStream {
 
 	private byte[] buildEncodedLine(@NonNull final byte[] src) {
 		final byte[] encodedLine = encoder.encode(src);
-		final byte[] toWrite = Arrays.copyOf(encodedLine, encodedLine.length + NEWLINE.length());
-		System.arraycopy(NEWLINE.getBytes(StandardCharsets.US_ASCII), 0, toWrite, encodedLine.length, NEWLINE.length());
+		final byte[] toWrite = Arrays.copyOf(encodedLine, encodedLine.length + System.lineSeparator().length());
+		System.arraycopy(System.lineSeparator().getBytes(StandardCharsets.US_ASCII), 0, toWrite, encodedLine.length, System.lineSeparator().length());
 		return toWrite;
 	}
 

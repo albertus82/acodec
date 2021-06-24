@@ -247,7 +247,10 @@ public class CodecEngineTest {
 			try (final InputStream fis = Files.newInputStream(outputFile.toPath())) {
 				IOUtils.copy(fis, baos);
 			}
-			Assert.assertTrue(codecConfig.getAlgorithm().getName() + " missing CRLF at the end of the file", baos.toString().endsWith(NewLine.CRLF.toString()));
+			Assert.assertTrue(codecConfig.getAlgorithm().getName() + " - missing or invalid system-dependent new line at the end of the file: " + Arrays.toString(Arrays.copyOfRange(baos.toByteArray(), baos.size() - 10, baos.size())), baos.toString().endsWith(System.lineSeparator()));
+			Assert.assertFalse(codecConfig.getAlgorithm().getName() + " - missing or invalid system-dependent new line at the end of the file: " + Arrays.toString(Arrays.copyOfRange(baos.toByteArray(), baos.size() - 10, baos.size())), baos.toString().endsWith(NewLine.CR.toString() + System.lineSeparator()));
+			Assert.assertFalse(codecConfig.getAlgorithm().getName() + " - missing or invalid system-dependent new line at the end of the file: " + Arrays.toString(Arrays.copyOfRange(baos.toByteArray(), baos.size() - 10, baos.size())), baos.toString().endsWith(NewLine.LF.toString() + System.lineSeparator()));
+			Assert.assertFalse(codecConfig.getAlgorithm().getName() + " - double new line at the end of the file: " + Arrays.toString(Arrays.copyOfRange(baos.toByteArray(), baos.size() - 10, baos.size())), baos.toString().endsWith(System.lineSeparator() + System.lineSeparator()));
 			return baos.toString(CHARSET.name()).replaceAll("[" + NewLine.CRLF.toString() + "]+", "");
 		}
 		finally {
