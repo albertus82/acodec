@@ -35,7 +35,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import it.albertus.util.NewLine;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -71,8 +70,7 @@ public class B91Cli {
 			for (int i = 0; i < s; ++i) {
 				line[n++] = (char) obuf[i];
 				if (n == 76) {
-					ps.print(line);
-					ps.print(NewLine.CRLF.toCharArray());
+					ps.println(line);
 					n = 0;
 				}
 			}
@@ -81,15 +79,12 @@ public class B91Cli {
 		for (int i = 0; i < s; ++i) {
 			line[n++] = (char) obuf[i];
 			if (n == 76) {
-				ps.print(line);
-				ps.print(NewLine.CRLF.toCharArray());
+				ps.println(line);
 				n = 0;
 			}
 		}
-		if (n > 0) {
-			ps.print(new String(line, 0, n));
-			ps.print(NewLine.CRLF.toCharArray());
-		}
+		if (n > 0)
+			ps.println(new String(line, 0, n));
 	}
 
 	public static void decode(final InputStream is, final OutputStream os) throws IOException {
