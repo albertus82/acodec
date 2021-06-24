@@ -1,4 +1,4 @@
-package it.albertus.acodec.engine;
+package it.albertus.acodec.common.engine;
 
 import static it.albertus.acodec.common.engine.CodecAlgorithm.ADLER32;
 import static it.albertus.acodec.common.engine.CodecAlgorithm.ASCII85;
