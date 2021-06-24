@@ -1,5 +1,8 @@
 package it.albertus.acodec.common.engine;
 
+import static it.albertus.acodec.common.engine.Base45.DECODED_CHUNK_SIZE;
+import static it.albertus.acodec.common.engine.Base45.ENCODED_CHUNK_SIZE;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +10,8 @@ import java.nio.ByteBuffer;
 
 import it.albertus.util.NewLine;
 import lombok.NonNull;
+import nl.minvws.encoding.Base45;
+import nl.minvws.encoding.Base45.Decoder;
 
 class Base45InputStream extends InputStream {
 
@@ -14,10 +19,10 @@ class Base45InputStream extends InputStream {
 
 	private final InputStream wrapped;
 
-	private final nl.minvws.encoding.Base45.Decoder decoder = nl.minvws.encoding.Base45.getDecoder();
+	private final Decoder decoder = Base45.getDecoder();
 
-	private final ByteBuffer encodedBuffer = ByteBuffer.allocate(Base45.ENCODED_CHUNK_SIZE * BUFFERING_FACTOR);
-	private final ByteBuffer decodedBuffer = ByteBuffer.allocate(Base45.DECODED_CHUNK_SIZE * BUFFERING_FACTOR);
+	private final ByteBuffer encodedBuffer = ByteBuffer.allocate(ENCODED_CHUNK_SIZE * BUFFERING_FACTOR);
+	private final ByteBuffer decodedBuffer = ByteBuffer.allocate(DECODED_CHUNK_SIZE * BUFFERING_FACTOR);
 
 	public Base45InputStream(@NonNull final InputStream wrapped) {
 		this.wrapped = wrapped;
@@ -35,8 +40,8 @@ class Base45InputStream extends InputStream {
 	}
 
 	private byte[] decode() throws IOException {
-		try (final ByteArrayOutputStream buf = new ByteArrayOutputStream(Base45.ENCODED_CHUNK_SIZE * BUFFERING_FACTOR)) {
-			while (buf.size() < Base45.ENCODED_CHUNK_SIZE * BUFFERING_FACTOR) {
+		try (final ByteArrayOutputStream buf = new ByteArrayOutputStream(ENCODED_CHUNK_SIZE * BUFFERING_FACTOR)) {
+			while (buf.size() < ENCODED_CHUNK_SIZE * BUFFERING_FACTOR) {
 				refillEncodedBuffer();
 				if (!encodedBuffer.hasRemaining()) {
 					break;

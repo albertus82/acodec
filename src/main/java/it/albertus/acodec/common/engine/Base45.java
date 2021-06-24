@@ -1,5 +1,8 @@
 package it.albertus.acodec.common.engine;
 
+import static nl.minvws.encoding.Base45.getDecoder;
+import static nl.minvws.encoding.Base45.getEncoder;
+
 import it.albertus.util.NewLine;
 
 enum Base45 implements BaseNCodec {
@@ -14,11 +17,11 @@ enum Base45 implements BaseNCodec {
 	}
 
 	public String encode(final byte[] byteArray) {
-		return nl.minvws.encoding.Base45.getEncoder().encodeToString(byteArray);
+		return getEncoder().encodeToString(byteArray);
 	}
 
 	public byte[] decode(final String encoded) {
-		return nl.minvws.encoding.Base45.getDecoder().decode(encoded.replace(NewLine.CR.toString(), "").replace(NewLine.LF.toString(), ""));
+		return getDecoder().decode(encoded.replace(NewLine.CR.toString(), "").replace(NewLine.LF.toString(), ""));
 	}
 
 }

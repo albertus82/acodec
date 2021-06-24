@@ -1,5 +1,8 @@
 package it.albertus.acodec.common.engine;
 
+import static it.albertus.acodec.common.engine.Base45.DECODED_CHUNK_SIZE;
+import static it.albertus.acodec.common.engine.Base45.ENCODED_CHUNK_SIZE;
+
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -8,14 +11,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import lombok.NonNull;
+import nl.minvws.encoding.Base45;
+import nl.minvws.encoding.Base45.Encoder;
 
 class Base45OutputStream extends FilterOutputStream {
 
 	private static final byte MAX_CHARS_PER_LINE = 76;
 
-	private final nl.minvws.encoding.Base45.Encoder encoder = nl.minvws.encoding.Base45.getEncoder();
+	private final Encoder encoder = Base45.getEncoder();
 
-	private final ByteBuffer buf = ByteBuffer.allocate(MAX_CHARS_PER_LINE / Base45.ENCODED_CHUNK_SIZE * Base45.DECODED_CHUNK_SIZE);
+	private final ByteBuffer buf = ByteBuffer.allocate(MAX_CHARS_PER_LINE / ENCODED_CHUNK_SIZE * DECODED_CHUNK_SIZE);
 
 	public Base45OutputStream(@NonNull final OutputStream out) {
 		super(out);
