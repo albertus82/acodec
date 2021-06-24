@@ -30,7 +30,6 @@ import it.albertus.acodec.common.resources.CommonMessages;
 import it.albertus.acodec.common.resources.Messages;
 import it.albertus.util.CRC16OutputStream;
 import it.albertus.util.ChecksumOutputStream;
-import it.albertus.util.NewLine;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -84,11 +83,11 @@ public class ProcessFileTask implements Cancelable {
 				Base16.encode(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast(), MAX_CHARS_PER_LINE);
 				break;
 			case BASE32:
-				cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(MAX_CHARS_PER_LINE), true));
+				cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(MAX_CHARS_PER_LINE, System.lineSeparator().getBytes(StandardCharsets.US_ASCII)), true));
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			case BASE32HEX:
-				cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(MAX_CHARS_PER_LINE, NewLine.CRLF.toString().getBytes(StandardCharsets.US_ASCII), true), true));
+				cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base32(MAX_CHARS_PER_LINE, System.lineSeparator().getBytes(StandardCharsets.US_ASCII), true), true));
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			case BASE45:
@@ -96,11 +95,11 @@ public class ProcessFileTask implements Cancelable {
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			case BASE64:
-				cs.getOutputStreams().add(new Base64OutputStream(cs.getOutputStreams().getLast()));
+				cs.getOutputStreams().add(new Base64OutputStream(cs.getOutputStreams().getLast(), true, MAX_CHARS_PER_LINE, System.lineSeparator().getBytes(StandardCharsets.US_ASCII)));
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			case BASE64URL:
-				cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base64(true), true));
+				cs.getOutputStreams().add(new BaseNCodecOutputStream(cs.getOutputStreams().getLast(), new Base64(MAX_CHARS_PER_LINE, System.lineSeparator().getBytes(StandardCharsets.US_ASCII), true), true));
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			case ASCII85:
@@ -159,7 +158,8 @@ public class ProcessFileTask implements Cancelable {
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			case BASE32HEX:
-				cs.getInputStreams().add(new BaseNCodecInputStream(cs.getInputStreams().getLast(), new Base32(true), false) {});
+				cs.getInputStreams().add(new BaseNCodecInputStream(cs.getInputStreams().getLast(), new Base32(true), false) {
+				});
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			case BASE45:
