@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 import net.sourceforge.base91.B91Cli;
 
@@ -26,7 +27,7 @@ enum Base91 implements BaseNCodec {
 
 	public byte[] decode(final String encoded) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try (final InputStream bais = new ByteArrayInputStream(encoded.getBytes())) {
+		try (final InputStream bais = new ByteArrayInputStream(encoded.getBytes(StandardCharsets.US_ASCII))) {
 			B91Cli.decode(bais, baos);
 		}
 		return baos.toByteArray();

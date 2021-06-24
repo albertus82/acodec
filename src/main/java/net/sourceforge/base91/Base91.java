@@ -30,6 +30,8 @@
  */
 package net.sourceforge.base91;
 
+import java.nio.charset.StandardCharsets;
+
 class Base91 {
 
 	private int ebq;
@@ -129,7 +131,7 @@ class Base91 {
 	public Base91() {
 		final String ts = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+,./:;<=>?@[]^_`{|}~\"";
 
-		enctab = ts.getBytes();
+		enctab = ts.getBytes(StandardCharsets.US_ASCII);
 		dectab = new byte[256];
 		for (int i = 0; i < 256; ++i) {
 			dectab[i] = -1;

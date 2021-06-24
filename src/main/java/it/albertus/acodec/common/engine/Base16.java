@@ -40,7 +40,7 @@ enum Base16 implements BaseNCodec {
 		final byte[] buffer = new byte[bufferSize];
 		int count;
 		while ((count = input.read(buffer)) != -1) {
-			final byte[] toWrite = Base16Encoder.encode(count == bufferSize ? buffer : Arrays.copyOfRange(buffer, 0, count)).getBytes();
+			final byte[] toWrite = Base16Encoder.encode(count == bufferSize ? buffer : Arrays.copyOfRange(buffer, 0, count)).getBytes(StandardCharsets.US_ASCII);
 			output.write(toWrite);
 			output.write(NewLine.CRLF.toString().getBytes(StandardCharsets.US_ASCII));
 		}

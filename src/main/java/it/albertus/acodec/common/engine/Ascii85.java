@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
 import org.freehep.util.io.Ascii85InputStream;
@@ -30,7 +31,7 @@ enum Ascii85 implements BaseNCodec {
 
 	public byte[] decode(final String encoded) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try (final InputStream bais = new ByteArrayInputStream(encoded.getBytes()); final InputStream a85is = new Ascii85InputStream(bais)) {
+		try (final InputStream bais = new ByteArrayInputStream(encoded.getBytes(StandardCharsets.US_ASCII)); final InputStream a85is = new Ascii85InputStream(bais)) {
 			IOUtils.copy(a85is, baos);
 		}
 		return baos.toByteArray();
