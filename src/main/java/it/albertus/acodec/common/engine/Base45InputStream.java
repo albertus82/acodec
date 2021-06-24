@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+import it.albertus.util.NewLine;
 import lombok.NonNull;
 
 class Base45InputStream extends InputStream {
@@ -41,7 +42,7 @@ class Base45InputStream extends InputStream {
 					break;
 				}
 				final int b = Byte.toUnsignedInt(encodedBuffer.get());
-				if (b != '\r' && b != '\n') { // discard CR & LF
+				if (NewLine.CRLF.toString().indexOf(b) == -1) { // discard CR & LF
 					buf.write(b);
 				}
 			}

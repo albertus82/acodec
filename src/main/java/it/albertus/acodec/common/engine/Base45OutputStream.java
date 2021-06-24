@@ -28,10 +28,7 @@ class Base45OutputStream extends FilterOutputStream {
 	public void write(final int b) throws IOException {
 		buf.put((byte) b);
 		if (!buf.hasRemaining()) {
-			final byte[] encodedLine = encoder.encode(buf.array());
-			final byte[] toWrite = Arrays.copyOf(encodedLine, encodedLine.length + NEWLINE.length());
-			System.arraycopy(NEWLINE.getBytes(StandardCharsets.US_ASCII), 0, toWrite, encodedLine.length, NEWLINE.length());
-			out.write(toWrite);
+			out.write(buildEncodedLine(buf.array()));
 			buf.clear();
 		}
 	}
@@ -39,10 +36,16 @@ class Base45OutputStream extends FilterOutputStream {
 	@Override
 	public void close() throws IOException {
 		if (buf.position() > 0) {
-			out.write(encoder.encode(Arrays.copyOf(buf.array(), buf.position())));
-			out.write(NewLine.CRLF.toString().getBytes(StandardCharsets.US_ASCII));
+			out.write(buildEncodedLine(Arrays.copyOf(buf.array(), buf.position())));
 		}
 		super.close();
+	}
+
+	private byte[] buildEncodedLine(@NonNull final byte[] src) {
+		final byte[] encodedLine = encoder.encode(src);
+		final byte[] toWrite = Arrays.copyOf(encodedLine, encodedLine.length + NEWLINE.length());
+		System.arraycopy(NEWLINE.getBytes(StandardCharsets.US_ASCII), 0, toWrite, encodedLine.length, NEWLINE.length());
+		return toWrite;
 	}
 
 }
