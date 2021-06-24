@@ -247,6 +247,7 @@ public class CodecEngineTest {
 			try (final InputStream fis = Files.newInputStream(outputFile.toPath())) {
 				IOUtils.copy(fis, baos);
 			}
+			Assert.assertTrue(codecConfig.getAlgorithm().getName() + " missing CRLF at the end of the file", baos.toString().endsWith(NewLine.CRLF.toString()));
 			return baos.toString(CHARSET.name()).replaceAll("[" + NewLine.CRLF.toString() + "]+", "");
 		}
 		finally {
