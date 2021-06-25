@@ -59,11 +59,11 @@
 			<artifactId>bcprov-jdk15on</artifactId>
 			<version>1.69</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>io.github.ehn-digital-green-development</groupId>
 			<artifactId>base45</artifactId>
 			<version>0.0.3</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>

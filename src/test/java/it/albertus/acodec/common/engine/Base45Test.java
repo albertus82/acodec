@@ -77,4 +77,10 @@ class Base45Test {
 		}
 	}
 
+	@Test
+	void testError() {
+		final Base45 codec = Base45.getCodec();
+		Assertions.assertThrows(IllegalArgumentException.class, () -> codec.decode("GGW"));
+	}
+
 }
