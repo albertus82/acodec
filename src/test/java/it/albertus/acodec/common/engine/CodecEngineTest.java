@@ -57,16 +57,15 @@ import java.util.logging.Level;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.io.IOUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import it.albertus.util.NewLine;
 import lombok.extern.java.Log;
 
 @Log
-public class CodecEngineTest {
+class CodecEngineTest {
 
 	private static final Charset CHARSET = StandardCharsets.UTF_8;
 	private static final String DIGEST_SEPARATOR = " *";
@@ -76,8 +75,8 @@ public class CodecEngineTest {
 	private static final Map<CodecAlgorithm, String> encodedStrings = new EnumMap<>(CodecAlgorithm.class);
 	private static final Map<CodecAlgorithm, File> encodedFiles = new EnumMap<>(CodecAlgorithm.class);
 
-	@BeforeClass
-	public static void beforeAll() throws IOException {
+	@BeforeAll
+	static void beforeAll() throws IOException {
 		createOriginalFile();
 		createEncodedStrings();
 		createEncodedFiles();
@@ -138,40 +137,40 @@ public class CodecEngineTest {
 	}
 
 	@Test
-	public void testStringEncoder() throws EncoderException, DecoderException {
+	void testStringEncoder() throws EncoderException, DecoderException {
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(ENCODE)) {
 				log.log(Level.INFO, "Testing string encoding {0}", ca);
 				final CodecConfig codecConfig = new CodecConfig(ENCODE, ca, CHARSET);
 				final String encoded = new StringCodec(codecConfig).run(originalString);
-				Assert.assertEquals(-1, encoded.indexOf('\r'));
-				Assert.assertEquals(-1, encoded.indexOf('\n'));
-				Assert.assertEquals(ca.toString(), encodedStrings.get(ca), encoded);
+				Assertions.assertEquals(-1, encoded.indexOf('\r'));
+				Assertions.assertEquals(-1, encoded.indexOf('\n'));
+				Assertions.assertEquals(encodedStrings.get(ca), encoded, ca.toString());
 			}
 		}
 	}
 
 	@Test
-	public void testStringDecoder() throws EncoderException, DecoderException {
+	void testStringDecoder() throws EncoderException, DecoderException {
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(DECODE)) {
 				log.log(Level.INFO, "Testing string decoding {0}", ca);
 				final CodecConfig codecConfig = new CodecConfig(DECODE, ca, CHARSET);
 				final StringCodec stringCodec = new StringCodec(codecConfig);
-				Assert.assertEquals(ca.toString(), originalString, stringCodec.run(encodedStrings.get(ca)));
+				Assertions.assertEquals(originalString, stringCodec.run(encodedStrings.get(ca)), ca.toString());
 
 				if (Arrays.asList(BASE16, BASE32, BASE32HEX).contains(ca)) {
-					Assert.assertEquals(ca.toString(), originalString, stringCodec.run(encodedStrings.get(ca).toLowerCase(Locale.ROOT)));
+					Assertions.assertEquals(originalString, stringCodec.run(encodedStrings.get(ca).toLowerCase(Locale.ROOT)), ca.toString());
 				}
 				if (ASCII85.equals(ca)) {
-					Assert.assertEquals(ca.toString(), originalString, stringCodec.run("<~" + encodedStrings.get(ASCII85)));
+					Assertions.assertEquals(originalString, stringCodec.run("<~" + encodedStrings.get(ASCII85)), ca.toString());
 				}
 			}
 		}
 	}
 
 	@Test
-	public void testFileEncoder() throws IOException, EncoderException, DecoderException {
+	void testFileEncoder() throws IOException, EncoderException, DecoderException {
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(ENCODE)) {
 				log.log(Level.INFO, "Testing file encoding {0}", ca);
@@ -188,40 +187,40 @@ public class CodecEngineTest {
 				else {
 					expected = encodedStrings.get(ca);
 				}
-				Assert.assertEquals(ca.toString(), expected, testFileEncoder(codecConfig));
+				Assertions.assertEquals(expected, testFileEncoder(codecConfig), ca.toString());
 			}
 		}
 	}
 
 	@Test
-	public void testFileDecoder() throws IOException, EncoderException, DecoderException {
+	void testFileDecoder() throws IOException, EncoderException, DecoderException {
 		for (final CodecAlgorithm ca : CodecAlgorithm.values()) {
 			if (ca.getModes().contains(DECODE)) {
 				log.log(Level.INFO, "Testing file decoding {0}", ca);
 				final CodecConfig codecConfig = new CodecConfig(DECODE, ca, CHARSET);
 				final File file = encodedFiles.get(ca);
-				Assert.assertEquals(ca.toString(), originalString, testFileDecoder(codecConfig, file));
+				Assertions.assertEquals(originalString, testFileDecoder(codecConfig, file), ca.toString());
 
 				if (Arrays.asList(BASE16, BASE32, BASE32HEX).contains(ca)) {
 					final Collection<String> lines = Files.readAllLines(file.toPath());
-					Assert.assertNotEquals(file.toString(), 0, lines.size());
+					Assertions.assertNotEquals(0, lines.size(), file.toString());
 					try (final BufferedWriter bw = Files.newBufferedWriter(file.toPath())) {
 						for (final String line : lines) {
-							bw.append(line.toLowerCase(Locale.ROOT)).append(NewLine.CRLF.toString());
+							bw.append(line.toLowerCase(Locale.ROOT)).append('\r').append('\n');
 						}
 					}
-					Assert.assertEquals(ca.toString(), originalString, testFileDecoder(codecConfig, file));
+					Assertions.assertEquals(originalString, testFileDecoder(codecConfig, file), ca.toString());
 				}
 				if (ASCII85.equals(ca)) {
 					final Collection<String> lines = Files.readAllLines(file.toPath());
-					Assert.assertNotEquals(file.toString(), 0, lines.size());
+					Assertions.assertNotEquals(0, lines.size(), file.toString());
 					try (final BufferedWriter bw = Files.newBufferedWriter(file.toPath())) {
 						bw.append("<~");
 						for (final String line : lines) {
 							bw.append(line);
 						}
 					}
-					Assert.assertEquals(ca.toString(), originalString, testFileDecoder(codecConfig, file));
+					Assertions.assertEquals(originalString, testFileDecoder(codecConfig, file), ca.toString());
 				}
 			}
 		}
@@ -234,24 +233,30 @@ public class CodecEngineTest {
 			log.log(Level.INFO, "Created temporary encoded file \"{0}\"", outputFile);
 			final String value = new ProcessFileTask(codecConfig, originalFile, outputFile).run(() -> false);
 			if (AlgorithmType.ENCODING.equals(codecConfig.getAlgorithm().getType())) {
-				Assert.assertNull(value);
+				Assertions.assertNull(value);
 				try (final BufferedReader br = Files.newBufferedReader(outputFile.toPath())) {
 					final int length = br.readLine().length();
-					Assert.assertFalse(codecConfig.getAlgorithm().getName() + " line length > 76 (" + length + ")", length > 76);
+					Assertions.assertFalse(length > 76, codecConfig.getAlgorithm() + " line length > 76 (" + length + ")");
 				}
 			}
 			else {
-				Assert.assertNotNull(value);
-				Assert.assertFalse(value.isEmpty());
+				Assertions.assertNotNull(value);
+				Assertions.assertFalse(value.isEmpty());
 			}
 			try (final InputStream fis = Files.newInputStream(outputFile.toPath())) {
 				IOUtils.copy(fis, baos);
 			}
-			Assert.assertTrue(codecConfig.getAlgorithm().getName() + " - missing or invalid system-dependent new line at the end of the file: " + Arrays.toString(Arrays.copyOfRange(baos.toByteArray(), baos.size() - 10, baos.size())), baos.toString().endsWith(System.lineSeparator()));
-			Assert.assertFalse(codecConfig.getAlgorithm().getName() + " - missing or invalid system-dependent new line at the end of the file: " + Arrays.toString(Arrays.copyOfRange(baos.toByteArray(), baos.size() - 10, baos.size())), baos.toString().endsWith(NewLine.CR.toString() + System.lineSeparator()));
-			Assert.assertFalse(codecConfig.getAlgorithm().getName() + " - missing or invalid system-dependent new line at the end of the file: " + Arrays.toString(Arrays.copyOfRange(baos.toByteArray(), baos.size() - 10, baos.size())), baos.toString().endsWith(NewLine.LF.toString() + System.lineSeparator()));
-			Assert.assertFalse(codecConfig.getAlgorithm().getName() + " - double new line at the end of the file: " + Arrays.toString(Arrays.copyOfRange(baos.toByteArray(), baos.size() - 10, baos.size())), baos.toString().endsWith(System.lineSeparator() + System.lineSeparator()));
-			return baos.toString(CHARSET.name()).replaceAll("[" + NewLine.CRLF.toString() + "]+", "");
+
+			log.log(Level.INFO, "Testing line separators for {0}", codecConfig.getAlgorithm());
+			Assertions.assertTrue(baos.toString().endsWith(System.lineSeparator()), codecConfig.getAlgorithm() + " - missing or invalid system-dependent line separator at the end of the file: " + Arrays.toString(Arrays.copyOfRange(baos.toByteArray(), baos.size() - 10, baos.size())));
+			Assertions.assertFalse(baos.toString().endsWith('\r' + System.lineSeparator()), codecConfig.getAlgorithm() + " - missing or invalid system-dependent line separator at the end of the file: " + Arrays.toString(Arrays.copyOfRange(baos.toByteArray(), baos.size() - 10, baos.size())));
+			Assertions.assertFalse(baos.toString().endsWith('\n' + System.lineSeparator()), codecConfig.getAlgorithm() + " - missing or invalid system-dependent line separator at the end of the file: " + Arrays.toString(Arrays.copyOfRange(baos.toByteArray(), baos.size() - 10, baos.size())));
+			Assertions.assertFalse(baos.toString().endsWith(System.lineSeparator() + System.lineSeparator()), codecConfig.getAlgorithm() + " - double line separator at the end of the file: " + Arrays.toString(Arrays.copyOfRange(baos.toByteArray(), baos.size() - 10, baos.size())));
+			if (!System.lineSeparator().contains("\r")) {
+				Assertions.assertFalse(baos.toString().contains("\r"));
+			}
+
+			return baos.toString(CHARSET.name()).replace("\r", "").replace("\n", "");
 		}
 		finally {
 			if (outputFile != null) {
@@ -294,8 +299,8 @@ public class CodecEngineTest {
 		}
 	}
 
-	@AfterClass
-	public static void afterAll() {
+	@AfterAll
+	static void afterAll() {
 		try {
 			if (Files.deleteIfExists(originalFile.toPath())) {
 				log.log(Level.INFO, "Deleted original file \"{0}\"", originalFile);

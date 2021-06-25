@@ -12,19 +12,18 @@ import java.util.logging.Level;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import it.albertus.util.NewLine;
 import lombok.extern.java.Log;
 
 @Log
-public class Base45Test {
+class Base45Test {
 
 	private static final Map<String, String> map = new TreeMap<>();
 
-	@BeforeClass
+	@BeforeAll
 	public static void beforeAll() {
 		map.put("AB", "BB8");
 		map.put("Hello!!", "%69 VD92EX0");
@@ -34,20 +33,20 @@ public class Base45Test {
 	}
 
 	@Test
-	public void testEncodeStream() throws IOException {
+	void testEncodeStream() throws IOException {
 		for (final Entry<String, String> e : map.entrySet()) {
 			log.info(() -> e.getKey() + " -> " + e.getValue());
 			try (final ByteArrayOutputStream os1 = new ByteArrayOutputStream()) {
 				try (final Base45OutputStream os2 = new Base45OutputStream(os1)) {
 					os2.write(e.getKey().getBytes(StandardCharsets.UTF_8));
 				}
-				Assert.assertEquals(e.getValue(), os1.toString(StandardCharsets.UTF_8.name()).replace(NewLine.CR.toString(), "").replace(NewLine.LF.toString(), ""));
+				Assertions.assertEquals(e.getValue(), os1.toString(StandardCharsets.UTF_8.name()).replace("\r", "").replace("\n", ""));
 			}
 		}
 	}
 
 	@Test
-	public void testDecodeStream() throws IOException {
+	void testDecodeStream() throws IOException {
 		for (final Entry<String, String> e : map.entrySet()) {
 			log.info(() -> e.getValue() + " -> " + e.getKey());
 			try (final ByteArrayInputStream is1 = new ByteArrayInputStream(e.getValue().getBytes(StandardCharsets.UTF_8))) {
@@ -55,26 +54,26 @@ public class Base45Test {
 				try (final Base45InputStream is2 = new Base45InputStream(is1)) {
 					decodedBytes = IOUtils.readFully(is2, e.getKey().length());
 				}
-				Assert.assertEquals(e.getKey(), new String(decodedBytes, StandardCharsets.UTF_8));
+				Assertions.assertEquals(e.getKey(), new String(decodedBytes, StandardCharsets.UTF_8));
 			}
 		}
 	}
 
 	@Test
-	public void testEncodeString() throws EncoderException, DecoderException {
+	void testEncodeString() throws EncoderException, DecoderException {
 		final StringCodec sc = new StringCodec(new CodecConfig(CodecMode.ENCODE, CodecAlgorithm.BASE45, StandardCharsets.UTF_8));
 		for (final Entry<String, String> e : map.entrySet()) {
 			log.info(() -> e.getKey() + " -> " + e.getValue());
-			Assert.assertEquals(e.getValue(), sc.run(e.getKey()));
+			Assertions.assertEquals(e.getValue(), sc.run(e.getKey()));
 		}
 	}
 
 	@Test
-	public void testDecodeString() throws EncoderException, DecoderException {
+	void testDecodeString() throws EncoderException, DecoderException {
 		final StringCodec sc = new StringCodec(new CodecConfig(CodecMode.DECODE, CodecAlgorithm.BASE45, StandardCharsets.UTF_8));
 		for (final Entry<String, String> e : map.entrySet()) {
 			log.info(() -> e.getValue() + " -> " + e.getKey());
-			Assert.assertEquals(e.getKey(), sc.run(e.getValue()));
+			Assertions.assertEquals(e.getKey(), sc.run(e.getValue()));
 		}
 	}
 

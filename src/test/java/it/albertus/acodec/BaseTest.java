@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 
 public abstract class BaseTest {
 
 	protected static final Properties projectProperties = new Properties();
 
-	@BeforeClass
+	@BeforeAll
 	public static void beforeAll() throws IOException {
 		try (final InputStream is = BaseTest.class.getResourceAsStream("/project.properties")) {
 			projectProperties.load(is);
