@@ -16,10 +16,12 @@ enum Base45 implements BaseNCodec {
 		return INSTANCE;
 	}
 
+	@Override
 	public String encode(final byte[] byteArray) {
 		return getEncoder().encodeToString(byteArray);
 	}
 
+	@Override
 	public byte[] decode(final String encoded) {
 		return getDecoder().decode(encoded.replace(NewLine.CR.toString(), "").replace(NewLine.LF.toString(), ""));
 	}

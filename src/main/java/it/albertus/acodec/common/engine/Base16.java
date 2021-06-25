@@ -18,10 +18,12 @@ enum Base16 implements BaseNCodec {
 		return INSTANCE;
 	}
 
+	@Override
 	public String encode(final byte[] byteArray) {
 		return Base16Encoder.encode(byteArray);
 	}
 
+	@Override
 	public byte[] decode(final String encoded) {
 		final String cleaned = encoded.replace(NewLine.CR.toString(), "").replace(NewLine.LF.toString(), "");
 		if (cleaned.matches("[0123456789ABCDEFabcdef]*")) {

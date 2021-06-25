@@ -17,6 +17,7 @@ enum Base91 implements BaseNCodec {
 		return INSTANCE;
 	}
 
+	@Override
 	public String encode(final byte[] byteArray) throws IOException {
 		final OutputStream baos = new ByteArrayOutputStream();
 		try (final InputStream bais = new ByteArrayInputStream(byteArray)) {
@@ -25,6 +26,7 @@ enum Base91 implements BaseNCodec {
 		return baos.toString().trim();
 	}
 
+	@Override
 	public byte[] decode(final String encoded) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try (final InputStream bais = new ByteArrayInputStream(encoded.getBytes(StandardCharsets.US_ASCII))) {
