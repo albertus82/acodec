@@ -24,7 +24,7 @@ class Base45Test {
 	private static final Map<String, String> map = new TreeMap<>();
 
 	@BeforeAll
-	public static void beforeAll() {
+	static void beforeAll() {
 		map.put("AB", "BB8");
 		map.put("Hello!!", "%69 VD92EX0");
 		map.put("base-45", "UJCLQE7W581");
