@@ -40,7 +40,7 @@ import net.sourceforge.base91.B91Cli;
 @RequiredArgsConstructor
 public class ProcessFileTask implements Cancelable {
 
-	private static final int MAX_CHARS_PER_LINE = 76;
+	private static final byte MAX_CHARS_PER_LINE = 76;
 
 	private static final Messages messages = CommonMessages.INSTANCE;
 
