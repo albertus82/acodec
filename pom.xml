@@ -77,7 +77,7 @@
 		<dependency>
 			<groupId>org.eclipse.platform</groupId>
 			<artifactId>org.eclipse.core.commands</artifactId>
-			<version>3.9.800</version>
+			<version>3.9.800</version> <!-- Last version compatible with JRE 8 -->
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.platform</groupId>
@@ -126,7 +126,7 @@
 			<dependency>
 				<groupId>org.eclipse.platform</groupId>
 				<artifactId>org.eclipse.equinox.common</artifactId>
-				<version>3.14.100</version> <!-- Latest version compatible with JRE 8 -->
+				<version>3.14.100</version> <!-- Last version compatible with JRE 8 -->
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
