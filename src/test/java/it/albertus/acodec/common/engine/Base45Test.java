@@ -97,6 +97,8 @@ class Base45Test {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> codec.decode("B&8"));
 		Assertions.assertThrows(IllegalArgumentException.class, () -> codec.decode("B(8"));
 		Assertions.assertThrows(IllegalArgumentException.class, () -> codec.decode("BB)"));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> codec.decode("B\u00808"));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> codec.decode("\u00FFB8"));
 	}
 
 	@Test
