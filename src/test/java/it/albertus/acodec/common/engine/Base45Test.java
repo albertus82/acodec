@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -56,6 +57,15 @@ class Base45Test {
 				}
 				Assertions.assertEquals(e.getKey(), new String(decodedBytes, StandardCharsets.UTF_8));
 			}
+			final String lowerCaseValue = e.getValue().toLowerCase(Locale.ROOT);
+			log.info(() -> lowerCaseValue + " -> " + e.getKey());
+			try (final ByteArrayInputStream is1 = new ByteArrayInputStream(lowerCaseValue.getBytes(StandardCharsets.UTF_8))) {
+				final byte[] decodedBytes;
+				try (final Base45InputStream is2 = new Base45InputStream(is1)) {
+					decodedBytes = IOUtils.readFully(is2, e.getKey().length());
+				}
+				Assertions.assertEquals(e.getKey(), new String(decodedBytes, StandardCharsets.UTF_8));
+			}
 		}
 	}
 
@@ -74,13 +84,34 @@ class Base45Test {
 		for (final Entry<String, String> e : map.entrySet()) {
 			log.info(() -> e.getValue() + " -> " + e.getKey());
 			Assertions.assertEquals(e.getKey(), sc.run(e.getValue()));
+			final String lowerCaseValue = e.getValue().toLowerCase(Locale.ROOT);
+			log.info(() -> lowerCaseValue + " -> " + e.getKey());
+			Assertions.assertEquals(e.getKey(), sc.run(lowerCaseValue));
 		}
 	}
 
 	@Test
-	void testError() {
+	void testFailOnInvalidInput() {
 		final Base45 codec = Base45.getCodec();
 		Assertions.assertThrows(IllegalArgumentException.class, () -> codec.decode("GGW"));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> codec.decode("B&8"));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> codec.decode("B(8"));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> codec.decode("BB)"));
+	}
+
+	@Test
+	void testIgnoreLineBreaks() throws EncoderException, DecoderException {
+		final StringCodec sc = new StringCodec(new CodecConfig(CodecMode.DECODE, CodecAlgorithm.BASE45, StandardCharsets.UTF_8));
+		Assertions.assertEquals("AB", sc.run("BB\n8"));
+		Assertions.assertEquals("AB", sc.run("BB\r8"));
+		Assertions.assertEquals("AB", sc.run("B\nB8"));
+		Assertions.assertEquals("AB", sc.run("B\rB8"));
+		Assertions.assertEquals("AB", sc.run("BB\r\n8"));
+		Assertions.assertEquals("AB", sc.run("B\r\nB8"));
+		Assertions.assertEquals("AB", sc.run("\r\nB\r\nB\r\n8\r\n"));
+		Assertions.assertEquals("AB", sc.run("\nBB8\n"));
+		Assertions.assertEquals("AB", sc.run("\rBB8\r"));
+		Assertions.assertEquals("AB", sc.run("\r\nBB8\r\n"));
 	}
 
 }

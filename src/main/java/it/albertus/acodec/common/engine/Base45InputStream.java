@@ -48,7 +48,7 @@ class Base45InputStream extends InputStream {
 				}
 				final int b = Byte.toUnsignedInt(encodedBuffer.get());
 				if (NewLine.CRLF.toString().indexOf(b) == -1) { // discard CR & LF
-					buf.write(b);
+					buf.write(b >= 'a' && b <= 'z' ? b - ('a' - 'A') : b);
 				}
 			}
 			return decoder.decode(buf.toByteArray());
