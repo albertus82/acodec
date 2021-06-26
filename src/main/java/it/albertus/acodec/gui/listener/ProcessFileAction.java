@@ -94,10 +94,10 @@ public class ProcessFileAction {
 			box.setMessage(messages.get("gui.message.file.process.ok.message"));
 			box.setText(messages.get(GUI_MESSAGE_APPLICATION_NAME));
 			box.open();
-			if (runnable.getResult() != null) { // result can be null in certain cases
+			runnable.getResult().ifPresent(result -> {
 				gui.setInputText(inputFile.getName(), DIRTY);
-				gui.setOutputText(runnable.getResult(), DIRTY);
-			}
+				gui.setOutputText(result, DIRTY);
+			});
 		}
 		catch (final InterruptedException e) { // NOSONAR
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);

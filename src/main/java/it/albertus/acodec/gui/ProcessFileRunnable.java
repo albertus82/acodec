@@ -1,5 +1,6 @@
 package it.albertus.acodec.gui;
 
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 
@@ -9,7 +10,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import it.albertus.acodec.common.engine.ProcessFileTask;
 import it.albertus.acodec.common.resources.Messages;
 import it.albertus.acodec.gui.resources.GuiMessages;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -20,7 +20,6 @@ public class ProcessFileRunnable implements IRunnableWithProgress {
 	private static final Messages messages = GuiMessages.INSTANCE;
 
 	private final ProcessFileTask task;
-	@Getter
 	private String result;
 
 	@Override
@@ -78,6 +77,10 @@ public class ProcessFileRunnable implements IRunnableWithProgress {
 		};
 		updateStatusBarThread.setDaemon(true); // This thread must not prevent the JVM from exiting.
 		return updateStatusBarThread;
+	}
+
+	public Optional<String> getResult() {
+		return Optional.ofNullable(result);
 	}
 
 }
