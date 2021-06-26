@@ -144,7 +144,7 @@ public class Base45 {
 
             int[] buffer = new int[src.length];
             for (int i = 0; i < src.length; ++i) {
-                buffer[i] = fromBase45[src[i]];
+                buffer[i] = fromBase45[Byte.toUnsignedInt(src[i])];
                 if (buffer[i] == -1) {
                     throw new IllegalArgumentException();
                 }
