@@ -409,16 +409,16 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		try {
 			final Path path = Paths.get(fileName);
 			final long fileSize = Files.readAttributes(path, BasicFileAttributes.class).size();
-			if (fileSize <= 0) {
+			if (fileSize < 0) {
 				throw new IOException();
 			}
 			if (fileSize > 4 * TEXT_LIMIT_CHARS) { // worst case: UTF-32
 				throw new SizeLimitExceededException();
 			}
 			try (final Reader r = Files.newBufferedReader(path, charset)) {
-				final CharBuffer cb = CharBuffer.allocate(TEXT_LIMIT_CHARS + 1);
-				final int count = r.read(cb);
-				if (count > TEXT_LIMIT_CHARS) {
+				final CharBuffer cb = CharBuffer.allocate(TEXT_LIMIT_CHARS);
+				r.read(cb);
+				if (r.read() != -1) {
 					throw new SizeLimitExceededException();
 				}
 				setInputText(cb.flip().toString(), GuiStatus.UNDEFINED);
