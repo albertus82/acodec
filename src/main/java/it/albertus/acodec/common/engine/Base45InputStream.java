@@ -4,9 +4,14 @@ import static it.albertus.acodec.common.engine.Base45.DECODED_CHUNK_SIZE;
 import static it.albertus.acodec.common.engine.Base45.ENCODED_CHUNK_SIZE;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
 
 import it.albertus.util.NewLine;
 import lombok.NonNull;
@@ -17,15 +22,19 @@ class Base45InputStream extends InputStream {
 
 	private static final short BUFFERING_FACTOR = 256;
 
-	private final InputStream wrapped;
+	@NonNull
+	private final Closeable closeable;
+	@NonNull
+	private final Reader reader;
 
 	private final Decoder decoder = Base45.getDecoder();
 
-	private final ByteBuffer encodedBuffer = ByteBuffer.allocate(ENCODED_CHUNK_SIZE * BUFFERING_FACTOR);
+	private final CharBuffer encodedBuffer = CharBuffer.allocate(ENCODED_CHUNK_SIZE * BUFFERING_FACTOR);
 	private final ByteBuffer decodedBuffer = ByteBuffer.allocate(DECODED_CHUNK_SIZE * BUFFERING_FACTOR);
 
-	public Base45InputStream(@NonNull final InputStream wrapped) {
-		this.wrapped = wrapped;
+	public Base45InputStream(@NonNull final InputStream in) {
+		closeable = in;
+		reader = new InputStreamReader(in, StandardCharsets.ISO_8859_1);
 		encodedBuffer.flip();
 		decodedBuffer.flip();
 	}
@@ -40,15 +49,16 @@ class Base45InputStream extends InputStream {
 	}
 
 	private byte[] decode() throws IOException {
-		try (final ByteArrayOutputStream buf = new ByteArrayOutputStream(ENCODED_CHUNK_SIZE * BUFFERING_FACTOR)) {
-			while (buf.size() < ENCODED_CHUNK_SIZE * BUFFERING_FACTOR) {
+		final int bufferSize = encodedBuffer.array().length;
+		try (final ByteArrayOutputStream buf = new ByteArrayOutputStream(bufferSize)) {
+			while (buf.size() < bufferSize) {
 				refillEncodedBuffer();
 				if (!encodedBuffer.hasRemaining()) {
 					break;
 				}
-				final int b = Byte.toUnsignedInt(encodedBuffer.get());
-				if (NewLine.CRLF.toString().indexOf(b) == -1) { // discard CR & LF
-					buf.write(b >= 'a' && b <= 'z' ? b - ('a' - 'A') : b);
+				final char c = encodedBuffer.get();
+				if (NewLine.CRLF.toString().indexOf(c) == -1) { // discard CR & LF
+					buf.write(c >= 'a' && c <= 'z' ? c - ('a' - 'A') : c);
 				}
 			}
 			return decoder.decode(buf.toByteArray());
@@ -58,8 +68,8 @@ class Base45InputStream extends InputStream {
 	private void refillEncodedBuffer() throws IOException {
 		if (!encodedBuffer.hasRemaining()) {
 			encodedBuffer.clear();
-			final int length = wrapped.read(encodedBuffer.array());
-			encodedBuffer.limit(Math.max(length, 0));
+			reader.read(encodedBuffer);
+			encodedBuffer.flip();
 		}
 	}
 
@@ -73,7 +83,12 @@ class Base45InputStream extends InputStream {
 
 	@Override
 	public void close() throws IOException {
-		wrapped.close();
+		try {
+			reader.close();
+		}
+		finally {
+			closeable.close();
+		}
 	}
 
 }
