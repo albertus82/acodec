@@ -231,7 +231,7 @@ class CodecEngineTest {
 		try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			outputFile = File.createTempFile(ENCODE.name().toLowerCase(Locale.ROOT) + '-', '.' + codecConfig.getAlgorithm().getFileExtension());
 			log.log(Level.INFO, "Created temporary encoded file \"{0}\"", outputFile);
-			final String value = new ProcessFileTask(codecConfig, originalFile, outputFile).run(() -> false);
+			final String value = new ProcessFileTask(codecConfig, originalFile, outputFile).run(() -> false).orElse(null);
 			if (AlgorithmType.ENCODING.equals(codecConfig.getAlgorithm().getType())) {
 				Assertions.assertNull(value);
 				try (final BufferedReader br = Files.newBufferedReader(outputFile.toPath())) {

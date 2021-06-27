@@ -2,10 +2,12 @@ package it.albertus.acodec.common.engine;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
@@ -37,16 +39,29 @@ class CloseableStreams implements Closeable {
 		inputStreams.add(countingInputStream);
 	}
 
-	private static LinkedList<InputStream> createInputStreams(final Path input) throws IOException {
+	CloseableStreams(@NonNull final String input, @NonNull final Charset charset, final Path output) throws IOException {
+		inputStreams = createInputStreams(input, charset);
+		outputStreams = createOutputStreams(output);
+		countingInputStream = new CountingInputStream(inputStreams.getLast());
+		inputStreams.add(countingInputStream);
+	}
+
+	private static LinkedList<InputStream> createInputStreams(@NonNull final Path input) throws IOException {
 		final LinkedList<InputStream> list = new LinkedList<>();
 		list.add(Files.newInputStream(input));
 		list.add(new BufferedInputStream(list.getLast()));
 		return list;
 	}
 
+	private static LinkedList<InputStream> createInputStreams(@NonNull final String input, @NonNull final Charset charset) {
+		final LinkedList<InputStream> list = new LinkedList<>();
+		list.add(new ByteArrayInputStream(input.getBytes(charset)));
+		return list;
+	}
+
 	private static LinkedList<OutputStream> createOutputStreams(final Path output) throws IOException {
 		final LinkedList<OutputStream> list = new LinkedList<>();
-		list.add(output == null ? System.out : Files.newOutputStream(output)); // NOSONAR
+		list.add(output == null ? System.out : Files.newOutputStream(output)); // NOSONAR Replace this use of System.out or System.err by a logger. Standard outputs should not be used directly to log anything (java:S106)
 		list.add(new BufferedOutputStream(list.getLast()));
 		return list;
 	}

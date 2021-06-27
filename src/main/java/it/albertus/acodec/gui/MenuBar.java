@@ -18,10 +18,11 @@ import it.albertus.acodec.gui.listener.AboutListener;
 import it.albertus.acodec.gui.listener.ArmMenuListener;
 import it.albertus.acodec.gui.listener.CloseListener;
 import it.albertus.acodec.gui.listener.LanguageSelectionListener;
-import it.albertus.acodec.gui.listener.ProcessFileButtonSelectionListener;
+import it.albertus.acodec.gui.listener.ProcessFileSelectionListener;
 import it.albertus.acodec.gui.listener.TextCopyAllSelectionListener;
 import it.albertus.acodec.gui.resources.GuiMessages;
 import it.albertus.jface.Multilanguage;
+import it.albertus.jface.SwtUtils;
 import it.albertus.jface.cocoa.CocoaEnhancerException;
 import it.albertus.jface.cocoa.CocoaUIEnhancer;
 import it.albertus.jface.i18n.LocalizedWidgets;
@@ -42,8 +43,10 @@ public class MenuBar implements Multilanguage {
 
 	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
-	private final MenuItem fileProcessMenuItem;
 	private final LocalizedWidgets localizedWidgets = new LocalizedWidgets();
+
+	@NonNull
+	private final MenuItem fileSaveOutputMenuItem;
 
 	MenuBar(@NonNull final CodecGui gui) {
 		final CloseListener closeListener = new CloseListener(gui);
@@ -67,9 +70,36 @@ public class MenuBar implements Multilanguage {
 		final MenuItem fileMenuHeader = newLocalizedMenuItem(bar, SWT.CASCADE, "gui.label.menu.header.file");
 		fileMenuHeader.setMenu(fileMenu);
 
-		fileProcessMenuItem = newLocalizedMenuItem(fileMenu, SWT.PUSH, "gui.label.menu.item.file.process");
+		final MenuItem fileProcessMenuItem = newLocalizedMenuItem(fileMenu, SWT.PUSH, "gui.label.menu.item.file.process");
 		fileProcessMenuItem.setEnabled(false);
-		fileProcessMenuItem.addSelectionListener(new ProcessFileButtonSelectionListener(gui));
+		fileProcessMenuItem.addSelectionListener(new ProcessFileSelectionListener(gui));
+
+		new MenuItem(fileMenu, SWT.SEPARATOR);
+
+		newLocalizedMenuItem(fileMenu, SWT.PUSH, "gui.label.menu.item.file.load.input").addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				gui.loadInput();
+			}
+		});
+
+		fileSaveOutputMenuItem = newLocalizedMenuItem(fileMenu, SWT.PUSH, () -> messages.get("gui.label.menu.item.file.save.output") + SwtUtils.getMod1ShortcutLabel(SwtUtils.KEY_SAVE));
+		fileSaveOutputMenuItem.setEnabled(false);
+		fileSaveOutputMenuItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				gui.saveOutput();
+			}
+		});
+		fileSaveOutputMenuItem.setAccelerator(SWT.MOD1 | SwtUtils.KEY_SAVE);
+
+		final ArmMenuListener fileMenuListener = e -> {
+			if (gui.getAlgorithm() != null && !fileProcessMenuItem.isEnabled()) {
+				fileProcessMenuItem.setEnabled(true);
+			}
+		};
+		fileMenu.addMenuListener(fileMenuListener);
+		fileMenuHeader.addArmListener(fileMenuListener);
 
 		if (!cocoaMenuCreated) {
 			new MenuItem(fileMenu, SWT.SEPARATOR);
@@ -151,8 +181,8 @@ public class MenuBar implements Multilanguage {
 		localizedWidgets.resetAllTexts();
 	}
 
-	public void enableFileProcessMenuItem() {
-		fileProcessMenuItem.setEnabled(true);
+	public void notifyStatus(@NonNull final GuiStatus status) {
+		fileSaveOutputMenuItem.setEnabled(GuiStatus.OK.equals(status));
 	}
 
 	private MenuItem newLocalizedMenuItem(@NonNull final Menu parent, final int style, @NonNull final String messageKey) {

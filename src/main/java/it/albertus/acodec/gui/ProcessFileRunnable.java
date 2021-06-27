@@ -26,15 +26,18 @@ public class ProcessFileRunnable implements IRunnableWithProgress {
 	public void run(final IProgressMonitor monitor) throws InterruptedException {
 		Thread updateStatusBarThread = null;
 		try {
-			if (task.getInputFile().length() > 0) {
-				monitor.beginTask(messages.get("gui.message.file.process.task.name.progress", task.getInputFile().getName(), 0), TOTAL_WORK);
+			if (task.getInputFile() == null) {
+				monitor.beginTask(messages.get("gui.message.file.process.task.name"), IProgressMonitor.UNKNOWN);
+			}
+			else if (task.getInputFile().length() > 0) {
+				monitor.beginTask(messages.get("gui.message.file.process.task.name.file.progress", task.getInputFile().getName(), 0), TOTAL_WORK);
 				updateStatusBarThread = newUpdateStatusBarThread(monitor);
 				updateStatusBarThread.start();
 			}
 			else {
-				monitor.beginTask(messages.get("gui.message.file.process.task.name", task.getInputFile().getName()), IProgressMonitor.UNKNOWN);
+				monitor.beginTask(messages.get("gui.message.file.process.task.name.file", task.getInputFile().getName()), IProgressMonitor.UNKNOWN);
 			}
-			result = task.run(monitor::isCanceled);
+			result = task.run(monitor::isCanceled).orElse(null);
 		}
 		catch (final CancellationException e) {
 			throw new InterruptedException(e.getLocalizedMessage());
@@ -62,7 +65,7 @@ public class ProcessFileRunnable implements IRunnableWithProgress {
 					final int partsPerThousand = (int) (byteCount / (double) fileLength * TOTAL_WORK);
 					monitor.worked(partsPerThousand - done);
 					done = partsPerThousand;
-					monitor.setTaskName(messages.get("gui.message.file.process.task.name.progress", fileName, partsPerThousand / 10));
+					monitor.setTaskName(messages.get("gui.message.file.process.task.name.file.progress", fileName, partsPerThousand / 10));
 					if (byteCount >= fileLength) {
 						break;
 					}

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.function.BooleanSupplier;
 import java.util.logging.Level;
@@ -30,6 +31,7 @@ import it.albertus.acodec.common.resources.CommonMessages;
 import it.albertus.acodec.common.resources.Messages;
 import it.albertus.util.CRC16OutputStream;
 import it.albertus.util.ChecksumOutputStream;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +39,7 @@ import lombok.extern.java.Log;
 import net.sourceforge.base91.B91Cli;
 
 @Log
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProcessFileTask implements Cancelable {
 
 	private static final byte MAX_CHARS_PER_LINE = 76;
@@ -47,22 +49,35 @@ public class ProcessFileTask implements Cancelable {
 	@NonNull
 	private final CodecConfig config;
 	@Getter
-	@NonNull
 	private final File inputFile;
+	private final String inputString;
 	@Getter
 	private final File outputFile;
 
 	private CloseableStreams streams;
 
-	public String run(final BooleanSupplier canceled) throws FileNotFoundException, EncoderException, DecoderException {
-		if (!inputFile.isFile()) {
+	public ProcessFileTask(@NonNull final CodecConfig config, @NonNull final File inputFile) {
+		this(config, inputFile, null, null);
+	}
+
+	public ProcessFileTask(@NonNull final CodecConfig config, @NonNull final File inputFile, @NonNull final File outputFile) {
+		this(config, inputFile, null, outputFile);
+	}
+
+	public ProcessFileTask(@NonNull final CodecConfig config, @NonNull final String inputString, @NonNull final File outputFile) {
+		this(config, null, inputString, outputFile);
+	}
+
+	public Optional<String> run(@NonNull final BooleanSupplier canceled) throws FileNotFoundException, EncoderException, DecoderException {
+		if (inputFile != null && !inputFile.isFile()) {
 			throw new FileNotFoundException(inputFile.toString());
 		}
 		switch (config.getMode()) {
 		case DECODE:
-			return decode(canceled);
+			decode(canceled);
+			return Optional.empty();
 		case ENCODE:
-			return encode(canceled);
+			return Optional.ofNullable(encode(canceled));
 		default:
 			throw new UnsupportedOperationException(messages.get("common.error.invalid.mode", config.getMode()));
 		}
@@ -75,7 +90,7 @@ public class ProcessFileTask implements Cancelable {
 		}
 	}
 
-	private String encode(final BooleanSupplier canceled) throws EncoderException {
+	private String encode(@NonNull final BooleanSupplier canceled) throws EncoderException {
 		String value = null;
 		try (final CloseableStreams cs = createStreams()) {
 			switch (config.getAlgorithm()) {
@@ -146,8 +161,7 @@ public class ProcessFileTask implements Cancelable {
 		}
 	}
 
-	private String decode(final BooleanSupplier canceled) throws DecoderException {
-		String value = null;
+	private void decode(@NonNull final BooleanSupplier canceled) throws DecoderException {
 		try (final CloseableStreams cs = createStreams()) {
 			switch (config.getAlgorithm()) {
 			case BASE16:
@@ -158,8 +172,7 @@ public class ProcessFileTask implements Cancelable {
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			case BASE32HEX:
-				cs.getInputStreams().add(new BaseNCodecInputStream(cs.getInputStreams().getLast(), new Base32(true), false) {
-				});
+				cs.getInputStreams().add(new BaseNCodecInputStream(cs.getInputStreams().getLast(), new Base32(true), false) {});
 				IOUtils.copyLarge(cs.getInputStreams().getLast(), cs.getOutputStreams().getLast());
 				break;
 			case BASE45:
@@ -192,9 +205,6 @@ public class ProcessFileTask implements Cancelable {
 			deleteOutputFile();
 			throw new CancellationException(messages.get("common.message.file.process.cancel.message"));
 		}
-		else {
-			return value;
-		}
 	}
 
 	private void deleteOutputFile() {
@@ -210,7 +220,12 @@ public class ProcessFileTask implements Cancelable {
 	}
 
 	private CloseableStreams createStreams() throws IOException {
-		streams = new CloseableStreams(inputFile.toPath(), outputFile != null ? outputFile.toPath() : null);
+		if (inputString != null) {
+			streams = new CloseableStreams(inputString, config.getCharset(), outputFile != null ? outputFile.toPath() : null);
+		}
+		else {
+			streams = new CloseableStreams(inputFile.toPath(), outputFile != null ? outputFile.toPath() : null);
+		}
 		return streams;
 	}
 
@@ -220,7 +235,10 @@ public class ProcessFileTask implements Cancelable {
 
 	private String buildHashFileContent(@NonNull final String hash) throws IOException {
 		final StringBuilder content = new StringBuilder();
-		if ("sfv".equalsIgnoreCase(config.getAlgorithm().getFileExtension())) {
+		if (inputFile == null) {
+			content.append(hash);
+		}
+		else if ("sfv".equalsIgnoreCase(config.getAlgorithm().getFileExtension())) {
 			if (outputFile != null) {
 				content.append(buildFileName(inputFile, outputFile)).append(' ');
 			}
@@ -247,28 +265,28 @@ public class ProcessFileTask implements Cancelable {
 		}
 	}
 
-	private static String computeCrc16(final InputStream is) throws IOException {
+	private static String computeCrc16(@NonNull final InputStream is) throws IOException {
 		try (final CRC16OutputStream os = new CRC16OutputStream()) {
 			IOUtils.copyLarge(is, os);
 			return os.toString();
 		}
 	}
 
-	private static String computeCrc32(final InputStream is) throws IOException {
+	private static String computeCrc32(@NonNull final InputStream is) throws IOException {
 		try (final ChecksumOutputStream<PureJavaCrc32> os = new ChecksumOutputStream<>(new PureJavaCrc32(), 32)) {
 			IOUtils.copyLarge(is, os);
 			return os.toString();
 		}
 	}
 
-	private static String computeCrc32C(final InputStream is) throws IOException {
+	private static String computeCrc32C(@NonNull final InputStream is) throws IOException {
 		try (final ChecksumOutputStream<PureJavaCrc32C> os = new ChecksumOutputStream<>(new PureJavaCrc32C(), 32)) {
 			IOUtils.copyLarge(is, os);
 			return os.toString();
 		}
 	}
 
-	private static String computeAdler32(final InputStream is) throws IOException {
+	private static String computeAdler32(@NonNull final InputStream is) throws IOException {
 		try (final ChecksumOutputStream<Adler32> os = new ChecksumOutputStream<>(new Adler32(), 32)) {
 			IOUtils.copyLarge(is, os);
 			return os.toString();

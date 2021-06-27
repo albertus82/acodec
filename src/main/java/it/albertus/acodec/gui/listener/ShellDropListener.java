@@ -33,13 +33,14 @@ public class ShellDropListener extends ProcessFileAction implements DropTargetLi
 		gui.getInputText().setText(text);
 	}
 
-	private void processFile(@NonNull final File file) {
-		if (file.exists() && !file.isDirectory()) {
-			final String sourceFileName = file.getPath();
-			final String destinationFileName = getDestinationFile(sourceFileName);
-			if (destinationFileName != null && destinationFileName.length() > 0) {
-				execute(sourceFileName, destinationFileName);
-			}
+	private void processFile(@NonNull final File sourceFile) {
+		if (sourceFile.exists() && !sourceFile.isDirectory()) {
+			final String sourceFileName = sourceFile.getPath();
+			getDestinationFileName(sourceFileName).ifPresent(destinationFileName -> {
+				if (!destinationFileName.isEmpty()) {
+					execute(sourceFile, new File(destinationFileName));
+				}
+			});
 		}
 	}
 

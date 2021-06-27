@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -44,21 +45,20 @@ import lombok.extern.java.Log;
 @RequiredArgsConstructor
 public class ProcessFileAction {
 
-	private static final String GUI_MESSAGE_APPLICATION_NAME = "gui.message.application.name";
-
 	private static final Messages messages = GuiMessages.INSTANCE;
 
-	@NonNull protected final CodecGui gui;
+	@NonNull
+	protected final CodecGui gui;
 
-	protected String getSourceFile() {
+	public Optional<String> getSourceFileName() {
 		final FileDialog openDialog = new FileDialog(gui.getShell(), SWT.OPEN);
 		if (DECODE.equals(gui.getMode())) {
 			openDialog.setFilterExtensions(buildFilterExtensions(gui.getAlgorithm()));
 		}
-		return openDialog.open();
+		return Optional.ofNullable(openDialog.open());
 	}
 
-	protected String getDestinationFile(@NonNull final String sourceFileName) {
+	public Optional<String> getDestinationFileName(@NonNull final String sourceFileName) {
 		final FileDialog saveDialog = new FileDialog(gui.getShell(), SWT.SAVE);
 		saveDialog.setOverwrite(true);
 		final File sourceFile = new File(sourceFileName);
@@ -68,41 +68,68 @@ public class ProcessFileAction {
 			saveDialog.setFilterExtensions(buildFilterExtensions(algorithm));
 			saveDialog.setFileName(sourceFile.getName() + '.' + algorithm.getFileExtension().toLowerCase(Locale.ROOT));
 		}
-		else {
-			if (sourceFile.getName().indexOf('.') != -1) {
-				saveDialog.setFileName(sourceFile.getName().substring(0, sourceFile.getName().lastIndexOf('.')));
-			}
+		else if (sourceFile.getName().indexOf('.') != -1) {
+			saveDialog.setFileName(sourceFile.getName().substring(0, sourceFile.getName().lastIndexOf('.')));
 		}
-		return saveDialog.open();
+		return Optional.ofNullable(getDestinationFileName(saveDialog));
 	}
 
-	static String[] buildFilterExtensions(@NonNull final CodecAlgorithm algorithm) {
+	public Optional<String> getDestinationFileName() {
+		final FileDialog saveDialog = new FileDialog(gui.getShell(), SWT.SAVE);
+		saveDialog.setOverwrite(true);
+		if (ENCODE.equals(gui.getMode())) {
+			final CodecAlgorithm algorithm = gui.getAlgorithm();
+			saveDialog.setFilterExtensions(buildFilterExtensions(algorithm));
+		}
+		return Optional.ofNullable(getDestinationFileName(saveDialog));
+	}
+
+	private String getDestinationFileName(@NonNull final FileDialog saveDialog) {
+		final String name = saveDialog.open();
+		if (name != null && name.indexOf('.') == -1 && ENCODE.equals(gui.getMode())) {
+			return name + '.' + gui.getAlgorithm().getFileExtension();
+		}
+		else {
+			return name;
+		}
+	}
+
+	public static String[] buildFilterExtensions(@NonNull final CodecAlgorithm algorithm) {
 		final String extension = algorithm.getFileExtension();
 		return new String[] { "*." + extension.toLowerCase(Locale.ROOT) + ";*." + extension.toUpperCase(Locale.ROOT), "*.*" };
 	}
 
-	protected void execute(@NonNull final String sourceFileName, @NonNull final String destinationFileName) {
+	public void execute(@NonNull final String inputString, @NonNull final File outputFile) {
+		execute(new ProcessFileTask(new CodecConfig(gui.getMode(), gui.getAlgorithm(), gui.getCharset()), inputString, outputFile));
+	}
+
+	public void execute(@NonNull final File inputFile, @NonNull final File outputFile) {
+		execute(new ProcessFileTask(new CodecConfig(gui.getMode(), gui.getAlgorithm(), gui.getCharset()), inputFile, outputFile));
+	}
+
+	private void execute(@NonNull final ProcessFileTask task) {
 		try {
-			final File inputFile = new File(sourceFileName);
-			final File outputFile = new File(destinationFileName);
-			final ProcessFileTask task = new ProcessFileTask(new CodecConfig(gui.getMode(), gui.getAlgorithm(), gui.getCharset()), inputFile, outputFile);
 			final ProcessFileRunnable runnable = new ProcessFileRunnable(task);
 			final LocalizedProgressMonitorDialog dialog = new LocalizedProgressMonitorDialog(gui.getShell(), task);
 			dialog.setOpenOnRun(false);
-			dialog.run(true, true, runnable); // execute in separate thread
-			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
-			box.setMessage(messages.get("gui.message.file.process.ok.message"));
-			box.setText(messages.get(GUI_MESSAGE_APPLICATION_NAME));
-			box.open();
-			runnable.getResult().ifPresent(result -> {
-				gui.setInputText(inputFile.getName(), DIRTY);
-				gui.setOutputText(result, DIRTY);
-			});
+			dialog.run(true, true, runnable); // execute in a separate thread
+			if (task.getInputFile() != null) {
+				final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
+				box.setMessage(messages.get("gui.message.file.process.ok.message"));
+				box.setText(CodecGui.getApplicationName());
+				box.open();
+				runnable.getResult().ifPresent(result -> {
+					if (gui.getInputText().getCharCount() == 0) { // don't overwrite user text if present
+						gui.setInputText(task.getInputFile().getName(), DIRTY);
+						gui.setOutputText(result, DIRTY);
+					}
+				});
+			}
 		}
-		catch (final InterruptedException e) { // NOSONAR
+		catch (final InterruptedException e) { // NOSONAR Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here. "InterruptedException" should not be ignored (java:S2142)
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
 			box.setMessage(messages.get("gui.message.file.process.cancel.message"));
-			box.setText(messages.get(GUI_MESSAGE_APPLICATION_NAME));
+			box.setText(CodecGui.getApplicationName());
 			box.open();
 		}
 		catch (final InvocationTargetException e) {
@@ -116,16 +143,16 @@ public class ProcessFileAction {
 				message = messages.get("gui.error.cannot.decode", gui.getAlgorithm().getName());
 			}
 			else if (throwable instanceof FileNotFoundException) {
-				message = messages.get("gui.message.missing.file", throwable.getMessage());
+				message = messages.get("gui.error.missing.file", throwable.getMessage());
 			}
 			else {
 				message = messages.get("gui.error.unexpected.error");
 			}
-			EnhancedErrorDialog.openError(gui.getShell(), messages.get(GUI_MESSAGE_APPLICATION_NAME), message, IStatus.WARNING, throwable, Images.getAppIconArray());
+			EnhancedErrorDialog.openError(gui.getShell(), CodecGui.getApplicationName(), message, IStatus.WARNING, throwable, Images.getAppIconArray());
 		}
 		catch (final Exception e) {
 			log.log(Level.SEVERE, e.toString(), e);
-			EnhancedErrorDialog.openError(gui.getShell(), messages.get(GUI_MESSAGE_APPLICATION_NAME), e.toString(), IStatus.ERROR, e, Images.getAppIconArray());
+			EnhancedErrorDialog.openError(gui.getShell(), CodecGui.getApplicationName(), e.toString(), IStatus.ERROR, e, Images.getAppIconArray());
 		}
 	}
 

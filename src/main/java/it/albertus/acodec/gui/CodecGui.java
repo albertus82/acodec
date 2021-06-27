@@ -4,11 +4,24 @@ import static it.albertus.acodec.gui.GuiStatus.DIRTY;
 import static it.albertus.acodec.gui.GuiStatus.ERROR;
 import static it.albertus.acodec.gui.GuiStatus.UNDEFINED;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.logging.Level;
+
+import javax.naming.SizeLimitExceededException;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -27,8 +40,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
@@ -42,7 +57,8 @@ import it.albertus.acodec.gui.listener.CharsetComboSelectionListener;
 import it.albertus.acodec.gui.listener.CloseListener;
 import it.albertus.acodec.gui.listener.InputTextModifyListener;
 import it.albertus.acodec.gui.listener.ModeRadioSelectionListener;
-import it.albertus.acodec.gui.listener.ProcessFileButtonSelectionListener;
+import it.albertus.acodec.gui.listener.ProcessFileAction;
+import it.albertus.acodec.gui.listener.ProcessFileSelectionListener;
 import it.albertus.acodec.gui.listener.ShellDropListener;
 import it.albertus.acodec.gui.listener.TextCopySelectionKeyListener;
 import it.albertus.acodec.gui.listener.TextSelectAllKeyListener;
@@ -71,20 +87,26 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
-	@NonNull private CodecMode mode = CodecMode.ENCODE;
+	@NonNull
+	private CodecMode mode = CodecMode.ENCODE;
 
 	private CodecAlgorithm algorithm;
-	@NonNull private Charset charset = Charset.defaultCharset();
+
+	@NonNull
+	private Charset charset = Charset.defaultCharset();
 
 	private final Shell shell;
 	private final MenuBar menuBar;
 
-	@Getter(AccessLevel.NONE) private final LocalizedWidgets localizedWidgets = new LocalizedWidgets();
+	@Getter(AccessLevel.NONE)
+	private final LocalizedWidgets localizedWidgets = new LocalizedWidgets();
 
-	@NonNull @Setter(AccessLevel.NONE) private Text inputText;
+	@NonNull @Setter(AccessLevel.NONE)
+	private Text inputText;
 	private final Button hideInputTextCheck;
 
-	@NonNull @Setter(AccessLevel.NONE) private Text outputText;
+	@NonNull @Setter(AccessLevel.NONE)
+	private Text outputText;
 	private final Button hideOutputTextCheck;
 
 	private final Combo algorithmCombo;
@@ -95,7 +117,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	private final DropTarget shellDropTarget;
 
-	@NonNull private GuiStatus status = UNDEFINED;
+	@NonNull
+	private GuiStatus status = UNDEFINED;
 
 	private CodecGui(final Display display) {
 		shell = localizeWidget(new Shell(display), "gui.message.application.name");
@@ -159,7 +182,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		processFileButton = localizeWidget(new Button(shell, SWT.NONE), "gui.label.file.process");
 		processFileButton.setEnabled(false);
 		GridDataFactory.swtDefaults().span(1, 2).align(SWT.BEGINNING, SWT.FILL).applyTo(processFileButton);
-		processFileButton.addSelectionListener(new ProcessFileButtonSelectionListener(this));
+		processFileButton.addSelectionListener(new ProcessFileSelectionListener(this));
 
 		/* Mode radio */
 		final Label modeLabel = localizeWidget(new Label(shell, SWT.NONE), "gui.label.mode");
@@ -188,7 +211,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	public static void main(final String... args) {
-		Display.setAppName(messages.get("gui.message.application.name"));
+		Display.setAppName(getApplicationName());
 		Display.setAppVersion(Version.getNumber());
 		try (final CloseableDevice<Display> cd = new CloseableDevice<>(Display.getDefault())) {
 			final Display display = cd.getDevice();
@@ -366,12 +389,88 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		menuBar.updateLanguage();
 	}
 
-	private <T extends Widget> T localizeWidget(@NonNull T widget, @NonNull final String messageKey) {
+	private <T extends Widget> T localizeWidget(@NonNull final T widget, @NonNull final String messageKey) {
 		return localizedWidgets.putAndReturn(widget, () -> messages.get(messageKey)).getKey();
 	}
 
 	private Color getInactiveTextColor() {
 		return shell.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
+	}
+
+	public void loadInput() {
+		final FileDialog openDialog = new FileDialog(shell, SWT.OPEN);
+		if (algorithm != null && CodecMode.DECODE.equals(mode)) {
+			openDialog.setFilterExtensions(ProcessFileAction.buildFilterExtensions(algorithm));
+		}
+		final String fileName = openDialog.open();
+		if (fileName == null || fileName.isEmpty()) {
+			return;
+		}
+		try {
+			final Path path = Paths.get(fileName);
+			final long fileSize = Files.readAttributes(path, BasicFileAttributes.class).size();
+			if (fileSize <= 0) {
+				throw new IOException();
+			}
+			if (fileSize > 4 * TEXT_LIMIT_CHARS) { // worst case: UTF-32
+				throw new SizeLimitExceededException();
+			}
+			try (final Reader r = Files.newBufferedReader(path, charset)) {
+				final CharBuffer cb = CharBuffer.allocate(TEXT_LIMIT_CHARS + 1);
+				final int count = r.read(cb);
+				if (count > TEXT_LIMIT_CHARS) {
+					throw new SizeLimitExceededException();
+				}
+				setInputText(cb.flip().toString(), GuiStatus.UNDEFINED);
+			}
+		}
+		catch (final InvalidPathException e) {
+			log.log(Level.INFO, "The path specified is invalid:", e);
+			openMessageBox(messages.get("gui.error.file.open.invalid.path"), SWT.ICON_WARNING);
+		}
+		catch (final FileNotFoundException e) {
+			log.log(Level.INFO, "Cannot find the specified file:", e);
+			openMessageBox(messages.get("gui.error.file.open.not.found"), SWT.ICON_WARNING);
+		}
+		catch (final CharacterCodingException e) {
+			log.log(Level.FINE, "Cannot load file content with the selected encoding (" + charset + "):", e);
+			openMessageBox(messages.get("gui.error.file.open.encoding", charset), SWT.ICON_INFORMATION);
+		}
+		catch (final SizeLimitExceededException e) {
+			log.log(Level.FINE, "The specified file is too large (maximum " + TEXT_LIMIT_CHARS + " characters allowed):", e);
+			openMessageBox(messages.get("gui.error.file.open.too.large", TEXT_LIMIT_CHARS), SWT.ICON_INFORMATION);
+		}
+		catch (final IOException e) {
+			log.log(Level.WARNING, "Unexpected error opening the specified file:", e);
+			EnhancedErrorDialog.openError(shell, getApplicationName(), messages.get("gui.error.file.open.unexpected"), IStatus.WARNING, e, Images.getAppIconArray());
+		}
+	}
+
+	public void saveOutput() {
+		if (GuiStatus.OK.equals(status)) {
+			final ProcessFileAction action = new ProcessFileAction(this);
+			action.getDestinationFileName().ifPresent(destinationFileName -> {
+				if (!destinationFileName.isEmpty()) {
+					action.execute(inputText.getText(), new File(destinationFileName));
+				}
+			});
+		}
+	}
+
+	private void setStatus(@NonNull final GuiStatus status) {
+		this.status = status;
+		menuBar.notifyStatus(status);
+	}
+
+	private int openMessageBox(@NonNull final String message, final int style) {
+		final MessageBox messageBox = new MessageBox(shell, style);
+		messageBox.setText(getApplicationName());
+		messageBox.setMessage(message);
+		return messageBox.open();
+	}
+
+	public static String getApplicationName() {
+		return messages.get("gui.message.application.name");
 	}
 
 }

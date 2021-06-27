@@ -173,7 +173,13 @@ public class CodecCli implements Callable<Integer> {
 				throw new UncheckedIOException(e);
 			}
 		}
-		final ProcessFileTask task = new ProcessFileTask(config, files[0], files.length > 1 ? files[1] : null);
+		final ProcessFileTask task;
+		if (files.length > 1) {
+			task = new ProcessFileTask(config, files[0], files[1]);
+		}
+		else {
+			task = new ProcessFileTask(config, files[0]);
+		}
 		try {
 			new ProcessFileRunnable(task, System.out).run();
 		}
