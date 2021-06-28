@@ -19,7 +19,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AlgorithmComboSelectionListener extends SelectionAdapter {
 
-	@NonNull private final CodecGui gui;
+	@NonNull
+	private final CodecGui gui;
 
 	@Override
 	public void widgetSelected(final SelectionEvent event) {

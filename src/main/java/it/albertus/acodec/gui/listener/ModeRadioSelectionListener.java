@@ -12,9 +12,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ModeRadioSelectionListener extends SelectionAdapter {
 
-	@NonNull private final CodecGui gui;
-	@NonNull private final Button radio;
-	@NonNull private final CodecMode mode;
+	@NonNull
+	private final CodecGui gui;
+	@NonNull
+	private final Button radio;
+	@NonNull
+	private final CodecMode mode;
 
 	@Override
 	public void widgetSelected(final SelectionEvent event) {

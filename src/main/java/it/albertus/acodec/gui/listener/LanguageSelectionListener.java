@@ -17,7 +17,8 @@ public class LanguageSelectionListener extends SelectionAdapter {
 
 	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
-	@NonNull private final Consumer<Language> consumer;
+	@NonNull
+	private final Consumer<Language> consumer;
 
 	@Override
 	public void widgetSelected(@NonNull final SelectionEvent event) {

@@ -12,7 +12,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CharsetComboSelectionListener extends SelectionAdapter {
 
-	@NonNull private final CodecGui gui;
+	@NonNull
+	private final CodecGui gui;
 
 	@Override
 	public void widgetSelected(final SelectionEvent event) {

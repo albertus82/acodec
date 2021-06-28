@@ -101,11 +101,13 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	@Getter(AccessLevel.NONE)
 	private final LocalizedWidgets localizedWidgets = new LocalizedWidgets();
 
-	@NonNull @Setter(AccessLevel.NONE)
+	@NonNull
+	@Setter(AccessLevel.NONE)
 	private Text inputText;
 	private final Button hideInputTextCheck;
 
-	@NonNull @Setter(AccessLevel.NONE)
+	@NonNull
+	@Setter(AccessLevel.NONE)
 	private Text outputText;
 	private final Button hideOutputTextCheck;
 

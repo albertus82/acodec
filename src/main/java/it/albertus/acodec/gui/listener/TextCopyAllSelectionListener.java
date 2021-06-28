@@ -16,7 +16,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TextCopyAllSelectionListener extends SelectionAdapter {
 
-	@NonNull private final Supplier<Text> textSupplier;
+	@NonNull
+	private final Supplier<Text> textSupplier;
 
 	@Override
 	public void widgetSelected(final SelectionEvent e) {

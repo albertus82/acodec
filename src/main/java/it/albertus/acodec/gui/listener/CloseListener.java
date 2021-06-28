@@ -15,7 +15,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CloseListener implements ShellListener, SelectionListener, Listener {
 
-	@NonNull private final IShellProvider provider;
+	@NonNull
+	private final IShellProvider provider;
 
 	private void disposeShellAndDisplay() {
 		provider.getShell().dispose();

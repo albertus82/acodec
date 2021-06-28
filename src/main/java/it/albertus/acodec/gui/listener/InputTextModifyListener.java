@@ -30,7 +30,8 @@ public class InputTextModifyListener implements ModifyListener {
 
 	private static final Messages messages = GuiMessages.INSTANCE;
 
-	@NonNull private final CodecGui gui;
+	@NonNull
+	private final CodecGui gui;
 
 	@Override
 	public void modifyText(final ModifyEvent event) {

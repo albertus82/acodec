@@ -13,7 +13,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AboutListener implements SelectionListener, Listener {
 
-	@NonNull private final IShellProvider provider;
+	@NonNull
+	private final IShellProvider provider;
 
 	private void openAboutDialog() {
 		new AboutDialog(provider.getShell()).open();

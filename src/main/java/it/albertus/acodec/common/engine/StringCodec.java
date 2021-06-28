@@ -20,7 +20,8 @@ public class StringCodec {
 
 	private static final Messages messages = CommonMessages.INSTANCE;
 
-	@NonNull private final CodecConfig config;
+	@NonNull
+	private final CodecConfig config;
 
 	public String run(final String input) throws EncoderException, DecoderException {
 		switch (config.getMode()) {
