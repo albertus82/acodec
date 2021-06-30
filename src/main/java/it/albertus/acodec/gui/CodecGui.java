@@ -76,7 +76,6 @@ import lombok.extern.java.Log;
 
 @Log
 @Getter
-@Setter
 public class CodecGui implements IShellProvider, Multilanguage {
 
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
@@ -88,11 +87,12 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
 
 	@NonNull
+	@Setter
 	private CodecMode mode = CodecMode.ENCODE;
-
+	@Setter
 	private CodecAlgorithm algorithm;
-
 	@NonNull
+	@Setter
 	private Charset charset = Charset.defaultCharset();
 
 	private final Shell shell;
@@ -102,12 +102,10 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private final LocalizedWidgets localizedWidgets = new LocalizedWidgets();
 
 	@NonNull
-	@Setter(AccessLevel.NONE)
 	private Text inputText;
 	private final Button hideInputTextCheck;
 
 	@NonNull
-	@Setter(AccessLevel.NONE)
 	private Text outputText;
 	private final Button hideOutputTextCheck;
 
