@@ -41,6 +41,8 @@ public class InputTextModifyListener implements ModifyListener {
 			gui.getInputText().setFocus();
 		}
 
+		gui.getInputLengthText().setText(Integer.toString(gui.getInputText().getCharCount()));
+
 		// Preliminary checks
 		if (gui.getAlgorithm() == null) {
 			gui.setOutputText(messages.get("gui.message.missing.algorithm.banner"), ERROR);

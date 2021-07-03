@@ -16,6 +16,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
@@ -104,10 +105,12 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	@NonNull
 	private Text inputText;
 	private final Button hideInputTextCheck;
+	private final Text inputLengthText;
 
 	@NonNull
 	private Text outputText;
 	private final Button hideOutputTextCheck;
+	private final Text outputLengthText;
 
 	private final Combo algorithmCombo;
 	private final Combo charsetCombo;
@@ -136,13 +139,17 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		GridDataFactory.swtDefaults().applyTo(new Label(shell, SWT.NONE)); // Spacer
 
 		hideInputTextCheck = localizeWidget(new Button(shell, SWT.CHECK), "gui.label.input.hide");
-		hideInputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(4, 1).create());
+		hideInputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
 		hideInputTextCheck.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				refreshInputTextStyle();
 			}
 		});
+
+		inputLengthText = new Text(shell, SWT.RIGHT);
+		inputLengthText.setEnabled(false);
+		inputLengthText.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.END, SWT.CENTER).span(1, 1).create());
 
 		/* Output text */
 		final Label outputLabel = localizeWidget(new Label(shell, SWT.NONE), "gui.label.output");
@@ -153,13 +160,17 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		GridDataFactory.swtDefaults().applyTo(new Label(shell, SWT.NONE)); // Spacer
 
 		hideOutputTextCheck = localizeWidget(new Button(shell, SWT.CHECK), "gui.label.output.hide");
-		hideOutputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(4, 1).create());
+		hideOutputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
 		hideOutputTextCheck.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				refreshOutputTextStyle();
 			}
 		});
+
+		outputLengthText = new Text(shell, SWT.RIGHT);
+		outputLengthText.setEnabled(false);
+		outputLengthText.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.END, SWT.CENTER).span(1, 1).create());
 
 		/* Codec combo */
 		final Label algorithmLabel = localizeWidget(new Label(shell, SWT.NONE), "gui.label.algorithm");
@@ -231,7 +242,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		}
 	}
 
-	private static void loop(final Shell shell) {
+	private static void loop(@NonNull final Shell shell) {
 		final Display display = shell.getDisplay();
 		while (!shell.isDisposed()) {
 			if (!display.isDisposed()) {
@@ -320,14 +331,22 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		return text;
 	}
 
-	private void configureInputText(final Text text) {
+	private void configureInputText(@NonNull final Text text) {
 		text.setTextLimit(TEXT_LIMIT_CHARS);
 		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
 		text.addModifyListener(new InputTextModifyListener(this));
 	}
 
-	private void configureOutputText(final Text text) {
+	private void configureOutputText(@NonNull final Text text) {
 		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
+		text.addModifyListener(e -> {
+			if (Arrays.asList(GuiStatus.ERROR, GuiStatus.UNDEFINED).contains(status)) {
+				outputLengthText.setText("-");
+			}
+			else {
+				outputLengthText.setText(Integer.toString(text.getCharCount()));
+			}
+		});
 	}
 
 	private void refreshInputTextStyle() {
