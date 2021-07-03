@@ -2,6 +2,7 @@ package it.albertus.acodec.gui;
 
 import static it.albertus.acodec.gui.GuiStatus.DIRTY;
 import static it.albertus.acodec.gui.GuiStatus.ERROR;
+import static it.albertus.acodec.gui.GuiStatus.OK;
 import static it.albertus.acodec.gui.GuiStatus.UNDEFINED;
 
 import java.io.File;
@@ -339,7 +340,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private void configureOutputText(@NonNull final Text text) {
 		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
 		text.addModifyListener(e -> {
-			if (EnumSet.of(GuiStatus.ERROR, GuiStatus.UNDEFINED).contains(status)) {
+			if (EnumSet.of(ERROR, UNDEFINED).contains(status)) {
 				outputLengthText.setText("-");
 			}
 			else {
@@ -439,7 +440,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 				if (r.read() != -1) {
 					throw new SizeLimitExceededException();
 				}
-				setInputText(cb.flip().toString(), GuiStatus.UNDEFINED);
+				setInputText(cb.flip().toString(), UNDEFINED);
 			}
 		}
 		catch (final InvalidPathException e) {
@@ -465,7 +466,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	public void saveOutput() {
-		if (GuiStatus.OK.equals(status)) {
+		if (OK.equals(status)) {
 			final ProcessFileAction action = new ProcessFileAction(this);
 			action.getDestinationFileName().ifPresent(destinationFileName -> {
 				if (!destinationFileName.isEmpty()) {
