@@ -49,6 +49,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -159,7 +160,7 @@ class CodecEngineTest {
 				final StringCodec stringCodec = new StringCodec(codecConfig);
 				Assertions.assertEquals(originalString, stringCodec.run(encodedStrings.get(ca)), ca.toString());
 
-				if (Arrays.asList(BASE16, BASE32, BASE32HEX).contains(ca)) {
+				if (EnumSet.of(BASE16, BASE32, BASE32HEX).contains(ca)) {
 					Assertions.assertEquals(originalString, stringCodec.run(encodedStrings.get(ca).toLowerCase(Locale.ROOT)), ca.toString());
 				}
 				if (ASCII85.equals(ca)) {
@@ -201,7 +202,7 @@ class CodecEngineTest {
 				final File file = encodedFiles.get(ca);
 				Assertions.assertEquals(originalString, testFileDecoder(codecConfig, file), ca.toString());
 
-				if (Arrays.asList(BASE16, BASE32, BASE32HEX).contains(ca)) {
+				if (EnumSet.of(BASE16, BASE32, BASE32HEX).contains(ca)) {
 					final Collection<String> lines = Files.readAllLines(file.toPath());
 					Assertions.assertNotEquals(0, lines.size(), file.toString());
 					try (final BufferedWriter bw = Files.newBufferedWriter(file.toPath())) {
