@@ -16,7 +16,6 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
@@ -340,7 +339,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private void configureOutputText(@NonNull final Text text) {
 		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
 		text.addModifyListener(e -> {
-			if (Arrays.asList(GuiStatus.ERROR, GuiStatus.UNDEFINED).contains(status)) {
+			if (EnumSet.of(GuiStatus.ERROR, GuiStatus.UNDEFINED).contains(status)) {
 				outputLengthText.setText("-");
 			}
 			else {
