@@ -70,6 +70,7 @@ class CodecEngineTest {
 
 	private static final Charset CHARSET = StandardCharsets.UTF_8;
 	private static final String DIGEST_SEPARATOR = " *";
+	private static final EnumSet<CodecAlgorithm> CASE_INSENSITIVE_ENCODINGS = EnumSet.of(BASE16, BASE32, BASE32HEX, BASE45);
 
 	private static final String originalString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 	private static File originalFile;
@@ -160,7 +161,7 @@ class CodecEngineTest {
 				final StringCodec stringCodec = new StringCodec(codecConfig);
 				Assertions.assertEquals(originalString, stringCodec.run(encodedStrings.get(ca)), ca.toString());
 
-				if (EnumSet.of(BASE16, BASE32, BASE32HEX).contains(ca)) {
+				if (CASE_INSENSITIVE_ENCODINGS.contains(ca)) {
 					Assertions.assertEquals(originalString, stringCodec.run(encodedStrings.get(ca).toLowerCase(Locale.ROOT)), ca.toString());
 				}
 				if (ASCII85.equals(ca)) {
@@ -202,7 +203,7 @@ class CodecEngineTest {
 				final File file = encodedFiles.get(ca);
 				Assertions.assertEquals(originalString, testFileDecoder(codecConfig, file), ca.toString());
 
-				if (EnumSet.of(BASE16, BASE32, BASE32HEX).contains(ca)) {
+				if (CASE_INSENSITIVE_ENCODINGS.contains(ca)) {
 					final Collection<String> lines = Files.readAllLines(file.toPath());
 					Assertions.assertNotEquals(0, lines.size(), file.toString());
 					try (final BufferedWriter bw = Files.newBufferedWriter(file.toPath())) {
