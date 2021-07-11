@@ -136,11 +136,6 @@
 				<artifactId>org.eclipse.equinox.common</artifactId>
 				<version>3.14.100</version> <!-- Last version compatible with JRE 8 -->
 			</dependency>
-			<dependency>
-				<groupId>com.ultramixer.jarbundler</groupId>
-				<artifactId>jarbundler-core</artifactId>
-				<version>3.3.0</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -186,6 +181,7 @@
 							<dependency>
 								<groupId>com.ultramixer.jarbundler</groupId>
 								<artifactId>jarbundler-core</artifactId>
+								<version>3.3.0</version>
 								<exclusions>
 									<exclusion>
 										<groupId>*</groupId>
@@ -267,6 +263,7 @@
 							<dependency>
 								<groupId>com.ultramixer.jarbundler</groupId>
 								<artifactId>jarbundler-core</artifactId>
+								<version>3.3.0</version>
 								<exclusions>
 									<exclusion>
 										<groupId>*</groupId>
