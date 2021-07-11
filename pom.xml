@@ -136,6 +136,11 @@
 				<artifactId>org.eclipse.equinox.common</artifactId>
 				<version>3.14.100</version> <!-- Last version compatible with JRE 8 -->
 			</dependency>
+			<dependency>
+				<groupId>com.ultramixer.jarbundler</groupId>
+				<artifactId>jarbundler-core</artifactId>
+				<version>3.3.0</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -160,7 +165,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
-						<version>3.2.0</version>
 						<configuration>
 							<includeScope>runtime</includeScope>
 							<useBaseVersion>false</useBaseVersion>
@@ -182,7 +186,6 @@
 							<dependency>
 								<groupId>com.ultramixer.jarbundler</groupId>
 								<artifactId>jarbundler-core</artifactId>
-								<version>3.3.0</version>
 								<exclusions>
 									<exclusion>
 										<groupId>*</groupId>
@@ -243,7 +246,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
-						<version>3.2.0</version>
 						<configuration>
 							<includeScope>runtime</includeScope>
 							<useBaseVersion>false</useBaseVersion>
@@ -265,7 +267,6 @@
 							<dependency>
 								<groupId>com.ultramixer.jarbundler</groupId>
 								<artifactId>jarbundler-core</artifactId>
-								<version>3.3.0</version>
 								<exclusions>
 									<exclusion>
 										<groupId>*</groupId>
@@ -595,6 +596,11 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-antrun-plugin</artifactId>
 					<version>3.0.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>3.2.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
