@@ -152,8 +152,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		inputLengthText = new Text(shell, SWT.RIGHT);
 		inputLengthText.setEnabled(false);
 		try (final CloseableResource<GC> gc = new CloseableResource<>(new GC(inputLengthText))) {
-			final int minWidth = gc.getResource().stringExtent("MMMMMM").x;
-			log.log(Level.FINE, "inputLengthText.minSize.x = {0}", minWidth);
+			final int minWidth = gc.getResource().stringExtent(Integer.toString(TEXT_LIMIT_CHARS * 100)).x;
+			log.log(Level.FINE, "inputLengthText.minSize.x = {0} px", minWidth);
 			GridDataFactory.swtDefaults().grab(true, false).align(SWT.END, SWT.CENTER).minSize(minWidth, SWT.DEFAULT).applyTo(inputLengthText);
 		}
 
@@ -177,8 +177,8 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		outputLengthText = new Text(shell, SWT.RIGHT);
 		outputLengthText.setEnabled(false);
 		try (final CloseableResource<GC> gc = new CloseableResource<>(new GC(outputLengthText))) {
-			final int minWidth = gc.getResource().stringExtent("MMMMMM").x;
-			log.log(Level.FINE, "outputLengthText.minSize.x = {0}", minWidth);
+			final int minWidth = gc.getResource().stringExtent(Integer.toString(TEXT_LIMIT_CHARS * 100)).x;
+			log.log(Level.FINE, "outputLengthText.minSize.x = {0} px", minWidth);
 			GridDataFactory.swtDefaults().grab(true, false).align(SWT.END, SWT.CENTER).minSize(minWidth, SWT.DEFAULT).applyTo(outputLengthText);
 		}
 
