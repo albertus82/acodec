@@ -34,6 +34,7 @@ import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -67,6 +68,7 @@ import it.albertus.acodec.gui.resources.GuiMessages;
 import it.albertus.jface.EnhancedErrorDialog;
 import it.albertus.jface.Multilanguage;
 import it.albertus.jface.closeable.CloseableDevice;
+import it.albertus.jface.closeable.CloseableResource;
 import it.albertus.jface.i18n.LocalizedWidgets;
 import it.albertus.util.Version;
 import lombok.AccessLevel;
@@ -149,7 +151,11 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 		inputLengthText = new Text(shell, SWT.RIGHT);
 		inputLengthText.setEnabled(false);
-		inputLengthText.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.END, SWT.CENTER).span(1, 1).create());
+		try (final CloseableResource<GC> gc = new CloseableResource<>(new GC(inputLengthText))) {
+			final int minWidth = gc.getResource().stringExtent("MMMMMM").x;
+			log.log(Level.FINE, "inputLengthText.minSize.x = {0}", minWidth);
+			GridDataFactory.swtDefaults().grab(true, false).align(SWT.END, SWT.CENTER).minSize(minWidth, SWT.DEFAULT).applyTo(inputLengthText);
+		}
 
 		/* Output text */
 		final Label outputLabel = localizeWidget(new Label(shell, SWT.NONE), "gui.label.output");
@@ -170,7 +176,11 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 		outputLengthText = new Text(shell, SWT.RIGHT);
 		outputLengthText.setEnabled(false);
-		outputLengthText.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.END, SWT.CENTER).span(1, 1).create());
+		try (final CloseableResource<GC> gc = new CloseableResource<>(new GC(outputLengthText))) {
+			final int minWidth = gc.getResource().stringExtent("MMMMMM").x;
+			log.log(Level.FINE, "outputLengthText.minSize.x = {0}", minWidth);
+			GridDataFactory.swtDefaults().grab(true, false).align(SWT.END, SWT.CENTER).minSize(minWidth, SWT.DEFAULT).applyTo(outputLengthText);
+		}
 
 		/* Codec combo */
 		final Label algorithmLabel = localizeWidget(new Label(shell, SWT.NONE), "gui.label.algorithm");
