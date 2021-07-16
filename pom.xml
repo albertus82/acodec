@@ -885,8 +885,7 @@
 						</configuration>
 						<phase>pre-integration-test</phase>
 						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
+							<goal>run</goal>
 						</goals>
 					</execution>
 					<execution>
@@ -896,8 +895,7 @@
 						</configuration>
 						<phase>pre-integration-test</phase>
 						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
+							<goal>run</goal>
 						</goals>
 					</execution>
 					<execution>
@@ -907,8 +905,7 @@
 						</configuration>
 						<phase>pre-integration-test</phase>
 						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
+							<goal>run</goal>
 						</goals>
 					</execution>
 					<execution>
@@ -918,8 +915,7 @@
 						</configuration>
 						<phase>pre-integration-test</phase>
 						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
+							<goal>run</goal>
 						</goals>
 					</execution>
 					<execution>
@@ -929,8 +925,7 @@
 						</configuration>
 						<phase>pre-integration-test</phase>
 						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
+							<goal>run</goal>
 						</goals>
 					</execution>
 					<execution>
@@ -940,8 +935,7 @@
 						</configuration>
 						<phase>pre-integration-test</phase>
 						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
+							<goal>run</goal>
 						</goals>
 					</execution>
 					<execution>
@@ -951,8 +945,7 @@
 						</configuration>
 						<phase>pre-integration-test</phase>
 						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
+							<goal>run</goal>
 						</goals>
 					</execution>
 					<execution>
@@ -962,8 +955,7 @@
 						</configuration>
 						<phase>pre-integration-test</phase>
 						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
+							<goal>run</goal>
 						</goals>
 					</execution>
 				</executions>
