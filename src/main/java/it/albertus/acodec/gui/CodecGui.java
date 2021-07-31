@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.Buffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
@@ -455,7 +456,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 				if (r.read() != -1) {
 					throw new SizeLimitExceededException();
 				}
-				setInputText(cb.flip().toString(), UNDEFINED);
+				setInputText(((Buffer) cb).flip().toString(), UNDEFINED); // Avoid java.lang.NoSuchMethodError (see: https://stackoverflow.com/q/61267495)
 			}
 		}
 		catch (final InvalidPathException e) {

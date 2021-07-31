@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
@@ -35,8 +36,8 @@ class Base45InputStream extends InputStream {
 	public Base45InputStream(@NonNull final InputStream in) {
 		closeable = in;
 		reader = new InputStreamReader(in, StandardCharsets.ISO_8859_1);
-		encodedBuffer.flip();
-		decodedBuffer.flip();
+		((Buffer) encodedBuffer).flip(); // Avoid java.lang.NoSuchMethodError (see: https://stackoverflow.com/q/61267495)
+		((Buffer) decodedBuffer).flip(); // Avoid java.lang.NoSuchMethodError (see: https://stackoverflow.com/q/61267495)
 	}
 
 	@Override
@@ -67,17 +68,17 @@ class Base45InputStream extends InputStream {
 
 	private void refillEncodedBuffer() throws IOException {
 		if (!encodedBuffer.hasRemaining()) {
-			encodedBuffer.clear();
+			((Buffer) encodedBuffer).clear(); // Avoid java.lang.NoSuchMethodError (see: https://stackoverflow.com/q/61267495)
 			reader.read(encodedBuffer);
-			encodedBuffer.flip();
+			((Buffer) encodedBuffer).flip(); // Avoid java.lang.NoSuchMethodError (see: https://stackoverflow.com/q/61267495)
 		}
 	}
 
 	private void refillDecodedBuffer() throws IOException {
 		if (!decodedBuffer.hasRemaining()) {
-			decodedBuffer.clear();
+			((Buffer) decodedBuffer).clear(); // Avoid java.lang.NoSuchMethodError (see: https://stackoverflow.com/q/61267495)
 			decodedBuffer.put(decode());
-			decodedBuffer.flip();
+			((Buffer) decodedBuffer).flip(); // Avoid java.lang.NoSuchMethodError (see: https://stackoverflow.com/q/61267495)
 		}
 	}
 

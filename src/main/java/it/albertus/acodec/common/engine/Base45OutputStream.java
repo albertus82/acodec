@@ -6,6 +6,7 @@ import static it.albertus.acodec.common.engine.Base45.ENCODED_CHUNK_SIZE;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ class Base45OutputStream extends FilterOutputStream {
 		buf.put((byte) b);
 		if (!buf.hasRemaining()) {
 			out.write(buildEncodedLine(buf.array()));
-			buf.clear();
+			((Buffer) buf).clear(); // Avoid java.lang.NoSuchMethodError (see: https://stackoverflow.com/q/61267495)
 		}
 	}
 
