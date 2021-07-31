@@ -244,10 +244,15 @@ public class CodecGui implements IShellProvider, Multilanguage {
 				gui.evaluateInputText();
 				loop(shell);
 			}
-			catch (final Exception e) {
-				final String message = e.toString();
+			catch (final RuntimeException e) {
+				final String message = messages.get("gui.error.fatal");
 				log.log(Level.SEVERE, message, e);
 				EnhancedErrorDialog.openError(shell, messages.get("gui.message.error"), message, IStatus.ERROR, e, Images.getAppIconArray());
+				throw e;
+			}
+			catch (final Error e) { // NOSONAR Catch Exception instead of Error. Throwable and Error should not be caught (java:S1181)
+				log.log(Level.SEVERE, "An unrecoverable error has occurred:", e);
+				throw e;
 			}
 		}
 	}

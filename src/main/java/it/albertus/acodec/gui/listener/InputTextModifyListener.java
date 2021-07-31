@@ -69,8 +69,8 @@ public class InputTextModifyListener implements ModifyListener {
 			return;
 		}
 		catch (final Exception e) {
-			gui.setOutputText(messages.get("gui.error.unexpected.error.banner"), ERROR);
-			log.log(Level.SEVERE, messages.get("gui.error.unexpected.error"), e);
+			gui.setOutputText(messages.get("gui.error.unexpected.banner"), ERROR);
+			log.log(Level.SEVERE, messages.get("gui.error.unexpected"), e);
 			return;
 		}
 		gui.setOutputText(result, OK);

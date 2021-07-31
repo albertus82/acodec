@@ -146,7 +146,7 @@ public class ProcessFileAction {
 				message = messages.get("gui.error.missing.file", throwable.getMessage());
 			}
 			else {
-				message = messages.get("gui.error.unexpected.error");
+				message = messages.get("gui.error.unexpected");
 			}
 			EnhancedErrorDialog.openError(gui.getShell(), CodecGui.getApplicationName(), message, IStatus.WARNING, throwable, Images.getAppIconArray());
 		}
