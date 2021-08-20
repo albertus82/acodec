@@ -56,7 +56,7 @@ import it.albertus.acodec.common.resources.ConfigurableMessages;
 import it.albertus.acodec.common.resources.Language;
 import it.albertus.acodec.gui.listener.AlgorithmComboSelectionListener;
 import it.albertus.acodec.gui.listener.CharsetComboSelectionListener;
-import it.albertus.acodec.gui.listener.CloseListener;
+import it.albertus.acodec.gui.listener.ExitListener;
 import it.albertus.acodec.gui.listener.InputTextModifyListener;
 import it.albertus.acodec.gui.listener.ModeRadioSelectionListener;
 import it.albertus.acodec.gui.listener.ProcessFileAction;
@@ -129,6 +129,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		shell = localizeWidget(new Shell(display), "gui.message.application.name");
 		shell.setImages(Images.getAppIconArray());
 		shell.setLayout(new GridLayout(5, false));
+		shell.addShellListener(new ExitListener(this));
 
 		menuBar = new MenuBar(this);
 
@@ -231,29 +232,27 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		shell.setMinimumSize(shell.getSize());
 	}
 
+	/* GUI entry point */
 	public static void main(final String... args) {
 		Display.setAppName(getApplicationName());
 		Display.setAppVersion(Version.getNumber());
+		Shell shell = null;
 		try (final CloseableDevice<Display> cd = new CloseableDevice<>(Display.getDefault())) {
-			final Display display = cd.getDevice();
-			final CodecGui gui = new CodecGui(display);
-			final Shell shell = gui.getShell();
-			shell.addShellListener(new CloseListener(gui));
-			try {
-				shell.open();
-				gui.evaluateInputText();
-				loop(shell);
-			}
-			catch (final RuntimeException e) {
-				final String message = messages.get("gui.error.fatal");
-				log.log(Level.SEVERE, message, e);
-				EnhancedErrorDialog.openError(shell, messages.get("gui.message.error"), message, IStatus.ERROR, e, Images.getAppIconArray());
-				throw e;
-			}
-			catch (final Error e) { // NOSONAR Catch Exception instead of Error. Throwable and Error should not be caught (java:S1181)
-				log.log(Level.SEVERE, "An unrecoverable error has occurred:", e);
-				throw e;
-			}
+			final CodecGui gui = new CodecGui(cd.getDevice());
+			shell = gui.getShell();
+			shell.open();
+			gui.evaluateInputText();
+			loop(shell);
+		}
+		catch (final RuntimeException e) {
+			final String message = messages.get("gui.error.fatal");
+			log.log(Level.SEVERE, message, e);
+			EnhancedErrorDialog.openError(shell, getApplicationName(), message, IStatus.ERROR, e, Images.getAppIconArray());
+			throw e;
+		}
+		catch (final Error e) { // NOSONAR Catch Exception instead of Error. Throwable and Error should not be caught (java:S1181)
+			log.log(Level.SEVERE, "An unrecoverable error has occurred:", e);
+			throw e;
 		}
 	}
 

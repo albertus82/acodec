@@ -3,8 +3,8 @@ package it.albertus.acodec.gui.listener;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -13,48 +13,36 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class CloseListener implements ShellListener, SelectionListener, Listener {
+public class ExitListener extends ShellAdapter implements SelectionListener, Listener {
 
 	@NonNull
-	private final IShellProvider provider;
+	private final IShellProvider shellProvider;
 
-	private void disposeShellAndDisplay() {
-		provider.getShell().dispose();
+	private void disposeAll() {
+		shellProvider.getShell().dispose();
 		final Display display = Display.getCurrent();
 		if (display != null) {
 			display.dispose(); // Fix close not working on Windows 10 when iconified
 		}
 	}
 
-	// OS X Menu
+	/* macOS Menu */
 	@Override
 	public void handleEvent(final Event event) {
-		disposeShellAndDisplay();
+		disposeAll();
 	}
 
-	// Menu
+	/* Menu */
 	@Override
 	public void widgetSelected(final SelectionEvent event) {
-		disposeShellAndDisplay();
+		disposeAll();
 	}
 
-	// Shell close command
+	/* Shell close command */
 	@Override
 	public void shellClosed(final ShellEvent event) {
-		disposeShellAndDisplay();
+		disposeAll();
 	}
-
-	@Override
-	public void shellActivated(final ShellEvent event) {/* Ignore */}
-
-	@Override
-	public void shellDeactivated(final ShellEvent event) {/* Ignore */}
-
-	@Override
-	public void shellDeiconified(final ShellEvent event) {/* Ignore */}
-
-	@Override
-	public void shellIconified(final ShellEvent event) {/* Ignore */}
 
 	@Override
 	public void widgetDefaultSelected(final SelectionEvent event) {/* Ignore */}

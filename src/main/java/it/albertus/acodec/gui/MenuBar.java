@@ -16,7 +16,7 @@ import it.albertus.acodec.common.resources.ConfigurableMessages;
 import it.albertus.acodec.common.resources.Language;
 import it.albertus.acodec.gui.listener.AboutListener;
 import it.albertus.acodec.gui.listener.ArmMenuListener;
-import it.albertus.acodec.gui.listener.CloseListener;
+import it.albertus.acodec.gui.listener.ExitListener;
 import it.albertus.acodec.gui.listener.LanguageSelectionListener;
 import it.albertus.acodec.gui.listener.ProcessFileSelectionListener;
 import it.albertus.acodec.gui.listener.TextCopyAllSelectionListener;
@@ -49,13 +49,13 @@ public class MenuBar implements Multilanguage {
 	private final MenuItem fileSaveOutputMenuItem;
 
 	MenuBar(@NonNull final CodecGui gui) {
-		final CloseListener closeListener = new CloseListener(gui);
+		final ExitListener exitListener = new ExitListener(gui);
 		final AboutListener aboutListener = new AboutListener(gui);
 
 		boolean cocoaMenuCreated = false;
 		if (Util.isCocoa()) {
 			try {
-				new CocoaUIEnhancer(gui.getShell().getDisplay()).hookApplicationMenu(closeListener, aboutListener, null);
+				new CocoaUIEnhancer(gui.getShell().getDisplay()).hookApplicationMenu(exitListener, aboutListener, null);
 				cocoaMenuCreated = true;
 			}
 			catch (final CocoaEnhancerException e) {
@@ -105,7 +105,7 @@ public class MenuBar implements Multilanguage {
 			new MenuItem(fileMenu, SWT.SEPARATOR);
 
 			final MenuItem fileExitMenuItem = newLocalizedMenuItem(fileMenu, SWT.PUSH, "gui.label.menu.item.exit");
-			fileExitMenuItem.addSelectionListener(closeListener);
+			fileExitMenuItem.addSelectionListener(exitListener);
 		}
 
 		// Edit
