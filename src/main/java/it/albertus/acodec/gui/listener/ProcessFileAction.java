@@ -133,7 +133,7 @@ public class ProcessFileAction {
 			box.open();
 		}
 		catch (final InvocationTargetException e) {
-			log.log(Level.WARNING, e.toString(), e);
+			log.log(Level.WARNING, "Error processing file:", e);
 			final String message;
 			final Throwable throwable = e.getCause() instanceof ProcessFileException ? e.getCause().getCause() : e;
 			if (throwable instanceof EncoderException) {
@@ -151,8 +151,8 @@ public class ProcessFileAction {
 			EnhancedErrorDialog.openError(gui.getShell(), CodecGui.getApplicationName(), message, IStatus.WARNING, throwable, Images.getAppIconArray());
 		}
 		catch (final Exception e) {
-			log.log(Level.SEVERE, e.toString(), e);
-			EnhancedErrorDialog.openError(gui.getShell(), CodecGui.getApplicationName(), e.toString(), IStatus.ERROR, e, Images.getAppIconArray());
+			log.log(Level.SEVERE, "An unexpected error has occurred:", e);
+			EnhancedErrorDialog.openError(gui.getShell(), CodecGui.getApplicationName(), messages.get("gui.error.unexpected"), IStatus.ERROR, e, Images.getAppIconArray());
 		}
 	}
 
