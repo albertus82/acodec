@@ -20,8 +20,6 @@ package org.apache.openjpa.lib.util;
 
 import org.bouncycastle.util.Arrays;
 
-import it.albertus.acodec.common.resources.CommonMessages;
-import it.albertus.acodec.common.resources.Messages;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -32,8 +30,6 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Base16Encoder {
-
-	private static final Messages messages = CommonMessages.INSTANCE;
 
 	private static final char[] HEX = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
@@ -59,7 +55,7 @@ public class Base16Encoder {
 			final char digit1 = toUpperCase(s.charAt(i * 2));
 			final char digit2 = toUpperCase(s.charAt(i * 2 + 1));
 			if (!Arrays.contains(HEX, digit1) || !Arrays.contains(HEX, digit2)) {
-				throw new IllegalArgumentException(messages.get("common.error.invalid.input"));
+				throw new IllegalArgumentException("Invalid input");
 			}
 			r[i] = decode(digit1, digit2);
 		}
