@@ -29,7 +29,6 @@ import org.reflections.scanners.ResourcesScanner;
 import it.albertus.acodec.ACodec;
 import it.albertus.acodec.BaseTest;
 import it.albertus.acodec.cli.resources.ConsoleMessages;
-import it.albertus.acodec.common.resources.CommonMessages;
 import it.albertus.acodec.gui.resources.GuiMessages;
 import it.albertus.util.StringUtils;
 import lombok.NonNull;
@@ -42,7 +41,6 @@ class MessagesTest extends BaseTest {
 	void checkMessageFiles() throws IOException {
 		checkMessageFiles(getResourceNames(ConsoleMessages.class), "console.");
 		checkMessageFiles(getResourceNames(GuiMessages.class), "gui.");
-		checkMessageFiles(getResourceNames(CommonMessages.class), "common.");
 	}
 
 	private void checkMessageFiles(@NonNull final Iterable<String> resourceNames, final String prefix) throws IOException {
@@ -55,7 +53,7 @@ class MessagesTest extends BaseTest {
 				p.load(is);
 			}
 			log.log(Level.INFO, "{0} messages found in: {1}", new Serializable[] { p.size(), resourceName });
-//			Assertions.assertFalse(p.isEmpty(), "Empty resource file: " + resourceName);
+			Assertions.assertFalse(p.isEmpty(), "Empty resource file: " + resourceName);
 		}
 		pp.stream().reduce((p1, p2) -> {
 			if (prefix != null) {
@@ -121,7 +119,6 @@ class MessagesTest extends BaseTest {
 	void checkUnreferencedMessages() throws IOException {
 		checkUnreferencedMessages(getResourceNames(ConsoleMessages.class).iterator().next());
 		checkUnreferencedMessages(getResourceNames(GuiMessages.class).iterator().next());
-		checkUnreferencedMessages(getResourceNames(CommonMessages.class).iterator().next());
 	}
 
 	private void checkUnreferencedMessages(@NonNull final String resourceName) throws IOException {
@@ -131,7 +128,7 @@ class MessagesTest extends BaseTest {
 			p.load(is);
 		}
 		log.log(Level.INFO, "{0} messages found in: {1}", new Serializable[] { p.size(), resourceName });
-//		Assertions.assertFalse(p.isEmpty(), "Empty resource file: " + resourceName);
+		Assertions.assertFalse(p.isEmpty(), "Empty resource file: " + resourceName);
 		final Set<String> usedKeys = new TreeSet<>();
 		final Set<String> allKeys = new TreeSet<>(Collections.list(p.propertyNames()).stream().map(Object::toString).collect(Collectors.toSet()));
 		try (final Stream<Path> paths = newSourceStream()) {
