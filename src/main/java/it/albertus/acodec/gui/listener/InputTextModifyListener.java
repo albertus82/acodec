@@ -60,17 +60,17 @@ public class InputTextModifyListener implements ModifyListener {
 		}
 		catch (final EncoderException e) {
 			gui.setOutputText(messages.get("gui.error.cannot.encode.banner", codecConfig.getAlgorithm().getName()), ERROR);
-			log.log(Level.FINE, messages.get("gui.error.cannot.encode", codecConfig.getAlgorithm().getName()), e);
+			log.log(Level.FINE, "Encoding process failure:", e);
 			return;
 		}
 		catch (final DecoderException e) {
 			gui.setOutputText(messages.get("gui.error.cannot.decode.banner", codecConfig.getAlgorithm().getName()), ERROR);
-			log.log(Level.FINE, messages.get("gui.error.cannot.decode", codecConfig.getAlgorithm().getName()), e);
+			log.log(Level.FINE, "Decoding process failure:", e);
 			return;
 		}
 		catch (final Exception e) {
 			gui.setOutputText(messages.get("gui.error.unexpected.banner"), ERROR);
-			log.log(Level.SEVERE, messages.get("gui.error.unexpected"), e);
+			log.log(Level.SEVERE, "An unexpected error has occurred:", e);
 			return;
 		}
 		gui.setOutputText(result, OK);

@@ -59,7 +59,7 @@ public class MenuBar implements Multilanguage {
 				cocoaMenuCreated = true;
 			}
 			catch (final CocoaEnhancerException e) {
-				log.log(Level.WARNING, messages.get("gui.error.cocoa.enhancer"), e);
+				log.log(Level.WARNING, "Unable to enhance Cocoa UI:", e);
 			}
 		}
 
