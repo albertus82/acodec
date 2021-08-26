@@ -59,6 +59,7 @@ public class CodecCli implements Callable<Integer> {
 	private static final char OPTION_CHARSET = 'c';
 	private static final char OPTION_FILE = 'f';
 	private static final char OPTION_INTERACTIVE = 'i';
+	private static final char OPTION_ERRORS = 'e';
 	private static final char OPTION_HELP = 'h';
 	private static final char OPTION_VERSION = 'v';
 
@@ -81,6 +82,9 @@ public class CodecCli implements Callable<Integer> {
 
 	@Option(names = { "-" + OPTION_FILE, "--file" }, arity = "1..2", required = false)
 	private File[] files;
+
+	@Option(names = { "-" + OPTION_ERRORS, "--errors" })
+	private boolean errors;
 
 	@Option(names = { "-" + OPTION_HELP, "--help", "-?", "/?" }, help = true)
 	private boolean usageHelpRequested;
@@ -137,19 +141,23 @@ public class CodecCli implements Callable<Integer> {
 			}
 		}
 		catch (final EncoderException e) {
-			System.out.println(messages.get("console.error.cannot.encode", config.getAlgorithm().getName()));
-			e.printStackTrace();
+			printError(messages.get("console.error.cannot.encode", config.getAlgorithm().getName()), e);
 			return ExitCode.SOFTWARE;
 		}
 		catch (final DecoderException e) {
-			System.out.println(messages.get("console.error.cannot.decode", config.getAlgorithm().getName()));
-			e.printStackTrace();
+			printError(messages.get("console.error.cannot.decode", config.getAlgorithm().getName()), e);
 			return ExitCode.SOFTWARE;
 		}
 		catch (final Exception e) {
-			System.out.println(messages.get("console.error.unexpected.error"));
-			e.printStackTrace();
+			printError(messages.get("console.error.unexpected.error"), e);
 			return ExitCode.SOFTWARE;
+		}
+	}
+
+	private void printError(final String message, final Exception e) {
+		System.out.println(message);
+		if (errors && e != null) {
+			e.printStackTrace();
 		}
 	}
 
@@ -195,7 +203,7 @@ public class CodecCli implements Callable<Integer> {
 
 	private static void printHelp() {
 		/* Usage */
-		final StringBuilder help = new StringBuilder(messages.get("console.help.usage", OPTION_CHARSET, OPTION_FILE, OPTION_INTERACTIVE));
+		final StringBuilder help = new StringBuilder(messages.get("console.help.usage", OPTION_CHARSET, OPTION_FILE, OPTION_INTERACTIVE, OPTION_ERRORS));
 		help.append(SYSTEM_LINE_SEPARATOR).append(SYSTEM_LINE_SEPARATOR);
 
 		/* Modes */
