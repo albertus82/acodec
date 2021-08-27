@@ -22,6 +22,9 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 
 import it.albertus.acodec.ACodec;
+import it.albertus.acodec.cli.completion.CharsetCompletion;
+import it.albertus.acodec.cli.completion.CodecAlgorithmCompletion;
+import it.albertus.acodec.cli.completion.CodecModeCompletion;
 import it.albertus.acodec.cli.converter.CharsetConverter;
 import it.albertus.acodec.cli.converter.CharsetConverter.InvalidCharsetException;
 import it.albertus.acodec.cli.converter.CodecAlgorithmConverter;
@@ -65,10 +68,10 @@ public class CodecCli implements Callable<Integer> {
 
 	private static final Messages messages = ConsoleMessages.INSTANCE;
 
-	@Parameters(index = "0")
+	@Parameters(index = "0", completionCandidates = CodecModeCompletion.class)
 	private CodecMode mode;
 
-	@Parameters(index = "1")
+	@Parameters(index = "1", completionCandidates = CodecAlgorithmCompletion.class)
 	private CodecAlgorithm algorithm;
 
 	@Parameters(index = "2", arity = "0..1")
@@ -77,7 +80,7 @@ public class CodecCli implements Callable<Integer> {
 	@Option(names = { "-" + OPTION_INTERACTIVE, "--interactive" }, interactive = true, echo = false, description = "input")
 	private String inputTextInteractive;
 
-	@Option(names = { "-" + OPTION_CHARSET, "--charset" })
+	@Option(names = { "-" + OPTION_CHARSET, "--charset" }, completionCandidates = CharsetCompletion.class)
 	private Charset charset = Charset.defaultCharset();
 
 	@Option(names = { "-" + OPTION_FILE, "--file" }, arity = "1..2", required = false)
