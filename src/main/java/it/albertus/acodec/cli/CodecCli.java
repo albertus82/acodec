@@ -68,10 +68,10 @@ public class CodecCli implements Callable<Integer> {
 
 	private static final Messages messages = ConsoleMessages.INSTANCE;
 
-	@Parameters(index = "0", completionCandidates = CodecModeCompletion.class)
+	@Parameters(index = "0", arity = "1", completionCandidates = CodecModeCompletion.class)
 	private CodecMode mode;
 
-	@Parameters(index = "1", completionCandidates = CodecAlgorithmCompletion.class)
+	@Parameters(index = "1", arity = "1", completionCandidates = CodecAlgorithmCompletion.class)
 	private CodecAlgorithm algorithm;
 
 	@Parameters(index = "2", arity = "0..1")
@@ -128,6 +128,11 @@ public class CodecCli implements Callable<Integer> {
 		if (files == null && inputText == null || files != null && inputText != null) {
 			System.out.println(messages.get("console.error.incorrect.command.syntax"));
 			return ExitCode.USAGE;
+		}
+
+		if (!algorithm.getModes().contains(mode)) {
+			System.out.println(messages.get("console.error.unsupported.operation", algorithm.getName()));
+			return ExitCode.SOFTWARE;
 		}
 
 		final CodecConfig config = new CodecConfig(mode, algorithm, charset);
