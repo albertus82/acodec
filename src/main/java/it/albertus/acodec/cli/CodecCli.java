@@ -40,6 +40,7 @@ import it.albertus.acodec.common.engine.StringCodec;
 import it.albertus.acodec.common.resources.Messages;
 import it.albertus.util.StringUtils;
 import it.albertus.util.Version;
+import it.albertus.util.logging.LoggingSupport;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -63,6 +64,7 @@ public class CodecCli implements Callable<Integer> {
 	private static final char OPTION_FILE = 'f';
 	private static final char OPTION_INTERACTIVE = 'i';
 	private static final char OPTION_ERRORS = 'e';
+	private static final char OPTION_DEBUG = 'd';
 	private static final char OPTION_HELP = 'h';
 	private static final char OPTION_VERSION = 'v';
 
@@ -88,6 +90,9 @@ public class CodecCli implements Callable<Integer> {
 
 	@Option(names = { "-" + OPTION_ERRORS, "--errors" })
 	private boolean errors;
+
+	@Option(names = { "-" + OPTION_DEBUG, "--debug" })
+	private boolean debug;
 
 	@Option(names = { "-" + OPTION_HELP, "--help", "-?", "/?" }, help = true)
 	private boolean usageHelpRequested;
@@ -118,6 +123,14 @@ public class CodecCli implements Callable<Integer> {
 
 	@Override
 	public Integer call() {
+		if (debug) {
+			LoggingSupport.setRootLevel(Level.FINE);
+			errors = true;
+		}
+		else {
+			LoggingSupport.setRootLevel(Level.WARNING);
+		}
+
 		if (usageHelpRequested) {
 			printHelp();
 			return ExitCode.OK;
@@ -211,7 +224,7 @@ public class CodecCli implements Callable<Integer> {
 
 	private static void printHelp() {
 		/* Usage */
-		final StringBuilder help = new StringBuilder(messages.get("console.help.usage", OPTION_FILE, OPTION_INTERACTIVE, OPTION_CHARSET, OPTION_ERRORS));
+		final StringBuilder help = new StringBuilder(messages.get("console.help.usage", OPTION_FILE, OPTION_INTERACTIVE, OPTION_CHARSET, OPTION_ERRORS, OPTION_DEBUG));
 		help.append(SYSTEM_LINE_SEPARATOR).append(SYSTEM_LINE_SEPARATOR);
 
 		/* Modes */
