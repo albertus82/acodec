@@ -68,10 +68,10 @@ public class CodecCli implements Callable<Integer> {
 
 	private static final Messages messages = ConsoleMessages.INSTANCE;
 
-	@Parameters(index = "0", arity = "1", completionCandidates = CodecModeCompletion.class)
+	@Parameters(index = "0", completionCandidates = CodecModeCompletion.class)
 	private CodecMode mode;
 
-	@Parameters(index = "1", arity = "1", completionCandidates = CodecAlgorithmCompletion.class)
+	@Parameters(index = "1", completionCandidates = CodecAlgorithmCompletion.class)
 	private CodecAlgorithm algorithm;
 
 	@Parameters(index = "2", arity = "0..1")
