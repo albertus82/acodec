@@ -1,5 +1,8 @@
 package it.albertus.acodec.common.engine;
 
+import static it.albertus.acodec.common.engine.CodecMode.DECODE;
+import static it.albertus.acodec.common.engine.CodecMode.ENCODE;
+
 import java.util.zip.Adler32;
 
 import org.apache.commons.codec.DecoderException;
@@ -31,6 +34,9 @@ public class StringCodec {
 	}
 
 	private String encode(final String input) throws EncoderException {
+		if (!config.getAlgorithm().getModes().contains(ENCODE)) {
+			throw new EncoderException("The algorithm " + config.getAlgorithm() + " does not support the " + config.getMode() + " operation");
+		}
 		try {
 			final byte[] bytes = input.getBytes(config.getCharset());
 			switch (config.getAlgorithm()) {
@@ -71,11 +77,14 @@ public class StringCodec {
 			}
 		}
 		catch (final Exception e) {
-			throw new EncoderException("Cannot encode algorithm " + config.getAlgorithm(), e);
+			throw new EncoderException("An error occurred while encoding " + config.getAlgorithm(), e);
 		}
 	}
 
 	private String decode(final String input) throws DecoderException {
+		if (!config.getAlgorithm().getModes().contains(DECODE)) {
+			throw new DecoderException("The algorithm " + config.getAlgorithm() + " does not support the " + config.getMode() + " operation");
+		}
 		try {
 			switch (config.getAlgorithm()) {
 			case BASE16:
@@ -97,8 +106,11 @@ public class StringCodec {
 				throw new UnsupportedOperationException("Invalid algorithm: " + config.getAlgorithm());
 			}
 		}
+		catch (final UnsupportedOperationException e) {
+			throw e;
+		}
 		catch (final Exception e) {
-			throw new DecoderException("Cannot decode algorithm " + config.getAlgorithm(), e);
+			throw new DecoderException("An error occurred while decoding " + config.getAlgorithm(), e);
 		}
 	}
 

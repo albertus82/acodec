@@ -1,5 +1,8 @@
 package it.albertus.acodec.common.engine;
 
+import static it.albertus.acodec.common.engine.CodecMode.DECODE;
+import static it.albertus.acodec.common.engine.CodecMode.ENCODE;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -87,6 +90,9 @@ public class ProcessFileTask implements Cancelable {
 	}
 
 	private String encode(@NonNull final BooleanSupplier canceled) throws EncoderException {
+		if (!config.getAlgorithm().getModes().contains(ENCODE)) {
+			throw new EncoderException("The algorithm " + config.getAlgorithm() + " does not support the " + config.getMode() + " operation");
+		}
 		String value = null;
 		try (final CloseableStreams cs = createStreams()) {
 			switch (config.getAlgorithm()) {
@@ -145,7 +151,7 @@ public class ProcessFileTask implements Cancelable {
 		catch (final Exception e) {
 			deleteOutputFile();
 			if (!canceled.getAsBoolean()) {
-				throw new EncoderException("Cannot encode algorithm " + config.getAlgorithm(), e);
+				throw new EncoderException("An error occurred while encoding " + config.getAlgorithm(), e);
 			}
 		}
 		if (canceled.getAsBoolean()) {
@@ -158,6 +164,9 @@ public class ProcessFileTask implements Cancelable {
 	}
 
 	private void decode(@NonNull final BooleanSupplier canceled) throws DecoderException {
+		if (!config.getAlgorithm().getModes().contains(DECODE)) {
+			throw new DecoderException("The algorithm " + config.getAlgorithm() + " does not support the " + config.getMode() + " operation");
+		}
 		try (final CloseableStreams cs = createStreams()) {
 			switch (config.getAlgorithm()) {
 			case BASE16:
@@ -194,7 +203,7 @@ public class ProcessFileTask implements Cancelable {
 		catch (final Exception e) {
 			deleteOutputFile();
 			if (!canceled.getAsBoolean()) {
-				throw new DecoderException("Cannot decode algorithm " + config.getAlgorithm(), e);
+				throw new DecoderException("An error occurred while decoding " + config.getAlgorithm(), e);
 			}
 		}
 		if (canceled.getAsBoolean()) {
