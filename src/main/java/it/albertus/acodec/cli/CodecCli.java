@@ -206,7 +206,7 @@ public class CodecCli implements Callable<Integer> {
 
 	private static void printHelp() {
 		/* Usage */
-		final StringBuilder help = new StringBuilder(messages.get("console.help.usage", OPTION_CHARSET, OPTION_FILE, OPTION_INTERACTIVE, OPTION_ERRORS));
+		final StringBuilder help = new StringBuilder(messages.get("console.help.usage", OPTION_FILE, OPTION_INTERACTIVE, OPTION_CHARSET, OPTION_ERRORS));
 		help.append(SYSTEM_LINE_SEPARATOR).append(SYSTEM_LINE_SEPARATOR);
 
 		/* Modes */
