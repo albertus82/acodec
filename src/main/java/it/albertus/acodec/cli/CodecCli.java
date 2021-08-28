@@ -152,7 +152,7 @@ public class CodecCli implements Callable<Integer> {
 			return ExitCode.SOFTWARE;
 		}
 		catch (final Exception e) {
-			printError(messages.get("console.error.unexpected.error"), e);
+			printError(messages.get("console.error.unexpected"), e);
 			return ExitCode.SOFTWARE;
 		}
 	}
