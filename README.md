@@ -31,7 +31,7 @@ Download the [latest release](https://github.com/albertus82/acodec/releases/late
 ## Command line reference
 
 ```ruby
-Usage: acodec <mode> <algorithm> { <text to process> | -f <source file> [<destination file>] | -i (interactive input) } [-c <charset>] [-e (verbose errors)]
+Usage: acodec <mode> <algorithm> { <input_text> | -f <input_file> [<output_file>] | -i (interactive input) } [-c <charset>] [-e (verbose errors)]
 
 Mode:
     e    Encode
