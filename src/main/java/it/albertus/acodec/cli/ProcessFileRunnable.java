@@ -72,10 +72,11 @@ class ProcessFileRunnable {
 					}
 				}
 				final StringBuilder del = new StringBuilder();
-				for (short i = 0; i < charsToDelete + part1.length(); i++) {
-					del.append("\b \b");
+				for (short i = 0; i < charsToDelete; i++) {
+					del.append('\b');
 				}
-				out.print(del);
+				final String part2 = "100%)";
+				out.println(del + part2);
 			}
 		};
 		printProgressThread.setDaemon(true); // This thread must not prevent the JVM from exiting.
