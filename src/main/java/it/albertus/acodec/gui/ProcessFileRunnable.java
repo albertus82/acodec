@@ -3,6 +3,7 @@ package it.albertus.acodec.gui;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -11,7 +12,9 @@ import it.albertus.acodec.common.engine.ProcessFileTask;
 import it.albertus.acodec.common.resources.Messages;
 import it.albertus.acodec.gui.resources.GuiMessages;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 
+@Log
 @RequiredArgsConstructor
 public class ProcessFileRunnable implements IRunnableWithProgress {
 
@@ -40,7 +43,8 @@ public class ProcessFileRunnable implements IRunnableWithProgress {
 			result = task.run(monitor::isCanceled).orElse(null);
 		}
 		catch (final CancellationException e) {
-			throw new InterruptedException(e.getLocalizedMessage());
+			log.log(Level.FINE, "Operation canceled:", e);
+			throw new InterruptedException("Operation canceled");
 		}
 		catch (final Exception e) {
 			throw new ProcessFileException(e);

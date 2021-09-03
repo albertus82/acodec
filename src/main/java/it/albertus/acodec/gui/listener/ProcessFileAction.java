@@ -127,6 +127,7 @@ public class ProcessFileAction {
 			}
 		}
 		catch (final InterruptedException e) { // NOSONAR Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here. "InterruptedException" should not be ignored (java:S2142)
+			log.log(Level.FINE, "Operation canceled by the user:", e);
 			final MessageBox box = new MessageBox(gui.getShell(), SWT.ICON_INFORMATION);
 			box.setMessage(messages.get("gui.message.file.process.cancel.message"));
 			box.setText(CodecGui.getApplicationName());
