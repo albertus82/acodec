@@ -138,7 +138,7 @@ public class CodecCli implements Callable<Integer> {
 
 		final String inputText = inputTextInteractive != null ? inputTextInteractive : inputTextCommandLine;
 
-		if (files == null && inputText == null || files != null && inputText != null) {
+		if (files == null && inputText == null || files != null && inputText != null || files != null && files.length > 2) {
 			System.out.println(messages.get("console.error.incorrect.command.syntax"));
 			return ExitCode.USAGE;
 		}
