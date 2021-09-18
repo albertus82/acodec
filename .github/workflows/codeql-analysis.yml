@@ -24,6 +24,10 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
 
     strategy:
       fail-fast: false
@@ -36,6 +40,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+
+    - run: mvn clean process-sources -B -V -e -ntp -P codeql
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
