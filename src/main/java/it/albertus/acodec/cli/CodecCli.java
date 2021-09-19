@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.TemporalAccessor;
@@ -280,7 +280,7 @@ public class CodecCli implements Callable<Integer> {
 		}
 		catch (final RuntimeException e) {
 			log.log(Level.FINE, "Invalid version timestamp, falling back to current datetime:", e);
-			return Instant.now();
+			return LocalDateTime.now();
 		}
 	}
 
