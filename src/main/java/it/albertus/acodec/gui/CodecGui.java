@@ -54,6 +54,7 @@ import it.albertus.acodec.common.engine.CodecAlgorithm;
 import it.albertus.acodec.common.engine.CodecMode;
 import it.albertus.acodec.common.resources.ConfigurableMessages;
 import it.albertus.acodec.common.resources.Language;
+import it.albertus.acodec.common.util.BuildInfo;
 import it.albertus.acodec.gui.listener.AlgorithmComboSelectionListener;
 import it.albertus.acodec.gui.listener.CharsetComboSelectionListener;
 import it.albertus.acodec.gui.listener.ExitListener;
@@ -70,7 +71,6 @@ import it.albertus.jface.Multilanguage;
 import it.albertus.jface.closeable.CloseableDevice;
 import it.albertus.jface.closeable.CloseableResource;
 import it.albertus.jface.i18n.LocalizedWidgets;
-import it.albertus.util.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -236,7 +236,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	public static void main(final String... args) {
 		try {
 			Display.setAppName(getApplicationName());
-			Display.setAppVersion(Version.getNumber());
+			Display.setAppVersion(BuildInfo.getProperty("project.version"));
 			start();
 		}
 		catch (final RuntimeException | Error e) { // NOSONAR Catch Exception instead of Error. Throwable and Error should not be caught (java:S1181)

@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.ParseException;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.concurrent.Callable;
@@ -38,8 +39,8 @@ import it.albertus.acodec.common.engine.CodecMode;
 import it.albertus.acodec.common.engine.ProcessFileTask;
 import it.albertus.acodec.common.engine.StringCodec;
 import it.albertus.acodec.common.resources.Messages;
+import it.albertus.acodec.common.util.BuildInfo;
 import it.albertus.util.StringUtils;
-import it.albertus.util.Version;
 import it.albertus.util.logging.LoggingSupport;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -247,15 +248,7 @@ public class CodecCli implements Callable<Integer> {
 		help.append(messages.get("console.help.example"));
 
 		/* Header */
-		Date versionDate;
-		try {
-			versionDate = Version.getDate();
-		}
-		catch (final ParseException e) {
-			log.log(Level.FINE, "Invalid version date:", e);
-			versionDate = new Date();
-		}
-		System.out.println(messages.get("console.help.header", Version.getNumber(), DateFormat.getDateInstance(DateFormat.MEDIUM).format(versionDate)));
+		System.out.println(messages.get("console.help.header", BuildInfo.getProperty("project.version"), DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(getVersionTimestamp())));
 		System.out.println();
 		System.out.println(help.toString().trim());
 	}
@@ -279,6 +272,16 @@ public class CodecCli implements Callable<Integer> {
 		}
 		block.replace(block.length() - 2, block.length(), SYSTEM_LINE_SEPARATOR);
 		return block;
+	}
+
+	private static TemporalAccessor getVersionTimestamp() {
+		try {
+			return DateTimeFormatter.ISO_ZONED_DATE_TIME.parse(BuildInfo.getProperty("version.timestamp"));
+		}
+		catch (final RuntimeException e) {
+			log.log(Level.FINE, "Invalid version timestamp, falling back to current datetime:", e);
+			return Instant.now();
+		}
 	}
 
 }
