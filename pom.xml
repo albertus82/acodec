@@ -86,7 +86,7 @@
 		<dependency>
 			<groupId>org.eclipse.platform</groupId>
 			<artifactId>org.eclipse.core.jobs</artifactId>
-			<version>3.11.0</version> <!-- Last version compatible with JRE 8 -->
+			<version>3.12.0</version> <!-- Last version compatible with JRE 8 -->
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.platform</groupId>
@@ -200,7 +200,7 @@
 								<phase>process-sources</phase>
 								<configuration>
 									<target>
-										<ant target="codeql-delombok" />
+										<ant target="codeql-delombok"/>
 									</target>
 								</configuration>
 								<goals>
@@ -212,7 +212,7 @@
 								<phase>process-test-sources</phase>
 								<configuration>
 									<target>
-										<ant target="codeql-delombok-test" />
+										<ant target="codeql-delombok-test"/>
 									</target>
 								</configuration>
 								<goals>
@@ -284,8 +284,8 @@
 								</goals>
 								<configuration>
 									<target>
-										<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpathref="maven.plugin.classpath" />
-										<ant target="jarbundler" />
+										<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpathref="maven.plugin.classpath"/>
+										<ant target="jarbundler"/>
 									</target>
 								</configuration>
 							</execution>
@@ -366,8 +366,8 @@
 								</goals>
 								<configuration>
 									<target>
-										<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpathref="maven.plugin.classpath" />
-										<ant target="jarbundler" />
+										<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpathref="maven.plugin.classpath"/>
+										<ant target="jarbundler"/>
 									</target>
 								</configuration>
 							</execution>
@@ -541,7 +541,7 @@
 								</goals>
 								<configuration>
 									<target>
-										<ant target="launch4j" />
+										<ant target="launch4j"/>
 									</target>
 								</configuration>
 							</execution>
@@ -592,7 +592,7 @@
 								</goals>
 								<configuration>
 									<target>
-										<ant target="launch4j" />
+										<ant target="launch4j"/>
 									</target>
 								</configuration>
 							</execution>
@@ -871,7 +871,7 @@
 						<configuration>
 							<skip>${maven.antrun.skip.lombok-config}</skip>
 							<target>
-								<ant target="lombok-config" />
+								<ant target="lombok-config"/>
 							</target>
 						</configuration>
 					</execution>
@@ -883,8 +883,8 @@
 						</goals>
 						<configuration>
 							<target>
-								<taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="maven.plugin.classpath" />
-								<ant target="innosetup" />
+								<taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="maven.plugin.classpath"/>
+								<ant target="innosetup"/>
 							</target>
 						</configuration>
 					</execution>
@@ -896,7 +896,7 @@
 						</goals>
 						<configuration>
 							<target>
-								<ant target="checksums" />
+								<ant target="checksums"/>
 							</target>
 						</configuration>
 					</execution>
