@@ -576,10 +576,43 @@
 				<assembly.descriptor>windows.xml</assembly.descriptor>
 				<assembly.outputTimestamp>${local.git.commit.time}</assembly.outputTimestamp>
 				<launch4j.jre.runtimeBits>64</launch4j.jre.runtimeBits>
+				<launch4j.tmpdir>${project.build.directory}/launch4j/launch4j-3.14-workdir-win32</launch4j.tmpdir>
 			</properties>
 			<build>
 				<finalName>${windows.build.finalName}</finalName>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>unpack</id>
+								<phase>package</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>net.sf.launch4j</groupId>
+											<artifactId>launch4j</artifactId>
+											<version>3.14</version>
+											<classifier>workdir-win32</classifier>
+										</artifactItem>
+									</artifactItems>
+									<outputDirectory>${project.build.directory}/launch4j</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>net.sf.launch4j</groupId>
+								<artifactId>launch4j</artifactId>
+								<version>3.14</version>
+								<classifier>workdir-win32</classifier>
+							</dependency>
+						</dependencies>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-antrun-plugin</artifactId>
@@ -592,11 +625,21 @@
 								</goals>
 								<configuration>
 									<target>
+										<taskdef name="launch4j"
+											classname="net.sf.launch4j.ant.Launch4jTask"
+											classpathref="maven.plugin.classpath" />
 										<ant target="launch4j" />
 									</target>
 								</configuration>
 							</execution>
 						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>net.sf.launch4j</groupId>
+								<artifactId>launch4j</artifactId>
+								<version>3.14</version>
+							</dependency>
+						</dependencies>
 					</plugin>
 				</plugins>
 			</build>

@@ -47,7 +47,6 @@
 		<echo level="debug" message="os.version: ${os.version}" />
 		<echo level="debug" message="os.arch: ${os.arch}" />
 
-		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${launch4j.directory}/launch4j.jar:${launch4j.directory}/lib/xstream.jar" />
 		<condition property="launch4j.bindir" value="${launch4j.directory}/bin/win32">
 			<and>
 				<os family="windows" />
@@ -93,8 +92,7 @@
 
 		<chmod perm="+x" file="${launch4j.bindir}/ld" failonerror="false" failifexecutionfails="false" ignoremissing="true" />
 		<chmod perm="+x" file="${launch4j.bindir}/windres" failonerror="false" failifexecutionfails="false" ignoremissing="true" />
-
-		<mkdir dir="${project.build.directory}/launch4j" />
+		
 		<launch4j bindir="${launch4j.bindir}">
 			<config outfile="${project.build.directory}/launch4j/${windows.gui.exeFileName}" jarpath="${windows.build.finalName}.${project.packaging}" headertype="gui" dontwrapjar="${launch4j.dontWrapJar}" stayalive="${launch4j.stayAlive}" restartoncrash="${launch4j.restartOnCrash}" priority="${launch4j.priority}" errtitle="${launch4j.errTitle}" chdir="." icon="${project.build.iconsSourceDirectory}/windows/${windows.build.finalName}.ico">
 				<singleInstance mutexname="${mainClass}" windowtitle="${project.name}" />
