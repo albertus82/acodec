@@ -11,7 +11,7 @@ import javax.swing.SortOrder;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
+import org.reflections.scanners.ResourcesScanner;
 
 import it.albertus.jface.ImageUtils;
 import lombok.AccessLevel;
@@ -31,8 +31,8 @@ public class Images {
 	private static final Map<Rectangle, Image> appIconMap = Collections.unmodifiableMap(loadFromResources(Images.class.getPackage().getName() + ".icon.app"));
 
 	private static Map<Rectangle, Image> loadFromResources(final String packageName) {
-		final Reflections reflections = new Reflections(packageName, Scanners.Resources.filterResultsBy(name -> name.toLowerCase(Locale.ROOT).endsWith(".png")));
-		final Iterable<String> resourceNames = reflections.getResources(".*").stream().map(name -> '/' + name).collect(Collectors.toSet());
+		final Reflections reflections = new Reflections(packageName, new ResourcesScanner());
+		final Iterable<String> resourceNames = reflections.getResources(name -> name.toLowerCase(Locale.ROOT).endsWith(".png")).stream().map(name -> '/' + name).collect(Collectors.toSet());
 		final Map<Rectangle, Image> map = ImageUtils.createImageMap(resourceNames, SortOrder.DESCENDING);
 		log.log(Level.CONFIG, "{0}: {1}", new Object[] { packageName, map });
 		return map;

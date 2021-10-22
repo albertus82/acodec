@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
+import org.reflections.scanners.ResourcesScanner;
 
 import it.albertus.acodec.ACodec;
 import it.albertus.acodec.BaseTest;
@@ -172,8 +172,8 @@ class MessagesTest extends BaseTest {
 	}
 
 	private static Set<String> getResourceNames(final Class<?> messagesClass) {
-		final Reflections reflections = new Reflections(messagesClass.getPackage().getName(), Scanners.Resources.filterResultsBy(name -> name.contains(messagesClass.getSimpleName().toLowerCase(Locale.ROOT)) && name.endsWith(".properties")));
-		final Set<String> resourceNames = reflections.getResources(".*");
+		final Reflections reflections = new Reflections(messagesClass.getPackage().getName(), new ResourcesScanner());
+		final Set<String> resourceNames = reflections.getResources(name -> name.contains(messagesClass.getSimpleName().toLowerCase(Locale.ROOT)) && name.endsWith(".properties"));
 		log.log(Level.INFO, "Resources found: {0}", resourceNames);
 		return resourceNames;
 	}
