@@ -5,7 +5,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>it.albertus</groupId>
+	<groupId>com.github.albertus82</groupId>
 	<artifactId>acodec</artifactId>
 	<version>2.5.1</version>
 	<name>ACodec</name>
@@ -37,7 +37,7 @@
 		<gui.vm.maxHeapSize>32</gui.vm.maxHeapSize>
 		<cli.vm.initialHeapSize>4</cli.vm.initialHeapSize>
 		<cli.vm.maxHeapSize>16</cli.vm.maxHeapSize>
-		<mainClass>it.albertus.acodec.ACodec</mainClass>
+		<mainClass>com.github.albertus82.acodec.ACodec</mainClass>
 	</properties>
 
 	<dependencies>
