@@ -5,7 +5,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.github.albertus82</groupId>
+	<groupId>io.github.albertus82</groupId>
 	<artifactId>acodec</artifactId>
 	<version>2.5.1</version>
 	<name>ACodec</name>
