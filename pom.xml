@@ -37,7 +37,9 @@
 		<gui.vm.maxHeapSize>32</gui.vm.maxHeapSize>
 		<cli.vm.initialHeapSize>4</cli.vm.initialHeapSize>
 		<cli.vm.maxHeapSize>16</cli.vm.maxHeapSize>
-		<mainClass>com.github.albertus82.acodec.ACodec</mainClass>
+		<jar.mainClass>${project.groupId}.${project.artifactId}.ACodec</jar.mainClass>
+		<gui.mainClass>${project.groupId}.${project.artifactId}.gui.CodecGui</gui.mainClass>
+		<cli.mainClass>${project.groupId}.${project.artifactId}.cli.CodecCli</cli.mainClass>
 	</properties>
 
 	<dependencies>
@@ -750,7 +752,7 @@
 							<X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
 						</manifestEntries>
 						<manifest>
-							<mainClass>${mainClass}</mainClass>
+							<mainClass>${jar.mainClass}</mainClass>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>${dependencies.directory}/</classpathPrefix>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>

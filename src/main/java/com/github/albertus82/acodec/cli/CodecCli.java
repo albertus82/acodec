@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 
-import com.github.albertus82.acodec.ACodec;
 import com.github.albertus82.acodec.cli.completion.CharsetCompletion;
 import com.github.albertus82.acodec.cli.completion.CodecAlgorithmCompletion;
 import com.github.albertus82.acodec.cli.completion.CodecModeCompletion;
@@ -103,7 +102,7 @@ public class CodecCli implements Callable<Integer> {
 	private boolean versionInfoRequested;
 
 	public static void main(final String... args) {
-		System.exit(new CommandLine(new CodecCli()).setCommandName(ACodec.class.getSimpleName().toLowerCase(Locale.ROOT)).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
+		System.exit(new CommandLine(new CodecCli()).setCommandName(BuildInfo.getProperty("project.artifactId")).setOptionsCaseInsensitive(true).setParameterExceptionHandler((e, a) -> {
 			if (e.getCause() instanceof InvalidCharsetException) {
 				System.out.println(messages.get("console.error.invalid.charset", e.getCause().getMessage()));
 			}
