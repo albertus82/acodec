@@ -9,8 +9,21 @@
 	<artifactId>acodec</artifactId>
 	<version>2.5.1</version>
 	<name>ACodec</name>
-	<url>https://github.com/albertus82/${project.artifactId}</url>
+	<url>https://github.com/albertus82/acodec</url>
 	<description>Encoder &amp; decoder for various algorithms with graphical user interface.</description>
+
+	<licenses>
+		<license>
+			<name>GNU General Public License, Version 3</name>
+			<url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:https://github.com/albertus82/acodec.git</connection>
+		<developerConnection>scm:git:https://github.com/albertus82/acodec.git</developerConnection>
+		<url>https://github.com/albertus82/acodec</url>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
