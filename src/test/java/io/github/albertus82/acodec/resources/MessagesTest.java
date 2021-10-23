@@ -30,7 +30,7 @@ import io.github.albertus82.acodec.ACodec;
 import io.github.albertus82.acodec.BaseTest;
 import io.github.albertus82.acodec.cli.resources.ConsoleMessages;
 import io.github.albertus82.acodec.gui.resources.GuiMessages;
-import it.albertus.util.StringUtils;
+import io.github.albertus82.util.StringUtils;
 import lombok.NonNull;
 import lombok.extern.java.Log;
 

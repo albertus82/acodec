@@ -9,7 +9,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Text;
 
-import it.albertus.jface.closeable.CloseableClipboard;
+import io.github.albertus82.jface.closeable.CloseableClipboard;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 

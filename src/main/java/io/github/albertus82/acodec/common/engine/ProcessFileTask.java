@@ -30,8 +30,8 @@ import org.apache.commons.io.IOUtils;
 import org.freehep.util.io.Ascii85InputStream;
 import org.freehep.util.io.Ascii85OutputStream;
 
-import it.albertus.util.CRC16OutputStream;
-import it.albertus.util.ChecksumOutputStream;
+import io.github.albertus82.util.CRC16OutputStream;
+import io.github.albertus82.util.ChecksumOutputStream;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;

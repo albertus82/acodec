@@ -5,7 +5,7 @@ import static nl.minvws.encoding.Base45.getEncoder;
 
 import java.util.Locale;
 
-import it.albertus.util.NewLine;
+import io.github.albertus82.util.NewLine;
 
 enum Base45 implements BaseNCodec {
 

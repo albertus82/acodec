@@ -12,7 +12,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.PureJavaCrc32;
 import org.apache.commons.codec.digest.PureJavaCrc32C;
 
-import it.albertus.util.CRC16;
+import io.github.albertus82.util.CRC16;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 

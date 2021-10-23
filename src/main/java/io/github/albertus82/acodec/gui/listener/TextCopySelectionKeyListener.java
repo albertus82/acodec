@@ -8,8 +8,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Text;
 
-import it.albertus.jface.SwtUtils;
-import it.albertus.jface.closeable.CloseableClipboard;
+import io.github.albertus82.jface.SwtUtils;
+import io.github.albertus82.jface.closeable.CloseableClipboard;
 import lombok.NonNull;
 
 public enum TextCopySelectionKeyListener implements KeyListener {

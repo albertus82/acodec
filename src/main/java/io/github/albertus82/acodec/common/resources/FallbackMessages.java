@@ -2,7 +2,7 @@ package io.github.albertus82.acodec.common.resources;
 
 import java.util.Collection;
 
-import it.albertus.jface.JFaceMessages;
+import io.github.albertus82.jface.JFaceMessages;
 import lombok.NonNull;
 
 public enum FallbackMessages implements ConfigurableMessages {

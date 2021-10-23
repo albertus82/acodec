@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 
-import it.albertus.util.NewLine;
+import io.github.albertus82.util.NewLine;
 import lombok.NonNull;
 import nl.minvws.encoding.Base45;
 import nl.minvws.encoding.Base45.Decoder;

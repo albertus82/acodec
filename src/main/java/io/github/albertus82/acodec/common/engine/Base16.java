@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 import org.apache.openjpa.lib.util.Base16Encoder;
 
-import it.albertus.util.NewLine;
+import io.github.albertus82.util.NewLine;
 
 enum Base16 implements BaseNCodec {
 

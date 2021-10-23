@@ -11,7 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.freehep.util.io.Ascii85InputStream;
 import org.freehep.util.io.Ascii85OutputStream;
 
-import it.albertus.util.NewLine;
+import io.github.albertus82.util.NewLine;
 
 enum Ascii85 implements BaseNCodec {
 
