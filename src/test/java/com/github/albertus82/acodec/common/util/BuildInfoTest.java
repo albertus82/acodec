@@ -8,8 +8,6 @@ import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.github.albertus82.acodec.common.util.BuildInfo;
-
 class BuildInfoTest {
 
 	private static final Collection<String> expectedPropertyNames = Arrays.asList("project.version", "version.timestamp");

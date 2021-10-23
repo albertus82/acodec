@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.github.albertus82.acodec.common.engine.CodecAlgorithm;
-import com.github.albertus82.acodec.gui.listener.ProcessFileAction;
 
 class ProcessFileActionTest {
 
