@@ -3,7 +3,6 @@ ACodec
 
 [![Latest release](https://img.shields.io/github/release/albertus82/acodec.svg)](https://github.com/albertus82/acodec/releases/latest)
 [![Build status](https://github.com/albertus82/acodec/workflows/build/badge.svg)](https://github.com/albertus82/acodec/actions)
-[![Build status](https://ci.appveyor.com/api/projects/status/github/albertus82/acodec?branch=master&svg=true)](https://ci.appveyor.com/project/albertus82/acodec)
 [![Known Vulnerabilities](https://snyk.io/test/github/albertus82/acodec/badge.svg?targetFile=pom.xml)](https://snyk.io/test/github/albertus82/acodec?targetFile=pom.xml)
 
 **Graphical user interface available for Windows, Linux & macOS.**
