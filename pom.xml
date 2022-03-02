@@ -456,7 +456,7 @@
 				<dependency>
 					<groupId>org.eclipse.platform</groupId>
 					<artifactId>org.eclipse.swt.gtk.linux.armhf</artifactId>
-					<version>3.109.0</version>
+					<version>3.104.0</version>
 					<exclusions>
 						<exclusion>
 							<groupId>*</groupId>
