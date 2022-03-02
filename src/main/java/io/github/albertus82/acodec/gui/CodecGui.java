@@ -31,8 +31,7 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FillLayout;
@@ -143,12 +142,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 		hideInputTextCheck = localizeWidget(new Button(shell, SWT.CHECK), "gui.label.input.hide");
 		hideInputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
-		hideInputTextCheck.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				refreshInputTextStyle();
-			}
-		});
+		hideInputTextCheck.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> refreshInputTextStyle()));
 
 		inputLengthText = new Text(shell, SWT.RIGHT);
 		inputLengthText.setEnabled(false);
@@ -168,12 +162,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 		hideOutputTextCheck = localizeWidget(new Button(shell, SWT.CHECK), "gui.label.output.hide");
 		hideOutputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
-		hideOutputTextCheck.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				refreshOutputTextStyle();
-			}
-		});
+		hideOutputTextCheck.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> refreshOutputTextStyle()));
 
 		outputLengthText = new Text(shell, SWT.RIGHT);
 		outputLengthText.setEnabled(false);
