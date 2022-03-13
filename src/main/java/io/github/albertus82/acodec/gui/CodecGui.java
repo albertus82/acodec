@@ -171,6 +171,16 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		hideOutputTextCheck.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
+				if (!hideInputTextCheck.isDisposed()) {
+					if (hideOutputTextCheck.getSelection()) {
+						hideInputTextCheck.setEnabled(false);
+						hideInputTextCheck.setSelection(true);
+						refreshInputTextStyle();
+					}
+					else {
+						hideInputTextCheck.setEnabled(true);
+					}
+				}
 				refreshOutputTextStyle();
 			}
 		});
