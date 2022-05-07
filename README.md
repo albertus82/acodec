@@ -54,7 +54,7 @@ This application uses or includes portions of the following third party software
 |Component                   |Author                     |License                                                |Home page                                     |
 |----------------------------|---------------------------|-------------------------------------------------------|----------------------------------------------|
 |Apache Commons & OpenJPA    |Apache Software Foundation |[License](https://www.apache.org/licenses/LICENSE-2.0) |[Home page](https://www.apache.org)           |
-|Base45                      |Staat der Nederlanden      |[License](https://opensource.org/licenses/EUPL-1.2)    |[Home page](https://git.io/JnFST)             |
+|Base45                      |Staat der Nederlanden      |[License](https://www.apache.org/licenses/LICENSE-2.0) |[Home page](https://git.io/JnFST)             |
 |basE91                      |Joachim Henke              |[License](http://base91.sourceforge.net/license.txt)   |[Home page](http://base91.sourceforge.net)    |
 |Bouncy Castle               |Legion of the Bouncy Castle|[License](https://www.bouncycastle.org/license.html)   |[Home page](https://www.bouncycastle.org)     |
 |Eclipse Platform & SWT      |Eclipse Foundation         |[License](https://www.eclipse.org/legal/epl-2.0/)      |[Home page](https://www.eclipse.org)          |
