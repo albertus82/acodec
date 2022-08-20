@@ -74,7 +74,7 @@
 		<dependency>
 			<groupId>io.github.albertus82</groupId>
 			<artifactId>jface-utils</artifactId>
-			<version>19.0.3</version>
+			<version>19.0.4</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.eclipse.platform</groupId>
@@ -150,7 +150,7 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
-			<version>5.8.2</version>
+			<version>5.9.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -900,7 +900,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.3.0</version>
+				<version>3.4.2</version>
 				<configuration>
 					<finalName>${assembly.finalName}</finalName>
 					<outputDirectory>${assembly.outputDirectory}</outputDirectory>
@@ -1023,7 +1023,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-help-plugin</artifactId>
-				<version>3.2.0</version>
+				<version>3.3.0</version>
 				<executions>
 					<execution>
 						<?m2e ignore?>
