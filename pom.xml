@@ -110,7 +110,7 @@
 		<dependency>
 			<groupId>org.eclipse.platform</groupId>
 			<artifactId>org.eclipse.core.jobs</artifactId>
-			<version>3.11.0</version> <!-- Last version compatible with JRE 8 -->
+			<version>3.13.100</version> <!-- Last version compatible with JRE 8 -->
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.platform</groupId>
