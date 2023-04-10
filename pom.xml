@@ -731,7 +731,7 @@
 						<goals>
 							<goal>revision</goal>
 						</goals>
-						<phase>initialize</phase>
+						<phase>verify</phase>
 					</execution>
 				</executions>
 				<configuration>
