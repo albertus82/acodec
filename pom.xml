@@ -731,7 +731,7 @@
 						<goals>
 							<goal>revision</goal>
 						</goals>
-						<phase>verify</phase>
+						<phase>initialize</phase>
 					</execution>
 				</executions>
 				<configuration>
@@ -820,7 +820,7 @@
 				<version>2.15.0</version>
 				<executions>
 					<execution>
-						<phase>validate</phase>
+						<phase>verify</phase>
 						<goals>
 							<goal>display-property-updates</goal>
 							<goal>display-dependency-updates</goal>
