@@ -7,7 +7,7 @@
 
 	<groupId>io.github.albertus82</groupId>
 	<artifactId>acodec</artifactId>
-	<version>2.5.4</version>
+	<version>2.5.5</version>
 	<name>ACodec</name>
 	<url>https://github.com/albertus82/acodec</url>
 	<description>Encoder &amp; decoder for various algorithms with graphical user interface.</description>
