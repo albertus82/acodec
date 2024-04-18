@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.input.CountingInputStream;
+import org.apache.commons.io.input.BoundedInputStream;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -30,19 +30,19 @@ class CloseableStreams implements Closeable {
 	private final LinkedList<OutputStream> outputStreams;
 
 	@Getter(AccessLevel.NONE)
-	private final CountingInputStream countingInputStream;
+	private final BoundedInputStream countingInputStream;
 
 	CloseableStreams(@NonNull final Path input, final Path output) throws IOException {
 		inputStreams = createInputStreams(input);
 		outputStreams = createOutputStreams(output);
-		countingInputStream = new CountingInputStream(inputStreams.getLast());
+		countingInputStream = BoundedInputStream.builder().setInputStream(inputStreams.getLast()).get();
 		inputStreams.add(countingInputStream);
 	}
 
 	CloseableStreams(@NonNull final String input, @NonNull final Charset charset, final Path output) throws IOException {
 		inputStreams = createInputStreams(input, charset);
 		outputStreams = createOutputStreams(output);
-		countingInputStream = new CountingInputStream(inputStreams.getLast());
+		countingInputStream = BoundedInputStream.builder().setInputStream(inputStreams.getLast()).get();
 		inputStreams.add(countingInputStream);
 	}
 
@@ -82,7 +82,7 @@ class CloseableStreams implements Closeable {
 	}
 
 	long getBytesRead() {
-		return countingInputStream.getByteCount();
+		return countingInputStream.getCount();
 	}
 
 }
