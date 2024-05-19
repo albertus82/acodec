@@ -8,6 +8,7 @@ import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,10 @@ public class ExitListener extends ShellAdapter implements SelectionListener, Lis
 	private final IShellProvider shellProvider;
 
 	private void disposeAll() {
-		shellProvider.getShell().dispose();
+		final Shell shell = shellProvider.getShell();
+		if (shell != null) {
+			shell.dispose();
+		}
 		final Display display = Display.getCurrent();
 		if (display != null) {
 			display.dispose(); // Fix close not working on Windows 10 when iconified
