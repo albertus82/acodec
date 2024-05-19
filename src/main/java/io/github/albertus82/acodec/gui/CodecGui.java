@@ -15,6 +15,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 
 import javax.naming.SizeLimitExceededException;
@@ -32,6 +33,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -39,6 +42,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
@@ -53,6 +57,7 @@ import io.github.albertus82.acodec.common.engine.CodecMode;
 import io.github.albertus82.acodec.common.resources.ConfigurableMessages;
 import io.github.albertus82.acodec.common.resources.Language;
 import io.github.albertus82.acodec.common.util.BuildInfo;
+import io.github.albertus82.acodec.gui.config.ApplicationConfig;
 import io.github.albertus82.acodec.gui.listener.AlgorithmComboSelectionListener;
 import io.github.albertus82.acodec.gui.listener.CharsetComboSelectionListener;
 import io.github.albertus82.acodec.gui.listener.ExitListener;
@@ -63,13 +68,18 @@ import io.github.albertus82.acodec.gui.listener.ProcessFileSelectionListener;
 import io.github.albertus82.acodec.gui.listener.ShellDropListener;
 import io.github.albertus82.acodec.gui.listener.TextCopySelectionKeyListener;
 import io.github.albertus82.acodec.gui.listener.TextSelectAllKeyListener;
+import io.github.albertus82.acodec.gui.preference.Preference;
 import io.github.albertus82.acodec.gui.resources.GuiMessages;
 import io.github.albertus82.jface.EnhancedErrorDialog;
+import io.github.albertus82.jface.Events;
 import io.github.albertus82.jface.Multilanguage;
+import io.github.albertus82.jface.SwtUtils;
 import io.github.albertus82.jface.closeable.CloseableResource;
 import io.github.albertus82.jface.i18n.LocalizedWidgets;
+import io.github.albertus82.jface.preference.IPreferencesConfiguration;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.java.Log;
@@ -78,6 +88,13 @@ import lombok.extern.java.Log;
 @Getter
 public class CodecGui extends ApplicationWindow implements Multilanguage {
 
+	public static final String SHELL_MAXIMIZED = "shell.maximized";
+	private static final String SHELL_SIZE_X = "shell.size.x";
+	private static final String SHELL_SIZE_Y = "shell.size.y";
+	private static final String SHELL_LOCATION_X = "shell.location.x";
+	private static final String SHELL_LOCATION_Y = "shell.location.y";
+	private static final Point POINT_ZERO = new Point(0, 0);
+
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
 
@@ -85,6 +102,13 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 	private static final String ERROR_SUFFIX = " --";
 
 	private static final ConfigurableMessages messages = GuiMessages.INSTANCE;
+
+	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class Defaults {
+		public static final boolean SHELL_MAXIMIZED = false;
+	}
+
+	private final IPreferencesConfiguration configuration = ApplicationConfig.getPreferencesConfiguration();
 
 	@NonNull
 	@Setter
@@ -121,6 +145,15 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 	@NonNull
 	private GuiStatus status = GuiStatus.UNDEFINED;
 
+	/** Shell maximized status. May be null in some circumstances. */
+	private Boolean shellMaximized;
+
+	/** Shell size. May be null in some circumstances. */
+	private Point shellSize;
+
+	/** Shell location. May be null in some circumstances. */
+	private Point shellLocation;
+
 	private CodecGui() {
 		super(null);
 	}
@@ -129,7 +162,6 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 	protected void configureShell(final Shell shell) {
 		super.configureShell(shell);
 		localizeWidget(shell, "gui.message.application.name");
-		shell.addShellListener(new ExitListener(this));
 	}
 
 	@Override
@@ -253,11 +285,64 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 	}
 
 	@Override
+	protected void handleShellCloseEvent() {
+		final Event event = new Event();
+		new ExitListener(this).handleEvent(event);
+		if (event.doit) {
+			super.handleShellCloseEvent();
+		}
+	}
+
+	@Override
 	protected void constrainShellSize() {
 		super.constrainShellSize();
 		final Shell shell = getShell();
 		shell.pack();
-		shell.setMinimumSize(shell.getSize());
+
+		final Point preferredSize = shell.getSize();
+		shell.setMinimumSize(preferredSize);
+
+		final Integer sizeX = configuration.getInt(SHELL_SIZE_X);
+		final Integer sizeY = configuration.getInt(SHELL_SIZE_Y);
+		if (sizeX != null && sizeY != null) {
+			shell.setSize(Math.max(sizeX, preferredSize.x), Math.max(sizeY, preferredSize.y));
+		}
+
+		final Integer locationX = configuration.getInt(SHELL_LOCATION_X);
+		final Integer locationY = configuration.getInt(SHELL_LOCATION_Y);
+		if (locationX != null && locationY != null) {
+			if (new Rectangle(locationX, locationY, shell.getSize().x, shell.getSize().y).intersects(shell.getDisplay().getBounds())) {
+				shell.setLocation(locationX, locationY);
+			}
+			else {
+				log.log(Level.WARNING, "Illegal shell location ({0}, {1}) for size ({2}).", new Object[] { locationX, locationY, shell.getSize() });
+			}
+		}
+
+		setMaximizedShellStatus();
+	}
+
+	private void setMaximizedShellStatus() {
+		if (configuration.getBoolean(SHELL_MAXIMIZED, Defaults.SHELL_MAXIMIZED)) {
+			getShell().setMaximized(true);
+		}
+	}
+
+	@Override
+	public int open() {
+		final int code = super.open();
+
+		final Shell shell = getShell();
+		final UpdateShellStatusListener listener = new UpdateShellStatusListener();
+		shell.addListener(SWT.Resize, listener);
+		shell.addListener(SWT.Move, listener);
+		shell.addListener(SWT.Activate, new MaximizeShellListener());
+
+		if (SwtUtils.isGtk3() == null || SwtUtils.isGtk3()) { // fixes invisible (transparent) shell bug with some Linux distibutions
+			setMaximizedShellStatus();
+		}
+
+		return code;
 	}
 
 	/* GUI entry point */
@@ -277,6 +362,7 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 	private static void start() {
 		Shell shell = null;
 		try {
+			ApplicationConfig.initialize(); // Load configuration and initialize the application
 			final CodecGui gui = new CodecGui();
 			gui.open(); // returns immediately
 			shell = gui.getShell(); // to be called after open!
@@ -441,11 +527,13 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 	public void setLanguage(@NonNull final Language language) {
 		messages.setLanguage(language);
 		final Shell shell = getShell();
-		shell.setRedraw(false);
-		updateLanguage();
-		shell.layout(true, true);
-		shell.setMinimumSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
-		shell.setRedraw(true);
+		if (shell != null) {
+			shell.setRedraw(false);
+			updateLanguage();
+			shell.layout(true, true);
+			shell.setMinimumSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+			shell.setRedraw(true);
+		}
 	}
 
 	@Override
@@ -534,6 +622,75 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 		messageBox.setText(getApplicationName());
 		messageBox.setMessage(message);
 		return messageBox.open();
+	}
+
+	private class MaximizeShellListener implements Listener {
+		private boolean firstTime = true;
+
+		@Override
+		public void handleEvent(final Event event) {
+			logEvent(event);
+			if (firstTime && !getShell().isDisposed() && configuration.getBoolean(SHELL_MAXIMIZED, Defaults.SHELL_MAXIMIZED)) {
+				firstTime = false;
+				getShell().setMaximized(true);
+			}
+		}
+	}
+
+	private static void logEvent(final Event event) {
+		log.log(Level.FINE, "{0} {1}", new Object[] { Events.getName(event), event });
+	}
+
+	private class UpdateShellStatusListener implements Listener {
+		@Override
+		public void handleEvent(final Event event) {
+			logEvent(event);
+			final Shell shell = getShell();
+			if (shell != null && !shell.isDisposed()) {
+				shellMaximized = shell.getMaximized();
+				if (Boolean.FALSE.equals(shellMaximized) && !POINT_ZERO.equals(shell.getSize())) {
+					shellSize = shell.getSize();
+					shellLocation = shell.getLocation();
+				}
+			}
+			log.log(Level.FINE, "shellMaximized: {0} - shellSize: {1} - shellLocation: {2}", new Object[] { shellMaximized, shellSize, shellLocation });
+		}
+	}
+
+	public void saveSettings() {
+		new Thread(() -> { // don't perform I/O in UI thread
+			try {
+				configuration.reload(); // make sure the properties are up-to-date
+			}
+			catch (final IOException e) {
+				log.log(Level.WARNING, "Cannot reload configuration:", e);
+				return; // abort
+			}
+			final Properties properties = configuration.getProperties();
+
+			properties.setProperty(Preference.LANGUAGE.getName(), messages.getLanguage().getLocale().getLanguage());
+
+			if (shellMaximized != null) {
+				properties.setProperty(SHELL_MAXIMIZED, Boolean.toString(shellMaximized));
+			}
+			if (shellSize != null) {
+				properties.setProperty(SHELL_SIZE_X, Integer.toString(shellSize.x));
+				properties.setProperty(SHELL_SIZE_Y, Integer.toString(shellSize.y));
+			}
+			if (shellLocation != null) {
+				properties.setProperty(SHELL_LOCATION_X, Integer.toString(shellLocation.x));
+				properties.setProperty(SHELL_LOCATION_Y, Integer.toString(shellLocation.y));
+			}
+
+			log.log(Level.FINE, "{0}", configuration);
+
+			try {
+				configuration.save(); // save configuration
+			}
+			catch (final IOException e) {
+				log.log(Level.WARNING, "Cannot save configuration:", e);
+			}
+		}, "Save settings").start();
 	}
 
 	public static String getApplicationName() {
