@@ -124,12 +124,10 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 	@Getter(AccessLevel.NONE)
 	private final LocalizedWidgets localizedWidgets = new LocalizedWidgets();
 
-	@NonNull
 	private Text inputText;
 	private Button hideInputTextCheck;
 	private Text inputLengthText;
 
-	@NonNull
 	private Text outputText;
 	private Button hideOutputTextCheck;
 	private Text outputLengthText;
