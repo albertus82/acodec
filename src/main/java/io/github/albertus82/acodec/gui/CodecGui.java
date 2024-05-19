@@ -88,7 +88,7 @@ import lombok.extern.java.Log;
 @Getter
 public class CodecGui extends ApplicationWindow implements Multilanguage {
 
-	public static final String SHELL_MAXIMIZED = "shell.maximized";
+	private static final String SHELL_MAXIMIZED = "shell.maximized";
 	private static final String SHELL_SIZE_X = "shell.size.x";
 	private static final String SHELL_SIZE_Y = "shell.size.y";
 	private static final String SHELL_LOCATION_X = "shell.location.x";
