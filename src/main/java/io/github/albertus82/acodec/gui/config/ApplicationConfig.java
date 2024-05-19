@@ -17,11 +17,22 @@ import io.github.albertus82.util.config.PropertiesConfiguration;
 
 public class ApplicationConfig extends Configuration {
 
-	private static final String DIRECTORY_NAME = Util.isLinux() ? '.' + BuildInfo.getProperty("project.artifactId") : BuildInfo.getProperty("project.name");
+	private static final String DIRECTORY_NAME;
+	private static final String CFG_FILE_NAME = BuildInfo.getProperty("project.groupId") + '.' + BuildInfo.getProperty("project.artifactId") + ".cfg";
+
+	static {
+		if (Util.isLinux()) {
+			DIRECTORY_NAME = '.' + BuildInfo.getProperty("project.artifactId");
+		}
+		else if (Util.isMac()) {
+			DIRECTORY_NAME = "";
+		}
+		else {
+			DIRECTORY_NAME = BuildInfo.getProperty("project.name");
+		}
+	}
 
 	public static final String APPDATA_DIRECTORY = SystemUtils.getOsSpecificLocalAppDataDir() + File.separator + DIRECTORY_NAME;
-
-	private static final String CFG_FILE_NAME = (Util.isLinux() ? BuildInfo.getProperty("project.artifactId") : BuildInfo.getProperty("project.name").replace(" ", "")) + ".cfg";
 
 	private static volatile ApplicationConfig instance; // NOSONAR Use a thread-safe type; adding "volatile" is not enough to make this field thread-safe. Use a thread-safe type; adding "volatile" is not enough to make this field thread-safe.
 	private static volatile IPreferencesConfiguration wrapper; // NOSONAR Use a thread-safe type; adding "volatile" is not enough to make this field thread-safe. Use a thread-safe type; adding "volatile" is not enough to make this field thread-safe.
