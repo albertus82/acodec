@@ -1,10 +1,5 @@
 package io.github.albertus82.acodec.gui;
 
-import static io.github.albertus82.acodec.gui.GuiStatus.DIRTY;
-import static io.github.albertus82.acodec.gui.GuiStatus.ERROR;
-import static io.github.albertus82.acodec.gui.GuiStatus.OK;
-import static io.github.albertus82.acodec.gui.GuiStatus.UNDEFINED;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,8 +21,10 @@ import javax.naming.SizeLimitExceededException;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.RowLayoutFactory;
-import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -37,13 +34,14 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -68,7 +66,6 @@ import io.github.albertus82.acodec.gui.listener.TextSelectAllKeyListener;
 import io.github.albertus82.acodec.gui.resources.GuiMessages;
 import io.github.albertus82.jface.EnhancedErrorDialog;
 import io.github.albertus82.jface.Multilanguage;
-import io.github.albertus82.jface.closeable.CloseableDevice;
 import io.github.albertus82.jface.closeable.CloseableResource;
 import io.github.albertus82.jface.i18n.LocalizedWidgets;
 import lombok.AccessLevel;
@@ -79,7 +76,7 @@ import lombok.extern.java.Log;
 
 @Log
 @Getter
-public class CodecGui implements IShellProvider, Multilanguage {
+public class CodecGui extends ApplicationWindow implements Multilanguage {
 
 	private static final int TEXT_LIMIT_CHARS = Character.MAX_VALUE;
 	private static final int TEXT_HEIGHT_MULTIPLIER = 4;
@@ -98,50 +95,64 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	@Setter
 	private Charset charset = Charset.defaultCharset();
 
-	private final Shell shell;
-	private final MenuBar menuBar;
+	private MenuBar menuBar;
 
 	@Getter(AccessLevel.NONE)
 	private final LocalizedWidgets localizedWidgets = new LocalizedWidgets();
 
 	@NonNull
 	private Text inputText;
-	private final Button hideInputTextCheck;
-	private final Text inputLengthText;
+	private Button hideInputTextCheck;
+	private Text inputLengthText;
 
 	@NonNull
 	private Text outputText;
-	private final Button hideOutputTextCheck;
-	private final Text outputLengthText;
+	private Button hideOutputTextCheck;
+	private Text outputLengthText;
 
-	private final Combo algorithmCombo;
-	private final Combo charsetCombo;
+	private Combo algorithmCombo;
+	private Combo charsetCombo;
 	private final Map<CodecMode, Button> modeRadios = new EnumMap<>(CodecMode.class);
 
-	private final Button processFileButton;
+	private Button processFileButton;
 
-	private final DropTarget shellDropTarget;
+	private DropTarget shellDropTarget;
 
 	@NonNull
-	private GuiStatus status = UNDEFINED;
+	private GuiStatus status = GuiStatus.UNDEFINED;
 
-	private CodecGui(final Display display) {
-		shell = localizeWidget(new Shell(display), "gui.message.application.name");
-		shell.setImages(Images.getAppIconArray());
-		shell.setLayout(new GridLayout(5, false));
+	private CodecGui() {
+		super(null);
+	}
+
+	@Override
+	protected void configureShell(final Shell shell) {
+		super.configureShell(shell);
+		localizeWidget(shell, "gui.message.application.name");
 		shell.addShellListener(new ExitListener(this));
+	}
 
+	@Override
+	protected void createTrimWidgets(final Shell shell) { /* Not needed */ }
+
+	@Override
+	protected Layout getLayout() {
+		return GridLayoutFactory.swtDefaults().numColumns(5).create();
+	}
+
+	@Override
+	protected Control createContents(final Composite parent) {
 		menuBar = new MenuBar(this);
 
 		/* Input text */
-		final Label inputLabel = localizeWidget(new Label(shell, SWT.NONE), "gui.label.input");
+		final Label inputLabel = localizeWidget(new Label(parent, SWT.NONE), "gui.label.input");
 		GridDataFactory.swtDefaults().applyTo(inputLabel);
 
 		inputText = createInputText();
 
-		GridDataFactory.swtDefaults().applyTo(new Label(shell, SWT.NONE)); // Spacer
+		GridDataFactory.swtDefaults().applyTo(new Label(parent, SWT.NONE)); // Spacer
 
-		hideInputTextCheck = localizeWidget(new Button(shell, SWT.CHECK), "gui.label.input.hide");
+		hideInputTextCheck = localizeWidget(new Button(parent, SWT.CHECK), "gui.label.input.hide");
 		hideInputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
 		hideInputTextCheck.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -150,7 +161,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			}
 		});
 
-		inputLengthText = new Text(shell, SWT.RIGHT);
+		inputLengthText = new Text(parent, SWT.RIGHT);
 		inputLengthText.setEnabled(false);
 		try (final CloseableResource<GC> gc = new CloseableResource<>(new GC(inputLengthText))) {
 			final int minWidth = gc.getResource().stringExtent(Integer.toString(TEXT_LIMIT_CHARS * 100)).x;
@@ -159,14 +170,14 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		}
 
 		/* Output text */
-		final Label outputLabel = localizeWidget(new Label(shell, SWT.NONE), "gui.label.output");
+		final Label outputLabel = localizeWidget(new Label(parent, SWT.NONE), "gui.label.output");
 		outputLabel.setLayoutData(new GridData());
 
 		outputText = createOutputText();
 
-		GridDataFactory.swtDefaults().applyTo(new Label(shell, SWT.NONE)); // Spacer
+		GridDataFactory.swtDefaults().applyTo(new Label(parent, SWT.NONE)); // Spacer
 
-		hideOutputTextCheck = localizeWidget(new Button(shell, SWT.CHECK), "gui.label.output.hide");
+		hideOutputTextCheck = localizeWidget(new Button(parent, SWT.CHECK), "gui.label.output.hide");
 		hideOutputTextCheck.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
 		hideOutputTextCheck.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -185,7 +196,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 			}
 		});
 
-		outputLengthText = new Text(shell, SWT.RIGHT);
+		outputLengthText = new Text(parent, SWT.RIGHT);
 		outputLengthText.setEnabled(false);
 		try (final CloseableResource<GC> gc = new CloseableResource<>(new GC(outputLengthText))) {
 			final int minWidth = gc.getResource().stringExtent(Integer.toString(TEXT_LIMIT_CHARS * 100)).x;
@@ -194,33 +205,33 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		}
 
 		/* Codec combo */
-		final Label algorithmLabel = localizeWidget(new Label(shell, SWT.NONE), "gui.label.algorithm");
+		final Label algorithmLabel = localizeWidget(new Label(parent, SWT.NONE), "gui.label.algorithm");
 		algorithmLabel.setLayoutData(new GridData());
 
-		algorithmCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
+		algorithmCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
 		algorithmCombo.setItems(CodecAlgorithm.getNames());
 		algorithmCombo.setLayoutData(new GridData());
 
 		/* Charset combo */
-		final Label charsetLabel = localizeWidget(new Label(shell, SWT.NONE), "gui.label.charset");
+		final Label charsetLabel = localizeWidget(new Label(parent, SWT.NONE), "gui.label.charset");
 		charsetLabel.setLayoutData(new GridData());
 
-		charsetCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
+		charsetCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
 		charsetCombo.setItems(Charset.availableCharsets().keySet().toArray(new String[0]));
 		charsetCombo.setText(Charset.defaultCharset().name());
 		charsetCombo.setLayoutData(new GridData());
 
 		// Process file button
-		processFileButton = localizeWidget(new Button(shell, SWT.NONE), "gui.label.file.process");
+		processFileButton = localizeWidget(new Button(parent, SWT.NONE), "gui.label.file.process");
 		processFileButton.setEnabled(false);
 		GridDataFactory.swtDefaults().span(1, 2).align(SWT.BEGINNING, SWT.FILL).applyTo(processFileButton);
 		processFileButton.addSelectionListener(new ProcessFileSelectionListener(this));
 
 		/* Mode radio */
-		final Label modeLabel = localizeWidget(new Label(shell, SWT.NONE), "gui.label.mode");
+		final Label modeLabel = localizeWidget(new Label(parent, SWT.NONE), "gui.label.mode");
 		modeLabel.setLayoutData(new GridData());
 
-		final Composite radioComposite = new Composite(shell, SWT.NONE);
+		final Composite radioComposite = new Composite(parent, SWT.NONE);
 		RowLayoutFactory.swtDefaults().applyTo(radioComposite);
 		GridDataFactory.swtDefaults().span(3, 1).applyTo(radioComposite);
 		for (final CodecMode m : CodecMode.values()) {
@@ -235,9 +246,16 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		charsetCombo.addSelectionListener(new CharsetComboSelectionListener(this));
 
 		/* Drag and drop */
-		shellDropTarget = new DropTarget(shell, DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK);
+		shellDropTarget = new DropTarget(parent, DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK);
 		shellDropTarget.addDropListener(new ShellDropListener(this));
 
+		return parent;
+	}
+
+	@Override
+	protected void constrainShellSize() {
+		super.constrainShellSize();
+		final Shell shell = getShell();
 		shell.pack();
 		shell.setMinimumSize(shell.getSize());
 	}
@@ -247,6 +265,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 		try {
 			Display.setAppName(getApplicationName());
 			Display.setAppVersion(BuildInfo.getProperty("project.version"));
+			Window.setDefaultImages(Images.getAppIconArray());
 			start();
 		}
 		catch (final RuntimeException | Error e) { // NOSONAR Catch Exception instead of Error. Throwable and Error should not be caught (java:S1181)
@@ -256,26 +275,24 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	private static void start() {
-		try (final CloseableDevice<Display> cd = new CloseableDevice<>(Display.getDefault())) {
-			Shell shell = null;
-			try {
-				final CodecGui gui = new CodecGui(cd.getDevice());
-				shell = gui.getShell();
-				shell.open();
-				gui.evaluateInputText();
-				loop(shell);
+		Shell shell = null;
+		try {
+			final CodecGui gui = new CodecGui();
+			gui.open(); // returns immediately
+			shell = gui.getShell(); // to be called after open!
+			gui.evaluateInputText();
+			loop(shell);
+		}
+		catch (final RuntimeException e) {
+			if (shell != null && shell.isDisposed()) {
+				log.log(Level.FINE, "An unrecoverable error has occurred:", e);
+				// Do not rethrow, exiting with status OK.
 			}
-			catch (final RuntimeException e) {
-				if (shell != null && shell.isDisposed()) {
-					log.log(Level.FINE, "An unrecoverable error has occurred:", e);
-					// Do not rethrow, exiting with status OK.
-				}
-				else {
-					EnhancedErrorDialog.openError(shell, getApplicationName(), messages.get("gui.error.fatal"), IStatus.ERROR, e, Images.getAppIconArray());
-					throw e;
-				}
+			else {
+				EnhancedErrorDialog.openError(shell, getApplicationName(), messages.get("gui.error.fatal"), IStatus.ERROR, e, Images.getAppIconArray());
+				throw e;
 			}
-		} // Display is disposed before the catch!
+		}
 	}
 
 	private static void loop(@NonNull final Shell shell) {
@@ -290,19 +307,19 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	public void setInputText(final String text, @NonNull final GuiStatus status) {
 		setStatus(status);
 		final Listener[] modifyListeners = inputText.getListeners(SWT.Modify);
-		if (DIRTY.equals(status)) {
+		if (GuiStatus.DIRTY.equals(status)) {
 			for (final Listener modifyListener : modifyListeners) {
 				inputText.removeListener(SWT.Modify, modifyListener);
 			}
 		}
 		inputText.setText(text != null ? text : "");
-		if (DIRTY.equals(status)) {
+		if (GuiStatus.DIRTY.equals(status)) {
 			for (final Listener modifyListener : modifyListeners) {
 				inputText.addListener(SWT.Modify, modifyListener);
 			}
 		}
 		refreshInputTextStyle();
-		if (DIRTY.equals(status)) {
+		if (GuiStatus.DIRTY.equals(status)) {
 			final Color inactiveTextColor = getInactiveTextColor();
 			if (!inactiveTextColor.equals(inputText.getForeground())) {
 				inputText.setForeground(inactiveTextColor);
@@ -316,12 +333,12 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	public void setOutputText(String text, @NonNull final GuiStatus status) {
 		setStatus(status);
 		text = text != null ? text : "";
-		if (ERROR.equals(status)) {
+		if (GuiStatus.ERROR.equals(status)) {
 			text = new StringBuilder(text).insert(0, ERROR_PREFIX).append(ERROR_SUFFIX).toString();
 		}
 		outputText.setText(text);
 		refreshOutputTextStyle();
-		if (EnumSet.of(ERROR, DIRTY).contains(status)) {
+		if (EnumSet.of(GuiStatus.ERROR, GuiStatus.DIRTY).contains(status)) {
 			final Color inactiveTextColor = getInactiveTextColor();
 			if (!inactiveTextColor.equals(outputText.getForeground())) {
 				outputText.setForeground(inactiveTextColor);
@@ -333,7 +350,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	private Text createInputText() {
-		final Composite composite = new Composite(shell, SWT.NONE);
+		final Composite composite = new Composite(getShell(), SWT.NONE);
 		composite.setLayout(new FillLayout());
 		final GridData compositeGridData = GridDataFactory.fillDefaults().grab(true, true).span(4, 1).create();
 		composite.setLayoutData(compositeGridData);
@@ -346,7 +363,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	private Text createOutputText() {
-		final Composite composite = new Composite(shell, SWT.NONE);
+		final Composite composite = new Composite(getShell(), SWT.NONE);
 		composite.setLayout(new FillLayout());
 		final GridData compositeGridData = GridDataFactory.fillDefaults().grab(true, true).span(4, 1).create();
 		composite.setLayoutData(compositeGridData);
@@ -369,7 +386,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	private void configureOutputText(@NonNull final Text text) {
 		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
 		text.addModifyListener(e -> {
-			if (EnumSet.of(ERROR, UNDEFINED).contains(status)) {
+			if (EnumSet.of(GuiStatus.ERROR, GuiStatus.UNDEFINED).contains(status)) {
 				outputLengthText.setText("-");
 			}
 			else {
@@ -379,7 +396,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	private void refreshInputTextStyle() {
-		final boolean mask = !DIRTY.equals(status) && hideInputTextCheck.getSelection();
+		final boolean mask = !GuiStatus.DIRTY.equals(status) && hideInputTextCheck.getSelection();
 		if ((inputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
 			final Text oldText = inputText;
 			final Composite parent = oldText.getParent();
@@ -397,7 +414,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	private void refreshOutputTextStyle() {
-		final boolean mask = !EnumSet.of(ERROR, DIRTY).contains(status) && hideOutputTextCheck.getSelection();
+		final boolean mask = !EnumSet.of(GuiStatus.ERROR, GuiStatus.DIRTY).contains(status) && hideOutputTextCheck.getSelection();
 		if ((outputText.getStyle() & SWT.PASSWORD) > 0 != mask) {
 			final Text oldText = outputText;
 			final Composite parent = oldText.getParent();
@@ -423,6 +440,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 
 	public void setLanguage(@NonNull final Language language) {
 		messages.setLanguage(language);
+		final Shell shell = getShell();
 		shell.setRedraw(false);
 		updateLanguage();
 		shell.layout(true, true);
@@ -442,10 +460,11 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	private Color getInactiveTextColor() {
-		return shell.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
+		return getShell().getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
 	}
 
 	public void loadInput() {
+		final Shell shell = getShell();
 		final FileDialog openDialog = new FileDialog(shell, SWT.OPEN);
 		if (algorithm != null && CodecMode.DECODE.equals(mode)) {
 			openDialog.setFilterExtensions(ProcessFileAction.buildFilterExtensions(algorithm));
@@ -469,7 +488,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 				if (r.read() != -1) {
 					throw new SizeLimitExceededException();
 				}
-				setInputText(cb.flip().toString(), UNDEFINED);
+				setInputText(cb.flip().toString(), GuiStatus.UNDEFINED);
 			}
 		}
 		catch (final InvalidPathException e) {
@@ -495,7 +514,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	public void saveOutput() {
-		if (OK.equals(status)) {
+		if (GuiStatus.OK.equals(status)) {
 			final ProcessFileAction action = new ProcessFileAction(this);
 			action.getDestinationFileName().ifPresent(destinationFileName -> {
 				if (!destinationFileName.isEmpty()) {
@@ -511,7 +530,7 @@ public class CodecGui implements IShellProvider, Multilanguage {
 	}
 
 	private int openMessageBox(@NonNull final String message, final int style) {
-		final MessageBox messageBox = new MessageBox(shell, style);
+		final MessageBox messageBox = new MessageBox(getShell(), style);
 		messageBox.setText(getApplicationName());
 		messageBox.setMessage(message);
 		return messageBox.open();
