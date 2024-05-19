@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 class BuildInfoTest {
 
-	private static final Collection<String> expectedPropertyNames = Arrays.asList("project.artifactId", "project.version", "version.timestamp");
+	private static final Collection<String> expectedPropertyNames = Arrays.asList("project.artifactId", "project.name", "project.version", "version.timestamp");
 
 	@Test
 	void testApi() {
