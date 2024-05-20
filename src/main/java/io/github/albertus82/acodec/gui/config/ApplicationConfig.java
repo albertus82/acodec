@@ -11,7 +11,6 @@ import io.github.albertus82.acodec.gui.resources.GuiMessages;
 import io.github.albertus82.jface.preference.IPreferencesConfiguration;
 import io.github.albertus82.jface.preference.PreferencesConfiguration;
 import io.github.albertus82.util.InitializationException;
-import io.github.albertus82.util.SystemUtils;
 import io.github.albertus82.util.config.Configuration;
 import io.github.albertus82.util.config.PropertiesConfiguration;
 
@@ -31,8 +30,6 @@ public class ApplicationConfig extends Configuration {
 			DIRECTORY_NAME = BuildInfo.getProperty("project.name");
 		}
 	}
-
-	public static final String APPDATA_DIRECTORY = SystemUtils.getOsSpecificLocalAppDataDir() + File.separator + DIRECTORY_NAME;
 
 	private static volatile ApplicationConfig instance; // NOSONAR Use a thread-safe type; adding "volatile" is not enough to make this field thread-safe. Use a thread-safe type; adding "volatile" is not enough to make this field thread-safe.
 	private static volatile IPreferencesConfiguration wrapper; // NOSONAR Use a thread-safe type; adding "volatile" is not enough to make this field thread-safe. Use a thread-safe type; adding "volatile" is not enough to make this field thread-safe.
