@@ -494,7 +494,7 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 			newText.setText(oldText.getText());
 			configureInputText(newText);
 			if (mask) {
-				createContextMenu(newText);
+				newText.addKeyListener(new TextCopyKeyListener(newText));
 			}
 			inputText = newText;
 			oldText.dispose();
