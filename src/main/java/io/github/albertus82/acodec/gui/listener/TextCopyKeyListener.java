@@ -8,9 +8,9 @@ import org.eclipse.swt.widgets.Text;
 import io.github.albertus82.jface.SwtUtils;
 import lombok.NonNull;
 
-public class TextCopySelectionKeyListener extends TextListener implements KeyListener {
+public class TextCopyKeyListener extends TextListener implements KeyListener {
 
-	public TextCopySelectionKeyListener(final Text text) {
+	public TextCopyKeyListener(final Text text) {
 		super(text);
 	}
 
