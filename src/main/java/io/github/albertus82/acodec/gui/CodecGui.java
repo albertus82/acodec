@@ -31,6 +31,7 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -47,6 +48,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -59,6 +62,7 @@ import io.github.albertus82.acodec.common.resources.Language;
 import io.github.albertus82.acodec.common.util.BuildInfo;
 import io.github.albertus82.acodec.gui.config.ApplicationConfig;
 import io.github.albertus82.acodec.gui.listener.AlgorithmComboSelectionListener;
+import io.github.albertus82.acodec.gui.listener.ArmMenuListener;
 import io.github.albertus82.acodec.gui.listener.CharsetComboSelectionListener;
 import io.github.albertus82.acodec.gui.listener.ExitListener;
 import io.github.albertus82.acodec.gui.listener.InputTextModifyListener;
@@ -67,7 +71,9 @@ import io.github.albertus82.acodec.gui.listener.ProcessFileAction;
 import io.github.albertus82.acodec.gui.listener.ProcessFileSelectionListener;
 import io.github.albertus82.acodec.gui.listener.ShellDropListener;
 import io.github.albertus82.acodec.gui.listener.TextCopySelectionKeyListener;
+import io.github.albertus82.acodec.gui.listener.TextCopySelectionMenuListener;
 import io.github.albertus82.acodec.gui.listener.TextSelectAllKeyListener;
+import io.github.albertus82.acodec.gui.listener.TextSelectAllMenuListener;
 import io.github.albertus82.acodec.gui.preference.Preference;
 import io.github.albertus82.acodec.gui.resources.GuiMessages;
 import io.github.albertus82.jface.EnhancedErrorDialog;
@@ -463,12 +469,12 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 
 	private void configureInputText(@NonNull final Text text) {
 		text.setTextLimit(TEXT_LIMIT_CHARS);
-		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
+		text.addKeyListener(new TextSelectAllKeyListener(text));
 		text.addModifyListener(new InputTextModifyListener(this));
 	}
 
 	private void configureOutputText(@NonNull final Text text) {
-		text.addKeyListener(TextSelectAllKeyListener.INSTANCE);
+		text.addKeyListener(new TextSelectAllKeyListener(text));
 		text.addModifyListener(e -> {
 			if (EnumSet.of(GuiStatus.ERROR, GuiStatus.UNDEFINED).contains(status)) {
 				outputLengthText.setText("-");
@@ -488,7 +494,7 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 			newText.setText(oldText.getText());
 			configureInputText(newText);
 			if (mask) {
-				newText.addKeyListener(TextCopySelectionKeyListener.INSTANCE);
+				newText.addKeyListener(new TextCopySelectionKeyListener(newText));
 			}
 			inputText = newText;
 			oldText.dispose();
@@ -507,7 +513,34 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 			newText.setBackground(inputText.getBackground()); // Override READ_ONLY style on some platforms.
 			configureOutputText(newText);
 			if (mask) {
-				newText.addKeyListener(TextCopySelectionKeyListener.INSTANCE);
+				newText.addKeyListener(new TextCopySelectionKeyListener(newText));
+
+				final Menu contextMenu = new Menu(newText);
+				newText.addMenuDetectListener(e -> {
+					e.doit = false; // disable default menu
+					newText.setFocus();
+					contextMenu.setVisible(true);
+				});
+
+				final MenuItem copyMenuItem = localizedWidgets.putAndReturn(new MenuItem(contextMenu, SWT.PUSH), () -> messages.get("gui.label.context.menu.item.copy") + SwtUtils.getMod1ShortcutLabel(SwtUtils.KEY_COPY)).getKey();
+				copyMenuItem.addSelectionListener(new TextCopySelectionMenuListener(newText));
+				copyMenuItem.setAccelerator(SWT.MOD1 | SwtUtils.KEY_COPY);
+
+				new MenuItem(contextMenu, SWT.SEPARATOR);
+
+				final MenuItem selectAllMenuItem = localizedWidgets.putAndReturn(new MenuItem(contextMenu, SWT.PUSH), () -> messages.get("gui.label.context.menu.item.select.all") + SwtUtils.getMod1ShortcutLabel(SwtUtils.KEY_SELECT_ALL)).getKey();
+				selectAllMenuItem.addSelectionListener(new TextSelectAllMenuListener(newText));
+				selectAllMenuItem.setAccelerator(SWT.MOD1 | SwtUtils.KEY_SELECT_ALL);
+
+				contextMenu.addMenuListener(new ArmMenuListener() {
+					@Override
+					public void menuArmed(final TypedEvent e) {
+						if (!newText.isDisposed()) {
+							copyMenuItem.setEnabled(newText.getSelectionCount() > 0);
+							selectAllMenuItem.setEnabled(newText.getSelectionCount() != newText.getCharCount());
+						}
+					}
+				});
 			}
 			outputText = newText;
 			oldText.dispose();

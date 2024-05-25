@@ -8,15 +8,16 @@ import org.eclipse.swt.widgets.Text;
 import io.github.albertus82.jface.SwtUtils;
 import lombok.NonNull;
 
-public enum TextSelectAllKeyListener implements KeyListener {
+public class TextSelectAllKeyListener extends TextListener implements KeyListener {
 
-	INSTANCE;
+	public TextSelectAllKeyListener(final Text text) {
+		super(text);
+	}
 
 	@Override
 	public void keyPressed(@NonNull final KeyEvent e) {
-		if (e.stateMask == SWT.MOD1 && e.keyCode == SwtUtils.KEY_SELECT_ALL && e.widget instanceof Text && !e.widget.isDisposed()) {
-			final Text text = (Text) e.widget;
-			text.selectAll();
+		if (e.stateMask == SWT.MOD1 && e.keyCode == SwtUtils.KEY_SELECT_ALL) {
+			selectAll();
 		}
 	}
 
