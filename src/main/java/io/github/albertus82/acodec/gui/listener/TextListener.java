@@ -6,15 +6,15 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Text;
 
 import io.github.albertus82.jface.closeable.CloseableClipboard;
+import lombok.AccessLevel;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class TextListener {
 
+	@NonNull
 	protected final Text text;
-
-	protected TextListener(@NonNull final Text text) {
-		this.text = text;
-	}
 
 	protected void copySelection() {
 		if (!text.isDisposed()) {
