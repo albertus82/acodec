@@ -63,10 +63,8 @@ import io.github.albertus82.acodec.common.util.BuildInfo;
 import io.github.albertus82.acodec.gui.config.ApplicationConfig;
 import io.github.albertus82.acodec.gui.listener.AlgorithmComboSelectionListener;
 import io.github.albertus82.acodec.gui.listener.ArmMenuListener;
-import io.github.albertus82.acodec.gui.listener.CharsetComboSelectionListener;
 import io.github.albertus82.acodec.gui.listener.ExitListener;
 import io.github.albertus82.acodec.gui.listener.InputTextModifyListener;
-import io.github.albertus82.acodec.gui.listener.ModeRadioSelectionListener;
 import io.github.albertus82.acodec.gui.listener.ProcessFileAction;
 import io.github.albertus82.acodec.gui.listener.ProcessFileSelectionListener;
 import io.github.albertus82.acodec.gui.listener.ShellDropListener;
@@ -117,12 +115,10 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 	private final IPreferencesConfiguration configuration = ApplicationConfig.getPreferencesConfiguration();
 
 	@NonNull
-	@Setter
 	private CodecMode mode = CodecMode.ENCODE;
 	@Setter
 	private CodecAlgorithm algorithm;
 	@NonNull
-	@Setter
 	private Charset charset = Charset.defaultCharset();
 
 	private MenuBar menuBar;
@@ -180,7 +176,7 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 	protected Control createContents(final Composite parent) {
 		menuBar = new MenuBar(this);
 
-		/* Input text */
+		// Input text
 		final Label inputLabel = localizeWidget(new Label(parent, SWT.NONE), "gui.label.input");
 		GridDataFactory.swtDefaults().applyTo(inputLabel);
 
@@ -205,7 +201,7 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 			GridDataFactory.swtDefaults().grab(true, false).align(SWT.END, SWT.CENTER).minSize(minWidth, SWT.DEFAULT).applyTo(inputLengthText);
 		}
 
-		/* Output text */
+		// Output text
 		final Label outputLabel = localizeWidget(new Label(parent, SWT.NONE), "gui.label.output");
 		outputLabel.setLayoutData(new GridData());
 
@@ -240,7 +236,7 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 			GridDataFactory.swtDefaults().grab(true, false).align(SWT.END, SWT.CENTER).minSize(minWidth, SWT.DEFAULT).applyTo(outputLengthText);
 		}
 
-		/* Codec combo */
+		// Algorithm combo
 		final Label algorithmLabel = localizeWidget(new Label(parent, SWT.NONE), "gui.label.algorithm");
 		algorithmLabel.setLayoutData(new GridData());
 
@@ -248,7 +244,7 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 		algorithmCombo.setItems(CodecAlgorithm.getNames());
 		algorithmCombo.setLayoutData(new GridData());
 
-		/* Charset combo */
+		// Charset combo
 		final Label charsetLabel = localizeWidget(new Label(parent, SWT.NONE), "gui.label.charset");
 		charsetLabel.setLayoutData(new GridData());
 
@@ -263,7 +259,7 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 		GridDataFactory.swtDefaults().span(1, 2).align(SWT.BEGINNING, SWT.FILL).applyTo(processFileButton);
 		processFileButton.addSelectionListener(new ProcessFileSelectionListener(this));
 
-		/* Mode radio */
+		// Mode radio
 		final Label modeLabel = localizeWidget(new Label(parent, SWT.NONE), "gui.label.mode");
 		modeLabel.setLayoutData(new GridData());
 
@@ -273,15 +269,32 @@ public class CodecGui extends ApplicationWindow implements Multilanguage {
 		for (final CodecMode m : CodecMode.values()) {
 			final Button radio = localizeWidget(new Button(radioComposite, SWT.RADIO), "gui.label.mode." + m.getAbbreviation());
 			modeRadios.put(m, radio);
-			radio.setSelection(m.equals(this.mode));
-			radio.addSelectionListener(new ModeRadioSelectionListener(this, radio, m));
+			radio.setSelection(m.equals(mode));
+			radio.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					if (radio.getSelection() && !m.equals(mode)) {
+						mode = m;
+						evaluateInputText();
+					}
+				}
+			});
 		}
 
-		/* Listener */
+		// Listeners
 		algorithmCombo.addSelectionListener(new AlgorithmComboSelectionListener(this));
-		charsetCombo.addSelectionListener(new CharsetComboSelectionListener(this));
+		charsetCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				final Charset selectedCharset = Charset.forName(charsetCombo.getText());
+				if (!selectedCharset.equals(charset)) {
+					charset = selectedCharset;
+					evaluateInputText();
+				}
+			}
+		});
 
-		/* Drag and drop */
+		// Drag & drop
 		shellDropTarget = new DropTarget(parent, DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK);
 		shellDropTarget.addDropListener(new ShellDropListener(this));
 
