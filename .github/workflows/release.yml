@@ -17,7 +17,7 @@ jobs:
     - uses: actions/setup-java@v5
       with:
         distribution: temurin
-        java-version: 21
+        java-version: 25
     - run: mvn clean verify -B -V -e -ntp
     - uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b
       with:
