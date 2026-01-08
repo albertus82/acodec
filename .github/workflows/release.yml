@@ -19,7 +19,7 @@ jobs:
         distribution: temurin
         java-version: 21
     - run: mvn clean verify -B -V -e -ntp
-    - uses: ncipollo/release-action@v1
+    - uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b
       with:
         artifacts: target/*.exe, target/*.tar.gz, target/*.zip
         bodyFile: target/checksums.md
