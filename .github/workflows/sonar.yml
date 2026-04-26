@@ -1,6 +1,9 @@
 name: Sonar
 
-on: push
+on:
+  push:
+  schedule:
+    - cron: '30 5 */14 * *'
 
 jobs:
   analyze:
